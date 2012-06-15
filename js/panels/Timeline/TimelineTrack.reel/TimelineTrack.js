@@ -649,25 +649,32 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             // This needs to move to a keyboard shortcut that is TBD
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
             if (ev.shiftKey) {
-                //if (this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList.length == 1) {
-                    if (this.tweens.length < 1) {
-                        this.insertTween(0);
-                        this.addAnimationRuleToElement(ev);
+                if (this.tweens.length < 1) {
+                    this.insertTween(0);
+                    this.addAnimationRuleToElement(ev);
+                    this.updateKeyframeRule();
+                } else {
+                    if (ev.target.className === "tracklane") {
+                        this.handleNewTween(ev);
                         this.updateKeyframeRule();
-                    } else {
-                        //console.log(ev);
-                        if (ev.target.className === "tracklane") {
-                            this.handleNewTween(ev);
-                            this.updateKeyframeRule();
-                        } else if (ev.target.className === "tween_span" && ev.target.parentElement.parentElement.className === "tracklane"){
-                            this.handleNewTween(ev);
-                            this.updateKeyframeRule();
-                        }
+                    } else if (ev.target.className === "tween_span" && ev.target.parentElement.parentElement.className === "tracklane") {
+                        this.handleNewTween(ev);
+                        this.updateKeyframeRule();
                     }
-                //} else {
-                    // TEMP error check
-                    //console.log("There must be exactly one element in an animated layer.");
-                //}
+                }
+            }
+        }
+    },
+
+    handleKeyboardShortcut:{
+        value:function(ev){
+            if (this.tweens.length < 1) {
+                this.insertTween(0);
+                this.addAnimationRuleToElement(ev);
+                this.updateKeyframeRule();
+            } else {
+                this.handleNewTween(ev);
+                this.updateKeyframeRule();
             }
         }
     },

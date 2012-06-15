@@ -905,6 +905,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
+    handleKeyframeShortcut:{
+        value:function(){
+            //console.log(this.currentLayersSelected);
+            //console.log(this.trackRepetition);
+            var tempEv = {};
+            tempEv.offsetX = this.playheadmarker.offsetLeft;
+            this.trackRepetition.childComponents[this.currentLayersSelected[0]].handleKeyboardShortcut(tempEv);
+        }
+    },
+
     updateTrackContainerWidth:{
         value:function () {
             this.container_tracks.style.width = (this.end_hottext.value * 80) + "px";
