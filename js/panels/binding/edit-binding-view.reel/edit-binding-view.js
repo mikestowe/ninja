@@ -5,10 +5,13 @@
  </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
+    Component = require("montage/ui/component").Component,
+    Converter = require("montage/core/converter/converter").Converter;
 
 
-exports.EditBindingView = Montage.create(Component, {
+var editBindingView = exports.EditBindingView = Montage.create(Component, {
+    sourceObjectIconElement : { value: null },
+    boundObjectIconElement  : { value: null },
 
     objectIdentifiers : {
         value: null
@@ -22,25 +25,90 @@ exports.EditBindingView = Montage.create(Component, {
     },
 
     /* -------------------
+     Object Identifier (for associating with object)
+     ------------------- */
+
+    _sourceObjectIdentifier : { value: null },
+    sourceObjectIdentifier : {
+        get : function() { return this._sourceObjectIdentifier; },
+        set : function(value) {
+            if(value === this._sourceObjectIdentifier) { return; }
+
+            this._sourceObjectIdentifier = value;
+
+            this.needsDraw = true;
+        }
+    },
+
+    _boundObjectIdentifier : { value: null },
+    boundObjectIdentifier : {
+        get : function() { return this._boundObjectIdentifier; },
+        set : function(value) {
+            if(value === this._boundObjectIdentifier) { return; }
+
+            this._boundObjectIdentifier = value;
+
+            this.needsDraw = true;
+        }
+    },
+
+
+    /* -------------------
        Binding Properties
      ------------------- */
 
-    sourceObjectIdentifier : {
-        value: "",
-        distinct: true
+    _sourceObject : { value: null },
+    sourceObject : {
+        get : function() { return this._sourceObject; },
+        set : function(value) {
+            if(value === this._sourceObject) { return; }
+
+            this._sourceObject = value;
+
+            this.needsDraw = true;
+        }
     },
+
+    _boundObject : { value: null },
+    boundObject : {
+        get : function() { return this._boundObject; },
+        set : function(value) {
+            if(value === this._boundObject) { return; }
+            console.log("Bound Object being set to ", value);
+            this._boundObject = value;
+
+            this.needsDraw = true;
+        }
+    },
+
+    _sourceObjectPropertyPath : { value: null },
     sourceObjectPropertyPath : {
-        value: "",
-        distinct: true
+        get : function() { return this._sourceObjectPropertyPath; },
+        set : function(value) {
+            console.log("Source Object Property Path being set to ", value);
+
+            if(value === this._sourceObjectPropertyPath) { return; }
+
+
+
+            this._sourceObjectPropertyPath = value;
+
+            this.needsDraw = true;
+        }
     },
-    boundObjectIdentifier : {
-        value: "",
-        distinct: true
-    },
+
+    _boundObjectPropertyPath : { value: null },
     boundObjectPropertyPath : {
-        value: "",
-        distinct: true
+        get : function() { return this._boundObjectPropertyPath; },
+        set : function(value) {
+            if(value === this._boundObjectPropertyPath) { return; }
+
+            this._boundObjectPropertyPath = value;
+
+            this.needsDraw = true;
+        }
     },
+
     _oneway: {
         value: null
     },
@@ -130,13 +198,15 @@ exports.EditBindingView = Montage.create(Component, {
 
     saveForm : {
         value: function() {
+            debugger;
+
             var controller = this.application.ninja.objectsController,
                 newBindingArgs = {
-                sourceObject : this.getObjectFromIdentifierValue(this.sourceObjectField.value),
-                sourceObjectPropertyPath : this.sourceObjectPropertyPathField.value,
-                boundObject : this.getObjectFromIdentifierValue(this.boundObjectField.value),
-                boundObjectPropertyPath : this.boundObjectPropertyPathField.value,
-                oneway: this.oneway
+                    sourceObject             : this.sourceObject,
+                    sourceObjectPropertyPath : this.sourceObjectPropertyPathField.value, // TODO: shouldn't need to do this (get from bound property)
+                    boundObject              : this.boundObject,
+                    boundObjectPropertyPath  : this.boundObjectPropertyPathField.value, // TODO: shouldn't need to do this
+                    oneway: this.oneway
             };
 
             if(this.isNewBinding) {
@@ -201,9 +271,76 @@ exports.EditBindingView = Montage.create(Component, {
      Draw Cycle
      ------------------- */
 
+    templateDidLoad : {
+        value: function() {
+
+
+            Object.defineBinding(this, 'sourceObject', {
+                boundObject: this,
+                boundObjectPropertyPath: 'sourceObjectIdentifier',
+                oneway: false,
+                converter : objectIdentifierConverter.create()
+            });
+
+            Object.defineBinding(this, 'boundObject', {
+                boundObject: this,
+                boundObjectPropertyPath: 'boundObjectIdentifier',
+                oneway: false,
+                converter : objectIdentifierConverter.create()
+            });
+
+        }
+    },
+
     prepareForDraw : {
         value: function() {
 
+        }
+    },
+    
+    draw : {
+        value: function() {
+            var defaultIconClass = 'object-icon',
+                controller = this.application.ninja.objectsController,
+                category;
+
+            this.sourceObjectIconElement.className = defaultIconClass;
+            this.boundObjectIconElement.className = defaultIconClass;
+
+            if(this.sourceObject) {
+                category = controller.getObjectCategory(this.sourceObject).toLowerCase();
+
+                if(category) {
+                    this.sourceObjectIconElement.classList.add('object-icon-'+category);
+                }
+            }
+
+            if(this.boundObject) {
+                category = controller.getObjectCategory(this.boundObject).toLowerCase() || null;
+
+                if(category) {
+                    this.boundObjectIconElement.classList.add('object-icon-'+category);
+                }
+            }
+        }
+    }
+});
+
+var objectIdentifierConverter = exports.ObjectIdentifierConverter = Montage.create(Converter, {
+    convert: {
+        value: function(identifier) {
+            if(!identifier) { return null; }
+
+            var identifiers = editBindingView.getObjectIdentifiers(),
+                objects = editBindingView.application.ninja.objectsController.objects;
+
+            return objects[identifiers.indexOf(identifier)];
+        }
+    },
+    revert: {
+        value: function(object) {
+            console.log("converter revert");
+            return object.identifier;
         }
     }
 });
