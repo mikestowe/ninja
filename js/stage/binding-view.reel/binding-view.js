@@ -94,6 +94,9 @@ exports.BindingView = Montage.create(Component, {
             return this._selectedComponent;
         },
         set: function(val) {
+            if(this._selectedComponent !== val) {
+                this.bindables = [];
+                this.clearCanvas();
             this._selectedComponent = val;
             if(this._selectedComponent !== null) {
                 this.application.ninja.objectsController.currentObject = this.selectedComponent;
@@ -128,9 +131,17 @@ exports.BindingView = Montage.create(Component, {
 
                 //Get Properties of Elements in bindings;
             }
-            this.needsDraw = true;
+                this.needsDraw = true;
+            }
         }
     },
+
+    handleResizeMove: {
+        value: function(e) {
+            console.log(e);
+        }
+    },
+
     bindables: {
         get: function() {
             return this._bindables;
@@ -169,8 +180,8 @@ exports.BindingView = Montage.create(Component, {
     //Montage Draw Cycle
     prepareForDraw: {
         value: function() {
-            //this._canvas = this.application.ninja.stage.drawingCanvas;
-            this._context = this._canvas.getContext('2d');
+            this._canvas = this.application.ninja.stage.drawingCanvas;
+            this._context = this.application.ninja.stage.drawingCanvas.getContext('2d');
             this.application.ninja.stage._iframeContainer.addEventListener("scroll", this, false);
         }
     },
@@ -181,8 +192,9 @@ exports.BindingView = Montage.create(Component, {
                 this.canvas.width  = this.application.ninja.stage.drawingCanvas.offsetWidth;
                 this.canvas.height = this.application.ninja.stage.drawingCanvas.offsetHeight;
                 this.clearCanvas();
-                this.drawBlueLine(110,53,210,173);
-
+                for(var i= 0; i < this.hudRepeater.childComponents.length; i++) {
+                    this.drawBlueLine(this.hudRepeater.objects[i].component.element.offsetLeft,this.hudRepeater.objects[i].component.element.offsetTop, this.hudRepeater.childComponents[i].element.offsetLeft, this.hudRepeater.childComponents[i].element.offsetTop);
+                }
             } else {
                 this.bindables = [];
                 this.clearCanvas();
@@ -200,7 +212,7 @@ exports.BindingView = Montage.create(Component, {
     drawBlueLine: {
         value: function(fromX,fromY,toX,toY) {
             this._context.lineWidth = 4; // Set Line Thickness
-            this._context.strokeStyle = "#5e9eff"
+            //this._context.strokeStyle = "#5e9eff";
 
             this._context.beginPath(); // Start Drawing Line
             this._context.moveTo(fromX, fromY);
@@ -211,6 +223,7 @@ exports.BindingView = Montage.create(Component, {
 
     clearCanvas: {
         value: function() {
+            debugger;
             this._context.clearRect(0,0,this._canvas.offsetWidth,this._canvas.offsetHeight);
         }
     },

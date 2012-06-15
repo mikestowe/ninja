@@ -62,6 +62,7 @@ exports.BindingHud = Montage.create(Component, {
             this.x = parseInt(this.x);
             this.y = parseInt(this.y);
             this.needsDraw = true;
+            this.parentComponent.parentComponent.needsDraw = true;
         }
     },
 
@@ -70,6 +71,7 @@ exports.BindingHud = Montage.create(Component, {
             this._resizedY = e._event.dY;
             this._resizedX = e._event.dX;
             this.needsDraw = true;
+            this.parentComponent.parentComponent.needsDraw = true;
         }
     },
 
@@ -81,6 +83,7 @@ exports.BindingHud = Montage.create(Component, {
             this._resizedY = 0;
             this.isResizing = false;
             this.needsDraw = true;
+            this.parentComponent.parentComponent.needsDraw = true;
         }
     },
 
@@ -98,7 +101,6 @@ exports.BindingHud = Montage.create(Component, {
         },
         set: function(val) {
             this._x = val;
-            console.log(this._x);
             this.needsDraw = true;
         }
     },
@@ -149,7 +151,6 @@ exports.BindingHud = Montage.create(Component, {
 //                }
             this.element.style.top = (this.y + this._resizedY) + "px";
             this.element.style.left = (this.x + this._resizedX) + "px";
-            console.log("hud",this);
         }
     }
 });
