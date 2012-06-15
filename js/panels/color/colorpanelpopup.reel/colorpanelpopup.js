@@ -50,8 +50,8 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     setNoColor: {
-    	value: function (e) {
-    		if (this.colorManager) this.colorManager.applyNoColor();
+    	value: function (code) {
+    		if (this.colorManager) this.colorManager.applyNoColor(code);
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -308,7 +308,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
 			    				color.type = 'change';
     							this.colorManager.hsl = color;
     						} else {
-			    				this.colorManager.applyNoColor();
+			    				this.colorManager.applyNoColor(false);
     						}
 			    		} else {
     						color = this.colorManager.hexToRgb(b._event.srcElement.colorValue);
@@ -317,7 +317,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     							color.type = 'change';
 			    				this.colorManager.rgb = color;
     						} else {
-    							this.colorManager.applyNoColor();
+    							this.colorManager.applyNoColor(false);
 			    			}
     					}
     				}

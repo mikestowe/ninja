@@ -198,7 +198,7 @@ exports.ColorController = Montage.create(Component, {
     	enumerable: true,
         value: function (e) {
         	//
-            var actionEvent, color, input = e._event.input, panelMode, mode = e._event.mode;
+            var color, input = e._event.input, panelMode, mode = e._event.mode;
             if (this.colorView) {
             	panelMode = this.colorView.panelMode;
             }

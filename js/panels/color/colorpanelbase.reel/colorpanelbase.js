@@ -694,7 +694,7 @@ exports.ColorPanelBase = Montage.create(Component, {
                 case 'nocolor':
                     this._buttons.nocolor.push(button);
                     button.title = 'No Color';
-                    button.addEventListener('click', this.setNoColor.bind(this));
+                    button.addEventListener('click', function () {this.setNoColor(false)}.bind(this));
                     break;
                 //////////////////////////////////////////////////////// 
                 case 'swap':
@@ -746,7 +746,7 @@ exports.ColorPanelBase = Montage.create(Component, {
                 color.wasSetByCode = false;
                 //
                 if (prev.m === 'nocolor') {
-                    this.setNoColor();
+                    this.setNoColor(false);
                 } else {
                     this.colorManager.alpha = { value: alpha, wasSetByCode: true, type: 'change' };
                     this.colorManager[prev.m] = color;
@@ -832,11 +832,11 @@ exports.ColorPanelBase = Montage.create(Component, {
     //TODO: Add set by code property
     setNoColor: {
         enumerable: true,
-        value: function (e) {
+        value: function (wasSetByCode) {
             //
             this.application.ninja.colorController.colorPopupManager.hideColorPopup();
             //
-            this.colorManager.applyNoColor();
+            this.colorManager.applyNoColor(wasSetByCode);
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -879,7 +879,7 @@ exports.ColorPanelBase = Montage.create(Component, {
                     break;
                 //////////////////////////////////////////////////////// 
                 default:
-                    this.setNoColor();
+                    this.setNoColor(false);
                     break;
                 //////////////////////////////////////////////////////// 
             }
@@ -911,7 +911,7 @@ exports.ColorPanelBase = Montage.create(Component, {
                     break;
                 //////////////////////////////////////////////////////// 
                 default:
-                    this.setNoColor();
+                    this.setNoColor(false);
                     break;
                 //////////////////////////////////////////////////////// 
             }
@@ -1300,7 +1300,7 @@ exports.ColorPanelBase = Montage.create(Component, {
                     update.type = 'change';
                     this.colorManager.hsl = update;
                 } else {
-                    this.colorManager.applyNoColor();
+                    this.colorManager.applyNoColor(false);
                 }
             } else {
                 update = this.colorManager.hexToRgb(color);
@@ -1309,7 +1309,7 @@ exports.ColorPanelBase = Montage.create(Component, {
                     update.type = 'change';
                     this.colorManager.rgb = update;
                 } else {
-                    this.colorManager.applyNoColor();
+                    this.colorManager.applyNoColor(false);
                 }
             }
         }
@@ -1553,7 +1553,7 @@ exports.ColorPanelBase = Montage.create(Component, {
                         this.colorManager.hsv = color.c;
                         break;
                     default:
-                        this.colorManager.applyNoColor();
+                        this.colorManager.applyNoColor(true);
                         break;
                 }
                 //
