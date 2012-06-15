@@ -22,7 +22,7 @@
 .objects-list .list-item {
     list-style-type: none;
     float: left;
-    width: 80px;
+    width: 70px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -32,7 +32,7 @@
   ------------------- */
 
 .object-icon {
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.6);
     /* red owner/crate */
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAACoZJREFUeNqsV2lsHOUZfufYmZ09vF6vE3t9YSc%2ByEWC7YAhbuM0B04TBDVQEGrVVmqpKrUS%2FVOhohQKglYtUlWEkJBKKaWiqG4EciHFMU5iJ8RJnDhOiG878b3rY9d7H7Nz9PkWEgVIaaj4pLFmx%2FN97%2FM%2B7%2FMew9FNrkuXLlE6nSZJkigWi0mZTKbcNM0duC7g2UWn05nYtGkTfdnF%2Fa8Xzp07R3V1ddTf3y8lEonNePSwxWLZL8tyhdVqlTRN0wFoBoBadV3%2FW15e3qWNGzca%2FzeAy5cv05o1a7L3MGpVVfUujuO%2BI4riHhgstNlsImMBnmffYfdsJZNJikQiKkAOAczreP8tvOsDmJsDMDw8zKgleMenUqmd8Oandru9EUZzFUXhBUEgHEzxeJxC4XBSDIf1glTKEXe7TaWsTIUxGXsJewmg2VlJAOozDOP53Nzc9xGeG7LCHT58mHlRAEP7YORR3N%2BNS7HZ7MSMJpOJbOwjoXAyfapnpOTI0c7yo0eXp3fs%2BKGluHhtLJXWi%2Fv7nvU9%2BaQ1Vln17TxPXrliVXjT%2FNgeQBBYiYKh9xGuV8BcD2wlGhoaPgbQ1tbGA%2FGRqqqq7UBKPC9kvUilUxSPxZPxySsD7rffuVDd%2Fn7cHovp49%2FY%2FU3B41kdzWRExNsZzagkx2ILVkkSuODKIbO%2B7uTSAy37wMYOl8vl4MAxC5eqZigcDhlgZh5MvgdAr0Sj0fNcZ2cnzczMHKqurt6LDQQ1E5DS4uJiALH%2FSf22bbmLW2ofUSurbxNCQd%2BUy7VxtdPBZXSDVn19Oy0d7yYLQHNkUGA5EL5FtkYRxxCvZV4MPPUrN5x5TFGsFQgnj7Bmw7iyskJ9fX2DS0tLt4ulpaVMeCN4cS%2BjHHQRXqbCwkIPmHlz%2BN13jyy8%2FkZ9gVXO8WlOj1e0aKmMZklnNCPe8yEfRXhyRIsuioKQES22iMPuWlGUEj43b6tDsAnpdLgP4SiDKJm2siFhWsN9pqioyBCnp6cJQulDnE23O4%2Bbnp7S2ctut5vDJdpqavYUPPEL8rcfpmXfouENBS3Mk0gqZVolC%2BmgN20agoUTab6ySpAb7jZTeW5TlqXvWfiM5HbnZjNkdnY2G1oRQmW%2FccZlOKnxu3btYlq4AlSGqqaJF8Tx%2Bfn556empqKTk5O0sLBAHDaVP9BCVQ%2FezwVQbGYQIqdNEQqbmsglS5QsLSP%2FvfeRUVurO26touKi1Xyuyy5FIuGs4YmJCRobG8sg5umC1QXZMCDMH%2B3bt49EZh0pdAXoVN0wFF3Tch959dXfR5aX50489uP70zXVu7GRczgc5HK7%2Bdz77iVb4zZSURnHBwYovWcv5axfR4pVpjxds5CpUSAQycaZpezy8rKWCgaPb%2BnoeDPz4IMHjJqaMjw3AWCQ2c4C8Hq9S%2FA2oqZVxSTTGTOMcp345pqk2mjOLdAEGelEsVdmscvJySGEhiw7mihaX0cK5GdT5Kxwg8EArmBWRwgjrV7tpbWDw2Mbnv11v2gY69%2FascOZixoBADr0NnkNwJYtW9TR0VF%2FKLRSwPO8FCouKU4sB23Dp3tsLJtzdVNN798vRku8POLHMe8QPyopKSGwQwgX8zRLrSiCBE5UeY0TV1pb%2Bd6Z2TLUQj4tSaJZ6FUikSgTYQaOTDPbPPuTn5%2FPhDjCxKXrhhAW%2BMrKRf%2BEMxSat6fSEbsrx6l8eELQRyfMSDSBcptkqctSic6ePZu9Z16vhCJGntNNeZcnJfON19NXpqdTOYnYsa5%2FH35cVRRJk2WIfopCoVAYGRC4BuCTNchUCg1waat1rT2RTGzcUnt%2B%2FSOPZgxDNxfgtXzqJL92elZyGTxpqAPhcDibUqJFpvUVt1LRrI%2B7%2BPJLNNN1hKotltj3N2%2Be%2Fa5v%2FqOdO5so4PEgAUSBZQDqy0JFRYX6KQCgvh85aoIJ0vM8xUmrbD05NnLPePshD4yrbjKTFp6n%2BPmzFD7dky3PLO6Mdub9RO9pWj7XyxmCoOfo%2BpxfFPN7BgYq2woKW1pbWynmzHGrqsbFYnEGYHTz5s30KQCoz5dwkM4Oncz3eCpstheDydRyGgbKa26Vqx5%2BVDEguBV4EPL5yAADrOmwwsLSdWpxkeIQXpluCqvgwChK%2BclY1LwiCOcfeughcdZbqDCRQmdMoINX7YpXb%2BDREoynNC3jiLpc1a82NPyzdP0Gt%2FOOu2ju3Ta6cLCVgjjULVnJHoubYaSmmklnvQd7ZiwW5mLQUBKAI2qS1tgUKk0l47%2F0%2BU7h%2BI0Sz5d58j2oK36TOXuN%2Bas3Tz%2F9NGtKUUYp1F204cCBDTOjY7IPvSKCWIdjUV1CVyn2esmCJqZHY9dmArvdyW3w5FOpmjbjgmCkdI08NgfnyvM4nikrfeGVXbvenCwpWeVELUGIdQwzw58DgIrnhjqjLBNYTzgxNETnJMnsHxmijKaZu3%2F2OF9ZUMj5%2FD4aDiwhl2PssCyIRDJOgbkZdpjRqNi5Wxw5NIp60IZ4W2RZaNi7d51j%2B%2FZ8NB%2B2J4PxbuVzALA0xPICVGqyHG9sbCRhw7rEMxf7h94jbvHiX1%2FjfOEQiZFo2GmaGcEiZht%2BFoShp6LRSDIpCumgmuTOoK%2F8bm62fywVD6Lgm0PFxVnBsqzB%2BYmDBw%2FarxoVrgeAYjQL79fg0DJUR66pqUnCJCMf6u66ELcqq6RQWF93Z4OjsLhUiOD%2FKqhmqWtz5Ijr9%2By3aF3H9AlsXrgysbJ7ZGj479Fo7%2B27d1fV19fLLP3QY8jn802hdvwD9oK4zOsBZEBnAI1jENVNxsE1EIuIdJExlJZ%2BcPr0wFG%2F74PKeHxLJBzkUjVVpq5rHDuYrcnuY7Tin59XPuwe9AcCI1eam7WnnnvuW5h8HMxwT0%2BPOTIyMn%2FixInfsFENW%2BKfZYAtFSCW0cFG%2FX5%2FDL9vgybk6qoqfs%2BePV6wJ%2Fy598zCuKzEy0pLFEHgLaweQD%2FxaEd7omBiorfTZuu67YknmnY2N38NPUO6ePEiHTt2TIPho7h%2BGwgEDuNcVgXNGwHIMoFrGU1lDJvHMSHVZTKak80HtXW1hZVrK6V%2Ftb3TWVVVWYFh1cYYQBsfSHZ2dkw038P%2F4MCBH23dutWbQM%2FoOXmSuru7%2Fe3t7S%2BPj4%2B%2FDB30XKX%2BRhq4fjGBRbBhFhsvY75bCyYKPJ58DmO2cscdd1bDawEFRWIaAAvxoua9Jfe3tGxHk7FMXJ6g3jNnDMT6o46OjucR0rdx3giuxGcNCV8wsjOUcdSGeYhzEKEpQMzLoQu%2BoqIcmCQJdGanm9raWvf2pqZVmIK4k%2FD63LmziePHj7eeOnXqBThxDOf4mMhvZES4iY%2BXBITtx9w4AAXrALAJ1tF1RQp%2BAqC4uIRjxaqrq4vOnz8%2FjUH3DxDzawDdj%2F3h6yn%2F7BJv8gsqxubGoaGhIEqvP5NRf15Y6HVlaUIhunChn%2FUEDe2ZCe2PeMxUvvTfvP6yDFxdOvMGaxIZMocZYhMEmsM0MDc3F4D3f8Kn3Et4p%2FcToRlfycfpDRarnquQFdtaWloex3SkHzly5C8o4914PsdS%2BSv9Ov6C5YAeCljzQoawvI7crNfXr%2F8IMADlMDTD%2BOWcSAAAAABJRU5ErkJggg%3D%3D);
     background-position:  center center;
@@ -40,7 +40,7 @@
     border: 1px solid rgba(0, 0, 0, 0);
     border-radius: 5px;
     height: 50px;
-    margin:  0 15px 5px;
+    margin:  0 auto 5px;
     width: 50px;
 }
 .object-label {
@@ -50,8 +50,7 @@
 }
 
 .object-icon:hover {
-    border: 1px solid rgba(0, 0, 0, 0.4);
-    box-shadow: 0 0 1px 1px #474747;
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
 .object-icon-component.object-icon {

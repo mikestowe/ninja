@@ -1,0 +1,33 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+/*
+
+<section data-montage-id="objects-panel" class="objects-panel">
+    <ul data-montage-id="list" class="objects-list">
+        <li data-montage-id="list-item" class="list-item"></li>
+    </ul>
+</section>
+
+*/
+
+.objects-list {
+    font-size: 11px;
+    margin: 10px 0 0 0;
+    padding: 0;
+    text-shadow: -1px -1px 0 #4D4D4D;
+}
+
+.objects-tray {
+    background-color: rgba(0,0,0,.6);
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    box-shadow: inset 0 0 3px #333;
+    padding: 0 10px 5px;
+    margin: 0 auto;
+    overflow: hidden;
+    -webkit-box-flex: 0;
+}

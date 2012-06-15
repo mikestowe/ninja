@@ -5,6 +5,7 @@
  </copyright> */
 
 .bindingView {
+    height: 100%;
     position: absolute;
     width:100%;
     z-index: 12;
@@ -22,4 +23,14 @@
     height:100%;
     position:absolute;
     z-index: 1;
+}
+
+.objects-tray-container {
+    bottom: 11px;
+    position: absolute;
+    width: 100%;
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
 }
