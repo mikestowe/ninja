@@ -21,7 +21,9 @@
                     "directionCheckbox"  : {"@": "directionCheckbox" },
                     "saveButton":{ "@": "saveButton" },
                     "cancelButton":{ "@": "cancelButton" },
-                    "deleteButton":{ "@": "deleteButton" }
+                    "deleteButton":{ "@": "deleteButton" },
+                    "sourceObjectIconElement": {"#": "source-object-icon"},
+                    "boundObjectIconElement": {"#": "bound-object-icon"}
                 }
             },
             "sourceObjectField": {
@@ -31,7 +33,7 @@
                     "element": {"#": "sourceObjectField"}
                 },
                 "bindings": {
-                    "value": {"<-": "@owner.sourceObjectIdentifier"}
+                    "value": {"<<->": "@owner.sourceObjectIdentifier"}
                 },
                 "listeners" : [
                     {
@@ -47,7 +49,7 @@
                     "element": {"#": "boundObjectField"}
                 },
                 "bindings": {
-                    "value": {"<-": "@owner.boundObjectIdentifier"}
+                    "value": {"<<->": "@owner.boundObjectIdentifier"}
                 },
                 "listeners" : [
                     {
@@ -64,7 +66,7 @@
                     "identifier": "sourceProperty"
                 },
                 "bindings": {
-                    "value": {"<-": "@owner.sourceObjectPropertyPath"}
+                    "value": {"<<->": "@owner.sourceObjectPropertyPath"}
                 },
                 "listeners" : [
                     {
@@ -81,7 +83,7 @@
                     "identifier": "boundProperty"
                 },
                 "bindings": {
-                    "value": {"<-": "@owner.boundObjectPropertyPath"}
+                    "value": {"<<->": "@owner.boundObjectPropertyPath"}
                 },
                 "listeners" : [
                     {
@@ -147,14 +149,10 @@
 </head>
 <body>
 <div data-montage-id="edit-binding" class="edit-binding-view">
-
-
     <section class="edit-object-binding">
         <div data-montage-id="source-object-container" class="object-container">
             <div data-montage-id="source-object-icon-container" class="object-icon-container">
-                <div>
-                    <div class="object-icon"></div>
-                </div>
+                <div data-montage-id="source-object-icon" class="object-icon"></div>
             </div>
             <div class="object-fields-container">
                 <span data-montage-id="sourceObjectField" class="hintable-field">Test</span>
@@ -164,9 +162,7 @@
 
         <div data-montage-id="bound-object-container" class="object-container">
             <div data-montage-id="bound-object-icon-container" class="object-icon-container">
-                <div>
-                    <div class="object-icon"></div>
-                </div>
+                <div data-montage-id="bound-object-icon" class="object-icon"></div>
             </div>
             <div class="object-fields-container">
                 <span data-montage-id="boundObjectField" class="hintable-field">Test</span>
@@ -175,11 +171,9 @@
         </div>
     </section>
 
-
     <div class="checkbox-container">
         <input data-montage-id="direction-checkbox" type="checkbox" class="nj-skinned"><label>Oneway</label>
     </div>
-
 
     <div class="buttons-container">
         <button data-montage-id="delete-button" class="nj-skinned btn-delete">Delete</button>

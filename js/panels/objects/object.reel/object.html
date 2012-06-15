@@ -14,7 +14,8 @@
             "owner": {
                 "prototype": "js/panels/objects/object.reel",
                 "properties": {
-                    "element": {"#": "object"}
+                    "element": {"#": "object"},
+                    "iconElement": { "#": "object-icon"}
                 }
             },
             "labelText": {
@@ -39,7 +40,7 @@
 
 
 <li data-montage-id="object" draggable="true">
-    <div class="object-icon"></div>
+    <div data-montage-id="object-icon" class="object-icon"></div>
     <span data-montage-id="label" class="object-label"></span>
 </li>
 
