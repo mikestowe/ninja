@@ -104,35 +104,35 @@
 .timeline-dnd-helper { -webkit-transform: scale(0.9, 0.9); }
 
 /* line 307, ../scss/TimelinePanel.scss */
-.tl_slider { width: 65px; height: 5px; background: none; float: left; margin-left: 5%; }
+.tl_slider { width: 65px; height: 5px; background: none; float: left; margin-left: 5%; visibility: hidden; }
 
 /* Configuration menu */
-/* line 316, ../scss/TimelinePanel.scss */
+/* line 317, ../scss/TimelinePanel.scss */
 .layer-master { position: relative; }
 
-/* line 319, ../scss/TimelinePanel.scss */
+/* line 320, ../scss/TimelinePanel.scss */
 .tl-configbutton { position: absolute; top: 0px; right: 2px; width: 20px; height: 20px; background-image: url(../images/icon-gear.png); background-repeat: no-repeat; cursor: pointer; z-index: 100; background-position: 100% 0px; }
 
-/* line 331, ../scss/TimelinePanel.scss */
+/* line 332, ../scss/TimelinePanel.scss */
 .tl-configbutton:hover { width: 180px; }
 
-/* line 335, ../scss/TimelinePanel.scss */
+/* line 336, ../scss/TimelinePanel.scss */
 .tl-configbutton .tl-dropdown { position: absolute; border: 1px solid black; top: 16px; right: 2px; width: 180px; padding-bottom: 7px; background-color: #474747; box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5); display: none; }
 
-/* line 346, ../scss/TimelinePanel.scss */
+/* line 347, ../scss/TimelinePanel.scss */
 .tl-configbutton.checked .tl-dropdown { display: block; }
 
-/* line 350, ../scss/TimelinePanel.scss */
+/* line 351, ../scss/TimelinePanel.scss */
 .tl-configbutton .checkable { padding-left: 20px; height: 20px; line-height: 20px; margin-top: 3px; }
 
-/* line 356, ../scss/TimelinePanel.scss */
+/* line 357, ../scss/TimelinePanel.scss */
 .tl-configbutton .checkable:hover { background-color: #b2b2b2; color: #242424; text-shadow: none; }
 
-/* line 361, ../scss/TimelinePanel.scss */
+/* line 362, ../scss/TimelinePanel.scss */
 .tl-configbutton .checkable.checked { background-image: url(../images/icon-checkmark.png); background-repeat: no-repeat; background-position: 6px 4px; }
 
-/* line 367, ../scss/TimelinePanel.scss */
+/* line 368, ../scss/TimelinePanel.scss */
 .tl-configbutton .nj-divider { margin-top: 7px; }
 
-/* line 371, ../scss/TimelinePanel.scss */
+/* line 372, ../scss/TimelinePanel.scss */
 .layer-hidden { display: none; }
