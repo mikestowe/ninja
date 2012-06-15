@@ -879,6 +879,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             newTween.tweenData.keyFrameMillisec = currentMilliSec;
                             newTween.tweenData.tweenID = this.nextKeyframe;
                             newTween.tweenData.spanPosition =clickPosition - newTween.tweenData.spanWidth;
+                            newTween.tweenData.easing = this.currentKeyframeRule[i].style.webkitAnimationName;
                             this.tweens.push(newTween);
                         }
                         this.nextKeyframe += 1;

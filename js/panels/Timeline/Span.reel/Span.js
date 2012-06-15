@@ -83,7 +83,6 @@ var Span = exports.Span = Montage.create(Component, {
 	
     draw:{
         value: function(){
-        	
             this.element.style.width = this.spanWidth + "px";
 
             if ((this.spanWidth <= 70) && (this.spanWidth >0)) {
