@@ -181,7 +181,7 @@ exports.MaterialsModel = Montage.create(Component, {
 
 	getDefaultMaterialName: {
 		value: function() {
-			return "FlatMaterial";
+			return "Flat";
 		}
 	},
 
