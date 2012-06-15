@@ -145,6 +145,29 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
 					template.file.content.document.body.setAttribute(template.body.attributes[n].name, template.body.attributes[n].value);
 				}				
 			}
+			//
+            if(template.template) {
+                //
+                // TODO - Need to handle banner and animation templates.
+                //Copying attributes to maintain same properties as <ninja-content>
+                var ninjaContentTagMem = template.document.getElementsByTagName('ninja-content')[0], ninjaContentTagDoc = template.file.content.document.getElementsByTagName('ninja-content')[0];
+                if (ninjaContentTagMem && ninjaContentTagMem.getAttribute('data-ninja-style') !== null) {
+                    ninjaContentTagDoc.setAttribute('style', ninjaContentTagMem.getAttribute('data-ninja-style'));
+                    ninjaContentTagDoc.removeAttribute('data-ninja-style');
+                } else if (ninjaContentTagMem && ninjaContentTagMem.getAttribute('data-ninja-style') === null) {
+                    ninjaContentTagDoc.removeAttribute('style');
+                    ninjaContentTagDoc.removeAttribute('data-ninja-style');
+                }
+            } else {
+                if (template.body && template.body.getAttribute('data-ninja-style') !== null) {
+                    template.file.content.document.body.setAttribute('style', template.body.getAttribute('data-ninja-style'));
+                    template.file.content.document.body.removeAttribute('data-ninja-style');
+                } else if (template.body && template.body.getAttribute('data-ninja-style') === null) {
+                    template.file.content.document.body.removeAttribute('style');
+                    template.file.content.document.body.removeAttribute('data-ninja-style');
+                }
+            }
+
 			wipeAttributes(template.file.content.document.head);
             //Copying attributes to maintain same properties as the <head>
 			for (var m in template.document.head.attributes) {
@@ -155,6 +178,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             //Copying attributes to maintain same properties as the <html>
 			var htmlTagMem = template.document.getElementsByTagName('html')[0], htmlTagDoc = template.file.content.document.getElementsByTagName('html')[0];
 			wipeAttributes(htmlTagDoc);
+			//
 			for (var m in htmlTagMem.attributes) {
 				if (htmlTagMem.attributes[m].value) {
 					if (htmlTagMem.attributes[m].value.replace(/montage-app-bootstrapping/gi, '').length>0) {
@@ -162,10 +186,19 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
 					}
 				}
 			}
+			//
+			if (htmlTagMem && htmlTagMem.getAttribute('data-ninja-style') !== null) {
+		    	htmlTagDoc.setAttribute('style', htmlTagMem.getAttribute('data-ninja-style'));
+		   		htmlTagDoc.removeAttribute('data-ninja-style');
+			} else if (htmlTagMem && htmlTagMem.getAttribute('data-ninja-style') === null) {
+				htmlTagDoc.removeAttribute('style');
+				htmlTagDoc.removeAttribute('data-ninja-style');
+			}
             //Getting list of current nodes (Ninja DOM)
             presentNodes = template.file.content.document.getElementsByTagName('*');
             //Looping through nodes to determine origin and removing if not inserted by Ninja
             for (var n in presentNodes) {
+	    		//
 	    		if (presentNodes[n].getAttribute && presentNodes[n].getAttribute('data-ninja-node') === null) {
 		    	 	toremovetags.push(presentNodes[n]);	
 	    		} else if (presentNodes[n].getAttribute && presentNodes[n].getAttribute('data-ninja-node') !== null) {
