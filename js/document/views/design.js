@@ -281,7 +281,6 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     		this.document.body.removeChild(this.document.getElementsByTagName('ninjaloadinghack')[0]);
    			//Getting style and link tags in document
             var htags = this.document.getElementsByTagName('html'),
-                btags = this.document.getElementsByTagName('body'),
                 userStyles,
                 stags = this.document.getElementsByTagName('style'),
             	ltags = this.document.getElementsByTagName('link'), i, orgNodes,
@@ -339,18 +338,18 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	    		if (orgNodes[n].getAttribute) orgNodes[n].setAttribute('data-ninja-node', 'true');
     		}
 
-            // Save initial HTML and Body style attributes so we don't override them on save
+            // Save initial HTML and Body/ninja-content style attributes so we don't override them on save
             if(htags.length) {
                 if(userStyles = htags[0].getAttribute('style')) {
                     htags[0].setAttribute('data-ninja-style', userStyles);
                 }
             }
-            if(btags.length) {
-                if(userStyles = btags[0].getAttribute('style')) {
-                    btags[0].setAttribute('data-ninja-style', userStyles);
+            if(this.documentRoot) {
+                if(userStyles = this.documentRoot.getAttribute('style')) {
+                    this.documentRoot.setAttribute('data-ninja-style', userStyles);
                 }
             }
-    		//Makign callback if specified
+    		//Making callback if specified
     		if (this._callback) this._callback();
     	}
     },
