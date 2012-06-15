@@ -35,6 +35,7 @@ exports.MaterialsPopup = Montage.create(Component, {
 
 	_useSelection: {  value: false,  enumerable: true },
 	_whichMaterial: { value: "fill", enumerable: true },
+	_originalValues: {value: null,  enumerable: true },
 
 	captureAction: {
 		value:function(event) {
@@ -42,6 +43,7 @@ exports.MaterialsPopup = Montage.create(Component, {
 			{
 				case "Cancel":
 					console.log("Cancel material edit");
+					this.revertToOriginalValues();
 					break;
 				case "OK":
 					console.log("Committing material with the following values:");
@@ -67,6 +69,46 @@ exports.MaterialsPopup = Montage.create(Component, {
 
             // Notify Materials Library to close popup
             NJevent("hideMaterialPopup");
+		}
+	},
+
+	revertToOriginalValues:
+	{
+		value: function()
+		{
+			if (this._originalValues)
+			{
+				this._material.importJSON( this._originalValues );
+
+				if (this._useSelection)
+				{
+					var selection = this.application.ninja.selectedElements;
+					if (selection && (selection.length > 0))
+					{
+						var nObjs = selection.length;
+						for (var iObj=0;  iObj<nObjs;  iObj++)
+						{
+							var canvas = selection[iObj];
+							var obj;
+							if (canvas.elementModel && canvas.elementModel.shapeModel)  obj = canvas.elementModel.shapeModel.GLGeomObj;
+							if (obj)
+							{
+								var matArray = obj._materialArray;
+								var matTypeArray = obj._materialTypeArray;
+								var nMats = matArray.length;
+								for (var iMat=0;  iMat<nMats;  iMat++)
+								{
+									if (matTypeArray[iMat] === this._whichMaterial)
+										matArray[iMat].importJSON( this._originalValues );
+								}
+								var world = obj.getWorld();
+								if (world)
+									world.restartRenderLoop();
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 
@@ -326,6 +368,7 @@ exports.MaterialsPopup = Montage.create(Component, {
 			if (material)
 			{
 				this._material = material;
+				this._originalValues = material.exportJSON();
 				this.materialsData = this.getMaterialData( material );
 			}
 			else
