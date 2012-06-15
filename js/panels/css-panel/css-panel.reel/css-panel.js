@@ -9,6 +9,16 @@ var Montage = require("montage/core/core").Montage,
 
 exports.CssPanel = Montage.create(Component, {
 
+    styleSheetsView: {
+        value: null,
+        serializable: true
+    },
+
+    stylesViewContainer: {
+        value: null,
+        serializable: true
+    },
+
     _currentDocument: {
         value : null
     },

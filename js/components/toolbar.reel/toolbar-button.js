@@ -12,6 +12,10 @@ var ToolbarButton = exports.ToolbarButton = Montage.create(Button, {
     hasTemplate : {
         value: false
     },
+    label: {
+        value: null,
+        serializable: true
+    },
     _sourceObject : {
         value: null
     },

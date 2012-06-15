@@ -9,7 +9,10 @@ var Montage = require("montage/core/core").Montage,
 
 exports.LineProperties = Montage.create(ToolProperties, {
 
-    base:       { value: null },
+    base: {
+        value: null,
+        serializable: true
+    },
     
     _subPrepare: {
         value: function() {

@@ -107,6 +107,12 @@ exports.HtmlDocument = Montage.create(Component, {
     },
     handleViewReady: {
         value: function() {
+            // TODO: Find a better way to initialize this property
+            // Assign the domContainer to be the document root on open
+            if(typeof this.model.domContainer !== "undefined") {
+                this.model.domContainer = this.model.documentRoot;
+            }
+
             //Making callback after view is loaded
             this.loaded.callback.call(this.loaded.context, this);
         }
@@ -115,10 +121,8 @@ exports.HtmlDocument = Montage.create(Component, {
 	//
 	closeDocument: {
 		value: function (context, callback) {
-			//Closing document and getting outcome
-			var closed = this.model.close(null);
-			//Making callback if specified
-			if (callback) callback.call(context, this);
+			//Closing document (sending null to close all views)
+			this.model.close(null, function () {if (callback) callback.call(context, this);}.bind(this));
 		}
 	},
     ////////////////////////////////////////////////////////////////////

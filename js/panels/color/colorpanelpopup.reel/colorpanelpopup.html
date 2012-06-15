@@ -16,7 +16,12 @@
             "owner": {
                 "prototype": "js/panels/Color/colorpanelpopup.reel[ColorPanelPopup]",
                 "properties": {
-                    "element": {"#": "cpp_popup"}
+                    "element": {"#": "cpp_popup"},
+                    "wheel": {"#": "cntnr_wheel"},
+                    "images": {"#": "cntnr_images"},
+                    "gradients": {"#": "cntnr_gradients"},
+                    "palettes": {"#": "cntnr_palettes"},
+                    "alpha": {"#": "cntnr_alpha"}
                 }
             }
         }
@@ -47,13 +52,13 @@
     		</div>
     		
     		<div class="cp_pu_content">
-    			<div class="cp_pu_wheel_container cp_pu_content_container"></div>
-    			<div class="cp_pu_gradient_container cp_pu_content_container"></div>
-    			<div class="cp_pu_palette_container cp_pu_content_container"></div>
-    			<div class="cp_pu_image_container cp_pu_content_container"></div>
+    			<div data-montage-id="cntnr_wheel" class="cp_pu_wheel_container cp_pu_content_container"></div>
+    			<div data-montage-id="cntnr_gradients" class="cp_pu_gradient_container cp_pu_content_container"></div>
+    			<div data-montage-id="cntnr_palettes" class="cp_pu_palette_container cp_pu_content_container"></div>
+    			<div data-montage-id="cntnr_images" class="cp_pu_image_container cp_pu_content_container"></div>
     		</div>
     		
-    		<div class="cp_pu_alpha">
+    		<div data-montage-id="cntnr_alpha" class="cp_pu_alpha">
     			<div class="cp_pu_a_label">Alpha</div>
     			<div class="cp_pu_a_slider"></div>
     			<input class="cp_pu_a_hottext"/>

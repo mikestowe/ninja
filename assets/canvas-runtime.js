@@ -1969,7 +1969,8 @@ NinjaCvsRt.RuntimeSubPath = Object.create(NinjaCvsRt.RuntimeGeomObj, {
             if (ipColor.gradientMode){
                 var position, gradient, cs, inset; //vars used in gradient calculations
                 inset = Math.ceil( lw ) - 0.5;
-
+                inset=0;
+                
                 if(ipColor.gradientMode === "radial") {
                     var ww = w - 2*lw,  hh = h - 2*lw;
                     gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(ww, hh)/2);
@@ -2107,7 +2108,40 @@ NinjaCvsRt.RuntimeBrushStroke = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                     }
                     this._LocalPoints = newPoints.slice(0);
                 }
-            }
+
+                // *** compute the bounding box *********
+                var BBoxMin = [Infinity, Infinity, Infinity];
+                var BBoxMax = [-Infinity, -Infinity, -Infinity];
+                if (numPoints === 0) {
+                    BBoxMin = [0, 0, 0];
+                    BBoxMax = [0, 0, 0];
+                } else {
+                    for (var i=0;i<numPoints;i++){
+                        var pt = this._LocalPoints[i];
+                        for (var d = 0; d < 3; d++) {
+                            if (BBoxMin[d] > pt[d]) {
+                                BBoxMin[d] = pt[d];
+                            }
+                            if (BBoxMax[d] < pt[d]) {
+                                BBoxMax[d] = pt[d];
+                            }
+                        }//for every dimension d from 0 to 2
+                    }
+                }
+
+                //increase the bbox given the stroke width and the angle (in case of calligraphic brush)
+                var bboxPadding = this._strokeWidth*0.5;
+                for (var d = 0; d < 3; d++) {
+                    BBoxMin[d]-= bboxPadding;
+                    BBoxMax[d]+= bboxPadding;
+                }//for every dimension d from 0 to 2
+
+                //******* update the local coords so that the bbox min is at the origin ******
+                for (var i=0;i<numPoints;i++) {
+                    this._LocalPoints[i][0]-= BBoxMin[0];
+                    this._LocalPoints[i][1]-= BBoxMin[1];
+                }
+            }//if we need to do smoothing
         }
     },
 
@@ -2148,6 +2182,7 @@ NinjaCvsRt.RuntimeBrushStroke = Object.create(NinjaCvsRt.RuntimeGeomObj, {
             if (ipColor.gradientMode){
                 var position, gradient, cs, inset; //vars used in gradient calculations
                 inset = Math.ceil( lw ) - 0.5;
+                inset=0;
 
                 if(ipColor.gradientMode === "radial") {
                     var ww = w - 2*lw,  hh = h - 2*lw;
@@ -2231,7 +2266,10 @@ NinjaCvsRt.RuntimeBrushStroke = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                     var disp = [brushStamp[t][0], brushStamp[t][1]];
                     var alphaVal = 1.0;
                     var distFromOpaqueRegion = Math.abs(t-halfNumTraces) - opaqueRegionHalfWidth;
-                    if (distFromOpaqueRegion>0) {
+                    if (numTraces === 1){
+                        distFromOpaqueRegion = 0;
+                    }
+                    else if (distFromOpaqueRegion>0) {
                         var transparencyFactor = distFromOpaqueRegion/maxTransparentRegionHalfWidth;
                         alphaVal = 1.0 - transparencyFactor;//(transparencyFactor*transparencyFactor);//the square term produces nonlinearly varying alpha values
                         alphaVal *= 0.5; //factor that accounts for lineWidth == 2

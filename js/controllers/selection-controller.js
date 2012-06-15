@@ -35,11 +35,13 @@ exports.SelectionController = Montage.create(Component, {
 
             if(this._currentDocument && this._currentDocument.currentView === "design") {
                 this._currentDocument.model._selection = this.application.ninja.selectedElements;
-                this._currentDocument.model.selectionContainer = this.application.ninja._currentSelectedContainer;
             }
 
             this._currentDocument = value;
 
+            if(this._currentDocument && this._currentDocument.currentView === "design") {
+                this.selectedElements = this._currentDocument.model.selection;
+            }
             /*
             if(!value) {
             } else if(this._currentDocument.currentView === "design") {
@@ -59,40 +61,18 @@ exports.SelectionController = Montage.create(Component, {
             return this._selectedElements;
         },
         set: function(value) {
-            if(this.currentDocument && this.currentDocument.currentView === "code") return;
 
             if(value) {
                 this._selectedElements = value;
 
                 this.application.ninja.selectedElements = this._selectedElements;
-                this.application.ninja._currentSelectedContainer = this._selectionContainer = this.application.ninja.currentDocument.model.documentRoot;
 
                 if(this._selectedElements.length === 0) {
                     this.executeSelectElement();
                 } else {
                     this.executeSelectElement(this._selectedElements);
                 }
-
-
             }
-        }
-    },
-
-    // Bound property to the ninja currentSelectedContainer
-    _selectionContainer: {
-        value: null
-    },
-
-    selectionContainer: {
-        get: function() {
-            return this._selectionContainer
-        },
-        set: function(value) {
-            if(this._selectionContainer && this._selectionContainer !== value) {
-                this.executeSelectElement();
-            }
-
-            this._selectionContainer = value;
         }
     },
 
@@ -131,7 +111,7 @@ exports.SelectionController = Montage.create(Component, {
         value: function(event) {
             var selected = [], childNodes = [], self = this;
 
-            childNodes = this.application.ninja.currentDocument.model.documentRoot.childNodes;
+            childNodes = this.currentDocument.model.domContainer.childNodes;
             childNodes = Array.prototype.slice.call(childNodes, 0);
             childNodes.forEach(function(item) {
                 if(self.isNodeTraversable(item)) {
@@ -175,12 +155,12 @@ exports.SelectionController = Montage.create(Component, {
                     if(this.isDocument) return;     // If the stage is already selected do nothing.
                     this.executeSelectElement();    // Else execute selection with no element
                 } else {
-                    if(element.parentNode.uuid === this.selectionContainer.uuid) {
+                    if(element.parentNode.uuid === this.currentDocument.model.domContainer.uuid) {
                         this.executeSelectElement(element);
                     } else {
                         var outerElement = element.parentNode;
 
-                        while(outerElement.parentNode && outerElement.parentNode.uuid !== this.selectionContainer.uuid) {
+                        while(outerElement.parentNode && outerElement.parentNode.uuid !== this.currentDocument.model.domContainer.uuid) {
                             // If element is higher up than current container then return
                             if(outerElement.nodeName === "BODY") return;
                             // else keep going up the chain

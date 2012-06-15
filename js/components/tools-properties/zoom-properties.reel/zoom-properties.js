@@ -10,8 +10,16 @@ var ToolProperties = require("js/components/tools-properties/tool-properties").T
 
 exports.ZoomProperties = Montage.create(ToolProperties, {
 
-    zoomIn:     { value: null },
-    zoomOut:    { value: null },
+    zoomIn: {
+        value: null,
+        serializable: true
+    },
+
+    zoomOut: {
+        value: null,
+        serializable: true
+    },
+
     zoomInCursor:{value:"url('images/cursors/zoom.png'), default"},
     zoomOutCursor:{value:"url('images/cursors/zoom_minus.png'), default"},
     _subPrepare: {

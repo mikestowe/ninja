@@ -43,15 +43,28 @@ exports.Properties = Montage.create(Component, {
     },
 
     elementName: {
-        value: null
+        value: null,
+        serializable: true
     },
 
     elementId: {
-        value: null
+        value: null,
+        serializable: true
     },
 
     elementClass: {
-        value: null
+        value: null,
+        serializable: true
+    },
+
+    positionSize: {
+        value: null,
+        serializable: true
+    },
+
+    threeD: {
+        value: null,
+        serializable: true
     },
 
     customSections: {
@@ -144,6 +157,7 @@ exports.Properties = Montage.create(Component, {
 
     handleElementChange: {
         value: function(event) {
+            var l, t, h, w, lvu, tvu, hvu, wvu;
 //            console.log("Element Change PI ", event.detail.source); // If the event comes from the pi don't need to update
             if(event.detail.source && event.detail.source !== "pi") {
                 var el = this.application.ninja.currentDocument.model.documentRoot;
@@ -152,10 +166,24 @@ exports.Properties = Montage.create(Component, {
                 }
 
                 // TODO - This should only update the properties that were changed.
-                this.positionSize.leftPosition = parseFloat(ElementsMediator.getProperty(el, "left"));
-                this.positionSize.topPosition = parseFloat(ElementsMediator.getProperty(el, "top"));
-                this.positionSize.heightSize = parseFloat(ElementsMediator.getProperty(el, "height"));
-                this.positionSize.widthSize = parseFloat(ElementsMediator.getProperty(el, "width"));
+                l = ElementsMediator.getProperty(el, "left");
+                t = ElementsMediator.getProperty(el, "top");
+                lvu = document.application.njUtils.getValueAndUnits(l);
+                tvu = document.application.njUtils.getValueAndUnits(t);
+                this.positionSize.leftUnits = lvu[1];
+                this.positionSize.leftPosition = lvu[0];
+                this.positionSize.topUnits = tvu[1];
+                this.positionSize.topPosition = tvu[0];
+
+                h = ElementsMediator.getProperty(el, "height");
+                w = ElementsMediator.getProperty(el, "width");
+                hvu = document.application.njUtils.getValueAndUnits(h);
+                wvu = document.application.njUtils.getValueAndUnits(w);
+
+                this.positionSize.heightUnits = hvu[1] || "px"; // canvas (and shapes) don't have units.
+                this.positionSize.heightSize = hvu[0];
+                this.positionSize.widthUnits = wvu[1] || "px";
+                this.positionSize.widthSize = wvu[0];
 
                 if(this.threeD.inGlobalMode) {
                     this.threeD.x3D = ElementsMediator.get3DProperty(el, "x3D");
@@ -210,7 +238,8 @@ exports.Properties = Montage.create(Component, {
 
     displayElementProperties: {
         value: function (el) {
-            var customPI, currentValue, isRoot = this.application.ninja.selectionController.isDocument;
+            var customPI, currentValue, isRoot = this.application.ninja.selectionController.isDocument,
+                l, t, h, w, lvu, tvu, hvu, wvu;
 
             this.elementName.value = el.elementModel.selection;
             this.elementId.value = el.getAttribute("id") || "";
@@ -220,11 +249,24 @@ exports.Properties = Montage.create(Component, {
             this.threeD.disableTranslation = isRoot;
             this.threeD.flatten = ElementsMediator.getProperty(el, "-webkit-transform-style") !== "preserve-3d";
 
-            this.positionSize.leftPosition = parseFloat(ElementsMediator.getProperty(el, "left"));
-            this.positionSize.topPosition = parseFloat(ElementsMediator.getProperty(el, "top"));
-            this.positionSize.heightSize = parseFloat(ElementsMediator.getProperty(el, "height"));
-            this.positionSize.widthSize = parseFloat(ElementsMediator.getProperty(el, "width"));
-//            this.positionSize.widthSize = ElementsMediator.getProperty(el, "width");
+            l = ElementsMediator.getProperty(el, "left");
+            t = ElementsMediator.getProperty(el, "top");
+            lvu = document.application.njUtils.getValueAndUnits(l);
+            tvu = document.application.njUtils.getValueAndUnits(t);
+            this.positionSize.leftUnits = lvu[1];
+            this.positionSize.leftPosition = lvu[0];
+            this.positionSize.topUnits = tvu[1];
+            this.positionSize.topPosition = tvu[0];
+
+            h = ElementsMediator.getProperty(el, "height");
+            w = ElementsMediator.getProperty(el, "width");
+            hvu = document.application.njUtils.getValueAndUnits(h);
+            wvu = document.application.njUtils.getValueAndUnits(w);
+
+            this.positionSize.heightUnits = hvu[1] || "px"; // canvas (and shapes) don't have units.
+            this.positionSize.heightSize = hvu[0];
+            this.positionSize.widthUnits = wvu[1] || "px";
+            this.positionSize.widthSize = wvu[0];
 
             if(this.threeD.inGlobalMode)
             {
@@ -278,10 +320,23 @@ exports.Properties = Montage.create(Component, {
 
                         if(control.type !== "color") {
                             currentValue = ElementsMediator.getProperty(el, control.prop, control.valueMutator);
-                            if(currentValue === null) {
-                                currentValue = control.defaultValue;
+                            if(control.type === "hottext") {
+                                if(currentValue == null) {
+                                    currentValue = control.defaultValue;
+                                }
+                                if(typeof(currentValue) === "string") {
+                                    currentValue = document.application.njUtils.getValueAndUnits(currentValue);
+                                    this.customSections[i].content.controls[control.id + "Units"] = currentValue[1] || "px";
+                                    this.customSections[i].content.controls[control.id] = currentValue[0];
+                                } else {
+                                    this.customSections[i].content.controls[control.id] = currentValue;
+                                }
+                            } else {
+                                if(currentValue === null) {
+                                    currentValue = control.defaultValue;
+                                }
+                                this.customSections[i].content.controls[control.id] = currentValue;
                             }
-                            this.customSections[i].content.controls[control.id] = currentValue;
                         } else {
                             if(control.prop === "border") {
                                 // TODO - For now, always return the top border if multiple border sides
@@ -403,7 +458,11 @@ exports.Properties = Montage.create(Component, {
         value: function(e) {
             if(e.wasSetByCode) return;
 
-            ElementsMediator.setProperty(this.application.ninja.selectedElements, e.prop, [e.value + "px"], "Changing", "pi");
+            var newValue;
+
+            e.units ? newValue = e.value + e.units : newValue = e.value;
+
+            ElementsMediator.setProperty(this.application.ninja.selectedElements, e.prop, [newValue], "Changing", "pi");
         }
     }
 

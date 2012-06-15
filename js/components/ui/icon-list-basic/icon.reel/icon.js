@@ -7,7 +7,17 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
 
-var Icon = exports.Icon = Montage.create(Component, {
+exports.Icon = Montage.create(Component, {
+
+    iconImg: {
+        value: null,
+        serializable: true
+    },
+
+    iconLabel: {
+        value: null,
+        serializable: true
+    },
 
     _icondata:{
         enumerable : false,

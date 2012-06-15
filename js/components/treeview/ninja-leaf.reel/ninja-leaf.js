@@ -8,9 +8,12 @@ var Montage   = require("montage/core/core").Montage,
     TreeNode = require("js/components/treeview/tree-node").TreeNode;
 
 exports.Leaf = Montage.create(TreeNode, {
-    hasTemplate: {
-        value: true
+
+    label: {
+        value: null,
+        serializable: true
     },
+
     templateDidLoad : {
         value: function() {
             var event = this.treeView.activationEvent;

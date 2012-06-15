@@ -37,7 +37,7 @@ exports.BodyController = Montage.create(ElementController, {
                 case "height":
                 case "width":
                 case "-webkit-transform-style":
-                    return this.application.ninja.stylesController.getElementStyle(el, p, true, true);
+                    return this.application.ninja.stylesController.getElementStyle(el, p);
                 default:
                     return ElementController.getProperty(el, p, true, true);
                     //console.log("Undefined Stage property ", p);

@@ -11,8 +11,14 @@ var ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 var Tween = exports.Tween = Montage.create(Component, {
 
-    hasTemplate:{
-        value: true
+    keyframe: {
+        value: null,
+        serializable: true
+    },
+
+    tweenspan: {
+        value: null,
+        serializable: true
     },
 
     _tweenData:{

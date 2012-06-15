@@ -84,6 +84,7 @@ exports.ElementMediator = Montage.create(Component, {
         value: function(newChild, oldChild, notify) {
 
             this.application.ninja.currentDocument.model.documentRoot.replaceChild(newChild, oldChild);
+            if (newChild.getAttribute) newChild.setAttribute('data-ninja-node', 'true');
 
             var undoLabel = "replace element";
 

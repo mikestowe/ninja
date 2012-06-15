@@ -83,7 +83,8 @@ var SliderBase = exports.SliderBase = Montage.create(Component, {
                 }
                 this.needsDraw = true;
             }
-        }
+        },
+        serializable: true
     },
 
     // Internal flags to determine what the change/changing events will contain
@@ -153,7 +154,8 @@ var SliderBase = exports.SliderBase = Montage.create(Component, {
                 }
                 this.needsDraw = true;
             }
-        }
+        },
+        serializable: true
     },
 
     _maxValue: {
@@ -175,7 +177,8 @@ var SliderBase = exports.SliderBase = Montage.create(Component, {
                 }
                 this.needsDraw = true;
             }
-        }
+        },
+        serializable: true
     },
 
     _valueCoef: {

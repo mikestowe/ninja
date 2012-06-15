@@ -23,13 +23,11 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Storing color manager
     _colorManager: {
-        enumerable: false,
         value: false
     },
     ////////////////////////////////////////////////////////////////////
     //Color manager
     colorManager: {
-    	enumerable: true,
         get: function() {
             return this._colorManager;
         },
@@ -42,13 +40,11 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Storing color panel
     _colorPanel: {
-        enumerable: false,
         value: false
     },
     ////////////////////////////////////////////////////////////////////
     //Color panel
     colorPanel: {
-    	enumerable: true,
         get: function() {
             return this._colorPanel;
         },
@@ -59,7 +55,6 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     setNoColor: {
-    	enumerable: true,
     	value: function (e) {
     		this.colorManager.applyNoColor();
     	}
@@ -67,23 +62,14 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     prepareForDraw: {
-    	enumerable: false,
     	value: function () {
     		//
-    		this.element._popups = {containers: {wheel: null, palette: null, gradient: null, image: null}};
     		this.element._components = {wheel: null, combo: null};
-    		//Storing containers for reference
-    		this.element._popups.containers.wheel = this.element.getElementsByClassName('cp_pu_wheel_container')[0];
-    		this.element._popups.containers.palette = this.element.getElementsByClassName('cp_pu_palette_container')[0];
-    		this.element._popups.containers.gradient = this.element.getElementsByClassName('cp_pu_gradient_container')[0];
-    		this.element._popups.containers.image = this.element.getElementsByClassName('cp_pu_image_container')[0];
-    		this.element._popups.containers.alpha = this.element.getElementsByClassName('cp_pu_alpha')[0];
     	}
     },
     ////////////////////////////////////////////////////////////////////
     //
     willDraw: {
-    	enumerable: false,
     	value: function() {
     		//
     		this.element.style.opacity = 0;
@@ -131,7 +117,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
    			this.element._components.combo.hottext.addEventListener('change', this.alphaChange.bind(this), true);
    			//
    			this.element._components.wheel = ColorWheel.create();
-		    this.element._components.wheel.element = this.element._popups.containers.wheel;
+		    this.element._components.wheel.element = this.wheel;
 	        this.element._components.wheel.element.style.display = 'block';
 	        this.element._components.wheel.rimWidth = 14;
 		    this.element._components.wheel.strokeWidth = 2;
@@ -152,7 +138,6 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     draw: {
-    	enumerable: false,
     	value: function() {
     		//
     		this.drawPalette(this.defaultPalette);
@@ -171,20 +156,20 @@ exports.ColorPanelPopup = Montage.create(Component, {
     		}.bind(this), true);
     		//
     		this.element.getElementsByClassName('cp_pu_palettes')[0].addEventListener('click', function () {
-   				this.popupSwitchInputTo(this.element._popups.containers.palette);
+   				this.popupSwitchInputTo(this.palettes);
     		}.bind(this), true);
     		//
     		this.element.getElementsByClassName('cp_pu_wheel')[0].addEventListener('click', function () {
-   				this.popupSwitchInputTo(this.element._popups.containers.wheel);
+   				this.popupSwitchInputTo(this.wheel);
     		}.bind(this), true);
     		//
     		this.element.getElementsByClassName('cp_pu_gradients')[0].addEventListener('click', function () {
-   				this.popupSwitchInputTo(this.element._popups.containers.gradient);
+   				this.popupSwitchInputTo(this.gradients);
     		}.bind(this), true);
     		//
     		this.element.getElementsByClassName('cp_pu_images')[0].style.opacity = .2;//TODO: Remove, visual feedback for disable button
     		this.element.getElementsByClassName('cp_pu_images')[0].addEventListener('click', function () {
-   				//this.popupSwitchInputTo(this.element._popups.containers.image);
+   				//this.popupSwitchInputTo(this.images);
     		}.bind(this), true);
     		//
     		this.application.ninja.colorController.colorView.addButton('current', this.element.getElementsByClassName('cp_pu_color_current')[0]);
@@ -198,7 +183,6 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     didDraw: {
-    	enumerable: false,
     	value: function() {
     		//
     		
@@ -207,7 +191,6 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Reworking logic, firstDraw bubbles up, so target must be checked
     handleFirstDraw: {
-    	enumerable: false,
     	value: function (e) {
     		//
     		if (this.element._components.wheel) {
@@ -217,16 +200,16 @@ exports.ColorPanelPopup = Montage.create(Component, {
     		//Switching to tab from previous selection
     		switch (this.application.ninja.colorController.popupTab) {
     			case 'wheel':
-    				this.popupSwitchInputTo(this.element._popups.containers.wheel);
+    				this.popupSwitchInputTo(this.wheel);
     				break;
     			case 'palette':
-    				this.popupSwitchInputTo(this.element._popups.containers.palette);
+    				this.popupSwitchInputTo(this.palettes);
     				break;
     			case 'image':
-    				this.popupSwitchInputTo(this.element._popups.containers.image);
+    				this.popupSwitchInputTo(this.images);
     				break;
     			default:
-    				this.popupSwitchInputTo(this.element._popups.containers.wheel);
+    				this.popupSwitchInputTo(this.wheel);
     				break
     		}
     		//Checking for a gradient to be current color
@@ -237,7 +220,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     			} else {
     				//Gradient has been set, so opening gradient tab with gradient
 	   				this.drawGradient(this.colorManager.gradient);
-   					this.popupSwitchInputTo(this.element._popups.containers.gradient);
+   					this.popupSwitchInputTo(this.gradients);
    				}
     		}
     		//Displaying element once it's been drawn
@@ -247,40 +230,39 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     popupSwitchInputTo: {
-    	enumerable: true,
     	value: function (tab) {
     		//
-    		if (tab !== this.element._popups.containers.palette) {
-    			this.element._popups.containers.palette.style.display = 'none';
+    		if (tab !== this.palettes) {
+    			this.palettes.style.display = 'none';
     		} else {
-    			this.element._popups.containers.palette.style.display = 'block';
-    			this.element._popups.containers.alpha.style.display = 'block';
+    			this.palettes.style.display = 'block';
+    			this.alpha.style.display = 'block';
     			//
     			this.application.ninja.colorController.popupTab = 'palette';
     		}
     		//
-    		if (tab !== this.element._popups.containers.wheel && this.element._components.wheel.element) {
+    		if (tab !== this.wheel && this.element._components.wheel.element) {
     			this.element._components.wheel.element.style.display = 'none';
     		} else if (this.element._components.wheel.element && this.element._components.wheel.element.style.display !== 'block'){
     			this.element._components.wheel.element.style.display = 'block';
-    			this.element._popups.containers.alpha.style.display = 'block';
+    			this.alpha.style.display = 'block';
     			//
     			this.application.ninja.colorController.popupTab = 'wheel';
     		} else {
-    			this.element._popups.containers.wheel.style.display = 'none';
+    			this.wheel.style.display = 'none';
     		}
     		//
-    		if (tab !== this.element._popups.containers.image) {
-    			this.element._popups.containers.image.style.display = 'none';
+    		if (tab !== this.images) {
+    			this.images.style.display = 'none';
     		} else {
-    			this.element._popups.containers.image.style.display = 'block';
-    			this.element._popups.containers.alpha.style.display = 'none';
+    			this.images.style.display = 'block';
+    			this.alpha.style.display = 'none';
     			//
     			this.application.ninja.colorController.popupTab = 'image';
     		}
     		//
-    		if (tab !== this.element._popups.containers.gradient) {
-    			this.element._popups.containers.gradient.style.display = 'none';
+    		if (tab !== this.gradients) {
+    			this.gradients.style.display = 'none';
     			//
     			if (this.element._components.wheel._value) {
     				this.element._components.wheel.value = {h: this.element._components.wheel._value.h, s: this.element._components.wheel._value.s, v: this.element._components.wheel._value.v, wasSetByCode: false};
@@ -288,8 +270,8 @@ exports.ColorPanelPopup = Montage.create(Component, {
     				this.element._components.wheel.value = {h: 0, s: 1, v: 1, wasSetByCode: false};
     			}
     		} else {
-    			this.element._popups.containers.gradient.style.display = 'block';
-    			this.element._popups.containers.alpha.style.display = 'none';
+    			this.gradients.style.display = 'block';
+    			this.alpha.style.display = 'none';
     			//
     			this.application.ninja.colorController.popupTab = 'gradient';
     		}
@@ -300,11 +282,10 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     drawPalette: {
-    	enumerable: true,
     	value: function (c) {
     		var i, button;
     		//
-    		this.element._popups.containers.palette.style.display = 'block';
+    		this.palettes.style.display = 'block';
     		//
     		for (i in c) {
     			button = document.createElement('button');
@@ -312,7 +293,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     			button.title = c[i].css.toUpperCase();
     			button.colorMode = c[i].mode;
     			button.colorValue = c[i].value;
-    			this.element._popups.containers.palette.appendChild(button);
+    			this.palettes.appendChild(button);
     			button.addEventListener('click', function (b) {
     				var rgb, color;
     				//
@@ -346,13 +327,12 @@ exports.ColorPanelPopup = Montage.create(Component, {
     			}.bind(this), true);
     		}
     		//
-    		this.element._popups.containers.palette.style.display = 'none';
+    		this.palettes.style.display = 'none';
     	}
     },
     ////////////////////////////////////////////////////////////////////
     //
     defaultPalette: {
-    	enumerable: true,
     	value: [{mode: 'hex', value: '000000', css: '#000000'}, {mode: 'hex', value: '808080', css: '#808080'}, {mode: 'hex', value: '000000', css: '#000000'}, {mode: 'hex', value: '003300', css: '#003300'}, {mode: 'hex', value: '006600', css: '#006600'}, {mode: 'hex', value: '009900', css: '#009900'}, {mode: 'hex', value: '00cc00', css: '#00cc00'}, {mode: 'hex', value: '00ff00', css: '#00ff00'}, {mode: 'hex', value: '330000', css: '#330000'}, {mode: 'hex', value: '333300', css: '#333300'}, {mode: 'hex', value: '336600', css: '#336600'}, {mode: 'hex', value: '339900', css: '#339900'}, {mode: 'hex', value: '33cc00', css: '#33cc00'}, {mode: 'hex', value: '33ff00', css: '#33ff00'}, {mode: 'hex', value: '660000', css: '#660000'}, {mode: 'hex', value: '663300', css: '#663300'}, {mode: 'hex', value: '666600', css: '#666600'}, {mode: 'hex', value: '669900', css: '#669900'}, {mode: 'hex', value: '66cc00', css: '#66cc00'}, {mode: 'hex', value: '66ff00', css: '#66ff00'},
     			{mode: 'hex', value: '333333', css: '#333333'}, {mode: 'hex', value: '808080', css: '#808080'}, {mode: 'hex', value: '000033', css: '#000033'}, {mode: 'hex', value: '003333', css: '#003333'}, {mode: 'hex', value: '006633', css: '#006633'}, {mode: 'hex', value: '009933', css: '#009933'}, {mode: 'hex', value: '00cc33', css: '#00cc33'}, {mode: 'hex', value: '00ff33', css: '#00ff33'}, {mode: 'hex', value: '330033', css: '#330033'}, {mode: 'hex', value: '333333', css: '#333333'}, {mode: 'hex', value: '336633', css: '#336633'}, {mode: 'hex', value: '339933', css: '#339933'}, {mode: 'hex', value: '33cc33', css: '#33cc33'}, {mode: 'hex', value: '33ff33', css: '#33ff33'}, {mode: 'hex', value: '660033', css: '#660033'}, {mode: 'hex', value: '663333', css: '#663333'}, {mode: 'hex', value: '666633', css: '#666633'}, {mode: 'hex', value: '669933', css: '#669933'}, {mode: 'hex', value: '66cc33', css: '#66cc33'}, {mode: 'hex', value: '66ff33', css: '#66ff33'},
     			{mode: 'hex', value: '666666', css: '#666666'}, {mode: 'hex', value: '808080', css: '#808080'}, {mode: 'hex', value: '000066', css: '#000066'}, {mode: 'hex', value: '003366', css: '#003366'}, {mode: 'hex', value: '006666', css: '#006666'}, {mode: 'hex', value: '009966', css: '#009966'}, {mode: 'hex', value: '00cc66', css: '#00cc66'}, {mode: 'hex', value: '00ff66', css: '#00ff66'}, {mode: 'hex', value: '330066', css: '#330066'}, {mode: 'hex', value: '333366', css: '#333366'}, {mode: 'hex', value: '336666', css: '#336666'}, {mode: 'hex', value: '339966', css: '#339966'}, {mode: 'hex', value: '33cc66', css: '#33cc66'}, {mode: 'hex', value: '33ff66', css: '#33ff66'}, {mode: 'hex', value: '660066', css: '#660066'}, {mode: 'hex', value: '663366', css: '#663366'}, {mode: 'hex', value: '666666', css: '#666666'}, {mode: 'hex', value: '669966', css: '#669966'}, {mode: 'hex', value: '66cc66', css: '#66cc66'}, {mode: 'hex', value: '66ff66', css: '#66ff66'},
@@ -369,11 +349,10 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     drawGradient: {
-    	enumerable: true,
     	value: function (g) {
     		//TODO: Remove container, insert in reel
     		var container = document.createElement('div'), gradient = GradientPicker.create();
-    		this.element._popups.containers.gradient.appendChild(container);
+    		this.gradients.appendChild(container);
     		//Creating gradient picker from components
     		gradient.element = container;
     		gradient.hack = this.hack; // TODO: Remove
@@ -403,13 +382,11 @@ exports.ColorPanelPopup = Montage.create(Component, {
      ////////////////////////////////////////////////////////////////////
     //
     defaultGradient: {
-    	enumerable: true,
     	value: {mode: 'linear', gradientMode: 'linear', stops: [{mode: 'rgb', value: {r: 255, g: 255, b: 255, a: 1, css: 'rgb(255, 255, 255)'}, position: 0}, {mode: 'rgb', value: {r: 0, g: 0, b: 0, a: 1, css: 'rgb(0, 0, 0)'}, position: 100}]}
     },
     ////////////////////////////////////////////////////////////////////
     //
     alphaChange: {
-    	enumerable: false,
     	value: function (e) {
 	    	if (!e._event.wasSetByCode) {
     			var update = {value: this.element._components.combo.slider.value/100, wasSetByCode: false, type: 'change'};
@@ -420,7 +397,6 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     handleChange: {
-    	enumerable: false,
     	value: function (e) {
     		this.dispatchEvent(e._event);
     	}
@@ -428,7 +404,6 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     handleChanging: {
-    	enumerable: false,
     	value: function (e) {
     		this.dispatchEvent(e._event);
     	}
@@ -436,7 +411,6 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     _handleWheelEvent: {
-    	enumerable: false,
     	value: function (e) {
     		if (!e._event.wasSetByCode) {
     			//
@@ -448,7 +422,6 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Garbage collection (Manual method)
     destroy: {
-    	enumerable: false,
     	value: function() {
     		//
     		this.application.ninja.colorController.colorView.removeButton('hexinput', this.element.getElementsByClassName('cp_pu_hottext_hex')[0]);

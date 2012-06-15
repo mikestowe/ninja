@@ -8,6 +8,11 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.RuleList = Montage.create(Component, {
+    supportedRules: {
+        value: null,
+        serializable: true
+    },
+
     focusDelegate : { value: null },
     ruleNodeName : { value: 'li' },
     _needsScrollToBottom: { value: null },

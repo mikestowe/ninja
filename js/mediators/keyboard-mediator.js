@@ -57,6 +57,11 @@ var Keyboard = exports.Keyboard = {
 
 exports.KeyboardMediator = Montage.create(Component, {
 
+    appModel: {
+        value: null,
+        serializable: true
+    },
+
     deserializedFromTemplate: {
         value: function() {
             this.eventManager.addEventListener("appLoaded", this, false);

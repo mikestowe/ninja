@@ -96,8 +96,8 @@ exports.NJUtils = Montage.create(Component, {
             var styles = {};
 
             styles['position'] = pos ? pos: "absolute";
-            styles['left'] = (Math.round(drawData.midPt[0] - 0.5 * width)) - this.application.ninja.currentSelectedContainer.offsetLeft + 'px';
-            styles['top'] = (Math.round(drawData.midPt[1] - 0.5 * height)) - this.application.ninja.currentSelectedContainer.offsetTop + 'px';
+            styles['left'] = (Math.round(drawData.midPt[0] - 0.5 * width)) - this.application.ninja.currentDocument.model.domContainer.offsetLeft + 'px';
+            styles['top'] = (Math.round(drawData.midPt[1] - 0.5 * height)) - this.application.ninja.currentDocument.model.domContainer.offsetTop + 'px';
             styles['width'] = width + 'px';
             styles['height'] = height + 'px';
 
