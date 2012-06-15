@@ -483,8 +483,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             
             // Bind the handlers for the config menu
             this.checkable_animated.addEventListener("click", this.handleAnimatedClick.bind(this), false);
-            this.checkable_relative.addEventListener("click", this.handleRelativeClick.bind(this), false);
-            this.checkable_absolute.addEventListener("click", this.handleAbsoluteClick.bind(this), false);
             this.tl_configbutton.addEventListener("click", this.handleConfigButtonClick.bind(this), false);
             document.addEventListener("click", this.handleDocumentClick.bind(this), false);
 
@@ -732,8 +730,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             
             // Bind the handlers for the config menu
             this.checkable_animated.addEventListener("click", this.handleAnimatedClick.bind(this), false);
-            this.checkable_relative.addEventListener("click", this.handleRelativeClick.bind(this), false);
-            this.checkable_absolute.addEventListener("click", this.handleAbsoluteClick.bind(this), false);
             this.tl_configbutton.addEventListener("click", this.handleConfigButtonClick.bind(this), false);
             document.addEventListener("click", this.handleDocumentClick.bind(this), false);
             
@@ -1590,24 +1586,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			}
     		}
     		
-    	}
-    },
-    handleRelativeClick: {
-    	value: function(event) {
-    		if (!event.currentTarget.classList.contains("checked")) {
-    			this.handleCheckableClick(event);
-    		}
-    		this.checkable_absolute.classList.remove("checked");
-            this.useAbsolutePosition = false;
-    	}
-    },
-    handleAbsoluteClick: {
-    	value: function(event) {
-    		if (!event.currentTarget.classList.contains("checked")) {
-    			this.handleCheckableClick(event);
-    		}
-    		this.checkable_relative.classList.remove("checked");
-            this.useAbsolutePosition = true;
     	}
     },
     handleCheckableClick: {
