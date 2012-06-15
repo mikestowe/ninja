@@ -146,13 +146,28 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
 				}				
 			}
 			//
-			if (template.body && template.body.getAttribute('data-ninja-style') !== null) {
-		    	template.file.content.document.body.setAttribute('style', template.body.getAttribute('data-ninja-style'));
-		   		template.file.content.document.body.removeAttribute('data-ninja-style');
-			} else if (template.body && template.body.getAttribute('data-ninja-style') === null) {
-				template.file.content.document.body.removeAttribute('style');
-				template.file.content.document.body.removeAttribute('data-ninja-style');
-			}
+            if(template.template) {
+                //
+                // TODO - Need to handle banner and animation templates.
+                //Copying attributes to maintain same properties as <ninja-content>
+                var ninjaContentTagMem = template.document.getElementsByTagName('ninja-content')[0], ninjaContentTagDoc = template.file.content.document.getElementsByTagName('ninja-content')[0];
+                if (ninjaContentTagMem && ninjaContentTagMem.getAttribute('data-ninja-style') !== null) {
+                    ninjaContentTagDoc.setAttribute('style', ninjaContentTagMem.getAttribute('data-ninja-style'));
+                    ninjaContentTagDoc.removeAttribute('data-ninja-style');
+                } else if (ninjaContentTagMem && ninjaContentTagMem.getAttribute('data-ninja-style') === null) {
+                    ninjaContentTagDoc.removeAttribute('style');
+                    ninjaContentTagDoc.removeAttribute('data-ninja-style');
+                }
+            } else {
+                if (template.body && template.body.getAttribute('data-ninja-style') !== null) {
+                    template.file.content.document.body.setAttribute('style', template.body.getAttribute('data-ninja-style'));
+                    template.file.content.document.body.removeAttribute('data-ninja-style');
+                } else if (template.body && template.body.getAttribute('data-ninja-style') === null) {
+                    template.file.content.document.body.removeAttribute('style');
+                    template.file.content.document.body.removeAttribute('data-ninja-style');
+                }
+            }
+
 			wipeAttributes(template.file.content.document.head);
             //Copying attributes to maintain same properties as the <head>
 			for (var m in template.document.head.attributes) {
