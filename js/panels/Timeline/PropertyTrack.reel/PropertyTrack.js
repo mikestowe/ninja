@@ -309,26 +309,18 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
     retrieveStoredStyleTweens:{
         value:function(){
-            console.log("retrieving style tweens");
+            console.log("retrieving style tweens " + this.animatedElement + " - " + this.currentKeyframeRule.name);
             console.log(this.currentKeyframeRule);
-
 
             var percentValue, fraction, splitValue;
             var currentMilliSec, currentMilliSecPerPixel, clickPosition, tempTiming, tempTimingFloat, trackTiming, i = 0;
 
             if (this.animatedElement !== undefined) {
-
-                //this.animationName = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-name");
-
-                // build tweens for this tracks's keyframe rule
+                this.animationName = this.currentKeyframeRule.name;
                 if (this.animationName) {
-
-
 
                     trackTiming = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-duration");
                     this.nextKeyframe = 0;
-
-                    this.currentKeyframeRule = this.application.ninja.stylesController.getAnimationRuleWithName(this.animationName, this.application.ninja.currentDocument.model.views.design.document);
 
                     for (i = 0; this.currentKeyframeRule[i]; i++) {
                         var newTween = {};
@@ -361,7 +353,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                             newTween.tweenData.keyFrameMillisec = 0;
                             newTween.tweenData.tweenID = 0;
                             newTween.tweenData.spanPosition = 0;
-                            this.tweens.push(newTween);
+                            this.propTweens.push(newTween);
                         }
                         else {
                             tempTiming = trackTiming.split("s");
@@ -373,16 +365,15 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                             currentMilliSec = fraction * this.trackDuration;
                             currentMilliSecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
                             clickPosition = currentMilliSec / currentMilliSecPerPixel;
-                            newTween.tweenData.spanWidth = clickPosition - this.tweens[this.tweens.length - 1].tweenData.keyFramePosition;
+                            newTween.tweenData.spanWidth = clickPosition - this.propTweens[this.propTweens.length - 1].tweenData.keyFramePosition;
                             newTween.tweenData.keyFramePosition = clickPosition;
                             newTween.tweenData.keyFrameMillisec = currentMilliSec;
                             newTween.tweenData.tweenID = this.nextKeyframe;
                             newTween.tweenData.spanPosition = clickPosition - newTween.tweenData.spanWidth;
-                            this.tweens.push(newTween);
+                            this.propTweens.push(newTween);
                         }
                         this.nextKeyframe += 1;
                     }
-                    this.isTrackAnimated = true;
                 }
             }
         }
