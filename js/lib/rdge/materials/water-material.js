@@ -133,11 +133,11 @@ var ParisMaterial = function ParisMaterial()
 	this.inheritedFrom = WaterMaterial;
 	this.inheritedFrom();
 
-	this._name = "ParisMaterial";
+	this._name = "Paris";
 	this._shaderName = "paris";
 
 	this._defaultTexMap = 'assets/images/paris.png';
-	this._propValues[this._propNames[u_tex_index]] = this._defaultTexMap.slice(0);
+	this._propValues[this._propNames[0]] = this._defaultTexMap.slice(0);
 
 	//this._diffuseColor = [0.5, 0.5, 0.5, 0.5];
 	//this._propValues[this._propNames[1]] = this._diffuseColor.slice();

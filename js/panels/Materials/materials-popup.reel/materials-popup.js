@@ -345,6 +345,7 @@ exports.MaterialsPopup = Montage.create(Component, {
 						(materialID ===  "Keleidoscope")	||
 						(materialID ===  "Linear Gradient")	||
 						(materialID ===  "Mandel")			||
+						(materialID ===  "Paris")			||
 						(materialID ===  "Plasma")			||
 						(materialID ===  "Pulse")			||
 						(materialID ===  "Radial Blur")		||

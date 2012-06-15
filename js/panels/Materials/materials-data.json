@@ -41,6 +41,10 @@
                     "id" : "Mandel"
                 },
                 {
+                    "label": "Paris",
+                    "id" : "Paris"
+                },
+                {
                     "label": "Plasma",
                     "id" : "Plasma"
                 },
