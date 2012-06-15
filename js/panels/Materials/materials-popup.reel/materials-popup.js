@@ -160,14 +160,26 @@ exports.MaterialsPopup = Montage.create(Component, {
 					var selection = this.application.ninja.selectedElements;
 					if (selection && (selection.length > 0))
 					{
-						var canvas = selection[0];
-						var obj;
-						if (canvas.elementModel && canvas.elementModel.shapeModel)  obj = canvas.elementModel.shapeModel.GLGeomObj;
-						if (obj)
+						var nObjs = selection.length;
+						for (var iObj=0;  iObj<nObjs;  iObj++)
 						{
-							var world = obj.getWorld();
-							if (world)
-								world.restartRenderLoop();
+							var canvas = selection[iObj];
+							var obj;
+							if (canvas.elementModel && canvas.elementModel.shapeModel)  obj = canvas.elementModel.shapeModel.GLGeomObj;
+							if (obj)
+							{
+								var matArray = obj._materialArray;
+								var matTypeArray = obj._materialTypeArray;
+								var nMats = matArray.length;
+								for (var iMat=0;  iMat<nMats;  iMat++)
+								{
+									if (matTypeArray[iMat] === this._whichMaterial)
+										matArray[iMat].setProperty( this._propNames[index], value );
+								}
+								var world = obj.getWorld();
+								if (world)
+									world.restartRenderLoop();
+							}
 						}
 					}
 				}
