@@ -12,6 +12,25 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.ObjectsTray = Montage.create(Component, {
+    hideClass : { value: 'hide-objects-tray'},
+    _workspaceMode : { value: null },
+    workspaceMode : {
+        get : function() { return this._workspaceMode; },
+        set : function(value) {
+            if(value === this._workspaceMode) { return; }
+
+            var toHide = (value !== 'binding');
+
+            setTimeout(function() {
+                this.hide = toHide;
+            }.bind(this), 200);
+
+            this._workspaceMode = value;
+
+            this.needsDraw = true;
+        }
+    },
+
     _objects: { value: null },
     objects: {
         get: function() {
@@ -19,6 +38,18 @@ exports.ObjectsTray = Montage.create(Component, {
         },
         set: function(value) {
             this._objects = value;
+            this.needsDraw = true;
+        }
+    },
+
+    _hide : { value: null },
+    hide : {
+        get : function() { return this._hide; },
+        set : function(value) {
+            if(value === this._hide) { return; }
+
+            this._hide = value;
+
             this.needsDraw = true;
         }
     },
@@ -33,6 +64,12 @@ exports.ObjectsTray = Montage.create(Component, {
     prepareForDraw : {
         value: function() {
 
+            Object.defineBinding(this, 'workspaceMode', {
+                "boundObject": this.application.ninja,
+                "boundObjectPropertyPath": "workspaceMode",
+                "oneway": true
+            });
+
             Object.defineBinding(this, 'objects', {
                 "boundObject": this.application.ninja.objectsController,
                 "boundObjectPropertyPath": "objects",
@@ -43,9 +80,10 @@ exports.ObjectsTray = Montage.create(Component, {
     },
     draw : {
         value: function() {
-            console.log("objects panel draw");
-            if(this.objects) {
-
+            if(this.hide) {
+                this.element.classList.add(this.hideClass);
+            } else {
+                this.element.classList.remove(this.hideClass);
             }
         }
     }

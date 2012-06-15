@@ -30,4 +30,12 @@
     margin: 0 auto;
     overflow: hidden;
     -webkit-box-flex: 0;
+    -webkit-transition: -webkit-transform .5s cubic-bezier(.44,.19,0,.99);
+    -webkit-transform-origin: center bottom;
+
+}
+
+.hide-objects-tray {
+    /*-webkit-transform: scale(0);*/
+    -webkit-transform: translate3d(0, 100px, 0) scale(.5);
 }
