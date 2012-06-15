@@ -47,7 +47,7 @@ exports.Ninja = Montage.create(Component, {
 
     workspaceMode: {
         get: function() {
-            return this.workspaceMode;
+            return this._workspaceMode;
         },
         set: function(val) {
             if(this._workspaceMode !== val ) {
