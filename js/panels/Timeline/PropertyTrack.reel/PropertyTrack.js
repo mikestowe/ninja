@@ -309,9 +309,6 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
     retrieveStoredStyleTweens:{
         value:function(){
-            console.log("retrieving style tweens " + this.animatedElement + " - " + this.currentKeyframeRule.name);
-            console.log(this.currentKeyframeRule);
-
             var percentValue, fraction, splitValue;
             var currentMilliSec, currentMilliSecPerPixel, clickPosition, tempTiming, tempTimingFloat, trackTiming, i = 0;
 
