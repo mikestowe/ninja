@@ -607,11 +607,12 @@ NinjaCvsRt.RuntimeGeomObj = Object.create(Object.prototype, {
 					case "bumpMetal":		mat = Object.create(NinjaCvsRt.RuntimeBumpMetalMaterial, {});		break;
 					case "uber":			mat = Object.create(NinjaCvsRt.RuntimeUberMaterial, {});			break;
 					case "plasma":			mat = Object.create(NinjaCvsRt.RuntimePlasmaMaterial, {});			break;
-					case "water":			mat = Object.create(NinjaCvsRt.RuntimeWaterMaterial, {});			break;
 					case "taper":			mat = Object.create(NinjaCvsRt.RuntimeTaperMaterial, {});			break;
+					
+					case "paris":
+					case "water":			mat = Object.create(NinjaCvsRt.RuntimeWaterMaterial, {});			break;
 
 					case "deform":
-					case "paris":
 					case "raiders":
 					case "tunnel":
 					case "reliefTunnel":
