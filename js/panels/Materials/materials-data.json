@@ -13,10 +13,6 @@
                     "id" : "Deform"
                 },
                 {
-                    "label": "Flat",
-                    "id" : "Flat"
-                },
-                {
                     "label": "Flag",
                     "id" : "Flag"
                 },
