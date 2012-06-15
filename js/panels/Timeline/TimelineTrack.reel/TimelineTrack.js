@@ -41,6 +41,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this._tween = newVal;
         }
     },
+    
+    _isFirstDraw: {
+    	value: true
+    },
 
     _isVisible:{
         value: true
