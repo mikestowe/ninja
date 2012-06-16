@@ -82,6 +82,11 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                 return;
             }//for design view only
 
+            // Don't do anything if an input or other control is focused
+            if(document.activeElement.nodeName !== "BODY") {
+                return;
+            }
+
             this.copy(clipboardEvent);
 
             clipboardEvent.preventDefault();
@@ -91,6 +96,11 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
     handleCut:{
         value:function(clipboardEvent){
             if(this.application.ninja.currentDocument.currentView === "code") return;
+
+            // Don't do anything if an input or other control is focused
+            if(document.activeElement.nodeName !== "BODY") {
+                return;
+            }
 
             this.cut(clipboardEvent);
 
@@ -112,6 +122,11 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
                 return;
             }//for design view only
+
+            // Don't do anything if an input or other control is focused
+            if(document.activeElement.nodeName !== "BODY") {
+                return;
+            }
 
             //TODO: return if stage is not focussed
 
