@@ -974,7 +974,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function () {
             this.createPositionTracks();
             // Register event handler for layer events.
-            defaultEventManager.addEventListener("layerEvent", this, false);
+            //defaultEventManager.addEventListener("layerEvent", this, false);
+            this.element.addEventListener("layerEvent", this, false);
         }
     },
 

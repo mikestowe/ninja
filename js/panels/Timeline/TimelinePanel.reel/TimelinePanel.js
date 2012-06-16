@@ -1934,6 +1934,20 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			return false;
     	}
     },
+
+	getActiveLayerIndex: {
+		value: function() {
+			var i = 0,
+				returnVal = false,
+				arrLayersLength = this.arrLayers.length;
+			for (i = 0; i < arrLayersLength; i++) {
+				if (this.arrLayers[i].isSelected === true) {
+					returnVal = i;
+				}
+			}
+			return returnVal;
+		}
+	},
     /* === END: Controllers === */
    
     /* === BEGIN: Logging routines === */
