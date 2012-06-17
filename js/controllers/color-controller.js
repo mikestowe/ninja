@@ -19,13 +19,11 @@ exports.ColorController = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     hasTemplate: {
-        enumerable: true,
         value: false
     },
     ////////////////////////////////////////////////////////////////////
     //
     deserializedFromTemplate: {
-    	enumerable: true,
     	value: function () {
     		//Setting up colorManager in other classes
     		this.colorPanelBase.colorManager = this.colorModel;
@@ -38,60 +36,47 @@ exports.ColorController = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     colorModel: {
-        enumerable: true,
         value: ColorModel
     },
     ////////////////////////////////////////////////////////////////////
     //
     colorPanelBase: {
-        enumerable: true,
         value: ColorPanelBase
     },
     ////////////////////////////////////////////////////////////////////
     //
     colorPopupManager: {
-        enumerable: true,
         value: ColorPopupManager
     },
     ////////////////////////////////////////////////////////////////////
     //
     colorButtonManager: {
-        enumerable: true,
         value: ColorPopupManager
     },
     ////////////////////////////////////////////////////////////////////
     //
     colorView: {
-        enumerable: true,
         value: null
     },
     ////////////////////////////////////////////////////////////////////
     //
     colorToolbar: {
-        enumerable: true,
         value: null
     },
     ////////////////////////////////////////////////////////////////////
     //
     _popupTab: {
-    	enumerable: false,
     	value: 'wheel'
     },
     ////////////////////////////////////////////////////////////////////
     //
     popupTab: {
-    	enumerable: true,
-        get: function() {
-            return this._popupTab;
-        },
-        set: function(value) {
-        	this._popupTab = value.toLowerCase();
-        }
+        get: function() {return this._popupTab;},
+        set: function(value) {this._popupTab = value.toLowerCase();}
     },
     ////////////////////////////////////////////////////////////////////
     //
     addButton: {
-        enumerable: true,
         value: function (type, button) {
             if (this.colorView) {
                 this.colorView.addButton(type, button);
@@ -107,7 +92,6 @@ exports.ColorController = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     removeButton: {
-        enumerable: true,
         value: function (type, button) {
             if (this.colorView) {
                 this.colorView.removeButton(type, button);
@@ -123,41 +107,28 @@ exports.ColorController = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     _fill: {
-    	enumerable: false,
     	value: null
     },
     ////////////////////////////////////////////////////////////////////
     //
     fill: {
-    	enumerable: true,
-        get: function() {
-            return this._fill;
-        },
-        set: function(value) {
-        	this._fill = value;
-        }
+        get: function() {return this._fill;},
+        set: function(value) {this._fill = value;}
     },
     ////////////////////////////////////////////////////////////////////
     //
     _stroke: {
-    	enumerable: false,
     	value: null
     },
     ////////////////////////////////////////////////////////////////////
     //
     stroke: {
-    	enumerable: true,
-        get: function() {
-            return this._stroke;
-        },
-        set: function(value) {
-        	this._stroke = value;
-        }
+        get: function() {return this._stroke;},
+        set: function(value) {this._stroke = value;}
     },
     ////////////////////////////////////////////////////////////////////
     //
     getBackground: {
-        enumerable: true,
         value: function (element) {
         	//TODO: Return object with all background properties
         	console.log(ElementsMediator.getProperty(element, 'background-color'));
@@ -167,7 +138,6 @@ exports.ColorController = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     getBorder: {
-        enumerable: true,
         value: function (element) {
         	
         }
@@ -175,7 +145,6 @@ exports.ColorController = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     setColor: {
-        enumerable: true,
         value: function (mode, color, isFill, selection) {
             var elements;
             //The selection is optional, if none, it asks for the currently selected elements
@@ -195,7 +164,6 @@ exports.ColorController = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     handleChange: {
-    	enumerable: true,
         value: function (e) {
         	//
             var color, input = e._event.input, panelMode, mode = e._event.mode;
@@ -244,7 +212,6 @@ exports.ColorController = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Converts CSS to a color object to be used by the color model
     getColorObjFromCss: {
-    	enumerable: true,
         value: function (css) {
         	//
         	var color, arr, i, j, temp, c, gradient;
@@ -341,7 +308,6 @@ exports.ColorController = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Parses simple solid CSS string into color object
     parseCssToColor: {
-    	enumerable: true,
         value: function (css) {
         	var color, r, p;
         	//Parsing string and converting into color object
@@ -368,4 +334,6 @@ exports.ColorController = Montage.create(Component, {
        		return color;
         }
     }
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
 });
