@@ -16,7 +16,9 @@
             "owner": {
                 "prototype": "js/components/Popup.reel",
                 "properties": {
-                    "element": {"#": "default_popup"}
+                    "element": {"#": "default_popup"},
+                    "popupTooltip": {"#": "tooltip"},
+                    "popupContent": {"#": "content"}
                 }
             }
         }
@@ -27,8 +29,8 @@
 	<body>
     
     	<div data-montage-id="default_popup" class="default_popup">
-    		<div class="tooltip"><span/></div>
-    		<div class="content"></div>
+    		<div data-montage-id="tooltip" class="tooltip"><span/></div>
+    		<div data-montage-id="content" class="content"></div>
     	</div>
     
 	</body>
