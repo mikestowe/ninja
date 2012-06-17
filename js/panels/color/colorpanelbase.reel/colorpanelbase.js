@@ -23,41 +23,28 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Storing ColorPanel sliders mode
     _panelMode: {
-        enumerable: false,
-        value: 'rgb'
+	    value: 'rgb'
     },
     ////////////////////////////////////////////////////////////////////
     //Storing ColorPanel sliders mode
     panelMode: {
-        enumerable: true,
-        get: function () {
-            return this._panelMode;
-        },
-        set: function (value) {
-            if (value !== this._panelMode) {
-                this._panelMode = value;
-            }
-        }
+        get: function () {return this._panelMode;},
+        set: function (value) {if (value !== this._panelMode)this._panelMode = value;}
     },
     ////////////////////////////////////////////////////////////////////
     //
     _colorBar: {
-        enumerable: false,
         value: null
     },
     ////////////////////////////////////////////////////////////////////
     //Storing color manager
     _colorManager: {
-        enumerable: false,
         value: null
     },
     ////////////////////////////////////////////////////////////////////
     //
     colorManager: {
-        enumerable: true,
-        get: function () {
-            return this._colorManager;
-        },
+        get: function () {return this._colorManager;},
         set: function (value) {
             if (value !== this._colorManager) {
                 this._colorManager = value;
@@ -72,60 +59,41 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Color Panel Container
     _container: {
-        enumerable: false,
         value: null
     },
     ////////////////////////////////////////////////////////////////////
     //
     _combo: {
-        enumerable: false,
         value: [{ slider: null, hottext: null }, { slider: null, hottext: null }, { slider: null, hottext: null }, { slider: null, hottext: null}]
     },
     ////////////////////////////////////////////////////////////////////
     //
     _buttons: {
-        enumerable: false,
         value: { chip: [], fill: [], stroke: [], current: [], previous: [], rgbmode: [], hslmode: [], hexinput: [], nocolor: [], reset: [], swap: [], mlabel1: [], mlabel2: [], mlabel3: [] }
     },
     ////////////////////////////////////////////////////////////////////
     //
     historyCache: {
-        enumerable: false,
         value: { current: null, previous: null }
     },
     ////////////////////////////////////////////////////////////////////
     //
     colorChipProps: {
-        enumerable: true,
         value: { side: 'top', align: 'center', wheel: true, palette: true, gradient: true, image: true, panel: false }
     },
     ////////////////////////////////////////////////////////////////////
     //
     currentChip: {
-        enumerable: true,
         value: null
     },
     ////////////////////////////////////////////////////////////////////
     //
     previousInput: {
-        enumerable: true,
         value: null
     },
     ////////////////////////////////////////////////////////////////////
-    //Setting up elements/components
-    prepareForDraw: {
-        enumerable: false,
-        value: function () {
-            //TODO: Remove temporary hack, color history should be initilized
-            this.addEventListener('firstDraw', this, false);
-            this.application.ninja.colorController.colorView = this;
-            this.colorManager.colorHistory.fill = [{ m: 'nocolor', c: {}, a: 1}];
-            this.colorManager.colorHistory.stroke = [{ m: 'nocolor', c: {}, a: 1}];
-        }
-    },
-
+    //
     handleFirstDraw: {
-        enumerable: true,
         value: function (e) {
             //
             this.applyDefaultColors();
@@ -137,33 +105,42 @@ exports.ColorPanelBase = Montage.create(Component, {
             this.application.ninja.colorController.colorPanelDrawn = true;
         }
     },
-
+    ////////////////////////////////////////////////////////////////////
+    //Setting up elements/components
+    prepareForDraw: {
+        value: function () {
+            //TODO: Remove temporary hack, color history should be initilized
+            this.addEventListener('firstDraw', this, false);
+            this.application.ninja.colorController.colorView = this;
+            this.colorManager.colorHistory.fill = [{ m: 'nocolor', c: {}, a: 1}];
+            this.colorManager.colorHistory.stroke = [{ m: 'nocolor', c: {}, a: 1}];
+        }
+    },
     ////////////////////////////////////////////////////////////////////
     //Assigning values and binding
     willDraw: {
-        enumerable: false,
         value: function () {
             ////////////////////////////////////////////////////////////
-            //TODO: remove ID dependencies
-            createCombo(this._combo[0], "cp_slider1", "cp_hottext1", true, this.element);
-            createCombo(this._combo[1], "cp_slider2", "cp_hottext2", true, this.element);
-            createCombo(this._combo[2], "cp_slider3", "cp_hottext3", true, this.element);
-            createCombo(this._combo[3], "cp_slider4", "cp_hottext4", false, this.element);
+            //Creating slider/hottext components
+            createCombo(this._combo[0], this.slider1, this.hottext1, true);
+            createCombo(this._combo[1], this.slider2, this.hottext2, true);
+            createCombo(this._combo[2], this.slider3, this.hottext3, true);
+            createCombo(this._combo[3], this.slider4, this.hottext4, false);
             ////////////////////////////////////////////////////////////
             //Function to create slider/hottext combination
-            function createCombo(c, slid, htid, color, e) {
+            function createCombo(c, sldr, htxt, color) {
                 //Only creating, not drawing
                 c.slider = Slider.create();
                 c.hottext = HotText.create();
-                c.slider.element = e.getElementsByClassName(slid)[0];
-                c.hottext.element = e.getElementsByClassName(htid)[0];
+                c.slider.element = sldr;
+                c.hottext.element = htxt;
                 c.slider.changesColor = c.hottext.changesColor = color;
                 c.slider.cInputType = 'slider';
                 c.slider.cInputType = 'hottext';
                 //Binding Hottext to Slider
                 Object.defineBinding(c.hottext, "value", {
                     boundObject: c.slider,
-                    boundObjectPropertyPath: "_value", //TODO: Check if needed
+                    boundObjectPropertyPath: "value", //TODO: Check if needed
                     oneway: false,
                     boundValueMutator: function (value) {
                         return Math.round(value);
@@ -182,32 +159,28 @@ exports.ColorPanelBase = Montage.create(Component, {
             ////////////////////////////////////////////////////////////
             //Creating ColorBar and sending color manager
             this._colorBar = ColorBar.create();
-            this._colorBar.element = this.element.getElementsByClassName("cp_spectrum")[0];
+            this._colorBar.element = this.spectrum;
             ////////////////////////////////////////////////////////////
             //Adding/Initializing buttons
-            this.addButton('fill', this.element.getElementsByClassName('cpe_fill')[0]);
-            this.addButton('fillicon', this.element.getElementsByClassName('cpe_fill_icon')[0]);
-            this.addButton('stroke', this.element.getElementsByClassName('cpe_stroke')[0]);
-            this.addButton('strokeicon', this.element.getElementsByClassName('cpe_stroke_icon')[0]);
-
-            this.addButton('current', this.element.getElementsByClassName('cp_color_current')[0]);
-            this.addButton('previous', this.element.getElementsByClassName('cp_color_previous')[0]);
-
-            this.addButton('hexinput', this.element.getElementsByClassName('cp_hottext5')[0]);
-            this.addButton('reset', this.element.getElementsByClassName('cp_reset')[0]);
-            this.addButton('nocolor', this.element.getElementsByClassName('cp_nocolor')[0]);
-            this.addButton('swap', this.element.getElementsByClassName('cp_swap')[0]);
-
+            this.addButton('fill', this.btnFill);
+            this.addButton('fillicon', this.btnFillIcon);
+            this.addButton('stroke', this.btnStroke);
+            this.addButton('strokeicon', this.btnStrokeIcon);
+            //
+            this.addButton('current', this.btnCurrent);
+            this.addButton('previous', this.btnPrevious);
+            //
+            this.addButton('hexinput', this.hextext);
+            this.addButton('reset', this.btnDefault);
+            this.addButton('nocolor', this.btnNoColor);
+            this.addButton('swap', this.btnSwap);
             //TODO: Add HSL mode when Chrome can pass proper mode in color, also add in CSS button states
-            //this.addButton('hslmode', this.element.getElementsByClassName('cp_hsl_mode')[0]);
-            this.addButton('rgbmode', this.element.getElementsByClassName('cp_rgb_mode')[0]);
-
-            this.addButton('mlabel1', this.element.getElementsByClassName('sh_label1')[0]);
-            this.addButton('mlabel2', this.element.getElementsByClassName('sh_label2')[0]);
-            this.addButton('mlabel3', this.element.getElementsByClassName('sh_label3')[0]);
-
-
-
+            //this.addButton('hslmode', this.btnHslMode);
+            this.addButton('rgbmode', this.btnRgbMode);
+            //
+            this.addButton('mlabel1', this.label1);
+            this.addButton('mlabel2', this.label2);
+            this.addButton('mlabel3', this.label3);
             //Initialing values of sliders according to current mode
             if (this._panelMode === 'rgb') {
                 this._combo[0].slider.maxValue = this._combo[0].hottext.maxValue = 255;
@@ -225,7 +198,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Drawing elements/components
     draw: {
-        enumerable: false,
         value: function () {
             ////////////////////////////////////////////////////////////
             //Drawing slider/hottext combinations
@@ -240,7 +212,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     didDraw: {
-        enumerable: false,
         value: function () {
             //Drawing color bar after layout has been drawn since width/height are needed
             this._colorBar.needsDraw = true;
@@ -277,7 +248,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Color Updating from Mananger
     _update: {
-        enumerable: false,
         value: function (e) {
             //Local variables
             var i, bgcolor, bgimg, input = this.colorManager.input.toLocaleLowerCase(), other;
@@ -356,7 +326,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Updating history buttons (individually kept per input type)
     _updateHistoryButtons: {
-        enumerable: false,
         value: function (e) {
             //Locals
             var bg = 'none', img, i, input = this.colorManager.input.toLowerCase(), color, hsv, mode = e._event.mode, prev, alpha, ctx, cvs;
@@ -474,7 +443,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Draws no color icon on button's canvas
     drawButtonNoColor: {
-        enumerable: true,
         value: function (btn, cvs) {
             //
             var ctx = cvs.getContext('2d');
@@ -493,7 +461,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     addButton: {
-        enumerable: true,
         value: function (type, button) {
             //
             switch (type.toLocaleLowerCase()) {
@@ -722,7 +689,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     removeButton: {
-        enumerable: true,
         value: function (type, button) {
             //Checking for type array to exists before removing item
             if (this._buttons[type.toLocaleLowerCase()]) {
@@ -733,7 +699,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     setPreviousColor: {
-        enumerable: true,
         value: function (e) {
             //
             this.application.ninja.colorController.colorPopupManager.hideColorPopup();
@@ -757,7 +722,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     rgbMode: {
-        enumerable: true,
         value: function (e) {
             //
             //this.application.ninja.colorController.colorPopupManager.hideColorPopup();
@@ -794,7 +758,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     hslMode: {
-        enumerable: true,
         value: function (e) {
             //
             //this.application.ninja.colorController.colorPopupManager.hideColorPopup();
@@ -831,7 +794,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //TODO: Add set by code property
     setNoColor: {
-        enumerable: true,
         value: function (wasSetByCode) {
             //
             this.application.ninja.colorController.colorPopupManager.hideColorPopup();
@@ -842,7 +804,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     swapColors: {
-        enumerable: true,
         value: function (e) {
             //TODO: Take into account current select input type
             this.application.ninja.colorController.colorPopupManager.hideColorPopup();
@@ -926,7 +887,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Applying default colors to stroke and fill
     applyDefaultColors: {
-        enumerable: true,
         value: function () {
             //TODO: Take into account current select input type
             this.application.ninja.colorController.colorPopupManager.hideColorPopup();
@@ -994,7 +954,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     selectColorWithChip: {
-        enumerable: true,
         value: function (e) {
             //
             this.currentChip = e._event.srcElement;
@@ -1015,7 +974,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     _updateValueFromSH: {
-        enumerable: false,
         value: function (e) {
             //
             var update;
@@ -1078,7 +1036,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     _updateSliders: {
-        enumerable: false,
         value: function (e) {
             var color, input = this.colorManager.input, i, other;
             if (input === 'fill') {
@@ -1166,7 +1123,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     _slider0Background: {
-        enumerable: false,
         value: function (c) {
             //
             var grdnt, cb_slc;
@@ -1205,7 +1161,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     _slider1Background: {
-        enumerable: false,
         value: function (c) {
             //
             var grdnt;
@@ -1226,7 +1181,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     _slider2Background: {
-        enumerable: false,
         value: function (c) {
             //
             var grdnt;
@@ -1247,7 +1201,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     _slider3Background: {
-        enumerable: false,
         value: function (c) {
             //
             var grdnt;
@@ -1260,7 +1213,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     _drawSliderBackground: {
-        enumerable: false,
         value: function (c, g) {
             var ctx = c.getContext("2d");
             ctx.clearRect(0, 0, c.width, c.height);
@@ -1274,7 +1226,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     _hottextHexInput: {
-        enumerable: false,
         value: function (color) {
             //If invalid input, no color will be applied
             var update, rgb;
@@ -1317,7 +1268,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     _updateHexValue: {
-        enumerable: false,
         value: function (v) {
             return this.colorManager.hex;
         }
@@ -1325,7 +1275,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     handleChange: {
-        enumerable: false,
         value: function (e) {
             if (e._event.input && e._event.input === 'chip' && e._event.mode !== 'gradient') {
                 this.application.ninja.colorController.colorPopupManager.colorChipChange(e);
@@ -1350,7 +1299,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     handleChanging: {
-        enumerable: false,
         value: function (e) {
             if (e._event.hsv) {
                 //
@@ -1438,26 +1386,17 @@ exports.ColorPanelBase = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
     //
-    handleResize:
-    {
-        enumerable: false,
-        value: function (e) {
-            this._killPopup(e);
-        }
+    handleResize: {
+        value: function (e) {this._killPopup(e);}
     },
     ////////////////////////////////////////////////////////////////////
     //
-    handleScroll:
-    {
-        enumerable: false,
-        value: function (e) {
-            this._killPopup(e);
-        }
+    handleScroll: {
+        value: function (e) {this._killPopup(e);}
     },
     ////////////////////////////////////////////////////////////////////
     //
     handleClick: {
-        enumerable: true,
         value: function (e) {
             //TODO: Fix this HACK
             if (this._popupPanel.opened || this._popupChip.opened) {
@@ -1468,7 +1407,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     _killPopup: {
-        enumerable: false,
         value: function (e) {
             this.application.ninja.colorController.colorPopupManager.hideColorPopup();
         }
@@ -1476,7 +1414,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     selectInputType: {
-        enumerable: true,
         value: function (type) {
             //Checking for the type to be formatted as expected, otherwise we unselected all buttons
             try {
@@ -1580,7 +1517,6 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Creating button highlight via drawing on inner canvas
     selectInputHighlight: {
-        enumerable: true,
         value: function (selected, unselected, selNoColor, unselNoColor) {
             var cvs, ctx;
             //Looping through canvases of selected buttons
