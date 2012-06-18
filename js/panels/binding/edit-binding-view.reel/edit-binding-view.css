@@ -55,13 +55,16 @@
     position:relative;
     top: -1px;
     left: -1px;
+    -webkit-transition: opacity 200ms linear;
 }
 .object-fields-container {
     -webkit-box-flex: 1;
     padding-top: 1px;
     width: 1px;
 }
-
+.no-object {
+    opacity: 0;
+}
 
 .edit-binding-view ul {
     padding: 0;

@@ -32,6 +32,7 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
     sourceObjectIdentifier : {
         get : function() { return this._sourceObjectIdentifier; },
         set : function(value) {
+            console.log("Source object IDENTIFIER changed");
             if(value === this._sourceObjectIdentifier) { return; }
 
             this._sourceObjectIdentifier = value;
@@ -44,6 +45,7 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
     boundObjectIdentifier : {
         get : function() { return this._boundObjectIdentifier; },
         set : function(value) {
+            console.log("Bound object IDENTIFIER changed");
             if(value === this._boundObjectIdentifier) { return; }
 
             this._boundObjectIdentifier = value;
@@ -66,7 +68,6 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
             this._sourceObject = value;
 
             if(value) {
-
                 this.sourceObjectPropertyPathField.hints = this.application.ninja.objectsController.getPropertiesFromObject(value);
                 console.log("Setting hints to: ", this.sourceObjectPropertyPathField.hints);
             }
@@ -273,6 +274,7 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
     handleEvent : {
         value: function(e) {
             if(e._event.type === 'change') {
+                console.log("here we are");
                 this.dirty = true;
             }
         }
@@ -319,19 +321,25 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
             this.boundObjectIconElement.className = defaultIconClass;
 
             if(this.sourceObject) {
+                this.sourceObjectIconElement.classList.remove('no-object');
                 category = controller.getObjectCategory(this.sourceObject).toLowerCase();
 
                 if(category) {
                     this.sourceObjectIconElement.classList.add('object-icon-'+category);
                 }
+            } else {
+                this.sourceObjectIconElement.classList.add('no-object');
             }
 
             if(this.boundObject) {
+                this.boundObjectIconElement.classList.remove('no-object');
                 category = controller.getObjectCategory(this.boundObject).toLowerCase() || null;
 
                 if(category) {
                     this.boundObjectIconElement.classList.add('object-icon-'+category);
                 }
+            } else {
+                this.boundObjectIconElement.classList.add('no-object');
             }
         }
     }
