@@ -687,7 +687,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     if (ev.target.className === "tracklane") {
                         this.handleNewTween(ev);
                         this.updateKeyframeRule();
-                    } else if (ev.target.className === "tween_span" && ev.target.parentElement.parentElement.className === "tracklane") {
+                    } else if (ev.target.className === "tween_span_bar" && ev.target.parentElement.parentElement.parentElement.className === "tracklane") {
                         this.handleNewTween(ev);
                         this.updateKeyframeRule();
                     }
@@ -703,6 +703,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 this.addAnimationRuleToElement(ev);
                 this.updateKeyframeRule();
             } else {
+            	
+            	
                 this.handleNewTween(ev);
                 this.updateKeyframeRule();
             }
@@ -716,7 +718,24 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 this.application.ninja.timeline.selectLayer(selectedIndex, false);
                 this.insertTween(ev.offsetX);
             } else {
-                this.splitTween(ev);
+            	// We will be splitting a tween.  Get the x-coordinate of the mouse click within the target element.
+            	// You'd think you could use the event.x info for that, right? NO. We must use page values, calculating offsets and scrolling.
+
+            	// Here's an easy function that adds up offsets and scrolls and returns the page x value of an element
+				var findXOffset = function(obj) {
+					var curleft = 0;
+					if (obj.offsetParent) {
+						do {
+								curleft += (obj.offsetLeft-obj.scrollLeft);
+					
+							} while (obj = obj.offsetParent);
+					}
+					return curleft;
+				}
+				var targetElementOffset = findXOffset(ev.currentTarget),
+					position = event.pageX - targetElementOffset;
+
+                this.splitTweenAt(position-18);
             }
         }
     },
@@ -771,10 +790,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     splitTween:{
         value:function (ev) {
-            var clickPos = ev.target.parentElement.offsetLeft + ev.offsetX;
-            var i;
-            var tweensLength = this.tweens.length-1;
-            var prevTween, nextTween, splitTweenIndex;
+            var clickPos = ev.target.parentElement.offsetLeft + ev.offsetX,
+            	i,
+            	tweensLength = this.tweens.length-1,
+            	prevTween, nextTween, splitTweenIndex;
+            
+            consol.log(ev.target.className)
             for(i=0; i<tweensLength; i++){
                 prevTween = this.tweens[i].tweenData.keyFramePosition;
                 nextTween = this.tweens[i+1].tweenData.keyFramePosition;
@@ -807,6 +828,71 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 }
             }
             this.application.ninja.currentDocument.model.needsSave = true;
+        }
+    },
+
+	// splitTweenAt: Split a tween at a particular position (x coordinate)
+    splitTweenAt: {
+        value:function (position) {
+            var i, j, nextComponentIndex,
+            	tweensLength = this.tweens.length-1,
+            	prevTween, 
+            	nextTween, 
+            	splitTweenIndex;
+
+			// Search through the tweens and find the pair whose keyframes bracket position.
+            for(i=0; i<tweensLength; i++){
+                prevTween = this.tweens[i].tweenData.keyFramePosition;
+                nextTween = this.tweens[i+1].tweenData.keyFramePosition;
+                if(position > prevTween && position < nextTween) {
+                	
+                	// We will insert a new tween at this index
+                    splitTweenIndex = i+1;
+
+					// Update the next tween to have new span position and width.
+                    this.tweens[i+1].tweenData.spanPosition = position;
+                    this.tweens[i+1].spanPosition = position;
+                    this.tweens[i+1].tweenData.spanWidth = this.tweens[i+1].tweenData.keyFramePosition - position;
+                    this.tweens[i+1].spanWidth = this.tweens[i+1].keyFramePosition - position;
+                    
+                    // You'd think that would be enough to make the component associated with that part of the array redraw, wouldn't you?
+                    // Turns out we have to manually poke the desired childComponent in the repetition to register its new changes.
+                    // So we have to get the index of the actual componentin the repetition, which may not match our iteration index.
+                    for (j = 0; j < tweensLength +1; j++) {
+                    	if (this.tweenRepetition.childComponents[j].keyFramePosition === nextTween) {
+                    		nextComponentIndex = j;
+                    	}
+                    }
+                    this.tweenRepetition.childComponents[nextComponentIndex].setData();
+
+					// Create the new tween and splice it into the model
+                    var newTweenToInsert = {};
+                    newTweenToInsert.tweenData = {};
+                    newTweenToInsert.tweenData.spanWidth = position - prevTween;
+                    newTweenToInsert.tweenData.keyFramePosition = position;
+                    newTweenToInsert.tweenData.keyFrameMillisec = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80) * position;
+                    newTweenToInsert.tweenData.tweenID = this.tweens.length;
+                    newTweenToInsert.tweenData.spanPosition = position - newTweenToInsert.tweenData.spanWidth;
+                    newTweenToInsert.tweenData.tweenedProperties = [];
+                    newTweenToInsert.tweenData.tweenedProperties["top"] = this.animatedElement.offsetTop + "px";
+                    newTweenToInsert.tweenData.tweenedProperties["left"] = this.animatedElement.offsetLeft + "px";
+                    newTweenToInsert.tweenData.tweenedProperties["width"] = this.animatedElement.offsetWidth + "px";
+                    newTweenToInsert.tweenData.tweenedProperties["height"] = this.animatedElement.offsetHeight + "px";
+                    this.tweens.splice(splitTweenIndex, 0, newTweenToInsert);
+                    
+                    // We are done, so end the loop.
+                    i = tweensLength;
+                }
+            }
+            
+            // We've made a change, so set the needsSave flag
+            this.application.ninja.currentDocument.model.needsSave = true;
+            
+            // Our tween IDs are now all messed up.  Fix them.
+            for (i = 0; i <= tweensLength+1; i++) {
+				this.tweens[i].tweenID = i;
+				this.tweens[i].tweenData.tweenID = i;
+			}
         }
     },
 
@@ -885,6 +971,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             newTween.tweenData.tweenID = this.nextKeyframe;
                             newTween.tweenData.spanPosition =clickPosition - newTween.tweenData.spanWidth;
                             newTween.tweenData.easing = this.currentKeyframeRule[i].style.webkitAnimationName;
+                            if (newTween.tweenData.easing == "") {
+                            	newTween.tweenData.easing = "none";
+                            }
                             this.tweens.push(newTween);
                         }
                         this.nextKeyframe += 1;
