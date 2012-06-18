@@ -76,7 +76,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     		this._components.combo.slider.element = this.alphaSlider;
    			this._components.combo.hottext.element = this.alphaHottext;
     		//
-    		Object.defineBinding(this._components.combo.hottext, "_value", {
+    		Object.defineBinding(this._components.combo.hottext, "value", {
    				boundObject: this._components.combo.slider,
        		    boundObjectPropertyPath: "value",
        		    oneway: false,
@@ -85,14 +85,6 @@ exports.ColorPanelPopup = Montage.create(Component, {
                 }
    			});
    			//
-   			Object.defineBinding(this._components.combo.hottext, "value", {
-   				boundObject: this._components.combo.slider,
-       		    boundObjectPropertyPath: "value",
-       		    oneway: false,
-               	boundValueMutator: function(value) {
-                   	return Math.round(value);
-                }
-   			});
    			if (this.application.ninja.colorController.colorView) {
 	    		Object.defineBinding(this._components.combo.slider, "value", {
     				boundObject: this.application.ninja.colorController.colorView._combo[3].slider,
