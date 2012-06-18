@@ -703,9 +703,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 this.addAnimationRuleToElement(ev);
                 this.updateKeyframeRule();
             } else {
-            	
-            	
-                this.handleNewTween(ev);
+                //this.handleNewTween(ev);
+                
+            	// Split a tween!
+            	this.splitTweenAt(this.application.ninja.timeline.playheadmarker.offsetLeft)
                 this.updateKeyframeRule();
             }
         }
