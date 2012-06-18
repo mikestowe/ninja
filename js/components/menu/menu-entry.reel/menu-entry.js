@@ -83,7 +83,7 @@ exports.MenuEntry = Montage.create(Component, {
         }
     },
 
-    handleClick: {
+    captureMousedown: {
         value: function(event) {
             // TODO: Hack! Rework this!
             this.parentComponent.ownerComponent.toggleActivation(this);
@@ -105,7 +105,7 @@ exports.MenuEntry = Montage.create(Component, {
 
             this.topHeaderText.innerHTML = this.data.header;
 
-            this.element.addEventListener("click", this, false);
+            this.element.addEventListener("mousedown", this, true);
 
             Object.defineBinding(this, "menuIsActive", {
                 boundObject: this._menu,
