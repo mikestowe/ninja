@@ -770,7 +770,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 newTween.tweenData.keyFrameMillisec = currentMillisec;
                 newTween.tweenData.tweenID = this.nextKeyframe;
                 newTween.tweenData.spanPosition = clickPos - newTween.tweenData.spanWidth;
-                newTween.tweenData.easing = "ease-in";
+                newTween.tweenData.easing = "none";
                 newTween.tweenData.tweenedProperties = [];
                 newTween.tweenData.tweenedProperties["top"] = this.animatedElement.offsetTop + "px";
                 newTween.tweenData.tweenedProperties["left"] = this.animatedElement.offsetLeft + "px";
