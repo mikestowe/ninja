@@ -710,7 +710,15 @@ var Layer = exports.Layer = Montage.create(Component, {
 			// Set up the event info and dispatch the event
             this.styleCounter += 1;
 			// newEvent.styleSelection = mySelection;
-			defaultEventManager.dispatchEvent(newEvent);
+			//defaultEventManager.dispatchEvent(newEvent);
+			
+			// Dispatch the event to the TimelineTrack component associated with this Layer.
+			var myIndex = this.application.ninja.timeline.getActiveLayerIndex(),
+				arrTracks = document.querySelectorAll('[data-montage-id="track"]');
+
+			if (myIndex !== false) {
+				arrTracks[myIndex].dispatchEvent(newEvent);
+			}
 		}
 	},
 
@@ -728,8 +736,15 @@ var Layer = exports.Layer = Montage.create(Component, {
 				newEvent.layerID = this.layerID;
 				newEvent.styleID = this.selectedStyleIndex;
 				newEvent.selectedStyleIndex = this.selectedStyleIndex;
-				defaultEventManager.dispatchEvent(newEvent);
-				
+
+				// Dispatch the event to the TimelineTrack component associated with this Layer.
+				var myIndex = this.application.ninja.timeline.getActiveLayerIndex(),
+					arrTracks = document.querySelectorAll('[data-montage-id="track"]');
+	
+				if (myIndex !== false) {
+					arrTracks[myIndex].dispatchEvent(newEvent);
+				}
+					
 				// Delete the style from the view
 				this.arrLayerStyles.splice(this.selectedStyleIndex, 1);
 				

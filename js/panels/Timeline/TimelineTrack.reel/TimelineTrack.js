@@ -41,6 +41,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this._tween = newVal;
         }
     },
+    
+    _isFirstDraw: {
+    	value: true
+    },
 
     _isVisible:{
         value: true
@@ -970,7 +974,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function () {
             this.createPositionTracks();
             // Register event handler for layer events.
-            defaultEventManager.addEventListener("layerEvent", this, false);
+            //defaultEventManager.addEventListener("layerEvent", this, false);
+            this.element.addEventListener("layerEvent", this, false);
         }
     },
 

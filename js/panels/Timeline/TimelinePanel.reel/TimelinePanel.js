@@ -933,12 +933,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 
                 // We're reading from the cache, not writing to it.
             	this._boolCacheArrays = false;
+            	
+            	// We are about to redraw the layers and tracks for the first time, so they need to go through their 
+            	// respective firstDraw routines.
                 for (i = 0; i < tlArrLayersLength; i++) {
-                    if (this.application.ninja.currentDocument.tlArrLayers[i].layerData.isSelected === true) {
-                        this.application.ninja.currentDocument.tlArrLayers[i].layerData._isFirstDraw = true;
-                    } else {
-                    	this.application.ninja.currentDocument.tlArrLayers[i].layerData._isFirstDraw = false;
-                    }
+					this.application.ninja.currentDocument.tlArrLayers[i].layerData._isFirstDraw = true;
                 }
                 this.arrLayers = this.application.ninja.currentDocument.tlArrLayers;
                 this.currentLayerNumber = this.application.ninja.currentDocument.tllayerNumber;
@@ -1935,6 +1934,20 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			return false;
     	}
     },
+
+	getActiveLayerIndex: {
+		value: function() {
+			var i = 0,
+				returnVal = false,
+				arrLayersLength = this.arrLayers.length;
+			for (i = 0; i < arrLayersLength; i++) {
+				if (this.arrLayers[i].isSelected === true) {
+					returnVal = i;
+				}
+			}
+			return returnVal;
+		}
+	},
     /* === END: Controllers === */
    
     /* === BEGIN: Logging routines === */

@@ -67,6 +67,9 @@ var Span = exports.Span = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		if (newVal !== this._easing) {
+    			if (typeof(newVal) === "undefined") {
+    				newVal = "ease-in";
+    			}
     			this._easing = newVal;
     			this.parentComponent.setKeyframeEase(newVal);
     			this.needsDraw = true;
