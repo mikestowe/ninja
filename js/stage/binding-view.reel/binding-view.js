@@ -50,6 +50,32 @@ exports.BindingView = Montage.create(Component, {
         }
     },
 
+    _width :{  value: 0 },
+    width: {
+        get:function() {
+            return this._width;
+        },
+        set: function(val) {
+            if(this._width !== val) {
+                this._width = val;
+                this.needsDraw = true;
+            }
+        }
+    },
+
+    _height :{  value: 0 },
+    height: {
+        get:function() {
+            return this._height;
+        },
+        set: function(val) {
+            if(this._height !== val) {
+                this._height = val;
+                this.needsDraw = true;
+            }
+        }
+    },
+
     validateOverHud: {
         value: function() {
 
@@ -178,18 +204,28 @@ exports.BindingView = Montage.create(Component, {
             this._context = this.application.ninja.stage.drawingCanvas.getContext('2d');
             this.application.ninja.stage._iframeContainer.addEventListener("scroll", this, false);
             this.element.addEventListener("mousedown", this, false);
+            this.element.addEventListener("mousemove", this, false);
         }
     },
 
     draw: {
         value: function() {
+
+            this.element.style.width = this.width + "px";
+            this.element.style.height = this.height + "px";
             if(this.selectedComponent !== null) {
                 this.canvas.width  = this.application.ninja.stage.drawingCanvas.offsetWidth;
                 this.canvas.height = this.application.ninja.stage.drawingCanvas.offsetHeight;
                 this.clearCanvas();
                 for(var i= 0; i < this.hudRepeater.childComponents.length; i++) {
                     this.drawLine(this.hudRepeater.objects[i].component.element.offsetLeft,this.hudRepeater.objects[i].component.element.offsetTop, this.hudRepeater.childComponents[i].element.offsetLeft +3, this.hudRepeater.childComponents[i].element.offsetTop +3);
+
                 }
+
+                if(this._isDrawingConnection) {
+                    this.drawLine(this._currentMousePosition.x,this._currentMousePosition.y,this._connectionPositionStart.x,this._connectionPositionStart.y,"#3333FF", 4);
+                }
+
             } else {
                 this.bindables = [];
                 this.clearCanvas();
@@ -205,12 +241,11 @@ exports.BindingView = Montage.create(Component, {
     },
 
     drawLine: {
-        value: function(fromX,fromY,toX,toY, color) {
-            this._context.lineWidth = 1; // Set Line Thickness
-            if (color === null) {
-                this._context.strokeStyle = "#CCCCCC";
-            }
-
+        value: function(fromX,fromY,toX,toY, color, width) {
+            if(width === null) width = 1;
+            if (color === null) color = "#CCC";
+            this._context.lineWidth = width; // Set Line Thickness
+            this._context.strokeStyle = color; // Set Color
             this._context.beginPath(); // Start Drawing Line
             this._context.moveTo(fromX, fromY);
             this._context.lineTo(toX, toY);
@@ -246,9 +281,24 @@ exports.BindingView = Montage.create(Component, {
 
     handleMousemove: {
         value: function(e) {
+            var mousePoint = webkitConvertPointFromPageToNode(this.element, new WebKitPoint(e.pageX, e.pageY));
+            var overHud = false;
+            this.hudRepeater.childComponents.forEach(function(obj) {
+                if(obj.x < mousePoint.x && (obj.x + obj.element.offsetWidth) > mousePoint.x) {
+                    if(obj.y < mousePoint.y && (obj.y + obj.element.offsetHeight) > mousePoint.y) {
+                        overHud = true;
+                        console.log(overHud);
+                    }
+                }
+            }.bind(this));
+            if(overHud) {
+                this.element.style.zIndex = "12";
+            } else {
+                this.element.style.zIndex = "2";
+            }
+
             if(this._isDrawingConnection) {
-                this._currentMousePosition.x = e.clientX;
-                this._currentMousePosition.y = e.clientY;
+                this._currentMousePosition = mousePoint;
                 this.needsDraw = true;
             }
 
@@ -257,21 +307,21 @@ exports.BindingView = Montage.create(Component, {
 
     handleMouseup: {
         value: function() {
-            this.element.removeEventListener("mousemove", this);
-            this.element.removeEventListener("mouseup", this);
+            window.removeEventListener("mouseup", this);
             this._isDrawingConnection = false;
             this.needsDraw = true;
         }
     },
 
     handleMousedown: {
-        value: function(event) {
+        value: function(e) {
             // We are looking for a mouse down on an option to start the connection visual
-            if(event._event.target.classList.contains("hudOption")) {
+            if(e._event.target.classList.contains("hudOption")) {
                 //NOTE: Test Code Please Clean Up
+                //alert(event._event.target.controller.title);
                 this._isDrawingConnection = true;
-                this.element.addEventListener("mousemove", this);
-                this.element.addEventListener("mouseup", this);
+                this._connectionPositionStart = webkitConvertPointFromPageToNode(this.element, new WebKitPoint(e.pageX, e.pageY));
+                window.addEventListener("mouseup", this);
             }
         }
     },

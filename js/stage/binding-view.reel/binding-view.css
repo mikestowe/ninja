@@ -5,10 +5,8 @@
  </copyright> */
 
 .bindingView {
-    height: 100%;
     position: absolute;
-    width:100%;
-    z-index: 12;
+    z-index: 2;
 }
 
 .hudRepeater {

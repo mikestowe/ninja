@@ -22,6 +22,7 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
         },
         set: function(val) {
             this._selectedComponent = val;
+            this.application.ninja.stage.bindingView.selectedComponent = val;
         }
     },
 
@@ -32,19 +33,23 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
             {
                 NJevent("enableStageMove");
                 this.application.ninja.workspaceMode = "binding";
+                if (this.application.ninja.selectedElements.length !== 0 ) {
+                    this.selectedComponent = this.application.ninja.selectedElements[0].controller;
+                }
             }
             else
             {
                 NJevent("disableStageMove");
                 this.application.ninja.workspaceMode = "default";
+                this.selectedComponent = null;
             }
+
         }
     },
 
     HandleLeftButtonDown: {
         value: function(event) {
             NJevent("enableStageMove");
-            this.application.ninja.stage.bindingView.validateOverHud();
         }
     },
 
@@ -53,8 +58,8 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
             /*
                 In the mouse over event we need to validate if the mouse over is over a hud.
                 If it on top of a hud bring that single hud to the top to associate with.
-
             */
+            this.application.ninja.stage.bindingView.handleMousemove(event);
             //this.doDraw(event);
         }
     },
@@ -79,7 +84,6 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
                 } else {
                     this.selectedComponent = null;
                 }
-                this.application.ninja.stage.bindingView.selectedComponent = this.selectedComponent;
                 this._isDrawing = false;
             }
             //this.endDraw(event);
