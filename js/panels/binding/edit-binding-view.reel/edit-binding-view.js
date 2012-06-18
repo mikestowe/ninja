@@ -65,6 +65,12 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
 
             this._sourceObject = value;
 
+            if(value) {
+
+                this.sourceObjectPropertyPathField.hints = this.application.ninja.objectsController.getPropertiesFromObject(value);
+                console.log("Setting hints to: ", this.sourceObjectPropertyPathField.hints);
+            }
+
             this.needsDraw = true;
         }
     },
@@ -76,6 +82,11 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
             if(value === this._boundObject) { return; }
             console.log("Bound Object being set to ", value);
             this._boundObject = value;
+
+            if(value) {
+                this.boundObjectPropertyPathField.hints = this.application.ninja.objectsController.getPropertiesFromObject(value);
+                console.log("Setting hints to: ", this.boundObjectPropertyPathField.hints);
+            }
 
             this.needsDraw = true;
         }

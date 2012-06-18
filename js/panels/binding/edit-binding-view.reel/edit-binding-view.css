@@ -116,6 +116,10 @@
     width: 80%;
 }
 
+.hintable-field .hintable-hint {
+    color: #7C7C7C;
+}
+
 .hintable-field:focus {
     border: 1px solid #313131;
 }

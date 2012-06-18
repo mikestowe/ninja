@@ -13,6 +13,7 @@ var Montage = require("montage/core/core").Montage,
 
 exports.ObjectsTray = Montage.create(Component, {
     hideClass : { value: 'hide-objects-tray'},
+    _empty : { value: null },
     _workspaceMode : { value: null },
     workspaceMode : {
         get : function() { return this._workspaceMode; },
@@ -76,11 +77,17 @@ exports.ObjectsTray = Montage.create(Component, {
                 "oneway": true
             });
 
+            if(this.objects) {
+                this.empty = !this.objects.length;
+            } else {
+                this.empty = true;
+            }
+
         }
     },
     draw : {
         value: function() {
-            if(this.hide) {
+            if(this.hide || this._empty) {
                 this.element.classList.add(this.hideClass);
             } else {
                 this.element.classList.remove(this.hideClass);
