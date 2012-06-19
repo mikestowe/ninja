@@ -1119,6 +1119,17 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
             // Deselect selected layers if they're not in arrSelectedIndexes.
             for (i = 0; i < arrLayersLength; i++) {
+
+                debugger;
+                if([i]===arrSelectedIndexes){
+                    if(this.arrLayers[i].layerData.isLock){
+                        this.arrLayers[i].layerData.isSelected = false;
+                    }else{
+                        this.arrLayers[i].layerData.isSelected = true;
+                    }
+                }else{
+                    this.arrLayers[i].layerData.isSelected = false;
+                }
             	if (this.arrLayers[i].layerData.isSelected === true) {
             		if (arrSelectedIndexes.indexOf(i) < 0) {
 
