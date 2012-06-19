@@ -543,6 +543,8 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.docUUID = this.layerData.docUUID;
             this.selectedStyleIndex = this.layerData.selectedStyleIndex;
             this.needsDraw = boolNeedsDraw;
+            this.isLock = this.layerData.isLock;
+            this.isHidden = this.layerData.isHidden;
         }
     },
     
@@ -590,6 +592,8 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.mainCollapser.clicker.addEventListener("click", this.handleMainCollapserClick.bind(this), false);
             this.positionCollapser.clicker.addEventListener("click", this.handlePositionCollapserClick.bind(this), false);
             this.styleCollapser.clicker.addEventListener("click", this.handleStyleCollapserClick.bind(this), false);
+            this.layerLock.addEventListener("click",this.handleLayerLock.bind(this),false);
+            this.visibilityButton.addEventListener("click",this.handleLayerVisibility.bind(this),false);
 
             // Add event listeners to add and delete style buttons
             this.buttonAddStyle.addEventListener("click", this.handleAddStyleClick.bind(this), false);
