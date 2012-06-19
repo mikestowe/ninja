@@ -9,6 +9,21 @@ var Montage = require("montage/core/core").Montage,
 
 exports.StylesViewContainer = Montage.create(Component, {
 
+    ruleListContainer: {
+        value: null,
+        serializable: true
+    },
+
+    computedStyleView: {
+        value: null,
+        serializable: true
+    },
+
+    toolbar: {
+        value: null,
+        serializable: true
+    },
+
     _currentDocument: {
         value : null
     },
@@ -36,6 +51,10 @@ exports.StylesViewContainer = Montage.create(Component, {
     },
     contentPanel : {
         value: 'rules'
+    },
+    selectionName: {
+        value: null,
+        serializable: true
     },
     _selectionNameLabelText : {
         value: null

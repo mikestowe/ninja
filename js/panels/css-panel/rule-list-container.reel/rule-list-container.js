@@ -8,6 +8,16 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.RuleListContainer = Montage.create(Component, {
+    focusDelegate: {
+        value: null,
+        serializable: true
+    },
+
+    ruleListComponent: {
+        value: null,
+        serializable: true
+    },
+
     _instanceToAdd     : { value: null },
     _appendElement     : { value: null },
     _lastDisplayedList : { value: null },

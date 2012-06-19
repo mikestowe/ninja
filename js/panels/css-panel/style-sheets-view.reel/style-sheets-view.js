@@ -8,13 +8,24 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.StyleSheetsView = Montage.create(Component, {
+
+    toolbar: {
+        value: null,
+        serializable: true
+    },
+
+    styleSheetList: {
+        value: null,
+        serializable: true
+    },
+
     documentLoaded       : { value: false },
     showToolbar          : { value: false },
     stylesController     : { value: null },
     styleSheets          : { value: [] },
     _initView            : { value: false },
     _needsScroll         : { value: false },
-    documentNameLabel    : { value: null },
+    documentNameLabel    : { value: null, serializable: true },
     noDocumentLabelClass : { value: "no-document" },
 
     _activeDocument: {

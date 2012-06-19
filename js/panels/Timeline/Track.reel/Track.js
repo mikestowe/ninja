@@ -10,8 +10,9 @@ var defaultEventManager = require("montage/core/event/event-manager").defaultEve
 
 var Track = exports.Track = Montage.create(Component, {
 
-    hasTemplate:{
-        value: true
+    track_lane: {
+        value: null,
+        serializable: true
     },
 
     _trackID:{

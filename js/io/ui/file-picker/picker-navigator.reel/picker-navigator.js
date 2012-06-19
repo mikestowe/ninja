@@ -11,6 +11,86 @@ var Montage = require("montage/core/core").Montage,
 
 var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
 
+    filterVal: {
+        value: null,
+        serializable: true
+    },
+
+    error: {
+        value: null,
+        serializable: true
+    },
+
+    addressBarUri: {
+        value: null,
+        serializable: true
+    },
+
+    forwardArrow: {
+        value: null,
+        serializable: true
+    },
+
+    backArrow: {
+        value: null,
+        serializable: true
+    },
+
+    leftNav: {
+        value: null,
+        serializable: true
+    },
+
+    iconViewContainer: {
+        value: null,
+        serializable: true
+    },
+
+    iconView: {
+        value: null,
+        serializable: true
+    },
+
+    treeView: {
+        value: null,
+        serializable: true
+    },
+
+    treeViewContainer: {
+        value: null,
+        serializable: true
+    },
+
+    okButton: {
+        value: null,
+        serializable: true
+    },
+
+    metadataSection: {
+        value: null,
+        serializable: true
+    },
+
+    filters: {
+        value: null,
+        serializable: true
+    },
+
+    refreshButton: {
+        value: null,
+        serializable: true
+    },
+
+    cancelButton: {
+        value: null,
+        serializable: true
+    },
+
+    resultsArea: {
+        value: null,
+        serializable: true
+    },
+
     popup:{
         enumerable: false,
         writable: true,

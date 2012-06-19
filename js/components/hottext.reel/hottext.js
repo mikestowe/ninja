@@ -121,13 +121,19 @@ var HotText = exports.HotText = Montage.create(SliderBase, {
         value: 2000
     },
 
+    // Flag used to dispatch a single change event if either or both of value and units are changed
+    _unitsModified: {
+        enumerable: false,
+        value: false
+    },
+
     value: {
         serializable: true,
         enumerable: true,
         get: function() {
             return this._value;
         },
-        set: function(value, fromInput) {
+        set: function(value) {
             if (isNaN(value)) {
                 this._valueSyncedWithInputField = false;
                 this.needsDraw = true;
@@ -149,6 +155,9 @@ var HotText = exports.HotText = Montage.create(SliderBase, {
                 this._valueSyncedWithInputField = false;
                 this.needsDraw = true;
                 this._dispatchActionEvent();
+            } else if(this._unitsModified) {
+                // Need to dispatch change event if units changed
+                this._dispatchActionEvent();
             }
         }
     },
@@ -164,7 +173,7 @@ var HotText = exports.HotText = Montage.create(SliderBase, {
         enumerable: false,
         value: function() {
             this._setEventFlags("change", false);
-            Object.getPropertyDescriptor(this, "value").set.call(this, this.inputFunction(this.element.value), true);
+            this.value = this.inputFunction(this.element.value);
         }
     },
 

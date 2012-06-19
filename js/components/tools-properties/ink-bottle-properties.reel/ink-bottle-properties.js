@@ -11,6 +11,71 @@ var Montage = require("montage/core/core").Montage,
 var InkBottleProperties = exports.InkBottleProperties = Montage.create(ToolProperties, {
     addedColorChips: { value: false },
 
+    useStrokeColor: {
+        value: null,
+        serializable: true
+    },
+
+    _strokeColorCtrl: {
+        value: null,
+        serializable: true
+    },
+
+    borderWidth: {
+        value: null,
+        serializable: true
+    },
+
+    useBorderWidth: {
+        value: null,
+        serializable: true
+    },
+
+    useBorderStyle: {
+        value: null,
+        serializable: true
+    },
+
+    borderStyle: {
+        value: null,
+        serializable: true
+    },
+
+    useStrokeSize: {
+        value: null,
+        serializable: true
+    },
+
+    strokeSize: {
+        value: null,
+        serializable: true
+    },
+
+    _useWebGL: {
+        value: null,
+        serializable: true
+    },
+
+    useWebGL: {
+        value: null,
+        serializable: true
+    },
+
+    _materialsContainer: {
+        value: null,
+        serializable: true
+    },
+
+    _strokeMaterial: {
+        value: null,
+        serializable: true
+    },
+
+    strokeMaterial: {
+        value: null,
+        serializable: true
+    },
+
     _stroke: {
         enumerable: false,
         value: { colorMode: 'rgb', color: { r: 255, g: 255, b: 255, a: 1, css: 'rgb(255,255,255)', mode: 'rgb', wasSetByCode: true, type: 'change' }, webGlColor: [1, 1, 1, 1] }

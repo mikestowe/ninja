@@ -13,11 +13,13 @@ exports.RadioGroup = Montage.create(Component, {
     },
 
     _selectedItem: {
-        value: null
+        value: null,
+        serializable: true
     },
 
     selectedIndex: {
-        value: null
+        value: null,
+        serializable: true
     },
 
     selectedItem: {
@@ -55,7 +57,8 @@ exports.RadioGroup = Montage.create(Component, {
     },
 
     name: {
-        value: "RadioGroup0"
+        value: "RadioGroup0",
+        serializable: true
     },
 
     addRadio:
@@ -101,15 +104,18 @@ exports.Radio = Montage.create(Component, {
     },
 
     label: {
-        value: null
+        value: null,
+        serializable: true
     },
 
     labelField: {
-        value: null
+        value: null,
+        serializable: true
     },
 
     radioField: {
-        value: null
+        value: null,
+        serializable: true
     },
 
     _checked: {
@@ -118,7 +124,8 @@ exports.Radio = Montage.create(Component, {
     },
 
     group: {
-        value: null
+        value: null,
+        serializable: true
     },
 
     checked: {

@@ -15,7 +15,32 @@
             "owner": {
                 "prototype": "js/panels/Color/ColorPanelBase.reel",
                 "properties": {
-                    "element": {"#": "cp_expanded"}
+                    "element": {"#": "cp_expanded"},
+                    "btnCurrent": {"#": "btn_current"},
+                    "btnPrevious": {"#": "btn_previous"},
+                    "btnRgbMode": {"#": "btn_rgb"},
+                    "btnHslMode": {"#": "btn_hsl"},
+                    "btnStroke": {"#": "btn_stroke"},
+                    "btnStrokeIcon": {"#": "btn_istoke"},
+                    "btnFill": {"#": "btn_fill"},
+                    "btnFillIcon": {"#": "btn_ifill"},
+                    "btnDefault": {"#": "btn_default"},
+                    "btnNoColor": {"#": "btn_nocolor"},
+                    "btnSwap": {"#": "btn_swap"},
+                    "label1": {"#": "label1"},
+                    "label2": {"#": "label2"},
+                    "label3": {"#": "label3"},
+                    "label4": {"#": "label4"},
+                    "slider1": {"#": "slider1"},
+                    "slider2": {"#": "slider2"},
+                    "slider3": {"#": "slider3"},
+                    "slider4": {"#": "slider4"},
+                    "hottext1": {"#": "hottext1"},
+                    "hottext2": {"#": "hottext2"},
+                    "hottext3": {"#": "hottext3"},
+                    "hottext4": {"#": "hottext4"},
+                    "hextext": {"#": "hextext"},
+                    "spectrum": {"#": "spectrum"}
                 }
             }
 
@@ -28,46 +53,46 @@
     
     	<div data-montage-id="cp_expanded" class="cp_expanded">
     		<div class="cp_history">
-    			<button class="cp_color_current">Current Color</button>
-    			<button class="cp_color_previous">Previous Color</button>
+    			<button data-montage-id="btn_current" class="cp_color_current">Current Color</button>
+    			<button data-montage-id="btn_previous" class="cp_color_previous">Previous Color</button>
    			</div>
     		<div class="cp_modes">
-    			<button class="cp_rgb_mode">RGB</button>
+    			<button data-montage-id="btn_rgb" class="cp_rgb_mode">RGB</button>
     			<hr />
-   				<button class="cp_hsl_mode">HSL</button>
+   				<button data-montage-id="btn_hsl" class="cp_hsl_mode">HSL</button>
     		</div>
     		<hr />
     		<div class="cp_inputs">
-    			<div class="cp_input_button"><button class="cpe_stroke">Stroke</button></div>
-    			<button class="cpe_stroke_icon"></button>
-    			<div class="cp_input_button"><button class="cpe_fill">Fill</button></div>
-    			<button class="cpe_fill_icon"></button>
+    			<div class="cp_input_button"><button data-montage-id="btn_stroke" class="cpe_stroke">Stroke</button></div>
+    			<button data-montage-id="btn_istoke" class="cpe_stroke_icon"></button>
+    			<div class="cp_input_button"><button data-montage-id="btn_fill" class="cpe_fill">Fill</button></div>
+    			<button data-montage-id="btn_ifill" class="cpe_fill_icon"></button>
     		</div>
     		<div class="cp_options">
-    			<button class="cp_reset">Default Colors</button>
-    			<button class="cp_nocolor">No Color</button>
-    			<button class="cp_swap">Swap Colors</button>
+    			<button data-montage-id="btn_default" class="cp_reset">Default Colors</button>
+    			<button data-montage-id="btn_nocolor" class="cp_nocolor">No Color</button>
+    			<button data-montage-id="btn_swap" class="cp_swap">Swap Colors</button>
     		</div>
     		<div class="cp_labels">
-    			<div class="sh_label1">R</div>
-    			<div class="sh_label2">G</div>
-    			<div class="sh_label3">B</div>
-    			<div class="sh_label4">A</div>
+    			<div data-montage-id="label1" class="sh_label1">R</div>
+    			<div data-montage-id="label2" class="sh_label2">G</div>
+    			<div data-montage-id="label3" class="sh_label3">B</div>
+    			<div data-montage-id="label4" class="sh_label4">A</div>
     		</div>
     		<div class="cp_sliders">
-    			<div class="cp_slider1"></div>
-    			<div class="cp_slider2"></div>
-    			<div class="cp_slider3"></div>
-    			<div class="cp_slider4"></div>
+    			<div data-montage-id="slider1" class="cp_slider1"></div>
+    			<div data-montage-id="slider2" class="cp_slider2"></div>
+    			<div data-montage-id="slider3" class="cp_slider3"></div>
+    			<div data-montage-id="slider4" class="cp_slider4"></div>
     		</div>
     		<div class="cp_hottext">
-    			<input class="cp_hottext1"/>
-    			<input class="cp_hottext2"/>
-    			<input class="cp_hottext3"/>
-    			<input class="cp_hottext4"/>
+    			<input data-montage-id="hottext1" class="cp_hottext1"/>
+    			<input data-montage-id="hottext2" class="cp_hottext2"/>
+    			<input data-montage-id="hottext3" class="cp_hottext3"/>
+    			<input data-montage-id="hottext4" class="cp_hottext4"/>
     		</div>
-    		<div class="cp_hex">#<input class="cp_hottext5" maxlength="6" /></div>
-    		<div class="cp_spectrum"></div>
+    		<div class="cp_hex">#<input data-montage-id="hextext" class="cp_hottext5" maxlength="6" /></div>
+    		<div class="cp_spectrum" data-montage-id="spectrum"></div>
     	</div>
     
 	</body>

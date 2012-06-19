@@ -54,7 +54,8 @@ exports.Resizer = Montage.create(Component, {
         },
         set: function(val) {
             this._isInversed = val;
-        }
+        },
+        serializable: true
     },
  
     _isVertical: {
@@ -67,7 +68,8 @@ exports.Resizer = Montage.create(Component, {
         },
         set: function(val) {
             this._isVertical = val;
-        }
+        },
+        serializable: true
     },
 
     _isPanel: {
@@ -79,8 +81,10 @@ exports.Resizer = Montage.create(Component, {
     	},
     	set: function(value) {
     		this._isPanel = value;
-    	}
+    	},
+        serializable: true
     },
+
     _panel : {
         value: null
     },
@@ -92,7 +96,8 @@ exports.Resizer = Montage.create(Component, {
         set: function(val) {
             this._panel = val;
             if(val._element) this._panel = val._element;
-        }
+        },
+        serializable: true
     },
 
     height: {

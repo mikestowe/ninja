@@ -10,6 +10,77 @@ var Montage = require("montage/core/core").Montage,
 
 var ShapeProperties = exports.ShapeProperties = Montage.create(ToolProperties, {
     toolsData: { value: null },
+
+    _strokeMaterial: {
+        value: null,
+        serializable: true
+    },
+
+    _fillIcon: {
+        value: null,
+        serializable: true
+    },
+
+    _fillMaterial: {
+        value: null,
+        serializable: true
+    },
+
+    _useWebGL: {
+        value: null,
+        serializable: true
+    },
+
+    _materialLabel: {
+        value: null,
+        serializable: true
+    },
+
+    _strokeIcon: {
+        value: null,
+        serializable: true
+    },
+
+    _fillColorCtrlIcon: {
+        value: null,
+        serializable: true
+    },
+
+    _fillColorCtrl: {
+        value: null,
+        serializable: true
+    },
+
+    _strokeColorCtrl: {
+        value: null,
+        serializable: true
+    },
+
+    _strokeSize: {
+        value: null,
+        serializable: true
+    },
+
+    ovalProperties: {
+        value: null,
+        serializable: true
+    },
+
+    rectProperties: {
+        value: null,
+        serializable: true
+    },
+
+    lineProperties: {
+        value: null,
+        serializable: true
+    },
+
+    endDivider: {
+        value: null,
+        serializable: true
+    },
+
     _use3D: { value: false },
     addedColorChips: { value: false },
 

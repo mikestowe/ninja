@@ -108,7 +108,7 @@ exports.ColorToolbar = Montage.create(Component, {
 	            	color.mode = e._event.colorMode;
             		this.application.ninja.colorController.colorModel[e._event.colorMode] = color;
             	} else {
-            		this.application.ninja.colorController.colorModel.applyNoColor();
+            		this.application.ninja.colorController.colorModel.applyNoColor(false);
             	}
             	this.application.ninja.colorController.colorModel.input = 'chip';
        		}.bind(this));
@@ -125,7 +125,7 @@ exports.ColorToolbar = Montage.create(Component, {
                     color.mode = e._event.colorMode;
             		this.application.ninja.colorController.colorModel[e._event.colorMode] = color;
            		} else {
-           			this.application.ninja.colorController.colorModel.applyNoColor();
+           			this.application.ninja.colorController.colorModel.applyNoColor(false);
            		}
             	this.application.ninja.colorController.colorModel.input = 'chip';
             }.bind(this));
