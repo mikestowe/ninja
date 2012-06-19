@@ -6,54 +6,43 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 			require("montage/core/core").Montage,
-	Component = 		require("montage/ui/component").Component;
+var Montage = 	require("montage/core/core").Montage,
+	Component = require("montage/ui/component").Component;
 ////////////////////////////////////////////////////////////////////////
 //Exporting as ColorWheel
 exports.GradientPicker = Montage.create(Component, {
 	////////////////////////////////////////////////////////////////////
 	//
 	hasTemplate: {
-		enumerable: true,
         value: true
     },
     ////////////////////////////////////////////////////////////////////
     //
     _updating: {
-        enumerable: false,
         value: false
     },
     ////////////////////////////////////////////////////////////////////
     //
     _value: {
-        enumerable: false,
         value: null
     },
 	////////////////////////////////////////////////////////////////////
     //
     value: {
-        enumerable: true,
-        get: function() {
-            return this._value;
-        },
-        set: function(value) {
-            this._value = value;
-        }
+        get: function() {return this._value;},
+        set: function(value) {this._value = value;}
     },
     ////////////////////////////////////////////////////////////////////
     //
     _mode: {
-        enumerable: false,
         value: 'linear'
     },
 	////////////////////////////////////////////////////////////////////
     //
     mode: {
-        enumerable: true,
-        get: function() {
-            return this._mode;
-        },
+        get: function() {return this._mode;},
         set: function(value) {
+        	//
         	this.application.ninja.colorController.colorPopupManager.hideColorChipPopup();
         	//
             this._mode = value;
@@ -64,7 +53,6 @@ exports.GradientPicker = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     prepareForDraw: {
-    	enumerable: false,
     	value: function() {
     		//
 		}
@@ -72,23 +60,21 @@ exports.GradientPicker = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     willDraw: {
-    	enumerable: false,
     	value: function() {
     		//Getting component views from layout
-    		this.element._components = {trackCover: this.element.getElementsByClassName('cp_gp_slider')[0].getElementsByClassName('cover')[0], gradientTrack: this.element.getElementsByClassName('cp_gp_slider')[0].getElementsByClassName('track')[0], stopsContainer: this.element.getElementsByClassName('cp_gp_slider')[0].getElementsByClassName('chips')[0]};
-    		this.element._trackWidth = parseInt(getComputedStyle(this.element._components.stopsContainer).getPropertyCSSValue('width').cssText);
+    		this.element._trackWidth = parseInt(getComputedStyle(this.trackChips).getPropertyCSSValue('width').cssText);
     		//TODO: Fix events and remove this hack
-    		this.element._components.trackCover.addEventListener('mouseover', function () {
+    		this.trackCover.addEventListener('mouseover', function () {
 				if (!this._updating) {    		
-	    			this.element._components.trackCover.style.display = 'none';
+	    			this.trackCover.style.display = 'none';
     			}
     		}.bind(this), true);
     		//
-    		this.element.getElementsByClassName('cp_gp_linear')[0].addEventListener('change', function (e){
+    		this.radioLinear.addEventListener('change', function (e){
     			this.mode = 'linear';
     		}.bind(this), true);
     		//
-    		this.element.getElementsByClassName('cp_gp_radial')[0].addEventListener('change', function (e){
+    		this.radioRadial.addEventListener('change', function (e){
     			this.mode = 'radial';
     		}.bind(this), true);	
 		}
@@ -96,22 +82,19 @@ exports.GradientPicker = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     draw: {
-    	enumerable: false,
     	value: function() {
     		//
     		if (this.mode === 'linear') {
-    			this.element.getElementsByClassName('cp_gp_linear')[0].checked = 'true';
+    			this.radioLinear.checked = 'true';
     		} else if (this.mode === 'radial') {
-    			this.element.getElementsByClassName('cp_gp_radial')[0].checked = 'true';
+    			this.radioRadial.checked = 'true';
     		}
     		//
     		if (!this.value) {
     			this.addDefaultStops();
 			} else {
-				//Temp holder
-				var stops = this.value;
 				//Adding stops from preset value
-				for (var i=0; stops[i]; i++) {
+				for (var i=0, stops = this.value; stops[i]; i++) {
 					this.addStop({color: {mode: stops[i].mode, value: stops[i].value}, percent:stops[i].position}, true);
 				}
 			}
@@ -120,10 +103,9 @@ exports.GradientPicker = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
    	didDraw: {
-    	enumerable: false,
     	value: function() {
 			//
-			this.element._components.gradientTrack.addEventListener('click', this, false);
+			this.trackMain.addEventListener('click', this, false);
     		
     		
     		
@@ -132,7 +114,7 @@ exports.GradientPicker = Montage.create(Component, {
     		////////////////////////////////////////////////////////////
 			////////////////////////////////////////////////////////////
 			//TODO: Determing a better way to get screen position
-			var element = this.element._components.gradientTrack;
+			var element = this.trackMain;
     		this.element._trackX = 0, this.element._trackY = 0;
     		//
    			while (element && !isNaN(element.offsetLeft) && !isNaN(element.offsetTop)) {
@@ -152,7 +134,6 @@ exports.GradientPicker = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     addDefaultStops: {
-    	enumerable: false,
     	value: function() {
     		this.addStop({color: {mode: 'rgb', value: {r: 255, g: 255, b: 255, a: 1, css: 'rgb(255, 255, 255)'}}, percent: 0}, true);
 			this.addStop({color: {mode: 'rgb', value: {r: 0, g: 0, b: 0, a: 1, css: 'rgb(0, 0, 0)'}}, percent: 100}, true);
@@ -161,7 +142,6 @@ exports.GradientPicker = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
    	addStop: {
-    	enumerable: false,
     	value: function(data, silent) {
     		if (this.application.ninja.colorController.colorPopupManager) {
     			//Hiding any open popups (of gradient buttons)
@@ -182,7 +162,7 @@ exports.GradientPicker = Montage.create(Component, {
 				button.stop = stop;
 				stop.button = button;
 				//Adding stop to container
-				this.element._components.stopsContainer.appendChild(stop);
+				this.trackChips.appendChild(stop);
 				//Checking for bounds to add stop
 				if (data.percent >= 0 && data.percent <= 100) {
 					this.positionStop(stop, data.percent);
@@ -211,13 +191,12 @@ exports.GradientPicker = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     removeStop: {
-    	enumerable: false,
     	value: function(stop) {
-    		var i, buttons = this.element._components.stopsContainer.getElementsByTagName('button');
+    		var i, buttons = this.trackChips.getElementsByTagName('button');
     		//
     		if (buttons.length > 2) {
     			//Removing stops
-    			this.element._components.stopsContainer.removeChild(stop);
+    			this.trackChips.removeChild(stop);
     			//Stopping events related to this current stop
     			this.removeStopMoving();
     		}
@@ -226,10 +205,9 @@ exports.GradientPicker = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     removeStopMoving: {
-    	enumerable: false,
     	value: function() {
     		this._updating = false;
-    		this.element._components.trackCover.style.display = 'none';
+    		this.trackCover.style.display = 'none';
 			this._dispatchEvent('change', false);
 			document.removeEventListener('mousemove', this, false);
 			document.removeEventListener('mouseup', this, false);
@@ -238,7 +216,6 @@ exports.GradientPicker = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     positionStop: {
-    	enumerable: false,
     	value: function(stop, percent) {
     		try {
     			if (percent<0) {
@@ -272,7 +249,6 @@ exports.GradientPicker = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //TODO: Add color detection canvas to get actual color
     handleClick: {
-    	enumerable: false,
     	value: function(e) {
     		//Logic to get color from canvas data would go here
     		var data = {};
@@ -285,7 +261,6 @@ exports.GradientPicker = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     handleMouseup: {
-    	enumerable: false,
     	value: function(e) {
 			this.removeStopMoving();
     	}
@@ -293,10 +268,9 @@ exports.GradientPicker = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     handleMousedown: {
-    	enumerable: false,
     	value: function(e) {
 			//
-			var i, buttons = this.element._components.stopsContainer.getElementsByTagName('button');
+			var i, buttons = this.trackChips.getElementsByTagName('button');
 			this.currentStop = e._event.target.stop;
     		//Looping through other stops to swap depths
     		for (i=0; buttons[i]; i++) {
@@ -312,7 +286,6 @@ exports.GradientPicker = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     handleMousemove: {
-    	enumerable: false,
     	value: function(e) {
     		//
     		this._updating = true;
@@ -324,7 +297,7 @@ exports.GradientPicker = Montage.create(Component, {
     		}
     		//
     		if (this.currentStop.button.stopPosition !== Math.round(((e._event.x+this.hack.x)-(this.element._trackX-23))/this.element._trackWidth*100)) {
-    			this.element._components.trackCover.style.display = 'block';
+    			this.trackCover.style.display = 'block';
     		}
     		//
     		this.positionStop(this.currentStop, Math.round(((e._event.x+this.hack.x)-(this.element._trackX-23))/this.element._trackWidth*100));
@@ -333,7 +306,6 @@ exports.GradientPicker = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     handleChange: {
-    	enumerable: false,
     	value: function(e) {
     		this.application.ninja.colorController.colorView.colorManager.input = this.application.ninja.colorController.colorView.previousInput;
 			this._dispatchEvent('change', false);
@@ -345,7 +317,7 @@ exports.GradientPicker = Montage.create(Component, {
     _dispatchEvent: {
         value: function(type, userInitiated) {
         	//
-        	var actionEvent = document.createEvent("CustomEvent"), buttons = this.element._components.stopsContainer.getElementsByTagName('button'), stops = [], css, previewCss = '-webkit-gradient(linear, left top, right top';
+        	var actionEvent = document.createEvent("CustomEvent"), buttons = this.trackChips.getElementsByTagName('button'), stops = [], css, previewCss = '-webkit-gradient(linear, left top, right top';
         	//Preventing an events of less than 2 stops since there'll be a reset
         	if (buttons.length < 2) {
         		return;
@@ -382,7 +354,7 @@ exports.GradientPicker = Montage.create(Component, {
         	previewCss += ')';
         	//console.log(previewCss);
         	//Setting the preview track background
-        	this.element._components.gradientTrack.style.background = previewCss;
+        	this.trackMain.style.background = previewCss;
         	//Storing the stops
         	this.value = stops;
         	//Initializing and storing data for event
