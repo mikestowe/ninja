@@ -32,7 +32,7 @@ uniform sampler2D depthMap;
 uniform vec4   u_matAmbient;
 uniform vec4   u_matDiffuse;
 uniform vec4   u_matSpecular;
-uniform float  u_matShininess;
+//uniform float  u_matShininess;
 uniform vec4   u_matEmission;
 uniform float  u_renderGlow;
 
