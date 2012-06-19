@@ -84,6 +84,46 @@ exports.BindingView = Montage.create(Component, {
         value: {}
     },
 
+    _connectionElementStart: { value: null },
+    connectionElementStart: {
+        get: function() {
+            return this._connectionElementStart;
+        },
+        set: function(val) {
+            this._connectionElementStart = val;
+        }
+    },
+
+    _connectionElementEnd: { value: null },
+    connectionElementEnd: {
+        get: function() {
+            return this._connectionElementEnd;
+        },
+        set: function(val) {
+            this._connectionElementEnd = val;
+        }
+    },
+
+    _connectionPropertyStart: { value: null },
+    connectionPropertyStart: {
+        get: function() {
+            return this._connectionPropertyStart;
+        },
+        set: function(val) {
+            this._connectionPropertyStart = val;
+        }
+    },
+
+    _connectionPropertyEnd: { value: null },
+    connectionPropertyEnd: {
+        get: function() {
+            return this._connectionPropertyEnd;
+        },
+        set: function(val) {
+            this._connectionPropertyEnd = val;
+        }
+    },
+
     _bindables: {
         value: []
     },
@@ -223,6 +263,9 @@ exports.BindingView = Montage.create(Component, {
                 }
 
                 if(this._isDrawingConnection) {
+                    if (this.hudRepeater.childComponents.length > 1) {
+                        //this.object
+                    }
                     this.drawLine(this._currentMousePosition.x,this._currentMousePosition.y,this._connectionPositionStart.x,this._connectionPositionStart.y,"#3333FF", 4);
                 }
 
@@ -335,15 +378,27 @@ exports.BindingView = Montage.create(Component, {
         }
     },
 
+
     handleMouseup: {
         value: function(e) {
             window.removeEventListener("mouseup", this);
-//            var mouseUpPoint = new WebKitPoint(e.pageX, e.pageY);
-//            var nodeEl = new webkitConvertPointFromPageToNode(this.element, mouseUpPoint);
             this.element.style.zIndex = "12";
             var nodeEl = document.elementFromPoint(e.pageX, e.pageY);
-            alert(nodeEl.parentElement.controller.title);
             this.element.style.zIndex = null;
+            if(nodeEl.classList.contains("connectorBubble")) {
+//            var mouseUpPoint = new WebKitPoint(e.pageX, e.pageY);
+//            var nodeEl = new webkitConvertPointFromPageToNode(this.element, mouseUpPoint);
+                debugger;
+            this.connectionElementEnd = nodeEl.parentElement.controller.parentComponent.parentComponent.userComponent;
+            this.connectionPropertyEnd = nodeEl.parentElement.controller.title;
+            console.log(this.connectionElementStart, this.connectionPropertyStart, this.connectionElementEnd, this.connectionPropertyEnd);
+                this.application.ninja.objectsController.addBinding({
+                    sourceObject: this.connectionElementStart,
+                    sourceObjectPropertyPath: this.connectionPropertyStart,
+                    boundObject: this.connectionElementEnd,
+                    boundObjectPropertyPath: this.connectionPropertyEnd
+                });
+            }
             this._isDrawingConnection = false;
             this.needsDraw = true;
         }
@@ -353,10 +408,12 @@ exports.BindingView = Montage.create(Component, {
         value: function(e) {
             // We are looking for a mouse down on an option to start the connection visual
             if(e._event.target.classList.contains("connectorBubble")) {
-                //NOTE: Test Code Please Clean Up
-                //alert(event._event.target.controller.title);
+                //console.log(e._event.target.parentElement.controller.parentComponent.parentComponent.userComponent);
+                this.connectionElementStart = e._event.target.parentElement.controller.parentComponent.parentComponent.userComponent;
+                this.connectionPropertyStart = e._event.target.parentElement.controller.title;
                 this._isDrawingConnection = true;
                 this._connectionPositionStart = webkitConvertPointFromPageToNode(this.element, new WebKitPoint(e.pageX, e.pageY));
+
                 window.addEventListener("mouseup", this);
             }
         }

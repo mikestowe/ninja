@@ -20,6 +20,17 @@ exports.BindingHud = Montage.create(Component, {
         value: null
     },
 
+    _userComponent: { value: null  },
+    userComponent: {
+        get: function() {
+            return this._userComponent;
+        },
+        set: function(val) {
+            this._userComponent = val;
+        }
+    },
+
+
     bindingArgs: {
         get: function() {
             return this._bindingArgs;
@@ -27,6 +38,7 @@ exports.BindingHud = Montage.create(Component, {
         set: function(val) {
             if (typeof(val) !== "undefined") {
                 this._bindingArgs = val;
+                this.userComponent = this.bindingArgs.component;
                 this.title = this.bindingArgs.component.identifier;
                 this.x = this._bindingArgs.component.element.offsetLeft;
                 this.y = this._bindingArgs.component.element.offsetTop;
