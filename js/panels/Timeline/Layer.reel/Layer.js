@@ -1263,39 +1263,40 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
 
     handleLayerLock: {
-            value: function() {
-               var i = 0;
-               var arrlength = this.application.ninja.timeline.arrLayers.length;
-               var lockElementArrLength = this.application.ninja.currentDocument.lockedElements.length;
-               if(!this.layerData.isLock){
-                   for(i = 0; i < arrlength; i++){
-                      if(this.application.ninja.timeline.arrLayers[i].layerData.isLock){
-                          this.application.ninja.timeline.arrLayers[i].layerData.isLock = false;
-                          this.application.ninja.timeline.arrLayers[i].layerData.isSelected = false;
-                          for(var k = 0; k < lockElementArrLength; k++){
-                              if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.elementsList[0]){
-                                  this.application.ninja.currentDocument.lockedElements.splice(k,1);
-                                  break;
-                              }
+        value: function() {
+           var i = 0;
+           var arrlength = this.application.ninja.timeline.arrLayers.length;
+           var lockElementArrLength = this.application.ninja.currentDocument.lockedElements.length;
+           if(!this.layerData.isLock){
+               for(i = 0; i < arrlength; i++){
+                  if(this.application.ninja.timeline.arrLayers[i].layerData.isLock){
+                      this.application.ninja.timeline.arrLayers[i].layerData.isLock = false;
+                      this.application.ninja.timeline.arrLayers[i].layerData.isSelected = false;
+                      for(var k = 0; k < lockElementArrLength; k++){
+                          if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.stageElement){
+                              this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                              break;
                           }
                       }
-                   }
-                   this.layerData.isSelected = false;
-                   this.application.ninja.timeline.selectLayers([]);
-                   this.application.ninja.currentDocument.lockedElements.push(this.layerData.elementsList[0]);
-               } else {
-                   this.layerData.isSelected = true;
-                   for(k = 0; k<lockElementArrLength; k++){
-                     if(this.application.ninja.currentDocument.lockedElements[k] === this.layerData.elementsList[0]){
-                         this.application.ninja.currentDocument.lockedElements.splice(k,1);
-                         break;
-                     }
-                   }
+                  }
                }
-               this.layerData.isLock = !this.layerData.isLock;
+               this.layerData.isSelected = false;
+               this.application.ninja.timeline.selectLayers([]);
+               this.application.ninja.currentDocument.lockedElements.push(this.layerData.stageElement);
+           } else {
+               this.layerData.isSelected = true;
+               for(k = 0; k<lockElementArrLength; k++){
+                 if(this.application.ninja.currentDocument.lockedElements[k] === this.layerData.stageElement){
+                     this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                     break;
+                 }
+               }
 
-            }
-        },
+           }
+           this.layerData.isLock = !this.layerData.isLock;
+
+        }
+    },
 
     handleLayerVisibility:{
         value:function(){
@@ -1306,9 +1307,9 @@ var Layer = exports.Layer = Montage.create(Component, {
                 for(i = 0; i<arrlength; i++){
                     if(this.application.ninja.timeline.arrLayers[i].layerData.isHidden){
                         this.application.ninja.timeline.arrLayers[i].layerData.isHidden = false;
-                        this.application.ninja.timeline.arrLayers[i].layerData.elementsList[0].style.visibility = "visible";
+                        this.application.ninja.timeline.arrLayers[i].layerData.stageElement.style.visibility = "visible";
                         for(var k = 0;k < lockElementArrLength;k++){
-                            if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.elementsList[0]){
+                            if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.stageElement){
                                 this.application.ninja.currentDocument.lockedElements.splice(k,1);
                                 break;
                             }
@@ -1316,13 +1317,13 @@ var Layer = exports.Layer = Montage.create(Component, {
                     }
 
                 }
-             this.layerData.elementsList[0].style.visibility = "hidden";
-             this.application.ninja.currentDocument.lockedElements.push(this.layerData.elementsList[0]);
+             this.layerData.stageElement.style.visibility = "hidden";
+             this.application.ninja.currentDocument.lockedElements.push(this.layerData.stageElement);
 
             } else {
-                this.layerData.elementsList[0].style.visibility = "visible";
+                this.layerData.stageElement.style.visibility = "visible";
                 for(var k = 0; k < lockElementArrLength; k++){
-                    if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.elementsList[0]){
+                    if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.stageElement){
                         this.application.ninja.currentDocument.lockedElements.splice(k,1);
                         break;
                     }

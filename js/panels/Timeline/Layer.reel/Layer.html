@@ -27,7 +27,9 @@
                         "topControl": {"@" : "dtext_position_y"},
                         "widthControl": {"@" : "dtext_scale_x"},
                         "heightControl": {"@" : "dtext_scale_y"},
-                        "styleType":{"@" : "style"}
+                        "styleType":{"@" : "style"},
+                        "layerLock":{"#" : "layerLock"},
+                        "visibilityButton":{"#" : "visibilityButton"}
                     }
                 },
 	            "dtext1" : {
@@ -262,8 +264,8 @@
 				<span data-montage-id="layer-tag" class="layer-tag"></span>
 				<span class="collapsible-label" data-montage-id="layer-label-text" spellcheck="false">Label</span>
 				<span class="collapsible-clicker collapsible-collapsed" data-montage-id="clicker-main"></span>
-				<div class="cssbutton button-lock"></div>
-				<div class="cssbutton button-visible"></div>
+                <div class="cssbutton button-lock" data-montage-id="layerLock"></div>
+                <div class="cssbutton button-visible" data-montage-id="visibilityButton"></div>
 			</div>
 			<div class="collapsible-content content-layer collapsible-collapsed" data-montage-id="content-main">
 				<div class="label-position">

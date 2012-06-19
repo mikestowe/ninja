@@ -732,6 +732,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		this.application.ninja.currentDocument.tlCurrentLayerSelected = false;
     		this.application.ninja.currentDocument.tlCurrentLayersSelected = false;
     		this.application.ninja.currentDocument.tlCurrentElementsSelected = [];
+            this.application.ninja.currentDocument.lockedElements = [];
     	}
     },
     
@@ -1119,20 +1120,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
             // Deselect selected layers if they're not in arrSelectedIndexes.
             for (i = 0; i < arrLayersLength; i++) {
-
-                debugger;
-                if([i]===arrSelectedIndexes){
-                    if(this.arrLayers[i].layerData.isLock){
-                        this.arrLayers[i].layerData.isSelected = false;
-                    }else{
-                        this.arrLayers[i].layerData.isSelected = true;
-                    }
-                }else{
-                    this.arrLayers[i].layerData.isSelected = false;
-                }
             	if (this.arrLayers[i].layerData.isSelected === true) {
             		if (arrSelectedIndexes.indexOf(i) < 0) {
-
 						this.arrLayers[i].layerData.isSelected = false;
 	            		this.triggerLayerBinding(i);
             		}
@@ -1150,11 +1139,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Loop through arrLayers and do the selection.
             for (i = 0; i < arrLayersLength; i++) {
             	if (arrSelectedIndexes.indexOf(i) > -1) {
-            		this.arrLayers[i].layerData.isSelected = true;
-            		this.arrLayers[i].isSelected = true;
-            		this.triggerLayerBinding(i);
-            		arrSelectedLayers.push(i);
-            		arrCurrentElementsSelected.push(this.arrLayers[i].layerData.stageElement);
+                    if(!this.arrLayers[i].layerData.isLock){
+                        this.arrLayers[i].layerData.isSelected = true;
+                        this.arrLayers[i].isSelected = true;
+                        this.triggerLayerBinding(i);
+                        arrSelectedLayers.push(i);
+                        arrCurrentElementsSelected.push(this.arrLayers[i].layerData.stageElement);
+                    }else{
+                        this.arrLayers[i].layerData.isSelected = false;
+                        this.triggerLayerBinding(i);
+                    }
             	}
             }
 
@@ -1732,8 +1726,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function(event){
 
            var arrLayersLength = this.arrLayers.length;
-           console.log(this.application.ninja.currentDocument)
-           debugger;
            var lockElementArrLength = this.application.ninja.currentDocument.lockedElements.length;
            var i = 0;
 
@@ -1767,7 +1759,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleLayerVisibleClick:{
         value:function(event){
-
            var arrLayersLength = this.arrLayers.length;
            var lockElementArrLength = this.application.ninja.currentDocument.lockedElements.length;
            var i = 0;
@@ -1776,7 +1767,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                event.currentTarget.classList.remove("checked");
                for(i = 0; i < arrLayersLength; i++){
                    this.arrLayers[i].layerData.isHidden = false;
-                   this.arrLayers[i].layerData.elementsList[0].style.visibility = "visible";
+                   this.arrLayers[i].layerData.stageElement.style.visibility = "visible";
                    for(var k=0;k<lockElementArrLength;k++){
                        if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.stageElement){
                            this.application.ninja.currentDocument.lockedElements.splice(k,1);
@@ -1789,7 +1780,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                for(i = 0; i < arrLayersLength; i++){
                    if(!this.arrLayers[i].layerData.isHidden){
                        this.arrLayers[i].layerData.isHidden = true;
-                       this.arrLayers[i].layerData.elementsList[0].style.visibility = "hidden";
+                       this.arrLayers[i].layerData.stageElement.style.visibility = "hidden";
                        this.application.ninja.currentDocument.lockedElements.push(this.arrLayers[i].layerData.stageElement);
                    }
 
