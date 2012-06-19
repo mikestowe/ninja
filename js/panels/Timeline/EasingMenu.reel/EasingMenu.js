@@ -81,7 +81,7 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
     
     // currentChoice: The data attribute of the current choice
     _currentChoice: {
-    	value: null
+    	value: "none"
     },
     currentChoice: {
     	get: function() {
@@ -109,8 +109,14 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
     draw: {
     	value: function() {
     		// Update the selection classes.
-            this.element.querySelector(".easing-selected").classList.remove("easing-selected");
-            this.element.querySelector('[data-ninja-ease="'+this.currentChoice+'"]').classList.add("easing-selected");
+			var easingSelected = this.element.querySelector(".easing-selected");
+			if (easingSelected !== null) {
+				easingSelected.classList.remove("easing-selected");
+			}
+            var dataEl = this.element.querySelector('[data-ninja-ease="'+this.currentChoice+'"]');
+            if (dataEl !== null) {
+            	dataEl.classList.add("easing-selected");
+            }
     	}
     },
     didDraw: {
@@ -147,7 +153,10 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
     		event.stopPropagation();
 
 			// Un-highlight the old choice and highlight the new choice
-    		this.element.querySelector(".easing-selected").classList.remove("easing-selected");
+			var easingSelected = this.element.querySelector(".easing-selected");
+			if (easingSelected !== null) {
+				easingSelected.classList.remove("easing-selected");
+			}
     		event.target.classList.add("easing-selected");
     		
     		// Set the easing in the span that called us

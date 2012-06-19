@@ -110,6 +110,7 @@ var Tween = exports.Tween = Montage.create(Component, {
         },
         set:function (value) {
             this._tweenID = value;
+            this.tweenData.tweenID = value;
         }
     },
 
@@ -156,7 +157,7 @@ var Tween = exports.Tween = Montage.create(Component, {
     },
     
     _easing: {
-    	value: "ease-in"
+    	value: "none"
     },
     easing: {
     	serializable: true,
@@ -171,9 +172,11 @@ var Tween = exports.Tween = Montage.create(Component, {
 
     draw:{
         value:function () {
+        	this.tweenspan.element.style.width = this.spanWidth + "px";
+            this.keyframe.element.style.left = (this.spanWidth -5) + "px";
+            this.tweenspan.spanWidth = this.spanWidth;
             this.element.style.left = this.spanPosition + "px";
             this.keyframe.position = this.spanWidth;
-            this.tweenspan.spanWidth = this.spanWidth;
             this.tweenspan.easing = this.easing;
             if(this.isTweenAnimated){
                 this.tweenspan.highlightSpan();
