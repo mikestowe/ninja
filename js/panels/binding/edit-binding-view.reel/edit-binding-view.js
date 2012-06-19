@@ -32,7 +32,6 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
     sourceObjectIdentifier : {
         get : function() { return this._sourceObjectIdentifier; },
         set : function(value) {
-            console.log("Source object IDENTIFIER changed");
             if(value === this._sourceObjectIdentifier) { return; }
 
             this._sourceObjectIdentifier = value;
@@ -45,7 +44,6 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
     boundObjectIdentifier : {
         get : function() { return this._boundObjectIdentifier; },
         set : function(value) {
-            console.log("Bound object IDENTIFIER changed");
             if(value === this._boundObjectIdentifier) { return; }
 
             this._boundObjectIdentifier = value;
@@ -69,7 +67,6 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
 
             if(value) {
                 this.sourceObjectPropertyPathField.hints = this.application.ninja.objectsController.getPropertiesFromObject(value);
-                console.log("Setting hints to: ", this.sourceObjectPropertyPathField.hints);
             }
 
             this.needsDraw = true;
@@ -81,12 +78,10 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
         get : function() { return this._boundObject; },
         set : function(value) {
             if(value === this._boundObject) { return; }
-            console.log("Bound Object being set to ", value);
             this._boundObject = value;
 
             if(value) {
                 this.boundObjectPropertyPathField.hints = this.application.ninja.objectsController.getPropertiesFromObject(value);
-                console.log("Setting hints to: ", this.boundObjectPropertyPathField.hints);
             }
 
             this.needsDraw = true;
@@ -97,11 +92,7 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
     sourceObjectPropertyPath : {
         get : function() { return this._sourceObjectPropertyPath; },
         set : function(value) {
-            console.log("Source Object Property Path being set to ", value);
-
             if(value === this._sourceObjectPropertyPath) { return; }
-
-
 
             this._sourceObjectPropertyPath = value;
 
@@ -156,26 +147,27 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
             // clear form values
             this.clearForm();
 
-            // set up hints for hintable components
-            this.objectIdentifiers = this.getObjectIdentifiers();
-            console.log("setting hints to ", this.objectIdentifiers);
-            this.boundObjectField.hints = this.objectIdentifiers;
-            this.sourceObjectField.hints = this.objectIdentifiers;
+            if(value) {
+                // set up hints for hintable components
+                this.objectIdentifiers = this.getObjectIdentifiers();
+                this.boundObjectField.hints = this.objectIdentifiers;
+                this.sourceObjectField.hints = this.objectIdentifiers;
 
-            if(value.sourceObject) {
-                this.sourceObjectIdentifier = value.sourceObject.identifier || value.sourceObject._montage_metadata.label;
-                this.sourceObjectPropertyPath = value.sourceObjectPropertyPath || '';
+                if(value.sourceObject) {
+                    this.sourceObjectIdentifier = value.sourceObject.identifier || value.sourceObject._montage_metadata.label;
+                    this.sourceObjectPropertyPath = value.sourceObjectPropertyPath || '';
+                }
+
+                if(value.boundObject) {
+                    this.boundObjectIdentifier = value.boundObject.identifier || '';
+                    this.boundObjectPropertyPath = value.boundObjectPropertyPath || '';
+                    this.isNewBinding = false;
+                } else {
+                    this.isNewBinding = true;
+                }
+
+                this.oneway = value.oneway;
             }
-
-            if(value.boundObject) {
-                this.boundObjectIdentifier = value.boundObject.identifier || '';
-                this.boundObjectPropertyPath = value.boundObjectPropertyPath || '';
-                this.isNewBinding = false;
-            } else {
-                this.isNewBinding = true;
-            }
-
-            this.oneway = value.oneway;
 
             this.needsDraw = true;
         }
@@ -199,25 +191,29 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
 
     clearForm : {
         value: function() {
-            for(var field in this) {
-                if(this.hasOwnProperty(field)) {
-                    field.value = '';
-                }
-            }
+            var fields = ["sourceObjectField",
+                          "boundObjectField",
+                          "sourceObjectPropertyPathField",
+                          "boundObjectPropertyPathField"];
+
+            fields.forEach(function(fieldName) {
+                this[fieldName].value = "";
+            }, this);
+
+            this._bindingArgs = null;
+
             this.dirty = false;
         }
     },
 
     saveForm : {
         value: function() {
-            debugger;
-
             var controller = this.application.ninja.objectsController,
                 newBindingArgs = {
                     sourceObject             : this.sourceObject,
-                    sourceObjectPropertyPath : this.sourceObjectPropertyPathField.value, // TODO: shouldn't need to do this (get from bound property)
+                    sourceObjectPropertyPath : this.sourceObjectPropertyPath,
                     boundObject              : this.boundObject,
-                    boundObjectPropertyPath  : this.boundObjectPropertyPathField.value, // TODO: shouldn't need to do this
+                    boundObjectPropertyPath  : this.boundObjectPropertyPath,
                     oneway: this.oneway
             };
 
@@ -274,7 +270,6 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
     handleEvent : {
         value: function(e) {
             if(e._event.type === 'change') {
-                console.log("here we are");
                 this.dirty = true;
             }
         }
@@ -286,8 +281,6 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
 
     templateDidLoad : {
         value: function() {
-
-
             Object.defineBinding(this, 'sourceObject', {
                 boundObject: this,
                 boundObjectPropertyPath: 'sourceObjectIdentifier',
@@ -301,7 +294,6 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
                 oneway: false,
                 converter : objectIdentifierConverter.create()
             });
-
         }
     },
 
@@ -316,9 +308,6 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
             var defaultIconClass = 'object-icon',
                 controller = this.application.ninja.objectsController,
                 category;
-
-            this.sourceObjectIconElement.className = defaultIconClass;
-            this.boundObjectIconElement.className = defaultIconClass;
 
             if(this.sourceObject) {
                 this.sourceObjectIconElement.classList.remove('no-object');
@@ -358,7 +347,6 @@ var objectIdentifierConverter = exports.ObjectIdentifierConverter = Montage.crea
     },
     revert: {
         value: function(object) {
-            console.log("converter revert");
             return object.identifier;
         }
     }
