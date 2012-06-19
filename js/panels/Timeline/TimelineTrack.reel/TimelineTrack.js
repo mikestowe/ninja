@@ -763,12 +763,16 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 newTween.tweenData.keyFrameMillisec = 0;
                 newTween.tweenData.tweenID = 0;
                 newTween.tweenData.spanPosition = 0;
+                newTween.tweenData.easing = "none";
                 newTween.tweenData.tweenedProperties = [];
                 newTween.tweenData.tweenedProperties["top"] = this.animatedElement.offsetTop + "px";
                 newTween.tweenData.tweenedProperties["left"] = this.animatedElement.offsetLeft + "px";
                 newTween.tweenData.tweenedProperties["width"] = this.animatedElement.offsetWidth + "px";
                 newTween.tweenData.tweenedProperties["height"] = this.animatedElement.offsetHeight + "px";
                 this.tweens.push(newTween);
+
+                this.createMatchingPositionSizeTween(newTween);
+
             } else {
                 newTween.tweenData.spanWidth = clickPos - this.tweens[this.tweens.length - 1].tweenData.keyFramePosition;
                 newTween.tweenData.keyFramePosition = clickPos;
@@ -787,21 +791,22 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 var animationDuration = (this.trackDuration / 1000) + "s";
                 this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
                 this.nextKeyframe += 1;
+
+                this.createMatchingPositionSizeTween(newTween);
             }
 
-            this.createMatchingPositionSizeTweens(clickPos);
+
 
             this.application.ninja.currentDocument.model.needsSave = true;
         }
     },
 
-    createMatchingPositionSizeTweens:{
-        value:function (position) {
-            console.log(this.positionTracksRepetition);
+    createMatchingPositionSizeTween:{
+        value:function (newTween) {
             var i;
-            var posTracks = this.positionTracksRepetition.length;
+            var posTracks = this.positionTracksRepetition.childComponents.length;
             for (i = 0; i < posTracks; i++) {
-
+                this.positionTracksRepetition.childComponents[i].propTweens.push(newTween);
             }
         }
     },
@@ -812,8 +817,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             	i,
             	tweensLength = this.tweens.length-1,
             	prevTween, nextTween, splitTweenIndex;
-            
-            consol.log(ev.target.className)
+
             for(i=0; i<tweensLength; i++){
                 prevTween = this.tweens[i].tweenData.keyFramePosition;
                 nextTween = this.tweens[i+1].tweenData.keyFramePosition;

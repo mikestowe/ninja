@@ -17,7 +17,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         value:function(){
             this.element.addEventListener("click", this, false);
             this.trackID = this.parentComponent.parentComponent.parentComponent.trackID;
-            this.animatedElement = this.parentComponent.parentComponent.parentComponent.animatedElement;
+            this.animatedElement = this.parentComponent.parentComponent.parentComponent.parentComponent.animatedElement;
             this.ninjaStylesContoller = this.application.ninja.stylesController;
         }
     },
@@ -180,7 +180,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
             if (ev.shiftKey) {
 
                 if (this.trackType == "position") {
-                    this.parentComponent.parentComponent.parentComponent.handleNewTween(ev);
+                    this.parentComponent.parentComponent.parentComponent.parentComponent.handleNewTween(ev);
                 }
 
                 if (this.propTweens.length < 1) {
@@ -199,16 +199,17 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                             this.trackEditorProperty = this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles[currentSelectedStyleIndex].editorProperty;
                             //console.log("Property track editorProperty set to: " + this.trackEditorProperty);
                         }
+                        this.insertPropTween(0);
+                        this.addPropAnimationRuleToElement(ev);
+                        this.updatePropKeyframeRule();
                     } else if (this.trackType == "position") {
                         //console.log("Property track editorProperty set to: " + this.trackEditorProperty);
                     }
-
-                    this.insertPropTween(0);
-                    this.addPropAnimationRuleToElement(ev);
-                    this.updatePropKeyframeRule();
                 } else {
                     this.handleNewPropTween(ev);
-                    this.updatePropKeyframeRule();
+                    if (this.trackType == "style") {
+                        this.updatePropKeyframeRule();
+                    }
                 }
             }
         }
