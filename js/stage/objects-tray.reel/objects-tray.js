@@ -15,6 +15,23 @@ exports.ObjectsTray = Montage.create(Component, {
     hideClass : { value: 'hide-objects-tray'},
     _empty : { value: null },
     _workspaceMode : { value: null },
+
+    offStageObjectsController : {
+        value: null
+    },
+    
+    _showAllObjects : { value: null },
+    showAllObjects : {
+        get : function() { return this._showAllObjects; },
+        set : function(value) {
+            if(value === this._showAllObjects) { return; }
+            
+            this._showAllObjects = value;
+            
+            this.needsDraw = true;
+        }
+    },
+    
     workspaceMode : {
         get : function() { return this._workspaceMode; },
         set : function(value) {
@@ -43,6 +60,19 @@ exports.ObjectsTray = Montage.create(Component, {
         }
     },
 
+    offStageObjectFilter : {
+        value: function(obj) {
+            if(this.showAllObjects) {
+                return true;
+            }
+
+            var isComponent = this.application.ninja.objectsController._hasPrototype(obj, "Component"),
+                hasValidElement = obj.element && obj.element.parentNode;
+
+            return !isComponent || !hasValidElement;
+        }
+    },
+
     _hide : { value: null },
     hide : {
         get : function() { return this._hide; },
@@ -58,7 +88,7 @@ exports.ObjectsTray = Montage.create(Component, {
 
     templateDidLoad: { 
         value: function() {
-            console.log('objects panel loaded');
+            this.offStageObjectsController.filterFunction = this.offStageObjectFilter.bind(this);
         }
     },
 

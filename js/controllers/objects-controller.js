@@ -4,14 +4,13 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-var Montage = require("montage/core/core").Montage,
-    Component        = require("montage/ui/component").Component;
+var Montage = require("montage/core/core").Montage;
 
 var CATEGORIES  = {
 
 };
 
-var objectsController = exports.ObjectsController = Montage.create(Component, {
+var objectsController = exports.ObjectsController = Montage.create(Montage, {
 
     _currentDocument : {
         value : null,
