@@ -235,7 +235,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                     }else{
                         styles = null;
                     }
-                    this.pastePositioned(node, styles);
+                    this.pastePositioned(node, styles, true/*notify*/);
                     pastedElements.push(node);
                 }
 
@@ -263,6 +263,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                       canvas = this.generateNewCanvas(this.copiedObjects.cut[j].outerhtml, this.copiedObjects.cut[j].styles, this.copiedObjects.cut[j].className, this.copiedObjects.cut[j].worldJson);
                       NJevent("elementAdded", canvas);
                       pastedElements.push(canvas);
+                      clipboardHelper.removeChild(clipboardHelper.lastChild);
                   }
                   else if((clipboardHelper.lastChild.nodeType === 3) || (clipboardHelper.lastChild.tagName === "A")){//TextNode
 
@@ -270,7 +271,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                   }
                   else {
                       node = clipboardHelper.removeChild(clipboardHelper.lastChild);
-                      this.pastePositioned(node, this.copiedObjects.cut[j].styles);
+                      this.pastePositioned(node, this.copiedObjects.cut[j].styles, true/*notify*/, false/*fromCopy*/);
                       pastedElements.push(node);
                   }
               }
@@ -328,7 +329,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                         styles = null;
                         //end - todo : not working
 
-                        this.pastePositioned(divWrapper, styles);
+                        this.pastePositioned(divWrapper, styles, true/*notify*/);
                     }else if(clipboardHelper.lastChild.tagName === "SPAN"){
                         node = clipboardHelper.removeChild(clipboardHelper.lastChild);
 
@@ -337,7 +338,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                         styles = null;
                         //end - todo : not working
 
-                        this.pastePositioned(divWrapper, styles);
+                        this.pastePositioned(divWrapper, styles, true/*notify*/);
                     }
                     else {
                         node = clipboardHelper.removeChild(clipboardHelper.lastChild);
@@ -345,7 +346,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                         //get class string while copying .... generate styles from class
                         styles = null;
 
-                        this.pastePositioned(node, styles);
+                        this.pastePositioned(node, styles, true/*notify*/);
                     }
 
                 }
@@ -357,7 +358,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                 clipboardHelper.innerHTML = "<div><span>"+ textData +"</span></div>";//add the copied html to generate the nodes
                 node = clipboardHelper.removeChild(clipboardHelper.lastChild);
                 styles = null;//get real stage center coordinates
-                this.pastePositioned(node, styles);
+                this.pastePositioned(node, styles, true/*notify*/);
             }
 
         }
@@ -379,7 +380,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                         if(!ninjaClipboardObj.canvas){
                             ninjaClipboardObj.canvas = true;
                         }
-                        elObj["worldJson"] = this.application.ninja.selectedElements[j].elementModel.shapeModel.GLWorld.exportJSON();
+                        elObj["worldJson"] = this.application.ninja.selectedElements[j].elementModel.shapeModel ? this.application.ninja.selectedElements[j].elementModel.shapeModel.GLWorld.exportJSON(): null;
                         elObj["className"] = this.application.ninja.selectedElements[j].className;
                     }else{
                         elObj["styles"] = this.getDominantStyles(this.application.ninja.selectedElements[j], false);
@@ -475,7 +476,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
             this.application.ninja.elementMediator.addElements(canvas, styles, false);
 
-            worldData = sourceCanvas.elementModel.shapeModel.GLWorld.exportJSON();
+            worldData = sourceCanvas.elementModel.shapeModel ? sourceCanvas.elementModel.shapeModel.GLWorld.exportJSON(): null;
             if(worldData)
             {
                 var jObj;
@@ -508,7 +509,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
             if (!canvas.getAttribute( "data-RDGE-id" )) canvas.setAttribute( "data-RDGE-id", NJUtils.generateRandom() );
 
-            this.application.ninja.elementMediator.addElements(canvas, null, false);
+            this.pastePositioned(canvas, styles, false/*notify*/, false/*from copy*/);
 
             worldData = worldJson;
 
@@ -572,32 +573,25 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
 
     pastePositioned:{
-        value: function(element, styles){// for now can wok for both in-place and centered paste
-            var modObject = [], x,y, newX, newY, translation;
+        value: function(element, styles, notify, fromCopy){// for now can wok for both in-place and centered paste
+            var modObject = [], x,y, newX, newY, counter;
+
+            if((typeof fromCopy === "undefined") || (fromCopy && fromCopy === true)){
+                counter = this.pasteCounter;
+            }else{
+                counter = this.pasteCounter - 1;
+            }
 
             x = styles ? ("" + styles.left + "px") : "100px";
             y = styles ? ("" + styles.top + "px") : "100px";
-            newX = styles ? ("" + (styles.left + (25 * this.pasteCounter)) + "px") : "100px";
-            newY = styles ? ("" + (styles.top + (25 * this.pasteCounter)) + "px") : "100px";
+            newX = styles ? ("" + (styles.left + (25 * counter)) + "px") : "100px";
+            newY = styles ? ("" + (styles.top + (25 * counter)) + "px") : "100px";
 
             if(!styles || (styles && !styles.position)){
-                this.application.ninja.elementMediator.addElements(element, null);
+                this.application.ninja.elementMediator.addElements(element, null, notify);
             }else if(styles && (styles.position === "absolute")){
-                this.application.ninja.elementMediator.addElements(element, {"top" : newY, "left" : newX});//displace
+                this.application.ninja.elementMediator.addElements(element, {"top" : newY, "left" : newX}, notify);//displace
             }
-
-            //todo: cleanup
-//            //add pasted object with new position
-//            translation = {"left": newX, "top": newY};
-//            this.application.ninja.elementMediator.addElements(element, translation);
-//
-
-//            //OR - first paste on top and then move the pasted object to make it visible to user
-//            this.application.ninja.elementMediator.addElements(element, null, false);
-//            modObject.push({element:element, properties:{left: newX, top:newY}, previousProperties: {left: x, top:y}});
-//            this.application.ninja.elementMediator.setProperties(modObject, "Change", "clipboard-controller" );
-//            NJevent("elementAdded", element);
-
         }
     },
 
