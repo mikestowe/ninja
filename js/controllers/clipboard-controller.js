@@ -133,8 +133,20 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
             this.pasteCounter++;
 
             if(ninjaData){
-                if(this.copiedObjects.copy){this.pasteFromCopy();}
-                else if(this.copiedObjects.cut){this.pasteFromCut();}
+                if(this.copiedObjects.copy){
+                    try{
+                        this.pasteFromCopy();
+                    }catch(e){
+                        console.log(""+e.stack);
+                    }
+                }
+                else if(this.copiedObjects.cut){
+                    try{
+                        this.pasteFromCut();
+                    }catch(e){
+                        console.log(""+e.stack);
+                    }
+                }
             }
             else{
 
