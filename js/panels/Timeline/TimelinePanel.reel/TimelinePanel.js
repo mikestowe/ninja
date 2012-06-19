@@ -580,6 +580,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Bind the handlers for the config menu
             this.checkable_animated.addEventListener("click", this.handleAnimatedClick.bind(this), false);
             this.tl_configbutton.addEventListener("click", this.handleConfigButtonClick.bind(this), false);
+            this.checkable_lock.addEventListener("click",this.handleLockLayerClick.bind(this),false);
+            this.checkable_visible.addEventListener("click",this.handleLayerVisibleClick.bind(this),false);
             document.addEventListener("click", this.handleDocumentClick.bind(this), false);
 
             this.addPropertyChangeListener("currentDocument.model.domContainer", this);
@@ -1395,6 +1397,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             thingToPush.layerData._isFirstDraw = true;
             thingToPush.layerData.created = true;
             thingToPush.layerData.stageElement = object;
+            thingToPush.layerData.isLock = false;
+            thingToPush.layerData.isHidden = false;
+
 
             if (this.checkable_animated.classList.contains("checked")) {
             	thingToPush.layerData.isVisible = false;
@@ -1710,6 +1715,77 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			event.currentTarget.classList.add("checked");
     		}
     	}
+    },
+
+    handleLockLayerClick:{
+        value:function(event){
+
+           var arrLayersLength = this.arrLayers.length;
+           console.log(this.application.ninja.currentDocument)
+           debugger;
+           var lockElementArrLength = this.application.ninja.currentDocument.lockedElements.length;
+           var i = 0;
+
+           if(event.currentTarget.classList.contains("checked")){
+               event.currentTarget.classList.remove("checked");
+               for(i=0;i<arrLayersLength;i++){
+                   this.arrLayers[i].layerData.isLock = false;
+                   this.arrLayers[i].layerData.isSelected = true;
+                   for(var k = 0; k<lockElementArrLength; k++){
+                     if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.stageElement){
+                         this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                         break;
+                     }
+                   }
+
+               }
+           } else {
+               for(i = 0;i < arrLayersLength;i++){
+                   if(!this.arrLayers[i].layerData.isLock){
+                       this.arrLayers[i].layerData.isLock = true;
+                       this.arrLayers[i].layerData.isSelected = false;
+                       this.application.ninja.currentDocument.lockedElements.push(this.arrLayers[i].layerData.stageElement);
+                   }
+                   this.selectLayers([]);
+
+               }
+               event.currentTarget.classList.add("checked");
+           }
+        }
+    },
+
+    handleLayerVisibleClick:{
+        value:function(event){
+
+           var arrLayersLength = this.arrLayers.length;
+           var lockElementArrLength = this.application.ninja.currentDocument.lockedElements.length;
+           var i = 0;
+
+           if(event.currentTarget.classList.contains("checked")){
+               event.currentTarget.classList.remove("checked");
+               for(i = 0; i < arrLayersLength; i++){
+                   this.arrLayers[i].layerData.isHidden = false;
+                   this.arrLayers[i].layerData.elementsList[0].style.visibility = "visible";
+                   for(var k=0;k<lockElementArrLength;k++){
+                       if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.stageElement){
+                           this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                           break;
+                       }
+                   }
+
+               }
+           } else {
+               for(i = 0; i < arrLayersLength; i++){
+                   if(!this.arrLayers[i].layerData.isHidden){
+                       this.arrLayers[i].layerData.isHidden = true;
+                       this.arrLayers[i].layerData.elementsList[0].style.visibility = "hidden";
+                       this.application.ninja.currentDocument.lockedElements.push(this.arrLayers[i].layerData.stageElement);
+                   }
+
+               }
+               event.currentTarget.classList.add("checked");
+           }
+        }
     },
 
 	// A layer's ID has been updated in the property panel. We need to update
