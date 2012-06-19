@@ -32,7 +32,6 @@ exports.BindingHud = Montage.create(Component, {
                 this.y = this._bindingArgs.component.element.offsetTop;
                 this.properties = this._bindingArgs.properties;
                 this.needsDraw = true;
-                console.log("Binding Args Set", val);
             } else {
                 this.properties = [];
             }

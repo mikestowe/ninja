@@ -60,7 +60,6 @@ exports.BindingHudOption = Montage.create(Component, {
     draw: {
         value:function() {
             if(this.bound) {
-                console.log(this.title);
                 this.element.classList.add("bound");
             } else {
                 this.element.classList.remove("bound");

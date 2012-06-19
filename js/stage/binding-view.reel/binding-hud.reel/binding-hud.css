@@ -38,15 +38,16 @@
     position:relative;
     border-bottom:1px solid #505050;
     line-height:16px;
-    padding:1px 9px 1px 15px;
+    padding:1px 20px 1px 10px;
 }
-.connectorBubble, .bindingHud .hudOption:hover, .bindingHud .hudOption .connectorBubble:hover {
+
+.bindingHud .hudOption .connectorBubble:hover {
     box-shadow: inset 0px 0px 6px #5e9eff;
-    display:block;
+    cursor: pointer;
 }
 
 .hudOption.bound, .bindingHud .hudOption.bound {
-    background: #5e9eff;
+    background:  -webkit-linear-gradient(top, #d0e4f7 0%,#73b1e7 24%,#0a77d5 50%,#539fe1 79%,#87bcea 100%);
 }
 
 .bindingHud .hudOption:last-child {
@@ -62,7 +63,7 @@
     height: 12px;
     border-left: 0px;
     display: block;
-    box-shadow: inset 0px 0px 6px #5e9eff;
+    box-shadow: inset 0px 0px 6px #AAA;
     /*border-bottom-right-radius: 50%;
     border-top-right-radius: 50%;*/
 
