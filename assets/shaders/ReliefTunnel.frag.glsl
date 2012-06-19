@@ -4,6 +4,7 @@ precision highp float;
 
 uniform vec2 u_resolution;
 uniform float u_time;
+uniform float u_speed;
 uniform sampler2D u_tex0;
 
 void main(void)
@@ -11,8 +12,10 @@ void main(void)
     vec2 p = -1.0 + 2.0 * gl_FragCoord.xy / u_resolution.xy;
     vec2 uv;
 
+	float time = u_time * u_speed;
+
     float r = sqrt( dot(p,p) );
-    float a = atan(p.y,p.x) + 0.5*sin(0.5*r-0.5*u_time);
+    float a = atan(p.y,p.x) + 0.5*sin(0.5*r-0.5*time);
 
     float s = 0.5 + 0.5*cos(7.0*a);
     s = smoothstep(0.0,1.0,s);
@@ -20,7 +23,7 @@ void main(void)
     s = smoothstep(0.0,1.0,s);
     s = smoothstep(0.0,1.0,s);
 
-    uv.x = u_time + 1.0/( r + .2*s);
+    uv.x = time + 1.0/( r + .2*s);
     uv.y = 3.0*a/3.1416;
 
     float w = (0.5 + 0.5*s)*r*r;

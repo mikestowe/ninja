@@ -104,7 +104,7 @@ exports.Popup = Montage.create(Component, {
     		if (!this._content.style.float) {
     			this._content.style.float = 'left';
     		}
-    		this.element.getElementsByClassName('content')[0].appendChild(this._content);
+    		this.popupContent.appendChild(this._content);
     		//
     		if (!this.tooltip) {
     			this.tooltip = {};
@@ -113,16 +113,16 @@ exports.Popup = Montage.create(Component, {
     		}
     		switch (this.tooltip.side.toLowerCase()) {
         		case 'top':
-        			this.element.style.marginTop = (this.element.getElementsByClassName('tooltip')[0].clientHeight) + 'px';
+        			this.element.style.marginTop = (this.popupTooltip.clientHeight) + 'px';
         			break;
         		case 'bottom':
-        			this.element.style.marginTop = -(this.element.clientHeight+(this.element.getElementsByClassName('tooltip')[0].clientHeight)) + 'px';
+        			this.element.style.marginTop = -(this.element.clientHeight+(this.popupTooltip.clientHeight)) + 'px';
         			break;
         		case 'left':
-        			this.element.style.marginLeft = (this.element.getElementsByClassName('tooltip')[0].clientWidth) + 'px';
+        			this.element.style.marginLeft = (this.popupTooltip.clientWidth) + 'px';
         			break;
         		case 'right':
-        			this.element.style.marginLeft = -(this.element.clientWidth + this.element.getElementsByClassName('tooltip')[0].clientWidth) + 'px';
+        			this.element.style.marginLeft = -(this.element.clientWidth + this.popupTooltip.clientWidth) + 'px';
         			break;
         		default:
         			//console.log("Error: Tooltip side value of "+this.tooltip.side.toLowerCase()+" property not allowed");
@@ -131,22 +131,22 @@ exports.Popup = Montage.create(Component, {
         	//
         	switch (this.tooltip.align.toLowerCase()) {
         		case 'top':
-        			this.element.style.marginTop = -Math.round((this.element.getElementsByClassName('tooltip')[0].clientHeight/2)+this.element.getElementsByClassName('tooltip')[0].offsetTop) + 'px';
+        			this.element.style.marginTop = -Math.round((this.popupTooltip.clientHeight/2)+this.popupTooltip.offsetTop) + 'px';
         			break;
         		case 'bottom':
-        			this.element.style.marginTop = -Math.round(this.element.clientHeight-((this.element.clientHeight - this.element.getElementsByClassName('tooltip')[0].offsetTop)-(this.element.getElementsByClassName('tooltip')[0].clientHeight/2))) + 'px';
+        			this.element.style.marginTop = -Math.round(this.element.clientHeight-((this.element.clientHeight - this.popupTooltip.offsetTop)-(this.popupTooltip.clientHeight/2))) + 'px';
         			break;
         		case 'left':
-        				this.element.style.marginLeft = -Math.round(this.element.clientWidth-((this.element.clientWidth - this.element.getElementsByClassName('tooltip')[0].offsetLeft)-(this.element.getElementsByClassName('tooltip')[0].clientWidth/2))) + 'px';
+        				this.element.style.marginLeft = -Math.round(this.element.clientWidth-((this.element.clientWidth - this.popupTooltip.offsetLeft)-(this.popupTooltip.clientWidth/2))) + 'px';
         				break;
         		case 'right':
-        			this.element.style.marginLeft = -(this.element.clientWidth - this.element.getElementsByClassName('tooltip')[0].clientWidth) + 'px';
+        			this.element.style.marginLeft = -(this.element.clientWidth - this.popupTooltip.clientWidth) + 'px';
         			break;
         		case 'center':
-        			this.element.style.marginLeft = -Math.round(this.element.clientWidth/2-((this.element.clientWidth/2 - this.element.getElementsByClassName('tooltip')[0].offsetLeft)-(this.element.getElementsByClassName('tooltip')[0].clientWidth/2))) + 'px';
+        			this.element.style.marginLeft = -Math.round(this.element.clientWidth/2-((this.element.clientWidth/2 - this.popupTooltip.offsetLeft)-(this.popupTooltip.clientWidth/2))) + 'px';
         			break;
        			case 'middle':
-       				this.element.style.marginTop = -Math.round(this.element.clientHeight/2-((this.element.clientHeight/2 - this.element.getElementsByClassName('tooltip')[0].offsetTop)-(this.element.getElementsByClassName('tooltip')[0].clientHeight/2))) + 'px';
+       				this.element.style.marginTop = -Math.round(this.element.clientHeight/2-((this.element.clientHeight/2 - this.popupTooltip.offsetTop)-(this.popupTooltip.clientHeight/2))) + 'px';
        				break;
         		default:
         			//console.log("Error: Tooltip align value of "+this.tooltip.align.toLowerCase()+" property not allowed");
@@ -170,7 +170,7 @@ exports.Popup = Montage.create(Component, {
     	enumerable: true,
     	value: function () {
     		//
-    		var longD = '22px', shortD = '10px', shortP = '-10px', longP = '8px', tip = this.element.getElementsByClassName('tooltip')[0];
+    		var longD = '22px', shortD = '10px', shortP = '-10px', longP = '8px', tip = this.popupTooltip;
     		//
         	if (this.tooltip && this.tooltip.side) {
         		switch (this.tooltip.side.toLowerCase()) {

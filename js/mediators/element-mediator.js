@@ -13,7 +13,6 @@ var ElementController = require("js/controllers/elements/element-controller").El
 
 exports.ElementMediator = Montage.create(Component, {
 
-
     addDelegate: {
         enumerable: false,
         value: null

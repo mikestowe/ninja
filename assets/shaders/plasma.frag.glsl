@@ -16,15 +16,21 @@ precision highp float;
 
 varying vec2 	v_uv;
 uniform float 	u_time;
-uniform vec4	color;
+
+uniform float u_wave;
+uniform float u_wave1;
+uniform float u_wave2;
+uniform float u_speed;
 
 void main(void)
 {
 	float x = v_uv.x ;
 	float y = v_uv.y ;
-	float time = u_time;
-	float wave =	(cos(time + y / 0.2  + cos(x / 0.3 + cos((y / 0.1)))));
-	float wave1 =	(sin(abs(wave + y/0.6)));
-	float wave2 =	(sin(abs(wave1 + y/0.8)));
+	float time = u_time*u_speed;
+
+	float wave =	(cos(time + y / (u_wave+0.2)  + cos(x / (u_wave+0.3) + cos((y / (u_wave+0.1))))));
+	float wave1 =	(sin(abs(wave + y/u_wave1)));
+	float wave2 =	(sin(abs(wave1 + y/u_wave2)));
+
 	gl_FragColor = vec4( abs(vec3(wave2,wave1,wave)),1.0);
 }	

@@ -231,10 +231,10 @@ exports.ColorModel = Montage.create(Component, {
     //
     applyNoColor: {
     	enumerable: true,
-        value: function () {
+        value: function (code) {
         	//
         	var nocolor = {};
-        	nocolor.wasSetByCode = true;
+        	nocolor.wasSetByCode = code;
     		nocolor.type = 'change';
         	this.updateColorSelected('nocolor', nocolor);
         }
@@ -310,29 +310,29 @@ exports.ColorModel = Montage.create(Component, {
     			case 'hex':
     				switch (color.length) {
     					case 1:
-    						this.applyNoColor();
+    						this.applyNoColor(false);
     						return;
     						break;
     					case 2:
-    						this.applyNoColor();
+    						this.applyNoColor(false);
     						return;
     						break;
     					case 3:
     						color = color[0]+color[0]+color[1]+color[1]+color[2]+color[2];
     						break;
     					case 4:
-    						this.applyNoColor();
+    						this.applyNoColor(false);
     						return;
     						break;
     					case 5:
-    						this.applyNoColor();
+    						this.applyNoColor(false);
     						return;
     						break;
     					case 6:
     						//Nothing
     						break;
     					default:
-    						this.applyNoColor();
+    						this.applyNoColor(false);
     						return;
     						break;
     				}

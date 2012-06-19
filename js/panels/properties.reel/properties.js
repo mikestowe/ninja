@@ -368,7 +368,7 @@ exports.Properties = Montage.create(Component, {
                                 }
                             } else {
                                 this.application.ninja.colorController.colorModel.alpha = {value: 1, wasSetByCode: true, type: 'change'};
-                                this.application.ninja.colorController.colorModel.applyNoColor();
+                                this.application.ninja.colorController.colorModel.applyNoColor(true);
                             }
                         }
                     }
@@ -398,7 +398,7 @@ exports.Properties = Montage.create(Component, {
     					this.application.ninja.colorController.colorModel.hsv = color.c;
     					break;
     				default:
-    					this.application.ninja.colorController.colorModel.applyNoColor();
+    					this.application.ninja.colorController.colorModel.applyNoColor(true);
     					break;
     			}
             }

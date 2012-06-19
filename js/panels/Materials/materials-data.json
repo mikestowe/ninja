@@ -5,37 +5,100 @@
             "label": "Ninja Materials",
             "children": [
                 {
-                    "label": "Uber",
-                    "id" : "UberMaterial"
+                    "label": "Bump Metal",
+                    "id" : "Bump Metal"
                 },
                 {
-                    "label": "Bump Metal",
-                    "id" : "BumpMetalMaterial"
+                    "label": "Deform",
+                    "id" : "Deform"
+                },
+                {
+                    "label": "Flag",
+                    "id" : "Flag"
+                },
+                {
+                    "label": "Fly",
+                    "id" : "Fly"
+                },
+                {
+                    "label": "Julia",
+                    "id" : "Julia"
+                },
+                {
+                    "label": "Keleidoscope",
+                    "id" : "Keleidoscope"
                 },
                 {
                     "label": "Linear Gradient",
-                    "id" : "LinearGradientMaterial"
+                    "id" : "Linear Gradient"
+                },
+                {
+                    "label": "Mandel",
+                    "id" : "Mandel"
+                },
+                {
+                    "label": "Paris",
+                    "id" : "Paris"
+                },
+                {
+                    "label": "Plasma",
+                    "id" : "Plasma"
+                },
+                {
+                    "label": "Pulse",
+                    "id" : "Pulse"
+                },
+                {
+                    "label": "Radial Blur",
+                    "id" : "Radial Blur"
                 },
                 {
                     "label": "Radial Gradient",
-                    "id" : "RadialGradientMaterial"
+                    "id" : "Radial Gradient"
                 },
                 {
-                    "label": "Flat",
-                    "id" : "FlatMaterial"
-                }
-            ]
-        },
-        {
-            "label": "Custom Materials",
-            "children": [
-                {
-                    "label": "Checker Board",
-                    "id" : "CheckerBoard"
+                    "label": "Raiders",
+                    "id" : "Raiders"
                 },
                 {
-                    "label": "Shiny Metal",
-                    "id" : "ShinyMetal"
+                    "label": "Relief Tunnel",
+                    "id" : "Relief Tunnel"
+                },
+                {
+                    "label": "Square Tunnel",
+                    "id" : "Square Tunnel"
+                },
+                {
+                    "label": "Star",
+                    "id" : "Star"
+                },
+                {
+                    "label": "Taper",
+                    "id" : "Taper"
+                },
+                {
+                    "label": "Tunnel",
+                    "id" : "Tunnel"
+                },
+                {
+                    "label": "Twist",
+                    "id" : "Twist"
+                },
+                {
+                    "label": "Twist Vertex",
+                    "id" : "Twist Vertex"
+                },
+                {
+                    "label": "Uber",
+                    "id" : "Uber"
+                },
+                {
+                    "label": "Water",
+                    "id" : "Water"
+                },
+                {
+                    "label": "Z-Invert",
+                    "id" : "Z-Invert"
                 }
             ]
         }
