@@ -21,7 +21,18 @@
                     "images": {"#": "cntnr_images"},
                     "gradients": {"#": "cntnr_gradients"},
                     "palettes": {"#": "cntnr_palettes"},
-                    "alpha": {"#": "cntnr_alpha"}
+                    "alpha": {"#": "cntnr_alpha"},
+                    "alphaSlider": {"#": "alpha_slider"},
+                    "alphaHottext": {"#": "alpha_hottext"},
+                    "btnPrevious": {"#": "btn_previous"},
+                    "btnCurrent": {"#": "btn_current"},
+                    "btnWheel": {"#": "btn_wheel"},
+                    "btnImage": {"#": "btn_images"},
+                    "btnGradient": {"#": "btn_gradients"},
+                    "btnPalette": {"#": "btn_palettes"},
+                    "btnNocolor": {"#": "btn_nocolor"},
+                    "inputHex": {"#": "input_hex"}
+                    
                 }
             }
         }
@@ -36,18 +47,18 @@
 	    		
 	    		<div class="cp_pu_history">
 	    			
-	    			<button class="cp_pu_color_previous">Previous Color</button>
-    				<button class="cp_pu_color_current">Current Color</button>
+	    			<button data-montage-id="btn_previous" class="cp_pu_color_previous">Previous Color</button>
+    				<button data-montage-id="btn_current" class="cp_pu_color_current">Current Color</button>
     				
    				</div>
 	    		
-	    		<div class="cp_pu_hex">#<input class="cp_pu_hottext_hex" maxlength="6" /></div>
+	    		<div data-montage-id="input_hex" class="cp_pu_hex">#<input class="cp_pu_hottext_hex" maxlength="6" /></div>
     			
-    			<button class="cp_pu_wheel" title="Color Wheel">Color Wheel</button>
-    			<button class="cp_pu_images" title="Background Image">Images</button>
-    			<button class="cp_pu_gradients" title="Gradient">Gradients</button>
-    			<button class="cp_pu_palettes" title="Color Palette">Palettes</button>
-    			<button class="cp_pu_nocolor" title="No Color">No Color</button>
+    			<button data-montage-id="btn_wheel" class="cp_pu_wheel" title="Color Wheel">Color Wheel</button>
+    			<button data-montage-id="btn_images" class="cp_pu_images" title="Background Image">Images</button>
+    			<button data-montage-id="btn_gradients" class="cp_pu_gradients" title="Gradient">Gradients</button>
+    			<button data-montage-id="btn_palettes" class="cp_pu_palettes" title="Color Palette">Palettes</button>
+    			<button data-montage-id="btn_nocolor" class="cp_pu_nocolor" title="No Color">No Color</button>
     			
     		</div>
     		
@@ -60,8 +71,8 @@
     		
     		<div data-montage-id="cntnr_alpha" class="cp_pu_alpha">
     			<div class="cp_pu_a_label">Alpha</div>
-    			<div class="cp_pu_a_slider"></div>
-    			<input class="cp_pu_a_hottext"/>
+    			<div data-montage-id="alpha_slider" class="cp_pu_a_slider"></div>
+    			<input data-montage-id="alpha_hottext" class="cp_pu_a_hottext"/>
     			<div class="cp_pu_a_label2">%</div>
     		</div>
     		
