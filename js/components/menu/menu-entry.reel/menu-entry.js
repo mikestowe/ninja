@@ -8,16 +8,52 @@ var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
 
 exports.MenuEntry = Montage.create(Component, {
-    topHeader: { value: null },
-    topHeaderText: { value: null },
+    topHeader: {
+        value: null,
+        serializable: true
+    },
+
+    topHeaderText: {
+        value: null,
+        serializable: true
+    },
+
+    subEntries: {
+        value: null,
+        serializable: true
+    },
 
     // Reference to the parent Menu component
     _menu: {
         value: null
     },
 
-    data: {
+    menu: {
+        get: function() {
+            return this._menu;
+        },
+        set: function(value) {
+            if(value !== this._menu) {
+                this._menu = value;
+            }
+        },
+        serializable: true
+    },
+
+    _data: {
         value: null
+    },
+
+    data: {
+        get: function() {
+            return this._data;
+        },
+        set: function(value) {
+            if(this._data !== value) {
+                this._data = value;
+            }
+        },
+        serializable: true
     },
 
     select: {
@@ -49,13 +85,16 @@ exports.MenuEntry = Montage.create(Component, {
 
     handleClick: {
         value: function(event) {
-            this._menu.toggleActivation(this);
+            // TODO: Hack! Rework this!
+            this.parentComponent.ownerComponent.toggleActivation(this);
+//            this._menu.toggleActivation(this);
         }
     },
 
     handleMouseover: {
         value: function(event) {
-            this._menu.activeEntry = this;
+            this.parentComponent.ownerComponent.activeEntry = this;
+//            this._menu.activeEntry = this;
         }
     },
 

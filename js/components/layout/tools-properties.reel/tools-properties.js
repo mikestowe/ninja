@@ -9,6 +9,85 @@ var Component = require("montage/ui/component").Component;
 
 exports.ToolsProperties = Montage.create(Component, {
 
+    selectionProperties: {
+        value: null,
+        serializable: true
+    },
+
+    object3DProperties: {
+        value: null,
+        serializable: true
+    },
+    tagProperties: {
+        value: null,
+        serializable: true
+    },
+
+    penProperties: {
+        value: null,
+        serializable: true
+    },
+
+    textProperties: {
+        value: null,
+        serializable: true
+    },
+
+    shapeProperties: {
+        value: null,
+        serializable: true
+    },
+
+    brushProperties: {
+        value: null,
+        serializable: true
+    },
+
+    fillProperties: {
+        value: null,
+        serializable: true
+    },
+
+    inkbottleProperties: {
+        value: null,
+        serializable: true
+    },
+
+    eraserProperties: {
+        value: null,
+        serializable: true
+    },
+
+    rotateStageProperties: {
+        value: null,
+        serializable: true
+    },
+
+    panProperties: {
+        value: null,
+        serializable: true
+    },
+
+    zoomProperties: {
+        value: null,
+        serializable: true
+    },
+
+    rotate3DProperties: {
+        value: null,
+        serializable: true
+    },
+
+    translate3DProperties: {
+        value: null,
+        serializable: true
+    },
+
+    toolsData: {
+        value: null,
+        serializable: true
+    },
+
     _currentDocument: {
         enumerable: false,
         value: null
@@ -28,7 +107,8 @@ exports.ToolsProperties = Montage.create(Component, {
 
             this.disabled = !this._currentDocument;
 
-        }
+        },
+        serializable: true
     },
 
     _disabled: {

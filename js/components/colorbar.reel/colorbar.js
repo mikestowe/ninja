@@ -19,28 +19,22 @@ exports.ColorBar = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Width of spectrum (not including b/w buttons)
     _colorBarSpectrumWidth: {
-    	enumerable: false,
     	value: null
     },
     ////////////////////////////////////////////////////////////////////
     //Width of spectrum steps (used to calculate size of B/W buttons)
     _colorBarSpectrumWidthSteps: {
-    	enumerable: false,
     	value: 10
     },
     ////////////////////////////////////////////////////////////////////
     //Default value
     _value: {
-        enumerable: false,
         value: {h: 0, s: 0, v: 0}
     },
 	////////////////////////////////////////////////////////////////////
     //HSV Value selected from bar
     value: {
-        enumerable: true,
-        get: function() {
-            return this._value;
-        },
+        get: function() {return this._value;},
         set: function(value) {
         	if (value) {
         		//Checking for limits (Max and Min HSV values)
@@ -73,7 +67,6 @@ exports.ColorBar = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     prepareForDraw: {
-    	enumerable: false,
     	value: function() {
  			//Nothing
     	}
@@ -81,7 +74,6 @@ exports.ColorBar = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Setting up and drawing canvas to object
     willDraw: {
-    	enumerable: false,
     	value: function() {
     		//Setting the width and height of the canvas to match container
     		this.element.width = parseInt(window.getComputedStyle(this.element, null).width);
@@ -168,7 +160,6 @@ exports.ColorBar = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Used to check mouse mode and display cursor
     _isMouseDown: {
-    	enumerable: false,
     	value: false
     },
     ////////////////////////////////////////////////////////////////////
@@ -223,5 +214,6 @@ exports.ColorBar = Montage.create(Component, {
             this.dispatchEvent(actionEvent);
         }
     }
+    ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
 });

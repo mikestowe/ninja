@@ -8,8 +8,15 @@ var Montage = require("montage/core/core").Montage,
     ToolProperties = require("js/components/tools-properties/tool-properties").ToolProperties;
 
 exports.OvalProperties = Montage.create(ToolProperties, {
-    base: { value: null },
-    innerRadius: { value: null },
+    base: {
+        value: null,
+        serializable: true
+    },
+
+    innerRadius: {
+        value: null,
+        serializable: true
+    },
     
     _subPrepare: {
         value: function() {

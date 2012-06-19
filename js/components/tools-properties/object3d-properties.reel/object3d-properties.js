@@ -10,8 +10,15 @@ var defaultEventManager = require("montage/core/event/event-manager").defaultEve
 var ToolProperties = require("js/components/tools-properties/tool-properties").ToolProperties;
 
 exports.Object3DProperties = Montage.create(ToolProperties, {
-    rotateLocally: { value: null, enumerable: false },
-    rotateGlobally: { value: null, enumerable: false },
+    rotateLocally: {
+        value: null,
+        serializable: true
+    },
+
+    rotateGlobally: {
+        value: null,
+        serializable: true
+    },
 
     _subPrepare: {
         value: function () {

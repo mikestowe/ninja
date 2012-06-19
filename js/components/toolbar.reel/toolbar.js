@@ -8,6 +8,11 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.Toolbar = Montage.create(Component, {
+    repetition: {
+        value: null,
+        serializable: true
+    },
+    
     _needsButtonProperties : {
         value: null
     },

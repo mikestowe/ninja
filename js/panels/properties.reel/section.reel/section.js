@@ -11,6 +11,7 @@ exports.Section = Montage.create(Component, {
 
     name: {
         value: "Panel"
+
     },
 
     slot: {

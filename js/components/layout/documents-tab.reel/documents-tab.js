@@ -9,6 +9,7 @@ var Component = require("montage/ui/component").Component;
 
 exports.DocumentsTab = Montage.create(Component, {
     contentController: {
-        value: null
+        value: null,
+        serializable: true
     }
 });

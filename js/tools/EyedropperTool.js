@@ -240,7 +240,7 @@ exports.EyedropperTool = Montage.create(toolBase, {
             else
             {
                 this.application.ninja.colorController.colorModel.alpha = {value: 1, wasSetByCode: true, type: eventType};
-                this.application.ninja.colorController.colorModel.applyNoColor();
+                this.application.ninja.colorController.colorModel.applyNoColor(true);
                 if(updateColorToolBar)
                 {
                     this._previousColor = "none";

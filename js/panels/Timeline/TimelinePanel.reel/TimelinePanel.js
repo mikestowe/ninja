@@ -10,9 +10,97 @@ var nj = require("js/lib/NJUtils").NJUtils;
 
 var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
-    hasTemplate:{
-        value:true
+    user_layers: {
+        value: null,
+        serializable: true
     },
+
+    track_container: {
+        value: null,
+        serializable: true
+    },
+
+    timeline_leftpane: {
+        value: null,
+        serializable: true
+    },
+
+    layer_tracks: {
+        value: null,
+        serializable: true
+    },
+
+    master_track: {
+        value: null,
+        serializable: true
+    },
+
+    time_markers: {
+        value: null,
+        serializable: true
+    },
+
+    playhead: {
+        value: null,
+        serializable: true
+    },
+
+    playheadmarker: {
+        value: null,
+        serializable: true
+    },
+
+    timetext: {
+        value: null,
+        serializable: true
+    },
+
+    timebar: {
+        value: null,
+        serializable: true
+    },
+
+    container_tracks: {
+        value: null,
+        serializable: true
+    },
+
+    end_hottext: {
+        value: null,
+        serializable: true
+    },
+
+    container_layers: {
+        value: null,
+        serializable: true
+    },
+
+    timeline_disabler: {
+        value: null,
+        serializable: true
+    },
+
+    checkable_relative: {
+        value: null,
+        serializable: true
+    },
+
+    checkable_absolute: {
+        value: null,
+        serializable: true
+    },
+
+    checkable_animated: {
+        value: null,
+        serializable: true
+    },
+
+    tl_configbutton: {
+        value: null,
+        serializable: true
+    },
+
+
 
     /* === BEGIN: Models === */
     _currentDocument: {
@@ -50,6 +138,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 
                 // Initialize the timeline for the document.
                 this.initTimelineForDocument();
+            }
+        }
+    },
+
+    handleChange: {
+        value: function() {
+            if(this.currentDocument && this.currentDocument.model.getProperty("domContainer")) {
+                this.currentSelectedContainer = this.currentDocument.model.getProperty("domContainer");
             }
         }
     },
@@ -405,13 +501,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.tl_configbutton.addEventListener("click", this.handleConfigButtonClick.bind(this), false);
             document.addEventListener("click", this.handleDocumentClick.bind(this), false);
 
-
-            // Bind some bindings
-            Object.defineBinding(this, "currentSelectedContainer", {
-                boundObject:this.application.ninja,
-                boundObjectPropertyPath:"currentSelectedContainer",
-                oneway:true
-            });
+            this.addPropertyChangeListener("currentDocument.model.domContainer", this);
 
         }
     },
@@ -511,11 +601,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			// Store the timeline data in currentDocument...
 			if (this._boolCacheArrays) {
 				// ... but only if we're supposed to.
-	    		this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
-	    		this.application.ninja.currentDocument.tlCurrentSelectedContainer = this.application.ninja.currentSelectedContainer;
-	    		this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
-	    		this.application.ninja.currentDocument.tlCurrentLayerSelected = this.currentLayerSelected;
-	    		this.application.ninja.currentDocument.tlCurrentLayersSelected = this.currentLayersSelected;
+                if(this.currentDocument) {
+	    		    this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
+	    		    this.application.ninja.currentDocument.tlCurrentSelectedContainer = this.currentDocument.model.domContainer;
+	    		    this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
+	    		    this.application.ninja.currentDocument.tlCurrentLayerSelected = this.currentLayerSelected;
+	    		    this.application.ninja.currentDocument.tlCurrentLayersSelected = this.currentLayersSelected;
+                }
 			}
     	}
     },
@@ -525,7 +617,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			// Initialize the currentDocument for a new set of timeline data.
 			this.application.ninja.currentDocument.isTimelineInitialized = true;
 			this.application.ninja.currentDocument.tlArrLayers = [];
-    		this.application.ninja.currentDocument.tlCurrentSelectedContainer = this.application.ninja.currentSelectedContainer;
+    		this.application.ninja.currentDocument.tlCurrentSelectedContainer = this.currentDocument.model.domContainer;
     		this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
     		this.application.ninja.currentDocument.tlCurrentLayerSelected = false;
     		this.application.ninja.currentDocument.tlCurrentLayersSelected = false;
@@ -669,7 +761,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 // console.log('TimelinePanel.initTimelineForDocument: breadCrumbClick');
 				// Information stored, but we're moving up or down in the breadcrumb.
 				// Get the current selection and restore timeline info for its children.
-                var parentNode = this.application.ninja.currentSelectedContainer,
+                var parentNode = this.currentDocument.model.domContainer,
                 	storedCurrentLayerNumber = this.application.ninja.currentDocument.tllayerNumber;
                 this.temparrLayers = [];
                 
@@ -691,6 +783,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 var i = 0, 
                 	tlArrLayersLength = this.application.ninja.currentDocument.tlArrLayers.length;
                 
+                
+                this._ignoreNextContainerChange = true;
+                
                 // We're reading from the cache, not writing to it.
             	this._boolCacheArrays = false;
                 for (i = 0; i < tlArrLayersLength; i++) {
@@ -708,7 +803,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
                 //debugger;
                 if (typeof(this.application.ninja.currentDocument.tlCurrentSelectedContainer) !== "undefined") {
-//                	this.application.ninja.currentSelectedContainer=this.application.ninja.currentDocument.tlCurrentSelectedContainer;
+//                	this.currentDocument.model.domContainer = this.application.ninja.currentDocument.tlCurrentSelectedContainer;
                 }
                 
                 // Are we only showing animated layers?
@@ -984,7 +1079,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             thingToPush.layerData.layerName = newLayerName;
             thingToPush.layerData.layerTag = "<" + object.nodeName.toLowerCase() + ">";
             thingToPush.layerData.layerID = this.currentLayerNumber;
-            thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
+            thingToPush.parentElement = this.currentDocument.model.domContainer;
             thingToPush.layerData.isSelected = true;
             thingToPush.layerData._isFirstDraw = true;
             thingToPush.layerData.created = true;
@@ -1032,7 +1127,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             thingToPush.layerData.layerName = newLayerName;
             thingToPush.layerData.layerID = this.currentLayerNumber;
             thingToPush.layerData.layerTag = "<" + ele.nodeName.toLowerCase() + ">";
-            thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
+            thingToPush.parentElement = this.currentDocument.model.domContainer;
             if (this.checkable_animated.classList.contains("checked")) {
             	thingToPush.layerData.isVisible = false;
             }

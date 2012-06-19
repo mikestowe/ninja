@@ -9,9 +9,21 @@ var ToolProperties = require("js/components/tools-properties/tool-properties").T
 
 var PenProperties = exports.PenProperties = Montage.create(ToolProperties, {
     addedColorChips: { value: false },
-    _penToolRadio:     { value: null, enumerable: false },
-    _penPlusRadio:   { value: null, enumerable: false },
-    _penMinusRadio:   { value: null, enumerable: false },
+
+    _penToolRadio: {
+        value: null,
+        serializable: true
+    },
+
+    _penPlusRadio: {
+        value: null,
+        serializable: true
+    },
+
+    _penMinusRadio: {
+        value: null,
+        serializable: true
+    },
 
     _subPrepare: {
         value: function() {
@@ -19,6 +31,21 @@ var PenProperties = exports.PenProperties = Montage.create(ToolProperties, {
             this._penPlusRadio.addEventListener("click", this, false);
             this._penMinusRadio.addEventListener("click", this, false);
         }
+    },
+
+    _fillColorCtrl: {
+        value: null,
+        serializable: true
+    },
+
+    _strokeColorCtrl: {
+        value: null,
+        serializable: true
+    },
+
+    _strokeSize: {
+        value: null,
+        serializable: true
     },
 
     _fill: {

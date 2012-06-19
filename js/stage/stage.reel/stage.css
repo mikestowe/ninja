@@ -14,6 +14,8 @@
 
 .montage-editor-container {
     z-index: 8;
+    display: none;
+    position: absolute;
 }
 
 .stageAndScenesContainer .montage-editor {
@@ -64,3 +66,4 @@ div.CodeMirror span.CodeMirror-matchingbracket {color: #000 !important;backgroun
 .cm-s-rubyblue .activeline {background: #3E7087; !important}
 .cm-s-lesser-dark .activeline {background: #8da6ce; !important}
 .cm-s-xq-dark .activeline {background: #8da6ce; !important}
+

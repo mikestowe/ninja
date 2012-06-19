@@ -8,12 +8,20 @@ var Montage = require("montage/core/core").Montage,
     ToolProperties = require("js/components/tools-properties/tool-properties").ToolProperties;
 
 exports.RectProperties = Montage.create(ToolProperties, {
-    base:       { value: null },
-    lockButton: { value: null, enumerable: false},
-    TLRadiusControl: { value: null, enumerable: false },
-    TRRadiusControl: { value: null, enumerable: false },
-    BLRadiusControl: { value: null, enumerable: false },
-    BRRadiusControl: { value: null, enumerable: false },
+    base: {
+        value: null,
+        serializable: true
+    },
+
+    lockButton: {
+        value: null,
+        serializable: true
+    },
+
+    TLRadiusControl: { value: null, serializable: true },
+    TRRadiusControl: { value: null, serializable: true },
+    BLRadiusControl: { value: null, serializable: true },
+    BRRadiusControl: { value: null, serializable: true },
 
     _unlocked: { value: false, enumerable: false},
 
