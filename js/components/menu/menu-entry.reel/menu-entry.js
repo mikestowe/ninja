@@ -107,9 +107,6 @@ exports.MenuEntry = Montage.create(Component, {
 
             this.element.addEventListener("mousedown", this, true);
 
-            this.topHeader.addEventListener("mouseover", this, false);//Todo: check why this listener as not getting added menuIsActive
-
-            //Todo: check this binding
             Object.defineBinding(this, "menuIsActive", {
                 boundObject: this._menu,
                 boundObjectPropertyPath: "active",
