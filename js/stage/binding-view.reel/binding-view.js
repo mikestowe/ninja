@@ -342,7 +342,8 @@ exports.BindingView = Montage.create(Component, {
 //            var nodeEl = new webkitConvertPointFromPageToNode(this.element, mouseUpPoint);
             this.element.style.zIndex = "12";
             var nodeEl = document.elementFromPoint(e.pageX, e.pageY);
-            alert(nodeEl.parentElement.controller.title);
+            //alert(nodeEl.parentElement.controller.title);
+            debugger;
             this.element.style.zIndex = null;
             this._isDrawingConnection = false;
             this.needsDraw = true;
