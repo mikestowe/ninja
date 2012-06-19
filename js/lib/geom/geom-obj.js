@@ -180,7 +180,7 @@ exports.GeomObj = Object.create(Object.prototype, {
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-    setMaterialColor: {
+   setMaterialColor: {
         value: function(c, type) {
             var i = 0,
                 nMats = 0;
@@ -281,9 +281,13 @@ exports.GeomObj = Object.create(Object.prototype, {
             this._materialArray.push(strokeMaterial);
             this._materialTypeArray.push("stroke");
 
-            if (this._strokeColor) {
-                this.setStrokeColor(this._strokeColor);
-            }
+			// don't set the value here.  The material editor may set a color directly
+			// to the material without setting this value in the obj.  The following
+			// lines of code will clobber the value in the material
+            //if (this._strokeColor)
+            //    this.setStrokeColor(this._strokeColor);
+
+			this._strokeMaterial = strokeMaterial;
 
             return strokeMaterial;
         }
@@ -304,10 +308,14 @@ exports.GeomObj = Object.create(Object.prototype, {
 
             this._materialArray.push(fillMaterial);
             this._materialTypeArray.push("fill");
+			
+			// don't set the value here.  The material editor may set a color directly
+			// to the material without setting this value in the obj.  The following
+			// lines of code will clobber the value in the material
+            //if (this._fillColor)
+            //     this.setFillColor(this._fillColor);
 
-            if (this._fillColor) {
-                this.setFillColor(this._fillColor);
-            }
+			this._fillMaterial = fillMaterial;
 
             return fillMaterial;
         }
@@ -315,6 +323,8 @@ exports.GeomObj = Object.create(Object.prototype, {
 
     exportMaterialsJSON: {
         value: function() {
+			MaterialsModel = require("js/models/materials-model").MaterialsModel;
+
             var jObj;
             if (this._materialArray && this._materialNodeArray && this.getWorld().isWebGL()) {
                 var nMats = this._materialArray.length;
@@ -345,6 +355,8 @@ exports.GeomObj = Object.create(Object.prototype, {
 
     importMaterialsJSON: {
         value: function(jObj) {
+			MaterialsModel = require("js/models/materials-model").MaterialsModel;
+
             this._materialArray = [];
             this._materialTypeArray = [];
 
@@ -370,6 +382,7 @@ exports.GeomObj = Object.create(Object.prototype, {
                     case "tunnel":
                     case "reliefTunnel":
                     case "squareTunnel":
+					case "flag":
                     case "twist":
                     case "fly":
                     case "julia":
@@ -379,6 +392,8 @@ exports.GeomObj = Object.create(Object.prototype, {
                     case "keleidoscope":
                     case "radialBlur":
                     case "pulse":
+					case "twistVert":
+					case "taper":
                         mat = MaterialsModel.getMaterialByShader(shaderName);
                         if (mat)  mat = mat.dup();
                         break;

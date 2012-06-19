@@ -24,8 +24,6 @@ uniform float u_minVal;
 uniform float u_maxVal;
 uniform float u_center;
 
-uniform vec4 color;
-
 
 // matrix uniforms
 uniform mat4 u_mvMatrix;

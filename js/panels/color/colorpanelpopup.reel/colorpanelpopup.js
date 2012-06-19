@@ -23,19 +23,13 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Storing color manager
     _colorManager: {
-        value: false
+        value: null
     },
     ////////////////////////////////////////////////////////////////////
     //Color manager
     colorManager: {
-        get: function() {
-            return this._colorManager;
-        },
-        set: function(value) {
-        	if (value !== this._colorManager) {
-        		this._colorManager = value;
-        	}
-        }
+        get: function() {return this._colorManager;},
+        set: function(value) {if (value !== this._colorManager) this._colorManager = value;}
     },
     ////////////////////////////////////////////////////////////////////
     //Storing color panel
@@ -45,18 +39,19 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Color panel
     colorPanel: {
-        get: function() {
-            return this._colorPanel;
-        },
-        set: function(value) {
-        	this._colorPanel = value;
-        }
+        get: function() {return this._colorPanel;},
+        set: function(value) {this._colorPanel = value;}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    _components: {
+	  	value: null  
     },
     ////////////////////////////////////////////////////////////////////
     //
     setNoColor: {
-    	value: function (e) {
-    		this.colorManager.applyNoColor();
+    	value: function (code) {
+    		if (this.colorManager) this.colorManager.applyNoColor(code);
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -64,7 +59,8 @@ exports.ColorPanelPopup = Montage.create(Component, {
     prepareForDraw: {
     	value: function () {
     		//
-    		this.element._components = {wheel: null, combo: null};
+    		this._components = null;
+    		this._components = {wheel: null, combo: null};
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -74,14 +70,14 @@ exports.ColorPanelPopup = Montage.create(Component, {
     		//
     		this.element.style.opacity = 0;
     		//
-    		this.element._components.combo = {};
-    		this.element._components.combo.slider = Slider.create();
-	   		this.element._components.combo.hottext = HotText.create();
-    		this.element._components.combo.slider.element = this.element.getElementsByClassName('cp_pu_a_slider')[0];
-   			this.element._components.combo.hottext.element = this.element.getElementsByClassName('cp_pu_a_hottext')[0];
+    		this._components.combo = {};
+    		this._components.combo.slider = Slider.create();
+	   		this._components.combo.hottext = HotText.create();
+    		this._components.combo.slider.element = this.alphaSlider;
+   			this._components.combo.hottext.element = this.alphaHottext;
     		//
-    		Object.defineBinding(this.element._components.combo.hottext, "_value", {
-   				boundObject: this.element._components.combo.slider,
+    		Object.defineBinding(this._components.combo.hottext, "value", {
+   				boundObject: this._components.combo.slider,
        		    boundObjectPropertyPath: "value",
        		    oneway: false,
                	boundValueMutator: function(value) {
@@ -89,16 +85,8 @@ exports.ColorPanelPopup = Montage.create(Component, {
                 }
    			});
    			//
-   			Object.defineBinding(this.element._components.combo.hottext, "value", {
-   				boundObject: this.element._components.combo.slider,
-       		    boundObjectPropertyPath: "value",
-       		    oneway: false,
-               	boundValueMutator: function(value) {
-                   	return Math.round(value);
-                }
-   			});
    			if (this.application.ninja.colorController.colorView) {
-	    		Object.defineBinding(this.element._components.combo.slider, "value", {
+	    		Object.defineBinding(this._components.combo.slider, "value", {
     				boundObject: this.application.ninja.colorController.colorView._combo[3].slider,
        			    boundObjectPropertyPath: "value",
     	   		    oneway: false,
@@ -108,25 +96,26 @@ exports.ColorPanelPopup = Montage.create(Component, {
     			});
     		}
 	       	//
-	       	this.element._components.combo.slider.maxValue = this.element._components.combo.hottext.maxValue = 100;
+	       	this._components.combo.slider.maxValue = this._components.combo.hottext.maxValue = 100;
+	       	//
 	       	if (this.application.ninja.colorController.colorView) {
-    			this.element._components.combo.slider.customBackground = this.application.ninja.colorController.colorView._slider3Background.bind(this.application.ninja.colorController.colorView);
+    			this._components.combo.slider.customBackground = this.application.ninja.colorController.colorView._slider3Background.bind(this.application.ninja.colorController.colorView);
     		}
     		//
-   			this.element._components.combo.slider.addEventListener('change', this.alphaChange.bind(this), true);
-   			this.element._components.combo.hottext.addEventListener('change', this.alphaChange.bind(this), true);
+   			this._components.combo.slider.addEventListener('change', this.alphaChange.bind(this), true);
+   			this._components.combo.hottext.addEventListener('change', this.alphaChange.bind(this), true);
    			//
-   			this.element._components.wheel = ColorWheel.create();
-		    this.element._components.wheel.element = this.wheel;
-	        this.element._components.wheel.element.style.display = 'block';
-	        this.element._components.wheel.rimWidth = 14;
-		    this.element._components.wheel.strokeWidth = 2;
+   			this._components.wheel = ColorWheel.create();
+		    this._components.wheel.element = this.wheel;
+	        this._components.wheel.element.style.display = 'block';
+	        this._components.wheel.rimWidth = 14;
+		    this._components.wheel.strokeWidth = 2;
 		    //
-	        this.element._components.wheel.value = this.colorManager.hsv;
-		    this.element._components.wheel.addEventListener('change', this, true);
-		    this.element._components.wheel.addEventListener('changing', this, true);
+	        this._components.wheel.value = this.colorManager.hsv;
+		    this._components.wheel.addEventListener('change', this, true);
+		    this._components.wheel.addEventListener('changing', this, true);
 	        //
-		    Object.defineBinding(this.element._components.wheel, "value", {
+		    Object.defineBinding(this._components.wheel, "value", {
     			boundObject: this.colorManager,
         	    boundObjectPropertyPath: "_hsv",
                	boundValueMutator: function(value) {
@@ -148,8 +137,8 @@ exports.ColorPanelPopup = Montage.create(Component, {
     		//
 	    	this.application.ninja.colorController.colorView.addButton('hexinput', this.element.getElementsByClassName('cp_pu_hottext_hex')[0]);
 	       	//
-	       	this.element._components.combo.slider.needsDraw = true;
-	       	this.element._components.combo.hottext.needsDraw = true;
+	       	this._components.combo.slider.needsDraw = true;
+	       	this._components.combo.hottext.needsDraw = true;
    			//
    			this.element.getElementsByClassName('cp_pu_nocolor')[0].addEventListener('click', function () {
    				this.setNoColor();
@@ -175,9 +164,9 @@ exports.ColorPanelPopup = Montage.create(Component, {
     		this.application.ninja.colorController.colorView.addButton('current', this.element.getElementsByClassName('cp_pu_color_current')[0]);
     		this.application.ninja.colorController.colorView.addButton('previous', this.element.getElementsByClassName('cp_pu_color_previous')[0]);
     		//
-    		this.element._components.wheel.addEventListener('firstDraw', this, false);
+    		this._components.wheel.addEventListener('firstDraw', this, false);
     		//
-    		this.element._components.wheel.needsDraw = true;
+    		this._components.wheel.needsDraw = true;
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -193,9 +182,9 @@ exports.ColorPanelPopup = Montage.create(Component, {
     handleFirstDraw: {
     	value: function (e) {
     		//
-    		if (this.element._components.wheel) {
+    		if (this._components.wheel) {
 	    		//Only using it for one instance, no need to check target
-    			this.element._components.wheel.removeEventListener('firstDraw', this, false);
+    			this._components.wheel.removeEventListener('firstDraw', this, false);
     		}
     		//Switching to tab from previous selection
     		switch (this.application.ninja.colorController.popupTab) {
@@ -241,10 +230,10 @@ exports.ColorPanelPopup = Montage.create(Component, {
     			this.application.ninja.colorController.popupTab = 'palette';
     		}
     		//
-    		if (tab !== this.wheel && this.element._components.wheel.element) {
-    			this.element._components.wheel.element.style.display = 'none';
-    		} else if (this.element._components.wheel.element && this.element._components.wheel.element.style.display !== 'block'){
-    			this.element._components.wheel.element.style.display = 'block';
+    		if (tab !== this.wheel && this._components.wheel.element) {
+    			this._components.wheel.element.style.display = 'none';
+    		} else if (this._components.wheel.element && this._components.wheel.element.style.display !== 'block'){
+    			this._components.wheel.element.style.display = 'block';
     			this.alpha.style.display = 'block';
     			//
     			this.application.ninja.colorController.popupTab = 'wheel';
@@ -264,10 +253,10 @@ exports.ColorPanelPopup = Montage.create(Component, {
     		if (tab !== this.gradients) {
     			this.gradients.style.display = 'none';
     			//
-    			if (this.element._components.wheel._value) {
-    				this.element._components.wheel.value = {h: this.element._components.wheel._value.h, s: this.element._components.wheel._value.s, v: this.element._components.wheel._value.v, wasSetByCode: false};
+    			if (this._components.wheel._value) {
+    				this._components.wheel.value = {h: this._components.wheel._value.h, s: this._components.wheel._value.s, v: this._components.wheel._value.v, wasSetByCode: false};
     			} else {
-    				this.element._components.wheel.value = {h: 0, s: 1, v: 1, wasSetByCode: false};
+    				this._components.wheel.value = {h: 0, s: 1, v: 1, wasSetByCode: false};
     			}
     		} else {
     			this.gradients.style.display = 'block';
@@ -311,7 +300,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
 			    				color.type = 'change';
     							this.colorManager.hsl = color;
     						} else {
-			    				this.colorManager.applyNoColor();
+			    				this.colorManager.applyNoColor(false);
     						}
 			    		} else {
     						color = this.colorManager.hexToRgb(b._event.srcElement.colorValue);
@@ -320,7 +309,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     							color.type = 'change';
 			    				this.colorManager.rgb = color;
     						} else {
-    							this.colorManager.applyNoColor();
+    							this.colorManager.applyNoColor(false);
 			    			}
     					}
     				}
@@ -389,7 +378,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     alphaChange: {
     	value: function (e) {
 	    	if (!e._event.wasSetByCode) {
-    			var update = {value: this.element._components.combo.slider.value/100, wasSetByCode: false, type: 'change'};
+    			var update = {value: this._components.combo.slider.value/100, wasSetByCode: false, type: 'change'};
     			this.colorManager.alpha = update;
     		}
     	}
@@ -425,10 +414,10 @@ exports.ColorPanelPopup = Montage.create(Component, {
     	value: function() {
     		//
     		this.application.ninja.colorController.colorView.removeButton('hexinput', this.element.getElementsByClassName('cp_pu_hottext_hex')[0]);
-    		Object.deleteBinding(this.element._components.combo.hottext, "value");
-    		Object.deleteBinding(this.element._components.combo.slider, "value");
-    		Object.deleteBinding(this.element._components.wheel, "value");
-    		this.element._components.wheel = null;
+    		Object.deleteBinding(this._components.combo.hottext, "value");
+    		Object.deleteBinding(this._components.combo.slider, "value");
+    		Object.deleteBinding(this._components.wheel, "value");
+    		this._components.wheel = null;
     	}
     }
     ////////////////////////////////////////////////////////////////////

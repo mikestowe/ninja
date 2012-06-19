@@ -67,6 +67,15 @@ Matrix.Rotation = function(angle, axis) {
     return mat;
 };
 
+Matrix.Scale = function( scaleVec ) {
+    var mat = Matrix.I(4);
+    mat[ 0] = scaleVec[0];
+	mat[ 5] = scaleVec[1];
+	mat[10] = scaleVec[2];
+
+    return mat;
+};
+
 Matrix.flatten = function (mat) {
     var result = [];
     if (this.elements.length == 0) {

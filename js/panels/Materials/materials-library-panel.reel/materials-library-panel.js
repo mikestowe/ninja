@@ -51,14 +51,15 @@ exports.MaterialsLibraryPanel = Montage.create(Component, {
 
     handleNodeActivation: {
         value:function(obj) {
-            this._showMaterialPopup(obj.id);
+            this._showMaterialPopup({ materialId: obj.id });
         }
     },
 
     handleShowMaterialPopup: {
         enumerable: false,
         value: function (event) {
-            this._showMaterialPopup(event.detail.materialId);
+            //this._showMaterialPopup(event.detail.materialId);
+            this._showMaterialPopup(event.detail);
         }
     },
 
@@ -74,9 +75,9 @@ exports.MaterialsLibraryPanel = Montage.create(Component, {
     
     _showMaterialPopup: {
     	enumerable: false,
-    	value: function (materialID) {
+    	value: function (materialObj) {
 
-            if(!this._materialPopup)
+			if(!this._materialPopup)
             {
                 this._materialPopup = Popup.create();
                 this._materialPopup.content = this._materialInfo;
@@ -85,7 +86,9 @@ exports.MaterialsLibraryPanel = Montage.create(Component, {
                 this._materialPopup.addEventListener("show", this, false);
             }
             this._materialPopup.show();
-            this._materialInfo.loadMaterials(materialID);
+
+            materialID = materialObj.materialId;
+            this._materialInfo.loadMaterials(materialID,  materialObj.useSelection, materialObj.whichMaterial);
     	}
     },
 
