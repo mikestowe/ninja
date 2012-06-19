@@ -9,6 +9,11 @@ var Montage = require("montage/core/core").Montage,
 
 exports.Breadcrumb = Montage.create(Component, {
 
+    breadcrumbBt: {
+        value: null,
+        serializable: true
+    },
+
     _currentDocument: {
         enumerable: false,
         value: null
@@ -100,6 +105,7 @@ exports.Breadcrumb = Montage.create(Component, {
 
             // TODO: This is bound 2 ways, update the internal property
             this.currentDocument.model.domContainer = this.containerElements[i].node;
+            this.application.ninja.selectionController.executeSelectElement();
         }
     }
 });

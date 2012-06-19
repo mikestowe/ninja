@@ -11,6 +11,11 @@ var Montage = 	require("montage/core/core").Montage,
 
 exports.Stage = Montage.create(Component, {
 
+    appModel: {
+        value: null,
+        serializable: true
+    },
+
     // TODO - Need to figure out how to remove this dependency
     // Needed by some tools that depend on selectionDrawn event to set up some logic
     drawNow: { value : false },
@@ -22,7 +27,10 @@ exports.Stage = Montage.create(Component, {
     _canvasDrawingPrefs:    { value: { "thickness" : 1.0, "color" : "#000" } },
     drawingContextPreferences: { get: function() { return this._canvasDrawingPrefs; } },
 
-    _iframeContainer: { value: null },
+    _iframeContainer: {
+        value: null,
+        serializable: true
+    },
 
     _scrollFlag: {value: true, writable: true},
     outFlag: { value: false, writable: true },
@@ -88,28 +96,81 @@ exports.Stage = Montage.create(Component, {
     },
 
     /** MAIN CANVASES **/
-    _canvas: { value: null },   // selection bounds, 3d normals and the overall 3d selection box use this canvas
-    canvas: { get: function() { return this._canvas; } },
+    // selection bounds, 3d normals and the overall 3d selection box use this canvas
+    _canvas: {
+        value: null,
+        serializable: true
+    },
+
+    canvas: {
+        get: function() {
+            return this._canvas;
+        }
+    },
 
     _context: { value: null },
     context: { get: function() { return this._context; } },
 
-    _layoutCanvas: { value: null },
-    layoutCanvas: { get: function() { return this._layoutCanvas; } },
+    _layoutCanvas: {
+        value: null,
+        serializable: true
+    },
 
-    _gridCanvas: { value: null },
-    gridCanvas: { get: function() { return this._gridCanvas; } },
+    layoutCanvas: {
+        get: function() {
+            return this._layoutCanvas;
+        }
+    },
+
+    _gridCanvas: {
+        value: null,
+        serializable: true
+    },
+
+    gridCanvas: {
+        get: function() {
+            return this._gridCanvas;
+        }
+    },
 
     _gridContext: { value: null },
     gridContext: { get: function() { return this._gridContext; } },
 
-    _drawingCanvas: { value: null },
-    drawingCanvas: { get: function() { return this._drawingCanvas; } },
+    _drawingCanvas: {
+        value: null,
+        serializable: true
+    },
+
+    drawingCanvas: {
+        get: function() {
+            return this._drawingCanvas;
+        }
+    },
 
     _drawingContext: { value: null },
     drawingContext: { get: function() { return this._drawingContext; } },
 
     _clickPoint: { value: { x: { value: null }, y: { value: null } } },
+
+    stageDeps: {
+        value: null,
+        serializable: true
+    },
+
+    layout: {
+        value: null,
+        serializable: true
+    },
+
+    textTool: {
+        value: null,
+        serializable: true
+    },
+
+    focusManager: {
+        value: null,
+        serializable: true
+    },
 
     // We will set this to false while moving objects to improve performance
     showSelectionBounds: { value: true },
@@ -182,6 +243,13 @@ exports.Stage = Montage.create(Component, {
             if(this.currentDocument && (this.currentDocument.currentView === "design")) {
                 this.currentDocument.model.scrollLeft = this._scrollLeft;
                 this.currentDocument.model.scrollTop = this._scrollTop;
+                this.currentDocument.model.userPaddingLeft = this._userPaddingLeft;
+                this.currentDocument.model.userPaddingTop = this._userPaddingTop;
+                this.currentDocument.model.documentOffsetLeft = this._documentOffsetLeft;
+                this.currentDocument.model.documentOffsetTop = this._documentOffsetTop;
+                this.currentDocument.model.userContentLeft = this._userContentLeft;
+                this.currentDocument.model.userContentTop = this._userContentTop;
+
                 //call configure false with the old document on the selected tool to tear down down any temp. stuff
                 this.application.ninja.toolsData.selectedToolInstance._configure(false);
             }
@@ -298,6 +366,23 @@ exports.Stage = Montage.create(Component, {
 
             if(model.scrollLeft != null) {
                 didSwitch = true;
+                this._userPaddingLeft = this.currentDocument.model.userPaddingLeft;
+                this._userPaddingTop = this.currentDocument.model.userPaddingTop;
+                this._documentOffsetLeft = this.currentDocument.model.documentOffsetLeft;
+                this._documentOffsetTop  = this.currentDocument.model.documentOffsetTop;
+                this._userContentLeft = this.currentDocument.model.userContentLeft;
+                this._userContentTop = this.currentDocument.model.userContentTop;
+                this._scrollLeft = this.currentDocument.model.scrollLeft;
+                this._scrollTop = this.currentDocument.model.scrollTop;
+            } else {
+                this._userPaddingLeft = 0;
+                this._userPaddingTop = 0;
+                this._documentOffsetLeft = 0;
+                this._documentOffsetTop  = 0;
+                this._userContentLeft = 0;
+                this._userContentTop = 0;
+                this._scrollLeft = 0;
+                this._scrollTop = 0;
             }
 
             // Recalculate the canvas sizes because of splitter resizing
@@ -308,19 +393,7 @@ exports.Stage = Montage.create(Component, {
 
             this.addPropertyChangeListener("appModel.show3dGrid", this, false);
 
-            this._userPaddingLeft = 0;
-            this._userPaddingTop = 0;
-
-            this._documentOffsetLeft = 0;
-            this._documentOffsetTop  = 0;
-
-            this._userContentLeft = 0;
-            this._userContentTop = 0;
-
-            this._scrollLeft = 0;
-            this._scrollTop = 0;
-
-            this.initialize3DOnOpenDocument();
+            this.initialize3DOnOpenDocument(!didSwitch);
 
             if(designView._template) {
                 var initialLeft = parseInt((this.canvas.width - designView._template.size.width)/2);
@@ -1186,7 +1259,7 @@ exports.Stage = Montage.create(Component, {
     },
 
     initialize3DOnOpenDocument: {
-        value: function() {
+        value: function(adjustScrollOffsets) {
 
             workingPlane = [0,0,1,0];
 
@@ -1197,7 +1270,7 @@ exports.Stage = Montage.create(Component, {
             this.snapManager.currentStage = this.currentDocument.model.documentRoot;
             this.snapManager.setupDragPlaneFromPlane (workingPlane);
 
-            this.drawUtils.initializeFromDocument();
+            this.drawUtils.initializeFromDocument(adjustScrollOffsets);
         }
     }
 

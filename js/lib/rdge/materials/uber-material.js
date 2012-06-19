@@ -6,12 +6,13 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var MaterialParser = require("js/lib/rdge/materials/material-parser").MaterialParser;
 var Material = require("js/lib/rdge/materials/material").Material;
+var Texture = require("js/lib/rdge/texture").Texture;
 
 var UberMaterial = function UberMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._name = "UberMaterial";
+    this._name = "Uber";
     this._shaderName = "uber";
     this.getShaderName = function () { return this._shaderName; };
 
@@ -23,7 +24,8 @@ var UberMaterial = function UberMaterial() {
     this._environmentAmount = 0.2; 	// 0 .. 1
 
     // set the default maps
-    this._diffuseMapOb = { 'texture': 'assets/images/rocky-diffuse.jpg', 'wrap': 'REPEAT' };
+	this._diffuseMapOb = { 'texture' : 'assets/images/rocky-diffuse.jpg', 'wrap' : 'REPEAT' };
+	//this._diffuseMapOb = { 'texture' : 'texture', 'wrap' : 'REPEAT' };
     this._normalMapOb = { 'texture': 'assets/images/rocky-normal.jpg', 'wrap': 'REPEAT' };
     this._specularMapOb = { 'texture': 'assets/images/rocky-spec.jpg', 'wrap': 'REPEAT' };
     this._environmentMapOb = { 'texture': 'assets/images/silver.png', 'wrap': 'CLAMP', 'envReflection': this._environmentAmount };
@@ -34,7 +36,13 @@ var UberMaterial = function UberMaterial() {
     this._useEnvironmentMap = true;
     this._useLights = [true, true, true, true];
 
+    // these are the abstracted texture objects - defined where they are set
+    this._diffuseTexture;
+
     this._MAX_LIGHTS = 4;
+
+    // array textures indexed by shader uniform name
+    this._glTextures = [];
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
@@ -175,6 +183,7 @@ var UberMaterial = function UberMaterial() {
     this.updateAmbientColor = function () {
         this._ambientColor = this._propValues['ambientColor'].slice(0);
         var material = this._materialNode;
+		//console.log( "ambient color: " + this._ambientColor );
         if (material) {
             var technique = material.shaderProgram.defaultTechnique;
             technique.u_ambientColor.set(this._ambientColor);
@@ -188,6 +197,7 @@ var UberMaterial = function UberMaterial() {
         if (material) {
             var technique = material.shaderProgram.defaultTechnique;
             technique.u_diffuseColor.set(this._diffuseColor);
+            this.getWorld().restartRenderLoop();
         }
     };
 
@@ -240,42 +250,43 @@ var UberMaterial = function UberMaterial() {
                     var technique = material.shaderProgram.defaultTechnique;
                     var renderer = RDGE.globals.engine.getContext().renderer;
                     if (renderer && technique) {
-                        var tex = renderer.getTextureByName(value, caps.environmentMap.wrap);
+                        var tex = renderer.getTextureByName(value, this._ubershaderCaps.environmentMap.wrap);
                         this.registerTexture(tex);
-                        technique.s_environmentMap.set(tex);
+                        technique.s_envMap.set(tex);
                     }
                 }
             }
         }
     };
 
-    this.updateDiffuseMap = function (value) {
-        var value = this._propValues["diffuseMap"];
-        this._diffuseMapOb.texture = value;
+ 	this.updateDiffuseMap = function(value) {
+		var value = this._propValues[ "diffuseMap" ];
+		this._diffuseMapOb.texture = value;
 
-        if ((value == null) || (value.length == 0)) {
-            if (this._useDiffuseMap) {
-                this._useDiffuseMap = false;
-                this.rebuildShader();
-            }
-        } else {
-            if (!this._useDiffuseMap) {
-                this._useDiffuseMap = true;
-                this.rebuildShader();
-            } else {
-                var material = this._materialNode;
-                if (material) {
-                    var technique = material.shaderProgram.defaultTechnique;
-                    var renderer = RDGE.globals.engine.getContext().renderer;
-                    if (renderer && technique) {
-                        var tex = renderer.getTextureByName(value, caps.diffuseMap.wrap);
-                        this.registerTexture(tex);
-                        technique.s_diffuseMap.set(tex);
-                    }
-                }
-            }
-        }
-    };
+		if ((value == null) || (value.length == 0)) {
+			if (this._useDiffuseMap) {
+				this._useDiffuseMap = false;
+                this._diffuseTexture = undefined;
+				this.rebuildShader();
+			}
+		} else {
+			if (!this._useDiffuseMap) {
+				this._useDiffuseMap = true;
+				this.rebuildShader();
+			} else {
+				var material = this._materialNode;
+				if (material) {
+					var technique = material.shaderProgram.defaultTechnique;
+					var renderer = RDGE.globals.engine.getContext().renderer;
+					if (renderer && technique) {
+                        this._diffuseTexture = new Texture( this.getWorld(), value,  this._ubershaderCaps.diffuseMap.wrap );
+                        var tex = this._diffuseTexture.getTexture();
+						technique.s_diffuseMap.set( tex );
+					}
+				}
+			}
+		}
+	};
 
     this.updateSpecularMap = function () {
         var value = this._propValues["specularMap"];
@@ -296,9 +307,9 @@ var UberMaterial = function UberMaterial() {
                     var technique = material.shaderProgram.defaultTechnique;
                     var renderer = RDGE.globals.engine.getContext().renderer;
                     if (renderer && technique) {
-                        var tex = renderer.getTextureByName(value, caps.specularMap.wrap);
+                        var tex = renderer.getTextureByName(value, this._ubershaderCaps.specularMap.wrap);
                         this.registerTexture(tex);
-                        technique.s_specularMap.set(tex);
+                        technique.s_specMap.set(tex);
                     }
                 }
             }
@@ -324,7 +335,7 @@ var UberMaterial = function UberMaterial() {
                     var technique = material.shaderProgram.defaultTechnique;
                     var renderer = RDGE.globals.engine.getContext().renderer;
                     if (renderer && technique) {
-                        var tex = renderer.getTextureByName(value, caps.normalMap.wrap);
+                        var tex = renderer.getTextureByName(value, this._ubershaderCaps.normalMap.wrap);
                         this.registerTexture(tex);
                         technique.s_normalMap.set(tex);
                     }
@@ -335,22 +346,25 @@ var UberMaterial = function UberMaterial() {
 
     // duplcate method requirde
     this.dup = function () {
-        // allocate a new uber material
-        var newMat = new UberMaterial();
 
+        // get the current values;
+        var propNames = [], propValues = [], propTypes = [], propLabels = [];
+        this.getAllProperties(propNames, propValues, propTypes, propLabels);
+        
+        // allocate a new material
+        var newMat = new UberMaterial();
         newMat._useDiffuseMap = this._useDiffuseMap;
         newMat._useEnvironmentMap = this._useEnvironmentMap;
         newMat._useLights = this._useLights;
         newMat._useNormalMap = this._useNormalMap;
         newMat._useSpecularMap = this._useSpecularMap;
-        newMat.rebuildShader();
 
-        // copy over the current values;
-        var propNames = [], propValues = [], propTypes = [], propLabels = [];
-        this.getAllProperties(propNames, propValues, propTypes, propLabels);
+		// copy over the current values;
         var n = propNames.length;
         for (var i = 0; i < n; i++)
             newMat.setProperty(propNames[i], propValues[i]);
+
+        newMat.rebuildShader();
 
         return newMat;
     };
@@ -367,7 +381,32 @@ var UberMaterial = function UberMaterial() {
         this._materialNode.setShader(this._shader);
     };
 
-    this.importJSON = function (jObj) {
+   this.update = function()
+    {
+		var material = this._materialNode;
+		if (material)
+        {
+		    var technique = material.shaderProgram.defaultTechnique;
+		    var renderer = RDGE.globals.engine.getContext().renderer;
+		    if (renderer && technique)
+            {
+                if (this._diffuseTexture && this._diffuseTexture.isAnimated())
+                {
+                    this._diffuseTexture.render();
+				    technique.s_diffuseMap.set( this._diffuseTexture.getTexture() );
+                }
+            }
+        }
+    }
+	
+    this.isAnimated	= function()
+    {
+        var anim = (this._diffuseTexture && this._diffuseTexture.isAnimated());
+        return anim;
+    }
+
+    this.importJSON = function (jObj)
+	{
         if (this.getShaderName() != jObj.material) throw new Error("ill-formed material");
         this.setName(jObj.name);
 
@@ -682,9 +721,9 @@ var UberMaterial = function UberMaterial() {
 
         var renderer = RDGE.globals.engine.getContext().renderer;
         if (this._useDiffuseMap) {
-            var tex = renderer.getTextureByName(caps.diffuseMap.texture, caps.diffuseMap.wrap, caps.diffuseMap.mips);
-            this.registerTexture(tex);
-            technique.s_diffuseMap.set(tex);
+			this._diffuseTexture = new Texture( this.getWorld(), caps.diffuseMap.texture,  caps.diffuseMap.wrap, caps.diffuseMap.mips );
+            var tex = this._diffuseTexture.getTexture();
+			technique.s_diffuseMap.set( tex );
         }
 
         if (this._useNormalMap) {
@@ -763,7 +802,7 @@ var UberMaterial = function UberMaterial() {
 
         var material = this._materialNode;
         if (material) {
-            material.setShader(buildUbershader(this._ubershaderCaps));
+            material.setShader( this.buildUberShader(this._ubershaderCaps) );
         }
     };
 };

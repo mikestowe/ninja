@@ -9,6 +9,11 @@ var Component = require("montage/ui/component").Component;
 
 exports.DocumentEntry = Montage.create(Component, {
 
+    label: {
+        value: null,
+        serializable: true
+    },
+
     _document: {
         value: null
     },

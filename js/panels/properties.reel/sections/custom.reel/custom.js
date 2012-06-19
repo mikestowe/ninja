@@ -116,7 +116,11 @@ exports.CustomSection = Montage.create(Component, {
         value: function(event) {
             // Change the stage color for now
             //console.log(this, event);
-            ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], this.id, [event._event.color.css], "Change", "pi", '');
+            if (event._event.color && event._event.color.css) {
+            	ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], this.id, [event._event.color.css], "Change", "pi", '');
+            } else {
+	            ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], this.id, ['none'], "Change", "pi", '');
+            }
             /*
             var propEvent = document.createEvent("CustomEvent");
             propEvent.initEvent("propertyChange", true, true);
@@ -231,6 +235,12 @@ exports.CustomSection = Montage.create(Component, {
             Object.defineBinding(this.controls, aField.id, {
               boundObject: obj,
               boundObjectPropertyPath: "value"
+            });
+
+            //Bind object value to controls list so it can be manipulated
+            Object.defineBinding(this.controls, aField.id + "Units", {
+              boundObject: obj,
+              boundObjectPropertyPath: "units"
             });
 
             return obj;

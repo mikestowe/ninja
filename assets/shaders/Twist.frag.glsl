@@ -4,6 +4,7 @@ precision highp float;
 
 uniform vec2 u_resolution;
 uniform float u_time;
+uniform float u_speed;
 uniform sampler2D u_tex0;
 
 void main(void)
@@ -14,8 +15,10 @@ void main(void)
     float a = atan(p.y,p.x);
     float r = sqrt(dot(p,p));
 
-    uv.x = r - .25*u_time;
-    uv.y = cos(a*5.0 + 2.0*sin(u_time+7.0*r)) ;
+	float time = u_time * u_speed;
+
+    uv.x = r - .25*time;
+    uv.y = cos(a*5.0 + 2.0*sin(time+7.0*r)) ;
 
     vec3 col =  (.5+.5*uv.y)*texture2D(u_tex0,uv).xyz;
 

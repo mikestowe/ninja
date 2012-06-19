@@ -10,39 +10,46 @@ var PlasmaMaterial = function PlasmaMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-	this._name = "PlasmaMaterial";
+	this._name = "Plasma";
 	this._shaderName = "plasma";
 
 	this._time = 0.0;
 	this._dTime = 0.01;
 	this._speed = 1.0;
 
+	this._wave  = 0.0;
+	this._wave1 = 0.6;
+	this._wave2 = 0.8;
+
+    ///////////////////////////////////////////////////////////////////////
+    // Properties
+    ///////////////////////////////////////////////////////////////////////
+	this._propNames			= ["u_wave",	"u_wave1",	"u_wave2",		"u_speed"];
+	this._propLabels		= ["Wave",		"Wave 1",	"Wave 2",		"Speed"];
+	this._propTypes			= ["float",		"float",	"float",		"float"];
+
+	this._propValues		= [];
+	this._propValues[ this._propNames[0] ] = this._wave;
+	this._propValues[ this._propNames[1] ] = this._wave1;
+	this._propValues[ this._propNames[2] ] = this._wave2;
+	this._propValues[ this._propNames[3] ] = this._speed;
+
 
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
 	this.getShaderName	= function()	{  return this._shaderName;		};
-
 	this.isAnimated		= function()	{  return true;					};
+	this.getShaderDef	= function()	{  return plasmaShaderDef;		};
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
-    ///////////////////////////////////////////////////////////////////////
-
-    this.setProperty = function( prop, value )
-	{
-		// plasma has no properties
-	};
-
     ///////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
 	// duplcate method requirde
-	this.dup = function()	{
-        return new PlasmaMaterial();
-    };
 
 	this.init = function( world)
 	{
@@ -60,30 +67,18 @@ var PlasmaMaterial = function PlasmaMaterial() {
 		// set up the material node
 		this._materialNode = RDGE.createMaterialNode("plasmaMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
+
+		this._time = 0;
+		if (this._shader && this._shader['default']) {
+			this._shader['default'].u_time.set( [this._time] );
+		}
+
+		this.setShaderValues();
 	};
 
 	this.update = function( time ) {
 		this._shader['default'].u_time.set( [this._time] );
 		this._time += this._dTime;
-	};
-
-	this.exportJSON = function()
-	{
-		var jObj =
-		{
-			'material'		: this.getShaderName(),
-			'name'			: this.getName(),
-			'speed'			: this._speed,
-			'dTime'			: this._dTime
-		};
-
-		return jObj;
-	};
-
-	this.importJSON = function( jObj )
-	{
-		this._speed = jObj.speed;
-		this._dTime = jObj.dTime;
 	};
 };
 
@@ -115,6 +110,10 @@ var plasmaShaderDef =
 				'params' : 
 				{
 					'u_time' : { 'type' : 'float' },
+					'u_speed': { 'type' : 'float' },
+					'u_wave' : { 'type' : 'float' },
+					'u_wave1': { 'type' : 'float' },
+					'u_wave2': { 'type' : 'float' }
 				},
 
 				// render states

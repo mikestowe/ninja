@@ -17,7 +17,16 @@ var Montage = require("montage/core/core").Montage,
 
 exports.Layout = Montage.create(Component, {
 
-    canvas: { value: null },
+    canvas: {
+        value: null,
+        serializable: true
+    },
+
+    stage: {
+        value: null,
+        serializable: true
+    },
+
     ctx: { value: null },
 
     drawFillColor: { value: 'rgba(255,255,255,1)' },

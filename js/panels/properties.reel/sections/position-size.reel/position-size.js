@@ -8,20 +8,77 @@ var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
 
 exports.PositionSize = Montage.create(Component, {
+
+    position: {
+        value: null,
+        serializable: true
+    },
+
+    leftLabel: {
+        value: null,
+        serializable: true
+    },
+
+    leftControl: {
+        value: null,
+        serializable: true
+    },
+
+    topLabel: {
+        value: null,
+        serializable: true
+    },
+
+    topControl: {
+        value: null,
+        serializable: true
+    },
+
+    heightControl: {
+        value: null,
+        serializable: true
+    },
+
+    widthControl: {
+        value: null,
+        serializable: true
+    },
+
+    bindButton: {
+        value: null,
+        serializable: true
+    },
+
     leftPosition: {
         value: 0
+    },
+
+    leftUnits: {
+        value: "px"
     },
 
     topPosition: {
         value: 0
     },
 
+    topUnits: {
+        value: "px"
+    },
+
     heightSize: {
         value: 0
     },
 
+    heightUnits: {
+        value: "px"
+    },
+
     widthSize: {
         value: 0
+    },
+
+    widthUnits: {
+        value: "px"
     },
 /*
     widthSize: {
@@ -132,7 +189,7 @@ exports.PositionSize = Montage.create(Component, {
             if(!event.wasSetByCode) {
                 if(this.savedPosition) prevPosition = [this.savedPosition + "px"];
 
-                this.application.ninja.elementMediator.setProperty(this.application.ninja.selectedElements, "left", [this.leftControl.value + "px"] , "Change", "pi", prevPosition);
+                this.application.ninja.elementMediator.setProperty(this.application.ninja.selectedElements, "left", [this.leftControl.value + this.leftControl.units] , "Change", "pi", prevPosition);
                 this.savedPosition = null;
             }
         }
@@ -145,7 +202,7 @@ exports.PositionSize = Montage.create(Component, {
             if(!event.wasSetByCode) {
                 if(this.savedPosition) prevPosition = [this.savedPosition + "px"];
 
-                this.application.ninja.elementMediator.setProperty(this.application.ninja.selectedElements, "top", [this.topControl.value + "px"] , "Change", "pi", prevPosition);
+                this.application.ninja.elementMediator.setProperty(this.application.ninja.selectedElements, "top", [this.topControl.value + this.topControl.units] , "Change", "pi", prevPosition);
                 this.savedPosition = null;
             }
         }
@@ -156,7 +213,7 @@ exports.PositionSize = Montage.create(Component, {
             var prevPosition, items;
 
             if(!event.wasSetByCode) {
-                if(this.savedPosition) prevPosition = [this.savedPosition + "px"];
+                if(this.savedPosition) prevPosition = [this.savedPosition];
 
                 this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.model.documentRoot];
 
@@ -170,7 +227,7 @@ exports.PositionSize = Montage.create(Component, {
                     this.application.ninja.elementMediator.setProperty(items, "width", [newWidth + "px"] , "Change", "pi");
                 }
 
-                this.application.ninja.elementMediator.setProperty(items, "height", [this.heightControl.value + "px"] , "Change", "pi", prevPosition);
+                this.application.ninja.elementMediator.setProperty(items, "height", [this.heightControl.value + this.heightControl.units] , "Change", "pi", prevPosition);
                 this.savedPosition = null;
             }
         }
@@ -181,7 +238,7 @@ exports.PositionSize = Montage.create(Component, {
             var prevPosition, items;
 
             if(!event.wasSetByCode) {
-                if(this.savedPosition) prevPosition = [this.savedPosition + "px"];
+                if(this.savedPosition) prevPosition = [this.savedPosition];
 
                 this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.model.documentRoot];
 
@@ -196,7 +253,7 @@ exports.PositionSize = Montage.create(Component, {
 
                 }
 
-                this.application.ninja.elementMediator.setProperty(items, "width", [this.widthControl.value + "px"] , "Change", "pi", prevPosition);
+                this.application.ninja.elementMediator.setProperty(items, "width", [this.widthControl.value + this.widthControl.units] , "Change", "pi", prevPosition);
                 this.savedPosition = null;
 
             }
@@ -208,7 +265,7 @@ exports.PositionSize = Montage.create(Component, {
         value: function(event) {
             if(!event.wasSetByCode) {
                 if(!this.savedPosition) this.savedPosition = this.leftPosition;
-                this.application.ninja.elementMediator.setProperty(this.application.ninja.selectedElements, "left", [this.leftControl.value + "px"] , "Changing", "pi");
+                this.application.ninja.elementMediator.setProperty(this.application.ninja.selectedElements, "left", [this.leftControl.value + this.leftControl.units] , "Changing", "pi");
             }
 
         }
@@ -218,7 +275,7 @@ exports.PositionSize = Montage.create(Component, {
         value: function(event) {
             if(!event.wasSetByCode) {
                 if(!this.savedPosition) this.savedPosition = this.topPosition;
-                this.application.ninja.elementMediator.setProperty(this.application.ninja.selectedElements, "top", [this.topControl.value + "px"] , "Changing", "pi");
+                this.application.ninja.elementMediator.setProperty(this.application.ninja.selectedElements, "top", [this.topControl.value + this.topControl.units] , "Changing", "pi");
             }
 
         }
@@ -229,7 +286,7 @@ exports.PositionSize = Montage.create(Component, {
             var items;
             if(!event.wasSetByCode) {
 
-                if(!this.savedPosition) this.savedPosition = this.heightSize;
+                if(!this.savedPosition) this.savedPosition = this.heightSize + " " + this.heightUnits;
 
                 this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.model.documentRoot];
 
@@ -243,7 +300,7 @@ exports.PositionSize = Montage.create(Component, {
                     this.application.ninja.elementMediator.setProperty(items, "width", [newWidth + "px"] , "Changing", "pi");
                 }
 
-                this.application.ninja.elementMediator.setProperty(items, "height", [this.heightControl.value + "px"] , "Changing", "pi");
+                this.application.ninja.elementMediator.setProperty(items, "height", [this.heightSize + this.heightUnits] , "Changing", "pi");
 
             }
         }
@@ -254,7 +311,7 @@ exports.PositionSize = Montage.create(Component, {
             var items;
             if(!event.wasSetByCode) {
 
-                if(!this.savedPosition) this.savedPosition = this.widthSize;
+                if(!this.savedPosition) this.savedPosition = this.widthSize + " " + this.widthUnits;
 
                 this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.model.documentRoot];
 
@@ -267,7 +324,7 @@ exports.PositionSize = Montage.create(Component, {
                     this.application.ninja.elementMediator.setProperty(items, "height", [newHeight + "px"] , "Changing", "pi");
                 }
 
-                this.application.ninja.elementMediator.setProperty(items, "width", [this.widthControl.value + "px"] , "Changing", "pi");
+                this.application.ninja.elementMediator.setProperty(items, "width", [this.widthSize + this.widthUnits] , "Changing", "pi");
             }
         }
     }

@@ -9,15 +9,25 @@ var Component = require("montage/ui/component").Component;
 var ToolProperties = require("js/components/tools-properties/tool-properties").ToolProperties;
 
 var TagProperties = exports.TagProperties = Montage.create(ToolProperties, {
-    divElement:     { value: null, enumerable: false },
-    imageElement:   { value: null, enumerable: false },
-    videoElement:   { value: null, enumerable: false },
-    canvasElement:  { value: null, enumerable: false },
-    customElement:  { value: null, enumerable: false },
-    classField:     { value: null, enumerable: false },
-    customName:     { value: null, enumerable: false },
-    customLabel:    { value: null, enumerable: false },
+    divElement: {
+        value: null,
+        serializable: true
+    },
+
+    imageElement:   { value: null, serializable: true },
+    videoElement:   { value: null, serializable: true },
+    canvasElement:  { value: null, serializable: true },
+    customElement:  { value: null, serializable: true },
+    classField:     { value: null, serializable: true },
+    customName:     { value: null, serializable: true },
+    customLabel:    { value: null, serializable: true },
+
     addedColorChips: { value: false },
+
+    _fillColorCtrl: {
+        value: null,
+        serializable: true
+    },
 
     _fill: {
         enumerable: false,

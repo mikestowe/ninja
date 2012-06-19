@@ -12,11 +12,30 @@ var Montage = require("montage/core/core").Montage,
 //Exporting as MaterialsPopup
 exports.MaterialsPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
+    okButton: {
+        value: null,
+        serializable: true
+    },
+
+    cancelButton: {
+        value: null,
+        serializable: true
+    },
+
+    materialTitle: {
+        value: null,
+        serializable: true
+    },
+
 	// Material Properties
     _materialName: {
         enumerable: true,
         value: ""
     },
+
+	_useSelection: {  value: false,  enumerable: true },
+	_whichMaterial: { value: "fill", enumerable: true },
+	_originalValues: {value: null,  enumerable: true },
 
 	captureAction: {
 		value:function(event) {
@@ -24,6 +43,7 @@ exports.MaterialsPopup = Montage.create(Component, {
 			{
 				case "Cancel":
 					console.log("Cancel material edit");
+					this.revertToOriginalValues();
 					break;
 				case "OK":
 					console.log("Committing material with the following values:");
@@ -49,6 +69,46 @@ exports.MaterialsPopup = Montage.create(Component, {
 
             // Notify Materials Library to close popup
             NJevent("hideMaterialPopup");
+		}
+	},
+
+	revertToOriginalValues:
+	{
+		value: function()
+		{
+			if (this._originalValues)
+			{
+				this._material.importJSON( this._originalValues );
+
+				if (this._useSelection)
+				{
+					var selection = this.application.ninja.selectedElements;
+					if (selection && (selection.length > 0))
+					{
+						var nObjs = selection.length;
+						for (var iObj=0;  iObj<nObjs;  iObj++)
+						{
+							var canvas = selection[iObj];
+							var obj;
+							if (canvas.elementModel && canvas.elementModel.shapeModel)  obj = canvas.elementModel.shapeModel.GLGeomObj;
+							if (obj)
+							{
+								var matArray = obj._materialArray;
+								var matTypeArray = obj._materialTypeArray;
+								var nMats = matArray.length;
+								for (var iMat=0;  iMat<nMats;  iMat++)
+								{
+									if (matTypeArray[iMat] === this._whichMaterial)
+										matArray[iMat].importJSON( this._originalValues );
+								}
+								var world = obj.getWorld();
+								if (world)
+									world.restartRenderLoop();
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 
@@ -88,8 +148,9 @@ exports.MaterialsPopup = Montage.create(Component, {
 
     _handlePropertyChange:
     {
-        value: function(event)
+        value: function(theEvent)
         {
+			var event = theEvent._event;
             if(typeof event.propertyValue === "object")
             {
                 console.log(event.propertyLabel + " changed to ");
@@ -133,6 +194,37 @@ exports.MaterialsPopup = Montage.create(Component, {
 					var value = this.decodeValue( this._propTypes[index],  propValue );
 					this._material.setProperty( this._propNames[index],  value );
 				}
+
+				if (this._useSelection)
+				{
+					console.log( "apply to selection" );
+
+					var selection = this.application.ninja.selectedElements;
+					if (selection && (selection.length > 0))
+					{
+						var nObjs = selection.length;
+						for (var iObj=0;  iObj<nObjs;  iObj++)
+						{
+							var canvas = selection[iObj];
+							var obj;
+							if (canvas.elementModel && canvas.elementModel.shapeModel)  obj = canvas.elementModel.shapeModel.GLGeomObj;
+							if (obj)
+							{
+								var matArray = obj._materialArray;
+								var matTypeArray = obj._materialTypeArray;
+								var nMats = matArray.length;
+								for (var iMat=0;  iMat<nMats;  iMat++)
+								{
+									if (matTypeArray[iMat] === this._whichMaterial)
+										matArray[iMat].setProperty( this._propNames[index], value );
+								}
+								var world = obj.getWorld();
+								if (world)
+									world.restartRenderLoop();
+							}
+						}
+					}
+				}
 			}
 		}
 	},
@@ -158,14 +250,20 @@ exports.MaterialsPopup = Montage.create(Component, {
 					rtnValue = value;
 					break;
 
+				case "angle":
+					rtnValue = value*3.14159/180.0;
+					break;
+
 				case "file":
 					if (value && (value.length > 0))
 					{
 						var index = value.lastIndexOf( "/" );
 						if (index < 0)  index = value.lastIndexOf( "\\" );
 						if (index >= 0)
+						{
 							value = value.substr( index+1 );
-						value = "assets\\images\\" + value;
+							value = "assets/images/" + value;
+						}
 						rtnValue = value.slice(0);
 					}
 					break;
@@ -212,32 +310,74 @@ exports.MaterialsPopup = Montage.create(Component, {
 	loadMaterials:
 	{
 		enumerable: true,
-		value: function(materialID)
+		value: function(materialID,  useSelection,  whichMaterial)
 		{
-            //TODO - Hack to force repetition to draw. Setting .length = 0 did not work.
-            this.materialsData = [];
+			//TODO - Hack to force repetition to draw. Setting .length = 0 did not work.
+			this.materialsData = [];
 
-            this._materialName = materialID;
-            if(
-					(materialID ===  "UberMaterial")				||
-					(materialID ===  "FlatMaterial")				||
-					(materialID ===  "BumpMetalMaterial")			||
-					(materialID ===  "LinearGradientMaterial")		||
-					(materialID ===  "RadialGradientMaterial")
-				)
+			var material;
+			this._materialName = materialID;
+			if (useSelection)
 			{
-				var material = MaterialsModel.getMaterial( materialID );
-				if (material)
+				this._useSelection = true;
+				var selection = this.application.ninja.selectedElements;
+				if (selection && (selection.length > 0))
 				{
-					this._material = material;
-                    this.materialsData = this.getMaterialData( material );
+					var canvas = selection[0];
+					var obj;
+					this._whichMaterial = whichMaterial;
+					if (canvas.elementModel && canvas.elementModel.shapeModel)  obj = canvas.elementModel.shapeModel.GLGeomObj;
+					if (obj)
+						material = (whichMaterial === 'stroke') ? obj.getStrokeMaterial() : obj.getFillMaterial();
 				}
-            }
-            else
-            {
-                this.materialsData = this[materialID];
-            }
-            this.needsDraw = true;
+			}
+			else
+			{
+				this._useSelection = false;
+
+				if(
+						(materialID ===  "Bump Metal")		||
+						(materialID ===  "Deform")			||
+						(materialID ===  "Flat")			||
+						(materialID ===  "Flag")			||
+						(materialID ===  "Fly")				||
+						(materialID ===  "Julia")			||
+						(materialID ===  "Keleidoscope")	||
+						(materialID ===  "Linear Gradient")	||
+						(materialID ===  "Mandel")			||
+						(materialID ===  "Paris")			||
+						(materialID ===  "Plasma")			||
+						(materialID ===  "Pulse")			||
+						(materialID ===  "Radial Blur")		||
+						(materialID ===  "Radial Gradient")	||
+						(materialID ===  "Raiders")			||
+						(materialID ===  "Relief Tunnel")	||
+						(materialID ===  "Square Tunnel")	||
+						(materialID ===  "Star")			||
+						(materialID ===  "Taper")			||
+						(materialID ===  "Tunnel")			||
+						(materialID ===  "Twist")			||
+						(materialID ===  "Twist Vertex")	||
+						(materialID ===  "Uber")			||
+						(materialID ===  "Water")			||
+						(materialID ===  "Z-Invert")
+					)
+				{
+					material = MaterialsModel.getMaterial( materialID );
+				}
+			}
+				
+			if (material)
+			{
+				this._material = material;
+				this._originalValues = material.exportJSON();
+				this.materialsData = this.getMaterialData( material );
+			}
+			else
+			{
+				this.materialsData = this[materialID];
+			}
+			this.needsDraw = true;
 		}
 	},
 
@@ -276,6 +416,10 @@ exports.MaterialsPopup = Montage.create(Component, {
 						obj = this.createFloatData( propLabels[i], propValues[i] );
 						break;
 
+					case "angle":
+						obj = this.createFloatData( propLabels[i], propValues[i]*180.0/3.14159 );
+						break;
+
 					case "file":
 						obj = this.createFileData( propLabels[i], propValues[i] );
 						break;
@@ -304,7 +448,7 @@ exports.MaterialsPopup = Montage.create(Component, {
 	{
 		value:  function( label,  color )
 		{
-            var css = 'rgba(' + color[0]*255 + ',' + color[1]*255 + ',' + color[2]*255 + ',' + color[3] + ')';
+            var css = 'rgba(' + Math.floor(color[0]*255) + ',' + Math.floor(color[1]*255) + ',' + Math.floor(color[2]*255) + ',' + color[3] + ')';
             var colorObj = this.application.ninja.colorController.getColorObjFromCss(css)
 			var obj =
 			{
@@ -333,7 +477,7 @@ exports.MaterialsPopup = Montage.create(Component, {
                 "defaults":
                 {
                     "minValue": 0,
-                    "maxValue": 128,
+                    "maxValue": 400,
                     "decimalPlace": 100,
 					"value": value
                 }
