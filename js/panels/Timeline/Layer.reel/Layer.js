@@ -368,6 +368,41 @@ var Layer = exports.Layer = Montage.create(Component, {
         	this.layerData.isVisible = value;
         }
     },
+
+    _isLock:{
+        value: false
+    },
+
+    isLock:{
+        get:function(){
+            return this._isLock;
+        },
+        set:function(value){
+            if (this._isLock !== value) {
+                this._isLock = value;
+
+            }
+            this.layerData.isLock = value;
+        }
+    },
+
+    _isHidden:{
+        value: false
+    },
+
+    isHidden:{
+        get:function(){
+            return this._isHidden;
+        },
+        set:function(value){
+            if (this._isHidden !== value) {
+                this._isHidden = value;
+
+            }
+            this.layerData._isHidden = value;
+        }
+    },
+
     
     _justAdded: {
     	value: false
@@ -1220,6 +1255,77 @@ var Layer = exports.Layer = Montage.create(Component, {
                 }
 
             }
+        }
+    },
+
+    handleLayerLock: {
+            value: function() {
+               var i = 0;
+               var arrlength = this.application.ninja.timeline.arrLayers.length;
+               var lockElementArrLength = this.application.ninja.currentDocument.lockedElements.length;
+               if(!this.layerData.isLock){
+                   for(i = 0; i < arrlength; i++){
+                      if(this.application.ninja.timeline.arrLayers[i].layerData.isLock){
+                          this.application.ninja.timeline.arrLayers[i].layerData.isLock = false;
+                          this.application.ninja.timeline.arrLayers[i].layerData.isSelected = false;
+                          for(var k = 0; k < lockElementArrLength; k++){
+                              if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.elementsList[0]){
+                                  this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                                  break;
+                              }
+                          }
+                      }
+                   }
+                   this.layerData.isSelected = false;
+                   this.application.ninja.timeline.selectLayers([]);
+                   this.application.ninja.currentDocument.lockedElements.push(this.layerData.elementsList[0]);
+               } else {
+                   this.layerData.isSelected = true;
+                   for(k = 0; k<lockElementArrLength; k++){
+                     if(this.application.ninja.currentDocument.lockedElements[k] === this.layerData.elementsList[0]){
+                         this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                         break;
+                     }
+                   }
+               }
+               this.layerData.isLock = !this.layerData.isLock;
+
+            }
+        },
+
+    handleLayerVisibility:{
+        value:function(){
+            var i = 0;
+            var arrlength = this.application.ninja.timeline.arrLayers.length;
+            var lockElementArrLength=this.application.ninja.currentDocument.lockedElements.length;
+            if(!this.layerData.isHidden){
+                for(i = 0; i<arrlength; i++){
+                    if(this.application.ninja.timeline.arrLayers[i].layerData.isHidden){
+                        this.application.ninja.timeline.arrLayers[i].layerData.isHidden = false;
+                        this.application.ninja.timeline.arrLayers[i].layerData.elementsList[0].style.visibility = "visible";
+                        for(var k = 0;k < lockElementArrLength;k++){
+                            if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.elementsList[0]){
+                                this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                                break;
+                            }
+                        }
+                    }
+
+                }
+             this.layerData.elementsList[0].style.visibility = "hidden";
+             this.application.ninja.currentDocument.lockedElements.push(this.layerData.elementsList[0]);
+
+            } else {
+                this.layerData.elementsList[0].style.visibility = "visible";
+                for(var k = 0; k < lockElementArrLength; k++){
+                    if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.elementsList[0]){
+                        this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                        break;
+                    }
+                }
+            }
+            this.layerData.isHidden = !this.layerData.isHidden;
+
         }
     },
 
