@@ -64,11 +64,15 @@ exports.BindingPanel = Montage.create(Component, {
 
     handleAddAction : {
         value: function(e) {
-            var newBindingArgs = {
-                sourceObject : this.application.ninja.objectsController.currentObject
-            };
+            var sourceObject = this.application.ninja.objectsController.currentObject;
 
-            this.displayEditView(newBindingArgs);
+            if(sourceObject) {
+                this.displayEditView({
+                    sourceObject: sourceObject
+                });
+            } else {
+                this.displayEditView();
+            }
         }
     },
 
