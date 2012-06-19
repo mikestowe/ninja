@@ -27,6 +27,12 @@
                     "objects": {"<-": "@owner.bindables"}
                 }
             },
+            "objectsTray" : {
+                "prototype": "js/stage/objects-tray.reel",
+                "properties": {
+                    "element": {"#": "objects-tray" }
+                }
+            },
             "hud": {
                 "prototype": "js/stage/binding-view.reel/binding-hud.reel",
                 "properties": {
@@ -55,6 +61,10 @@
             <div data-montage-id="hud">
 
             </div>
+        </div>
+
+        <div class="objects-tray-container">
+            <div data-montage-id="objects-tray" ></div>
         </div>
 
     </section>
