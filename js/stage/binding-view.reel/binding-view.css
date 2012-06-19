@@ -27,7 +27,7 @@
 }
 
 .objects-tray-container {
-    bottom: 10px;
+    bottom:0;
     position: absolute;
     width: 100%;
     display: -webkit-box;
