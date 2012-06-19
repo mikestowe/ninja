@@ -250,27 +250,25 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
     pasteFromCut:{
           value:function(){
               var i=0, j=0,
-                  clipboardHelper=this.createClipboardHelper(),
                   node = null, canvas = null,
                   styles=null,
                   pastedElements = [];//array of te pastes clones - for selection
 
               for(j=0; j< this.copiedObjects.cut.length; j++){
-                  clipboardHelper.innerHTML = this.copiedObjects.cut[j].outerhtml;
+                  node = this.deserializeHtmlString(this.copiedObjects.cut[j].outerhtml)[0];
 
-                  if (clipboardHelper.lastChild.tagName === "CANVAS"){
+                  if (node.tagName === "CANVAS"){
                       //paste canvas
                       canvas = this.generateNewCanvas(this.copiedObjects.cut[j].outerhtml, this.copiedObjects.cut[j].styles, this.copiedObjects.cut[j].className, this.copiedObjects.cut[j].worldJson);
                       NJevent("elementAdded", canvas);
                       pastedElements.push(canvas);
-                      clipboardHelper.removeChild(clipboardHelper.lastChild);
+                      node = null;
                   }
-                  else if((clipboardHelper.lastChild.nodeType === 3) || (clipboardHelper.lastChild.tagName === "A")){//TextNode
+                  else if((node.nodeType === 3) || (node.tagName === "A")){//TextNode
 
-
+                      node = null;
                   }
                   else {
-                      node = clipboardHelper.removeChild(clipboardHelper.lastChild);
                       this.pastePositioned(node, this.copiedObjects.cut[j].styles, true/*notify*/, false/*fromCopy*/);
                       pastedElements.push(node);
                   }
@@ -286,78 +284,81 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
         value: function(htmlData, textData){
             var i=0, j=0,
                 pasteDataObject=null,
-                clipboardHelper=this.createClipboardHelper(),
                 pastedElements = null,
-                node = null,
+                node = null, nodeList = null,
                 styles = null,
                 divWrapper = null,
                 spanWrapper = null,
-                metaEl = null;
+                metaEl = null,
+                self = this;
 
             if(htmlData){
 
                 //TODO: cleanse HTML
 
-                //TODO: remove all script tags for security
                 htmlData.replace(/[<script]/g," ");
 
                 this.application.ninja.selectedElements.length = 0;
                 NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": true} );
 
                 try{
-                    clipboardHelper.innerHTML = htmlData;//this removes html and body tags
+                    nodeList = self.deserializeHtmlString(htmlData);//this removes html and body tags
                 }
                 catch(e){
                     console.log(""+e.stack);
                 }
 
-                while(clipboardHelper.hasChildNodes()){
-                    if(clipboardHelper.lastChild.tagName === "META") {
-                        clipboardHelper.removeChild(clipboardHelper.lastChild);//remove unnecesary meta tag
+                for(i=0; i < nodeList.length; i++){
+                    if(nodeList[i].tagName === "META") {
+                        nodeList[i] = null;
                     }
-                    else if (clipboardHelper.lastChild.tagName === "CANVAS"){
+                    else if (nodeList[i].tagName === "CANVAS"){
                         //can't paste external canvas for lack of all metadata
-                        clipboardHelper.removeChild(clipboardHelper.lastChild);
+                        nodeList[i] = null;
                     }
-                    else if((clipboardHelper.lastChild.nodeType === 3) || (clipboardHelper.lastChild.tagName === "A")){
-                        node = clipboardHelper.removeChild(clipboardHelper.lastChild);
+                    else if((nodeList[i].nodeType === 3) || (nodeList[i].tagName === "A")){
+                        node = nodeList[i].cloneNode(true);
 
                         divWrapper = document.application.njUtils.make("div", null, this.application.ninja.currentDocument);
                         spanWrapper = document.application.njUtils.make("span", null, this.application.ninja.currentDocument);
                         spanWrapper.appendChild(node);
                         divWrapper.appendChild(spanWrapper);
-                        styles = null;
-                        //end - todo : not working
+                        styles = {"position":"absolute", "top":"100px", "left":"100px"};
 
                         this.pastePositioned(divWrapper, styles, true/*notify*/);
-                    }else if(clipboardHelper.lastChild.tagName === "SPAN"){
-                        node = clipboardHelper.removeChild(clipboardHelper.lastChild);
+
+                        nodeList[i] = null;
+
+                    }else if(nodeList[i].tagName === "SPAN"){
+                        node = nodeList[i].cloneNode(true);
 
                         divWrapper = document.application.njUtils.make("div", null, this.application.ninja.currentDocument);
                         divWrapper.appendChild(node);
-                        styles = null;
-                        //end - todo : not working
+                        styles =  {"position":"absolute", "top":"100px", "left":"100px"};
 
                         this.pastePositioned(divWrapper, styles, true/*notify*/);
+
+                        nodeList[i] = null;
                     }
                     else {
-                        node = clipboardHelper.removeChild(clipboardHelper.lastChild);
+                        node = nodeList[i].cloneNode(true);
 
                         //get class string while copying .... generate styles from class
-                        styles = null;
+                        styles = {"position":"absolute", "top":"100px", "left":"100px"};
 
                         this.pastePositioned(node, styles, true/*notify*/);
+
+                        nodeList[i] = null;
                     }
 
                 }
 
+                nodeList = null;
+
                 this.application.ninja.currentDocument.model.needsSave = true;
             }else if(textData){
-
-                //USE styles controller to create the styles of the div and span
-                clipboardHelper.innerHTML = "<div><span>"+ textData +"</span></div>";//add the copied html to generate the nodes
-                node = clipboardHelper.removeChild(clipboardHelper.lastChild);
-                styles = null;//get real stage center coordinates
+                node = self.deserializeHtmlString("<div><span>"+ textData +"</span></div>")[0];
+                styles = {"position":"absolute", "top":"100px", "left":"100px"};
                 this.pastePositioned(node, styles, true/*notify*/);
             }
 
@@ -408,24 +409,21 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
         }
     },
 
-    createClipboardHelper:{
-        value:function(){
+    deserializeHtmlString:{
+        value:function(htmlString){
             var doc = (this.application.ninja.currentDocument.currentView === "design") ? this.application.ninja.currentDocument.model.views.design.document : document,
-                clipboardHelper=doc.getElementById("clipboardHelper");
-            if(!clipboardHelper){
-                clipboardHelper = doc.createElement ("div");
-                clipboardHelper.id = "clipboardHelper";
-                clipboardHelper.style.display="none";
-                clipboardHelper.style.position = "absolute";
-                clipboardHelper.style.right = "-1000px";
-                clipboardHelper.style.top = "-1000px";
+                clipboardHelper=doc.createElement("div"),
+                nodeList = null;
 
-                doc.body.appendChild (clipboardHelper);
-            }
-            return clipboardHelper;
+            clipboardHelper.innerHTML = htmlString;
+
+            nodeList = clipboardHelper.childNodes;
+
+            clipboardHelper = null; //for garbage collection
+
+            return nodeList;
         }
     },
-
 
     serializeHTMLElement:{
         value: function(elem){
