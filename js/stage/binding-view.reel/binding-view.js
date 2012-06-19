@@ -388,10 +388,10 @@ exports.BindingView = Montage.create(Component, {
             if(nodeEl.classList.contains("connectorBubble")) {
 //            var mouseUpPoint = new WebKitPoint(e.pageX, e.pageY);
 //            var nodeEl = new webkitConvertPointFromPageToNode(this.element, mouseUpPoint);
-                debugger;
+                //debugger;
             this.connectionElementEnd = nodeEl.parentElement.controller.parentComponent.parentComponent.userComponent;
             this.connectionPropertyEnd = nodeEl.parentElement.controller.title;
-            console.log(this.connectionElementStart, this.connectionPropertyStart, this.connectionElementEnd, this.connectionPropertyEnd);
+            //console.log(this.connectionElementStart, this.connectionPropertyStart, this.connectionElementEnd, this.connectionPropertyEnd);
                 this.application.ninja.objectsController.addBinding({
                     sourceObject: this.connectionElementStart,
                     sourceObjectPropertyPath: this.connectionPropertyStart,
