@@ -41,6 +41,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this._tween = newVal;
         }
     },
+
+    positionPropertyTrack:{
+        value:null
+    },
     
     _isFirstDraw: {
     	value: true
@@ -171,9 +175,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._arrPositionTracks = newVal;
-    		if (typeof(this.trackData) === "undefined") {
-    			//this.createTrackData();
-    		}
     		this.trackData.arrPositionTracks = newVal;
             
     	}
@@ -189,8 +190,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     		this._positionTracksRepetition = newVal;
     	}
     },
-    
-    
+
+
     /* Transform Property Tracks */
     _arrTransformTracks : {
     	value: []
@@ -470,6 +471,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.bypassAnimation = this.trackData.bypassAnimation;
             this.trackID = this.trackData.layerID;
             this.tweens = this.trackData.tweens;
+            this.arrPositionTracks = this.trackData.arrPositionTracks;
             this.animatedElement = this.trackData.animatedElement;
             this.arrStyleTracks = this.trackData.arrStyleTracks;
             this.isTrackAnimated = this.trackData.isTrackAnimated;
@@ -486,6 +488,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.needsDraw = true;
         }
     },
+
     createTrackData: {
     	value: function() {
     		tempData = {};
@@ -494,6 +497,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             tempData.tweens = this.tweens;
             tempData.animatedElement = this.animatedElement; 
             tempData.arrStyleTracks = this.arrStyleTracks;
+            tempData.arrPositionTracks = this.arrPositionTracks;
             tempData.isTrackAnimated = this.isTrackAnimated;
             tempData.trackDuration = this.trackDuration;
             tempData.animationName = this.animationName;
@@ -785,7 +789,20 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 this.nextKeyframe += 1;
             }
 
+            this.createMatchingPositionSizeTweens(clickPos);
+
             this.application.ninja.currentDocument.model.needsSave = true;
+        }
+    },
+
+    createMatchingPositionSizeTweens:{
+        value:function (position) {
+            console.log(this.positionTracksRepetition);
+            var i;
+            var posTracks = this.positionTracksRepetition.length;
+            for (i = 0; i < posTracks; i++) {
+
+            }
         }
     },
 

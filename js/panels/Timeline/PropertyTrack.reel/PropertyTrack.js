@@ -40,10 +40,6 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         value:""
     },
 
-    _propTweenRepetition:{
-        value:null
-    },
-
     animatedElement:{
         value:null
     },
@@ -52,8 +48,11 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         value:true
     },
 
+    _propTweenRepetition:{
+        value:null
+    },
+
     propTweenRepetition:{
-        serializable:true,
         get:function () {
             return this._propTweenRepetition;
         },

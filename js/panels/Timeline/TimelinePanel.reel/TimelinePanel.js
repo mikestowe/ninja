@@ -686,6 +686,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             returnObj.layerData.currentKeyframeRule = null;
             returnObj.layerData.trackPosition = 0;
             returnObj.layerData.arrStyleTracks = [];
+            returnObj.layerData.arrPositionTracks = [];
             returnObj.layerData.tweens = [];
             returnObj.layerData.layerTag = "";
             returnObj.layerData.isVisible = true;
