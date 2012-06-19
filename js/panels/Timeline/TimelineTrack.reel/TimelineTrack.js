@@ -41,6 +41,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this._tween = newVal;
         }
     },
+
+    positionPropertyTrack:{
+        value:null
+    },
     
     _isFirstDraw: {
     	value: true
@@ -171,9 +175,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._arrPositionTracks = newVal;
-    		if (typeof(this.trackData) === "undefined") {
-    			//this.createTrackData();
-    		}
     		this.trackData.arrPositionTracks = newVal;
             
     	}
@@ -189,8 +190,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     		this._positionTracksRepetition = newVal;
     	}
     },
-    
-    
+
+
     /* Transform Property Tracks */
     _arrTransformTracks : {
     	value: []
@@ -470,6 +471,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.bypassAnimation = this.trackData.bypassAnimation;
             this.trackID = this.trackData.layerID;
             this.tweens = this.trackData.tweens;
+            this.arrPositionTracks = this.trackData.arrPositionTracks;
             this.animatedElement = this.trackData.animatedElement;
             this.arrStyleTracks = this.trackData.arrStyleTracks;
             this.isTrackAnimated = this.trackData.isTrackAnimated;
@@ -486,6 +488,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.needsDraw = true;
         }
     },
+
     createTrackData: {
     	value: function() {
     		tempData = {};
@@ -494,6 +497,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             tempData.tweens = this.tweens;
             tempData.animatedElement = this.animatedElement; 
             tempData.arrStyleTracks = this.arrStyleTracks;
+            tempData.arrPositionTracks = this.arrPositionTracks;
             tempData.isTrackAnimated = this.isTrackAnimated;
             tempData.trackDuration = this.trackDuration;
             tempData.animationName = this.animationName;
@@ -759,12 +763,16 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 newTween.tweenData.keyFrameMillisec = 0;
                 newTween.tweenData.tweenID = 0;
                 newTween.tweenData.spanPosition = 0;
+                newTween.tweenData.easing = "none";
                 newTween.tweenData.tweenedProperties = [];
                 newTween.tweenData.tweenedProperties["top"] = this.animatedElement.offsetTop + "px";
                 newTween.tweenData.tweenedProperties["left"] = this.animatedElement.offsetLeft + "px";
                 newTween.tweenData.tweenedProperties["width"] = this.animatedElement.offsetWidth + "px";
                 newTween.tweenData.tweenedProperties["height"] = this.animatedElement.offsetHeight + "px";
                 this.tweens.push(newTween);
+
+                this.createMatchingPositionSizeTween(newTween);
+
             } else {
                 newTween.tweenData.spanWidth = clickPos - this.tweens[this.tweens.length - 1].tweenData.keyFramePosition;
                 newTween.tweenData.keyFramePosition = clickPos;
@@ -783,9 +791,23 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 var animationDuration = (this.trackDuration / 1000) + "s";
                 this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
                 this.nextKeyframe += 1;
+
+                this.createMatchingPositionSizeTween(newTween);
             }
 
+
+
             this.application.ninja.currentDocument.model.needsSave = true;
+        }
+    },
+
+    createMatchingPositionSizeTween:{
+        value:function (newTween) {
+            var i;
+            var posTracks = this.positionTracksRepetition.childComponents.length;
+            for (i = 0; i < posTracks; i++) {
+                this.positionTracksRepetition.childComponents[i].propTweens.push(newTween);
+            }
         }
     },
 
@@ -795,8 +817,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             	i,
             	tweensLength = this.tweens.length-1,
             	prevTween, nextTween, splitTweenIndex;
-            
-            consol.log(ev.target.className)
+
             for(i=0; i<tweensLength; i++){
                 prevTween = this.tweens[i].tweenData.keyFramePosition;
                 nextTween = this.tweens[i+1].tweenData.keyFramePosition;

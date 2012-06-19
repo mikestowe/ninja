@@ -17,7 +17,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         value:function(){
             this.element.addEventListener("click", this, false);
             this.trackID = this.parentComponent.parentComponent.parentComponent.trackID;
-            this.animatedElement = this.parentComponent.parentComponent.parentComponent.animatedElement;
+            this.animatedElement = this.parentComponent.parentComponent.parentComponent.parentComponent.animatedElement;
             this.ninjaStylesContoller = this.application.ninja.stylesController;
         }
     },
@@ -40,10 +40,6 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         value:""
     },
 
-    _propTweenRepetition:{
-        value:null
-    },
-
     animatedElement:{
         value:null
     },
@@ -52,8 +48,11 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         value:true
     },
 
+    _propTweenRepetition:{
+        value:null
+    },
+
     propTweenRepetition:{
-        serializable:true,
         get:function () {
             return this._propTweenRepetition;
         },
@@ -181,7 +180,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
             if (ev.shiftKey) {
 
                 if (this.trackType == "position") {
-                    this.parentComponent.parentComponent.parentComponent.handleNewTween(ev);
+                    this.parentComponent.parentComponent.parentComponent.parentComponent.handleNewTween(ev);
                 }
 
                 if (this.propTweens.length < 1) {
@@ -200,16 +199,17 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                             this.trackEditorProperty = this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles[currentSelectedStyleIndex].editorProperty;
                             //console.log("Property track editorProperty set to: " + this.trackEditorProperty);
                         }
+                        this.insertPropTween(0);
+                        this.addPropAnimationRuleToElement(ev);
+                        this.updatePropKeyframeRule();
                     } else if (this.trackType == "position") {
                         //console.log("Property track editorProperty set to: " + this.trackEditorProperty);
                     }
-
-                    this.insertPropTween(0);
-                    this.addPropAnimationRuleToElement(ev);
-                    this.updatePropKeyframeRule();
                 } else {
                     this.handleNewPropTween(ev);
-                    this.updatePropKeyframeRule();
+                    if (this.trackType == "style") {
+                        this.updatePropKeyframeRule();
+                    }
                 }
             }
         }
@@ -231,11 +231,28 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
     },
 
     handleNewPropTween:{
-        value:function(ev){
+        value:function (ev) {
             if (ev.offsetX > this.propTweens[this.propTweens.length - 1].tweenData.keyFramePosition) {
                 this.insertPropTween(ev.offsetX);
             } else {
-                console.log("Splitting style tweens not yet supported.");
+                // We will be splitting a tween.  Get the x-coordinate of the mouse click within the target element.
+                // You'd think you could use the event.x info for that, right? NO. We must use page values, calculating offsets and scrolling.
+
+                // Here's an easy function that adds up offsets and scrolls and returns the page x value of an element
+                var findXOffset = function (obj) {
+                    var curleft = 0;
+                    if (obj.offsetParent) {
+                        do {
+                            curleft += (obj.offsetLeft - obj.scrollLeft);
+
+                        } while (obj = obj.offsetParent);
+                    }
+                    return curleft;
+                }
+                var targetElementOffset = findXOffset(ev.currentTarget),
+                    position = event.pageX - targetElementOffset;
+
+                this.splitPropTweenAt(position - 18);
             }
         }
     },
@@ -321,6 +338,68 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                 }
             }
             this.application.ninja.currentDocument.model.needsSave = true;
+        }
+    },
+
+    // splitTweenAt: Split a tween at a particular position (x coordinate)
+    splitPropTweenAt:{
+        value:function (position) {
+            var i, j, nextComponentIndex,
+                tweensLength = this.propTweens.length - 1,
+                prevTween,
+                nextTween,
+                splitTweenIndex;
+
+            // Search through the tweens and find the pair whose keyframes bracket position.
+            for (i = 0; i < tweensLength; i++) {
+                prevTween = this.propTweens[i].tweenData.keyFramePosition;
+                nextTween = this.propTweens[i + 1].tweenData.keyFramePosition;
+                if (position > prevTween && position < nextTween) {
+
+                    // We will insert a new tween at this index
+                    splitTweenIndex = i + 1;
+
+                    // Update the next tween to have new span position and width.
+                    this.propTweens[i + 1].tweenData.spanPosition = position;
+                    this.propTweens[i + 1].spanPosition = position;
+                    this.propTweens[i + 1].tweenData.spanWidth = this.propTweens[i + 1].tweenData.keyFramePosition - position;
+                    this.propTweens[i + 1].spanWidth = this.propTweens[i + 1].keyFramePosition - position;
+
+                    // You'd think that would be enough to make the component associated with that part of the array redraw, wouldn't you?
+                    // Turns out we have to manually poke the desired childComponent in the repetition to register its new changes.
+                    // So we have to get the index of the actual componentin the repetition, which may not match our iteration index.
+                    for (j = 0; j < tweensLength + 1; j++) {
+                        if (this.propTweenRepetition.childComponents[j].keyFramePosition === nextTween) {
+                            nextComponentIndex = j;
+                        }
+                    }
+                    this.propTweenRepetition.childComponents[nextComponentIndex].setData();
+
+                    // Create the new tween and splice it into the model
+                    var newTweenToInsert = {};
+                    newTweenToInsert.tweenData = {};
+                    newTweenToInsert.tweenData.spanWidth = position - prevTween;
+                    newTweenToInsert.tweenData.keyFramePosition = position;
+                    newTweenToInsert.tweenData.keyFrameMillisec = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80) * position;
+                    newTweenToInsert.tweenData.tweenID = this.propTweens.length;
+                    newTweenToInsert.tweenData.spanPosition = position - newTweenToInsert.tweenData.spanWidth;
+                    newTweenToInsert.tweenData.tweenedProperties = [];
+                    newTweenToInsert.tweenData.tweenedProperties[this.trackEditorProperty] = this.ninjaStylesContoller.getElementStyle(this.animatedElement, this.trackEditorProperty);
+                    this.propTweens.splice(splitTweenIndex, 0, newTweenToInsert);
+
+                    // We are done, so end the loop.
+                    i = tweensLength;
+                }
+            }
+
+            // We've made a change, so set the needsSave flag
+            this.application.ninja.currentDocument.model.needsSave = true;
+
+            // Our tween IDs are now all messed up.  Fix them.
+            for (i = 0; i <= tweensLength + 1; i++) {
+                this.propTweens[i].tweenID = i;
+                this.propTweens[i].tweenData.tweenID = i;
+            }
         }
     },
 

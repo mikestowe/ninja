@@ -17,6 +17,8 @@
                            "tweenRepetition" : {"@" : "tweenRepetition"},
                            "track_lanes" : {"#" : "track_lanes"},
                            "tween": {"@" : "tween"},
+                           "positionTracksRepetition" : {"@" : "positionTracksRepetition"},
+                           "positionPropertyTrack" : {"@" : "positionPropertyTrack"},
                            "mainCollapser" : {"@" : "mainCollapser"},
                            "positionCollapser" : {"@" : "positionCollapser"},
                            "styleCollapser" : {"@" : "styleCollapser"}
@@ -81,7 +83,7 @@
                    "positionTracksRepetition": {
                        "prototype": "montage/ui/repetition.reel",
                    	   "properties": {
-                   	       "element": {"#": "content-position-tracks"},
+                   	       "element": {"#": "content_position_tracks"},
                    	       "isSelectionEnabled" : false
                    	   },
                    	   "bindings": {
@@ -95,7 +97,7 @@
 					"positionPropertyTrack" : {
 						"prototype" : "js/panels/Timeline/PropertyTrack.reel",
 						"properties" : {
-							"element":{"#": "position-track-base"}
+							"element":{"#": "position_track_base"}
 						},
                         "bindings" : {
                             "propTrackData" : {
@@ -134,8 +136,8 @@
 					"positionCollapser" : {
 						"prototype" : "js/panels/timeline/Collapser",
 						"properties" : {
-							"element" : {"#" : "content-position-tracks"},
-							"myContent" : {"#":"content-position-tracks"},
+							"element" : {"#" : "content_position_collapser"},
+							"myContent" : {"#":"content_position_collapser"},
 							"contentHeight" : 40,
 							"isLabelClickable" : false,
 							"clicker" : {"#" : "label-position"},
@@ -194,11 +196,14 @@
             <div class="label-main collapsible-label collapsible-collapsed" data-montage-id="label-main"></div>
             <div class="collapsible-content collapsible-collapsed content-main" data-montage-id="content-main">
             	<div class="label-position collapsible-label collapsible-collapsed" data-montage-id="label-position">
-            		
-            	</div>
-            	<div class="content-position collapsible-content collapsible-collapsed" data-montage-id="content-position-tracks">
-            		<div data-montage-id="position-track-base"></div>
-            	</div>
+
+                </div>
+                <div class="content-position collapsible-content collapsible-collapsed"
+                     data-montage-id="content_position_collapser">
+                    <div data-montage-id="content_position_tracks">
+                        <div data-montage-id="position_track_base"></div>
+                    </div>
+                </div>
 
             	<div class="label-styles collapsible-label collapsible-collapsed" data-montage-id="label-styles">
             		
