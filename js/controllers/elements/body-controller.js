@@ -13,7 +13,8 @@ exports.BodyController = Montage.create(ElementController, {
     set3DProperties: {
         value: function(el, props, update3DModel) {
             var dist = props["dist"], mat = props["mat"];
-            this.application.ninja.stylesController.setElementStyle(el, "-webkit-transform", "perspective(" + dist + ") " + "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")");
+//            this.application.ninja.stylesController.setElementStyle(el, "-webkit-transform", "perspective(" + dist + ") " + "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")");
+            el.style["-webkit-transform"] = "perspective(" + dist + ") " + "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")";
 
             el.elementModel.props3D.matrix3d = mat;
             el.elementModel.props3D.perspectiveDist = dist;
@@ -37,7 +38,7 @@ exports.BodyController = Montage.create(ElementController, {
                 case "height":
                 case "width":
                 case "-webkit-transform-style":
-                    return this.application.ninja.stylesController.getElementStyle(el, p, true, true);
+                    return this.application.ninja.stylesController.getElementStyle(el, p);
                 default:
                     return ElementController.getProperty(el, p, true, true);
                     //console.log("Undefined Stage property ", p);

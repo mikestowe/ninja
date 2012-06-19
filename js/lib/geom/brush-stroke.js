@@ -31,6 +31,8 @@ var BrushStroke = function GLBrushStroke() {
     
     //the HTML5 canvas that holds this brush stroke
     this._canvas = null;
+    //flag indicating whether or not to freeze the size and position of canvas
+    this._freezeCanvas = false;
 
     //stroke information
     this._strokeWidth = 1.0;
@@ -174,11 +176,15 @@ BrushStroke.prototype.getStrokeWidth = function () {
 };
 
 BrushStroke.prototype.setStrokeWidth = function (w) {
-    this._strokeWidth = w;
-    if (this._strokeWidth<1) {
-        this._strokeWidth = 1;
+    if (this._strokeWidth!==w) {
+        this._strokeWidth = w;
+
+        if (this._strokeWidth<1) {
+            this._strokeWidth = 1;
+        }
+        this._isDirty=true;
+        this._freezeCanvas=false;
     }
-    this._isDirty=true;
 };
 /*
 BrushStroke.prototype.getStrokeMaterial = function () {
@@ -236,6 +242,7 @@ BrushStroke.prototype.setSmoothingAmount = function(a){
     if (this._strokeAmountSmoothing!==a) {
         this._strokeAmountSmoothing = a;
         this._isDirty = true;
+        this._freezeCanvas=false;
     }
 };
 
@@ -274,27 +281,32 @@ BrushStroke.prototype.setStrokeStyle = function (s) {
 };
 
 BrushStroke.prototype.setWidth = function (newW) {
-    if (newW<1) {
-        newW=1; //clamp minimum width to 1
+    //get the old width from the canvas controller if the canvas is frozen, or from bbox if not frozen.
+    var oldCanvasWidth = parseInt(CanvasController.getProperty(this._canvas, "width"));
+    if (!this._freezeCanvas){
+        oldCanvasWidth = Math.round(this._BBoxMax[0]-this._BBoxMin[0]);
+    }
+    var minWidth = 1+this._strokeWidth;
+    if (newW<minWidth) {
+        newW=minWidth; 
+    }
+
+    if (oldCanvasWidth<minWidth) {
+        oldCanvasWidth=minWidth;
     }
 
     //scale the contents of this subpath to lie within this width
     //determine the scale factor by comparing with the old width
-    var oldWidth = this._BBoxMax[0]-this._BBoxMin[0];
-    if (oldWidth<1) {
-        oldWidth=1;
-    }
-
-    var scaleX = newW/oldWidth;
+    var scaleX = (newW-this._strokeWidth)/(oldCanvasWidth-this._strokeWidth);
     if (scaleX===1) {
+        console.log("Ignoring setWidth because scale is "+scaleX);
         return; //no need to do anything
     }
-
     //scale the local point positions such that the width of the bbox is the newW
-    var origX = this._BBoxMin[0];
+    var origX = 0.5*this._strokeWidth;//this._BBoxMin[0]; //this represents the left edge
     var numPoints = this._LocalPoints.length;
     for (var i=0;i<numPoints;i++){
-        //compute the distance from the bboxMin
+        //compute the distance from the left edge
         var oldW = this._LocalPoints[i][0] - origX;
         this._LocalPoints[i] = [(origX + oldW*scaleX),this._LocalPoints[i][1],this._LocalPoints[i][2]];
 
@@ -305,24 +317,29 @@ BrushStroke.prototype.setWidth = function (newW) {
 };
 
 BrushStroke.prototype.setHeight = function (newH) {
-    if (newH<1) {
-        newH=1; //clamp minimum width to 1
+    var oldCanvasHeight = parseInt(CanvasController.getProperty(this._canvas, "height"));
+    if (!this._freezeCanvas){
+        oldCanvasHeight = this._BBoxMax[1]-this._BBoxMin[1];
     }
+    var minHeight = 1 + this._strokeWidth;
+    if (oldCanvasHeight<minHeight) {
+        oldCanvasHeight=minHeight;
+    }
+    if (newH<minHeight) {
+        newH=minHeight;
+    }
+
 
     //scale the contents of this subpath to lie within this height
     //determine the scale factor by comparing with the old height
-    var oldHeight = this._BBoxMax[1]-this._BBoxMin[1];
-    if (oldHeight<1) {
-        oldHeight=1;
-    }
-
-    var scaleY = newH/oldHeight;
+    var scaleY = (newH-this._strokeWidth)/(oldCanvasHeight-this._strokeWidth);
     if (scaleY===1) {
+        console.log("Ignoring setHeight because scale is 1");
         return; //no need to do anything
     }
 
     //scale the local point positions such that the width of the bbox is the newW
-    var origY = this._BBoxMin[1];
+    var origY = 0.5*this._strokeWidth;//this._BBoxMin[1]; //this represents the top edge
     var numPoints = this._LocalPoints.length;
     for (var i=0;i<numPoints;i++){
         //compute the distance from the bboxMin
@@ -611,7 +628,7 @@ BrushStroke.prototype.render = function () {
         //set the canvas by querying the world
         this._canvas = this.getWorld().getCanvas();
     }
-    if (this._canvas) {
+    if (this._canvas && !this._freezeCanvas) {
         var newLeft = Math.round(this._stageWorldCenter[0] - 0.5 * bboxWidth);
         var newTop = Math.round(this._stageWorldCenter[1] - 0.5 * bboxHeight);
         //assign the new position, width, and height as the canvas dimensions through the canvas controller
@@ -622,7 +639,7 @@ BrushStroke.prototype.render = function () {
         CanvasController.setProperty(this._canvas, "height", bboxHeight+"px");
         //this._canvas.elementModel.shapeModel.GLWorld.setViewportFromCanvas(this._canvas);
     }
-
+    this._freezeCanvas=true; //unless this is set to false, we will not update the canvas width and height anymore in the render function
 
     //get the context
     var ctx = world.get2DContext();
@@ -648,6 +665,7 @@ BrushStroke.prototype.buildColor = function(ctx,          //the 2D rendering con
     if (ipColor.gradientMode){
         var position, gradient, cs, inset; //vars used in gradient calculations
         inset = Math.ceil( lw ) - 0.5;
+        inset = 0;
 
         if(ipColor.gradientMode === "radial") {
             var ww = w - 2*lw,  hh = h - 2*lw;
@@ -719,7 +737,10 @@ BrushStroke.prototype.drawToContext = function(ctx, drawStageWorldPts, stageWorl
             var disp = [brushStamp[t][0], brushStamp[t][1]];
             var alphaVal = 1.0;
             var distFromOpaqueRegion = Math.abs(t-halfNumTraces) - opaqueRegionHalfWidth;
-            if (distFromOpaqueRegion>0) {
+            if (numTraces === 1){
+                distFromOpaqueRegion = 0;
+            }
+            else if (distFromOpaqueRegion>0) {
                 var transparencyFactor = distFromOpaqueRegion/maxTransparentRegionHalfWidth;
                 alphaVal = 1.0 - transparencyFactor;//(transparencyFactor*transparencyFactor);//the square term produces nonlinearly varying alpha values
                 alphaVal *= 0.5; //factor that accounts for lineWidth == 2

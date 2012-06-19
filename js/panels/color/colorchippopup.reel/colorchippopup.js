@@ -43,8 +43,8 @@ exports.ColorChipPopup = Montage.create(Component, {
     //
     setNoColor: {
     	enumerable: true,
-    	value: function (e) {
-    		this.colorManager.applyNoColor();
+    	value: function (code) {
+    		this.colorManager.applyNoColor(code);
     	}
     },
     ////////////////////////////////////////////////////////////////////

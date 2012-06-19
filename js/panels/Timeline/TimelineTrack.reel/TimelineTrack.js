@@ -11,10 +11,6 @@ var defaultEventManager = require("montage/core/event/event-manager").defaultEve
 
 var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
-    hasTemplate:{
-        value:true
-    },
-
     _trackID:{
         value:null
     },
@@ -31,6 +27,21 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         	}
         }
     },
+
+    _tween:{
+        value:[]
+    },
+
+    tween:{
+        serializable:true,
+        get:function () {
+            return this._tween;
+        },
+        set:function (newVal) {
+            this._tween = newVal;
+        }
+    },
+
     _isVisible:{
         value: true
     },
@@ -155,7 +166,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._arrPositionTracks = newVal;
-            this.trackData.arrPositionTracks = newVal;
+    		if (typeof(this.trackData) === "undefined") {
+    			//this.createTrackData();
+    		}
+    		this.trackData.arrPositionTracks = newVal;
+            
     	}
     },
     _positionTracksRepetition: {
@@ -333,14 +348,50 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     _positionCollapser:{
         value:null
     },
+    positionCollapser:{
+        serializable:true,
+        get:function(){
+            return this._positionCollapser;
+        },
+        set:function(val){
+            this._positionCollapser = val;
+        }
+    },
     _mainCollapser:{
         value:null
+    },
+    mainCollapser:{
+        serializable:true,
+        get:function () {
+            return this._mainCollapser;
+        },
+        set:function (val) {
+            this._mainCollapser = val;
+        }
     },
     _transformCollapser:{
         value:null
     },
+    transformCollapser:{
+        serializable:true,
+        get:function () {
+            return this._transformCollapser;
+        },
+        set:function (val) {
+            this._transformCollapser = val;
+        }
+    },
     _styleCollapser:{
         value:null
+    },
+    styleCollapser:{
+        serializable:true,
+        get:function () {
+            return this._styleCollapser;
+        },
+        set:function (val) {
+            this._styleCollapser = val;
+        }
     },
 
     _trackData:{
@@ -348,6 +399,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     trackData:{
+    	serializable: true,
         get:function(){
             return this._trackData;
         },
@@ -385,6 +437,27 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.isVisible = this.trackData.isVisible;
             this.needsDraw = true;
         }
+    },
+    createTrackData: {
+    	value: function() {
+    		tempData = {};
+            tempData.bypassAnimation = this.bypassAnimation;
+            tempData.trackID = this.layerID;
+            tempData.tweens = this.tweens;
+            tempData.animatedElement = this.animatedElement; 
+            tempData.arrStyleTracks = this.arrStyleTracks;
+            tempData.isTrackAnimated = this.isTrackAnimated;
+            tempData.trackDuration = this.trackDuration;
+            tempData.animationName = this.animationName;
+            tempData.currentKeyframeRule = this.currentKeyframeRule;
+            tempData.isMainCollapsed = this.isMainCollapsed;
+            tempData.isPositionCollapsed = this.isPositionCollapsed;
+            tempData.isTransformCollapsed = this.isTransformCollapsed;
+            tempData.isStyleCollapsed = this.isStyleCollapsed;
+            tempData.trackPosition = this.trackPosition;
+            tempData.isVisible = this.isVisible;
+            this.trackData = tempData;
+    	}
     },
     
     // Data binding observation point and trigger method

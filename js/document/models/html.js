@@ -27,11 +27,6 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
         	this.libs = {montage: false, canvas: false, montageId: null, canvasId: null};
 		}           
     },
-    ////////////////////////////////////////////////////////////////////
-    //
-    selectionContainer: {
-        value: []
-    },
 	////////////////////////////////////////////////////////////////////
 	//
     draw3DGrid: {

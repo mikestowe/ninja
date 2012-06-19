@@ -31,9 +31,10 @@
             "repetition": {
                 "prototype": "montage/ui/repetition.reel",
                 "properties": {
-                    "element": { "#": "topMenu" },
-                    "contentController": {"@": "menuController"},
-                    "menuComponent": {"@": "owner"}
+                    "element": { "#": "topMenu" }
+                },
+                "bindings": {
+                    "objects": {"<-": "@menudata.topLevelMenu"}
                 }
             },
 
@@ -43,17 +44,14 @@
                     "element": { "#": "menuItem" }
                 },
                 "bindings": {
-                    "data": {"<-": "@repetition.objectAtCurrentIteration"},
-                    "_menu": {"<-": "@repetition.menuComponent"}
+                    "data": {"<-": "@repetition.objectAtCurrentIteration"}
                 }
             },
             
             "owner": {
                 "prototype": "js/components/menu/menu.reel",
                 "properties": {
-                    "element":  {"#": "mainMenuBar"},
-                    "controller": {"@": "menuController"},
-                    "rep": {"@": "repetition"}
+                    "element":  {"#": "mainMenuBar"}
                 }
             }
         }

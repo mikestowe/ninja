@@ -9,6 +9,18 @@ var Montage = require("montage/core/core").Montage,
     ShorthandProps = require("js/panels/CSSPanel/css-shorthand-map");
 
 exports.StyleDeclaration = Montage.create(Component, {
+    arrayController: {
+        value: null
+    },
+
+    styleComponent: {
+        value: null
+    },
+
+    repetition: {
+        value: null
+    },
+
     cssText : { value: null },
     focusDelegate : { value: null },
     needsSort : { value: null },
