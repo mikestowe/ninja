@@ -19,7 +19,7 @@ attribute vec2 texcoord;
 uniform float u_limit1;
 uniform float u_limit2;
 uniform float u_twistAmount;
-uniform float u_center;
+//uniform float u_center;
 
 // texture sampler uniforms
 uniform sampler2D u_tex0;
@@ -63,17 +63,14 @@ void main(void)
 	vec2 uv = texcoord;
 	v_texcoord = texcoord;
 
-	//v_color = vec4(texcoord.x, texcoord.y, 0, 1);
-
 	v_zNormal = 1.0;
 	if (uv.x < u_limit2)
 	{
 		float angle = GetAngle( uv.x );
 		float cs = cos(angle),  sn = sin(angle);
 
-		pos.y -= u_center;
 		vec3 ctrPt = pos;
-		float y = pos.y*cs - pos.z*sn + u_center;
+		float y = pos.y*cs - pos.z*sn;	// + u_center;
 		pos.z   = pos.y*sn + pos.z*cs;
 		pos.y = y;
 
@@ -85,11 +82,7 @@ void main(void)
 		cs = cos(angle); sn = sin(angle);
 		rotMat = mat3( vec3( 1.0,  0.0,  0.0 ),  vec3( 0.0,   cs,   sn ),  vec3( 0.0,  -sn,   cs ) );
 		pt2 = rotMat * pt2;
-		pt0.y += u_center;  pt1.y += u_center;  pt2.y += u_center;
-		//vec4 nrm = u_projMatrix * u_mvMatrix * vec4( cross(pt1-pt0, pt2-pt0), 1.0 );
 		vec4 nrm = vec4( cross(pt1-pt0, pt2-pt0), 1.0 );
-		
-		//v_zNormal   = normal.y*sn + normal.z*cs;
 		v_zNormal   = -nrm.z;
 	}
 

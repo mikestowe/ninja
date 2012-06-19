@@ -36,7 +36,7 @@ exports.HtmlDocument = Montage.create(Component, {
 	////////////////////////////////////////////////////////////////////
 	//
     exclusionList: {
-        value: ["HTML", "BODY", "NINJA-CONTENT"]
+        value: ["HTML", "BODY", "NINJA-CONTENT", "NINJA-VIEWPORT"]
     },
     ////////////////////////////////////////////////////////////////////
 	//

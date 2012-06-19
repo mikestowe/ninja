@@ -4,33 +4,36 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var MaterialParser = require("js/lib/rdge/materials/material-parser").MaterialParser;
+var Material = require("js/lib/rdge/materials/material").Material;
+var Texture = require("js/lib/rdge/texture").Texture;
+
 ///////////////////////////////////////////////////////////////////////
 // Class GLMaterial
 //      RDGE representation of a material.
 ///////////////////////////////////////////////////////////////////////
-function TaperMaterial() {
+var TaperMaterial = function TaperMaterial()
+{
     // initialize the inherited members
-    this.inheritedFrom = GLMaterial;
+	this.inheritedFrom = Material;
     this.inheritedFrom();
 
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._name = "TaperMaterial";
+    this._name = "Taper";
     this._shaderName = "taper";
-
-    this._color = [1, 0, 0, 1];
 
     this._deltaTime = 0.0;
 
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
-    this.getColor = function () { return this._color; };
     this.getShaderName = function () { return this._shaderName; };
 
     this.isAnimated = function () { return true; };
+	this.getShaderDef	= function()	{  return taperShaderDef;	};
+	this.getTechniqueName	= function() {  return 'colorMe'  };
+
     this.hasVertexDeformation = function () { return this._hasVertexDeformation; };
     this._hasVertexDeformation = true;
     this._vertexDeformationTolerance = 0.02; // should be a property
@@ -38,9 +41,6 @@ function TaperMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-    // duplcate method requirde
-    this.dup = function () { return new TaperMaterial(); };
-
     this.init = function (world) {
         this.setWorld(world);
 
@@ -49,104 +49,56 @@ function TaperMaterial() {
         this._shader.def = taperShaderDef;
         this._shader.init();
 
-        // set the defaults
-        this._shader.colorMe.color.set(this.getColor());
-
         // set up the material node
         this._materialNode = RDGE.createMaterialNode("taperMaterial" + "_" + world.generateUniqueNodeID());
         this._materialNode.setShader(this._shader);
+ 
+        this._time = 0;
+        if (this._shader && this._shader['default']) {
+            this._shader['default'].u_time.set([this._time]);
+        }
 
         // initialize the taper properties
-        this.updateShaderValues();
+        this.setShaderValues();
     };
 
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-    this._propNames = ["color", "u_limit1", "u_limit2", "u_limit3", "u_minVal", "u_maxVal", "u_center", "u_taperAmount"];
-    this._propLabels = ["Color", "Minimum Parameter Value", "Center Paramater Value", "Maximum Parameter Value", "Minimum Data Bounds", "Maximum Data Bounds", "Center", "Taper Amount"];
-    this._propTypes = ["color", "float", "float", "float", "float", "float", "float", "float"];
+    this._propNames = [ "u_limit1", "u_limit2", "u_limit3", "u_minVal", "u_maxVal", "u_center", "u_taperAmount",  "u_speed" ];
+    this._propLabels = [ "Minimum Parameter Value", "Center Paramater Value", "Maximum Parameter Value", "Minimum Data Bounds", "Maximum Data Bounds", "Center", "Taper Amount", "Speed" ];
+    this._propTypes = [ "float", "float", "float", "float", "float", "float", "float", "float" ];
     this._propValues = [];
 
     // initialize the property values
-    this._propValues[this._propNames[0]] = this._color.slice();
-    this._propValues[this._propNames[1]] = 0.25;
-    this._propValues[this._propNames[2]] = 0.50;
-    this._propValues[this._propNames[3]] = 0.75;
-    this._propValues[this._propNames[4]] = -1;
-    this._propValues[this._propNames[5]] = 1;
-    this._propValues[this._propNames[6]] = 0.0;
-    this._propValues[this._propNames[7]] = 0.9;
-
-    this.setProperty = function (prop, value) {
-        // make sure we have legitimate input
-        if (this.validateProperty(prop, value)) {
-            switch (prop) {
-                case "color": this._propValues[prop] = value.slice(); break;
-                default: this._propValues[prop] = value; break;
-            }
-
-            this.updateShaderValues();
-        }
-    };
-    ///////////////////////////////////////////////////////////////////////
-    this.exportJSON = function () {
-        var jObj =
-		{
-		    'material': this.getShaderName(),
-		    'name': this.getName(),
-		    'color': this._propValues["color"]
-		};
-
-        return jObj;
-    };
-
-    this.importJSON = function (jObj) {
-        if (this.getShaderName() != jObj.material) throw new Error("ill-formed material");
-        this.setName(jObj.name);
-
-        try {
-            var color = jObj.color;
-            this.setProperty("color", color);
-        }
-        catch (e) {
-            throw new Error("could not import material: " + jObj);
-        }
-    };
+    this._propValues[this._propNames[0]] = 0.25;
+    this._propValues[this._propNames[1]] = 0.50;
+    this._propValues[this._propNames[2]] = 0.75;
+    this._propValues[this._propNames[3]] = -1;
+    this._propValues[this._propNames[4]] = 1;
+    this._propValues[this._propNames[5]] = 0.0;
+    this._propValues[this._propNames[6]] = 0.9;
+    this._propValues[this._propNames[7]] = 1.0;
 
     this.update = function (time) {
-        //var speed = 0.01;
-        //time *= speed;
-        this._deltaTime += 0.01;
+        var speed = this._propValues["u_speed"];
+        this._deltaTime += 0.01 * speed;
 
         if (this._shader && this._shader.colorMe) {
-            var t3 = this._propValues[this._propNames[3]] - this._deltaTime;
+            var t3 = this._propValues["u_limit3"] - this._deltaTime;
             if (t3 < 0) {
-                this._deltaTime = this._propValues[this._propNames[1]] - 1.0;
-                t3 = this._propValues[this._propNames[3]] - this._deltaTime;
+                this._deltaTime = this._propValues["u_limit1"] - 1.0;
+                t3 = this._propValues["u_limit3"] - this._deltaTime;
             }
-            var t1 = this._propValues[this._propNames[1]] - this._deltaTime,
-				t2 = this._propValues[this._propNames[2]] - this._deltaTime;
+
+            var t1 = this._propValues["u_limit1"] - this._deltaTime,
+				t2 = this._propValues["u_limit2"] - this._deltaTime;
 
 
-            this._shader.colorMe[this._propNames[1]].set([t1]);
-            this._shader.colorMe[this._propNames[2]].set([t2]);
-            this._shader.colorMe[this._propNames[3]].set([t3]);
-        }
-    };
-
-    this.updateShaderValues = function () {
-        if (this._shader && this._shader.colorMe) {
-            var nProps = this._propNames.length;
-            for (var i = 0; i < nProps; i++) {
-                var propName = this._propNames[i];
-                var propValue = this._propValues[propName];
-                switch (propName) {
-                    case "color": this._shader.colorMe[propName].set(propValue); break;
-                    default: this._shader.colorMe[propName].set([propValue]); break;
-                }
-            }
+            this._shader.colorMe["u_limit1"].set([t1]);
+            this._shader.colorMe["u_limit2"].set([t2]);
+            this._shader.colorMe["u_limit3"].set([t3]);
         }
     };
 };
@@ -176,18 +128,21 @@ taperShaderDef = {
 			// attributes
 			'params':
 				 {
-				     'color': { 'type': 'vec4' },
-
 				     'u_limit1': { 'type': 'float' },
 				     'u_limit2': { 'type': 'float' },
 				     'u_limit3': { 'type': 'float' },
 				     'u_minVal': { 'type': 'float' },
 				     'u_maxVal': { 'type': 'float' },
 				     'u_center': { 'type': 'float' },
-				     'u_taperAmount': { 'type': 'float' }
+				     'u_taperAmount': { 'type': 'float' },
+				     'u_speed': { 'type': 'float' }
 				 }
             }
 		]
     }
 };
 
+
+if (typeof exports === "object") {
+    exports.TaperMaterial = TaperMaterial;
+}

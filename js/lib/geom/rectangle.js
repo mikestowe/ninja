@@ -17,6 +17,9 @@ exports.Rectangle = Object.create(GeomObj, {
 	// CONSTANTS
 	N_TRIANGLES: { value : 15, writable: false },       // TODO - This is not being used anywhere. Remove?
 
+	//if (!MaterialsModel)
+	//	MaterialsModel = require("js/models/materials-model").MaterialsModel;
+
 	///////////////////////////////////////////////////////////////////////
 	// Instance variables
 	///////////////////////////////////////////////////////////////////////
@@ -70,16 +73,19 @@ exports.Rectangle = Object.create(GeomObj, {
             this._materialSpecular = [0.4, 0.4, 0.4,  1.0];
 
             if(strokeMaterial) {
-                this._strokeMaterial = strokeMaterial;
+                this._strokeMaterial = strokeMaterial.dup();
             } else {
-                this._strokeMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() );
+                this._strokeMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() ).dup();
             }
+			if (strokeColor && this._strokeMaterial.hasProperty( "color" ))  this._strokeMaterial.setProperty( "color",  this._strokeColor );
+
 
             if(fillMaterial) {
-                this._fillMaterial = fillMaterial;
+                this._fillMaterial = fillMaterial.dup();
             } else {
-                this._fillMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() );
+                this._fillMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() ).dup();
             }
+			if (fillColor && this._fillMaterial.hasProperty( "color" ))  this._fillMaterial.setProperty( "color",  this._fillColor );
         }
     },
 
@@ -286,19 +292,23 @@ exports.Rectangle = Object.create(GeomObj, {
             var strokeMaterialName	= jObj.strokeMat;
             var fillMaterialName	= jObj.fillMat;
 
-            var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
+            var strokeMat = MaterialsModel.getMaterial( strokeMaterialName ).dup();
             if (!strokeMat) {
                 console.log( "object material not found in library: " + strokeMaterialName );
-                strokeMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
+                strokeMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() ).dup();
             }
             this._strokeMaterial = strokeMat;
+			if (this._strokeMaterial.hasProperty( 'color' ))
+				this._strokeMaterial.setProperty( 'color', this._strokeColor );
 
-            var fillMat = MaterialsModel.getMaterial( fillMaterialName );
+            var fillMat = MaterialsModel.getMaterial( fillMaterialName ).dup();
             if (!fillMat) {
                 console.log( "object material not found in library: " + fillMaterialName );
-                fillMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
+                fillMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() ).dup();
             }
             this._fillMaterial = fillMat;
+			if (this._fillMaterial.hasProperty( 'color' ))
+				this._fillMaterial.setProperty( 'color', this._fillColor );
 
             this.importMaterialsJSON( jObj.materials );
         }
@@ -942,13 +952,13 @@ RectangleFill.create = function( rectCtr,  width, height, tlRad, blRad,  brRad, 
 	}
 
 	//refine the mesh for vertex deformations
-//	if (material) {
-//		if (material.hasVertexDeformation()) {
-//			var paramRange = material.getVertexDeformationRange();
-//			var tolerance = material.getVertexDeformationTolerance();
-//			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
-//		}
-//	}
+	if (material) {
+		if (material.hasVertexDeformation()) {
+			var paramRange = material.getVertexDeformationRange();
+			var tolerance = material.getVertexDeformationTolerance();
+			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+		}
+	}
 
 	// create the RDGE primitive
 	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices);
@@ -1174,13 +1184,15 @@ RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad,
 	}
 
 	//refine the mesh for vertex deformations
-//	if (material) {
-//		if (material.hasVertexDeformation()) {
-//			var paramRange = material.getVertexDeformationRange();
-//			var tolerance = material.getVertexDeformationTolerance();
-//			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
-//		}
-//	}
+	if (material)
+	{
+		if (material.hasVertexDeformation())
+		{
+			var paramRange = material.getVertexDeformationRange();
+			var tolerance = material.getVertexDeformationTolerance();
+			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+		}
+	}
 
 	// create the RDGE primitive
 	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices);
@@ -1258,15 +1270,15 @@ RectangleGeometry.create = function( ctr,  width, height, material ) {
 	RectangleGeometry.pushIndices( 0, 3, 2 );
 
 	//refine the mesh for vertex deformations
-//	if (material)
-//	{
-//		if (material.hasVertexDeformation())
-//		{
-//			var paramRange = material.getVertexDeformationRange();
-//			var tolerance = material.getVertexDeformationTolerance();
-//			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
-//		}
-//	}
+	if (material)
+	{
+		if (material.hasVertexDeformation())
+		{
+			var paramRange = material.getVertexDeformationRange();
+			var tolerance = material.getVertexDeformationTolerance();
+			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+		}
+	}
 
 	// create the RDGE primitive
 	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices);
@@ -1279,5 +1291,36 @@ RectangleGeometry.pushIndices	= RectangleFill.pushIndices;
 RectangleGeometry.getVertex		= RectangleFill.getVertex;
 RectangleGeometry.getUV			= RectangleFill.getUV;
 
+RectangleGeometry.init = function()
+{
+	this.vertices	= [];
+	this.normals	= [];
+	this.uvs		= [];
+	this.indices	= [];
+}
+
+RectangleGeometry.addQuad = function( verts,  normals, uvs )
+{
+	var offset = this.vertices.length/3;
+	for (var i=0;  i<4;  i++)
+	{
+		RectangleGeometry.pushVertex( verts[i][0], verts[i][1], verts[i][2]);
+		RectangleGeometry.pushNormal( normals[i] );
+		RectangleGeometry.pushUV( uvs[i] );
+	}
+
+	RectangleGeometry.pushIndices( 0+offset, 1+offset, 2+offset );
+	RectangleGeometry.pushIndices( 2+offset, 3+offset, 0+offset );
+}
+
+RectangleGeometry.buildPrimitive = function()
+{
+	var nVertices = this.vertices.length/3;
+	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices);
+}
+
+
+
+	exports.RectangleGeometry = RectangleGeometry;
 
 

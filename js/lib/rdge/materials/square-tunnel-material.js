@@ -5,45 +5,43 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var PulseMaterial = require("js/lib/rdge/materials/pulse-material").PulseMaterial;
+var Texture = require("js/lib/rdge/texture").Texture;
 
 var SquareTunnelMaterial = function SquareTunnelMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._name = "SquareTunnelMaterial";
+    this._name = "Square Tunnel";
     this._shaderName = "squareTunnel";
 
-    this._texMap = 'assets/images/rocky-normal.jpg';
+    this._defaultTexMap = 'assets/images/rocky-normal.jpg';
 
     this._time = 0.0;
     this._dTime = 0.01;
 
+    // array textures indexed by shader uniform name
+    this._glTextures = [];
+
     ///////////////////////////////////////////////////////////////////////
-    // Properties
+    // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-    // all defined in parent PulseMaterial.js
-    // load the local default value
-    this._propValues[this._propNames[0]] = this._texMap.slice(0);
+	var u_tex0_index	= 0,  u_speed_index = 1;
+	this._propNames			= ["u_tex0",		"u_speed" ];
+	this._propLabels		= ["Texture map",	"Speed" ];
+	this._propTypes			= ["file",			"float" ];
+	this._propValues		= [];
+    this._propValues[this._propNames[u_tex0_index]] = this._defaultTexMap.slice(0);
+    this._propValues[this._propNames[u_speed_index]] = 1.0;
+
+    ///////////////////////////////////////////////////////////////////////
+    // Material Property Accessors
+    ///////////////////////////////////////////////////////////////////////
+	this.isAnimated		= function()	{  return true;						};
+	this.getShaderDef	= function()	{  return squareTunnelMaterialDef;	};
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-    // duplcate method requirde
-    this.dup = function (world) {
-        // allocate a new uber material
-        var newMat = new SquareTunnelMaterial();
-
-        // copy over the current values;
-        var propNames = [], propValues = [], propTypes = [], propLabels = [];
-        this.getAllProperties(propNames, propValues, propTypes, propLabels);
-        var n = propNames.length;
-        for (var i = 0; i < n; i++) {
-            newMat.setProperty(propNames[i], propValues[i]);
-        }
-
-        return newMat;
-    };
-
     this.init = function (world) {
         // save the world
         if (world) this.setWorld(world);
@@ -63,7 +61,7 @@ var SquareTunnelMaterial = function SquareTunnelMaterial() {
         }
 
         // set the shader values in the shader
-        this.updateTexture();
+        this.setShaderValues();
         this.setResolution([world.getViewportWidth(), world.getViewportHeight()]);
         this.update(0);
     };
@@ -98,6 +96,7 @@ var squareTunnelMaterialDef =
 				{
 				    'u_tex0': { 'type': 'tex2d' },
 				    'u_time': { 'type': 'float' },
+				    'u_speed': { 'type': 'float' },
 				    'u_resolution': { 'type': 'vec2' }
 				},
 
