@@ -6,7 +6,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = require("montage/core/core").Montage,
     DrawingTool = require("js/tools/drawing-tool").DrawingTool,
-    RichTextEditor = require("node_modules/labs/rich-text-editor.reel").RichTextEditor,
+    //RichTextEditor = ("node_modules/labs/rich-text-editor.reel").RichTextEditor,
     ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 exports.TextTool = Montage.create(DrawingTool, {

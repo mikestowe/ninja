@@ -6,7 +6,7 @@
 
 var Montage = require("montage").Montage,
     Component = require("montage/ui/component").Component,
-    Button = require("montage/ui/button.reel/button").Button;
+    Button = require("montage/ui/native/button.reel/button").Button;
 
 var ToolbarButton = exports.ToolbarButton = Montage.create(Button, {
     hasTemplate : {

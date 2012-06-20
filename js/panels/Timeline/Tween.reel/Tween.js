@@ -206,6 +206,7 @@ var Tween = exports.Tween = Montage.create(Component, {
             if (event.detail.source && event.detail.source !== "tween") {
 
                 if(this.parentComponent.parentComponent.isSubproperty){
+                	console.log("setting style tween property")
                     this.setStyleTweenProperty(event.detail);
                 } else {
                     // check for correct element selection
@@ -221,21 +222,32 @@ var Tween = exports.Tween = Montage.create(Component, {
 
     setTweenProperties:{
         value:function (eventDetail) {
-            if(this.parentComponent.parentComponent.animatedElement.offsetTop != this.tweenedProperties["top"]){
-                this.tweenedProperties["top"] = this.parentComponent.parentComponent.animatedElement.offsetTop + "px";
-            }
-            if(this.parentComponent.parentComponent.animatedElement.offsetLeft != this.tweenedProperties["left"]){
-                this.tweenedProperties["left"] = this.parentComponent.parentComponent.animatedElement.offsetLeft + "px";
-            }
-            if (this.parentComponent.parentComponent.animatedElement.offsetWidth != this.tweenedProperties["width"]){
-                this.tweenedProperties["width"] = this.parentComponent.parentComponent.animatedElement.offsetWidth + "px";
-            }
-            if (this.parentComponent.parentComponent.animatedElement.offsetHeight != this.tweenedProperties["height"]){
-                this.tweenedProperties["height"] = this.parentComponent.parentComponent.animatedElement.offsetHeight + "px";
-            }
-            // tell track to update css rule
-            this.parentComponent.parentComponent.updateKeyframeRule();
-            this.isTweenAnimated = true;
+        	if (eventDetail.source === "SelectionTool") {
+	            if(this.parentComponent.parentComponent.animatedElement.offsetTop != this.tweenedProperties["top"]){
+	                this.tweenedProperties["top"] = this.parentComponent.parentComponent.animatedElement.offsetTop + "px";
+	            }
+	            if(this.parentComponent.parentComponent.animatedElement.offsetLeft != this.tweenedProperties["left"]){
+	                this.tweenedProperties["left"] = this.parentComponent.parentComponent.animatedElement.offsetLeft + "px";
+	            }
+	            if (this.parentComponent.parentComponent.animatedElement.offsetWidth != this.tweenedProperties["width"]){
+	                this.tweenedProperties["width"] = this.parentComponent.parentComponent.animatedElement.offsetWidth + "px";
+	            }
+	            if (this.parentComponent.parentComponent.animatedElement.offsetHeight != this.tweenedProperties["height"]){
+	                this.tweenedProperties["height"] = this.parentComponent.parentComponent.animatedElement.offsetHeight + "px";
+	            }
+	            // tell track to update css rule
+	            this.parentComponent.parentComponent.updateKeyframeRule();
+	            this.isTweenAnimated = true;
+        	}
+			
+			if (eventDetail.source === "translateTool") {
+        		var arrMat = eventDetail.data.value[0].properties.mat,
+        			strTweenProperty = "perspective(1400) matrix3d(" + arrMat.join() + ")";
+        		
+        		this.tweenedProperties["-webkit-transform"] = strTweenProperty;
+        		this.parentComponent.parentComponent.updateKeyframeRule();
+        		this.isTweenAnimated = true;
+        	}
         }
     },
 

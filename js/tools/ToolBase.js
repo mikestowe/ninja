@@ -35,6 +35,8 @@ exports.toolBase = Montage.create(Component, {
     _currentX: {value: 0, writable: true},
     _currentY: {value: 0, writable: true},
 
+    _dragPlane: { value: null },
+
     /**
      * This function is for specifying custom feedback routine
      * upon mouse over.

@@ -31,26 +31,6 @@ exports.ElementController = Montage.create(Component, {
             if(styles) {
                 this.application.ninja.stylesController.setElementStyles(el, styles);
             }
-        	
-        	/*
-			// Old methods. Kept for reference. Delete if not needed. JR.
-            if(this.application.ninja.timeline.currentLayerSelected) {
-                var selectedLayerIndex = this.application.ninja.timeline.getLayerIndexByID(this.application.ninja.timeline.currentLayerSelected.layerData.layerID);
-
-                if(selectedLayerIndex === 0) {
-                    this.application.ninja.currentDocument.model.domContainer.appendChild(el);
-                } else {
-                    var element = this.application.ninja.timeline.arrLayers[selectedLayerIndex].layerData.stageElement;
-                    element.parentNode.insertBefore(el, element.nextSibling);
-                }
-            } else {
-                this.application.ninja.currentDocument.model.domContainer.appendChild(el);
-            }
-
-            if(styles) {
-                this.application.ninja.stylesController.setElementStyles(el, styles);
-            }
-            */
         }
     },
 
