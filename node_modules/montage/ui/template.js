@@ -18,7 +18,7 @@ var Serializer = require("core/serializer").Serializer;
 var Deserializer = require("core/deserializer").Deserializer;
 var logger = require("core/logger").logger("template");
 var defaultEventManager = require("core/event/event-manager").defaultEventManager;
-var applicationExports = require("ui/application");
+var defaultApplication;
 
 /**
     @class module:montage/ui/template.Template
@@ -261,8 +261,11 @@ var Template = exports.Template = Montage.create(Montage, /** @lends module:mont
 
     _deserialize: {
         value: function(instances, targetDocument, callback) {
-            var self = this,
-                defaultApplication = applicationExports.application;
+            if ( typeof defaultApplication === "undefined") {
+                defaultApplication = require("ui/application").application;
+            }
+
+            var self = this;
 
             this.getDeserializer(function(deserializer) {
                 var externalObjects;
@@ -623,7 +626,9 @@ var Template = exports.Template = Montage.create(Montage, /** @lends module:mont
                 var style = doc.importNode(cssTag,false);
                 style.href = url;
                 container.insertBefore(style, container.firstChild);
-                container.insertBefore(doc.createComment("Inserted from " + this._id), container.firstChild);
+                if (logger.isDebug) {
+                    container.insertBefore(doc.createComment("Inserted from " + this._id), container.firstChild);
+                }
 
                 var loadHandler = function(event) {
                     if (++self._stylesLoadedCount === self._expectedStylesLoadedCount) {
@@ -659,7 +664,9 @@ var Template = exports.Template = Montage.create(Montage, /** @lends module:mont
 
             } else {
                 container.insertBefore(doc.importNode(cssTag, true), container.firstChild);
-                container.insertBefore(doc.createComment("Inserted from " + this._id), container.firstChild);
+                if (logger.isDebug) {
+                    container.insertBefore(doc.createComment("Inserted from " + this._id), container.firstChild);
+                }
             }
         }
 
@@ -724,7 +731,9 @@ var Template = exports.Template = Montage.create(Montage, /** @lends module:mont
                 if (src in externalScriptsLoaded) continue;
                 externalScriptsLoaded[src] = true;
             }
-            container.appendChild(doc.createComment("Inserted from " + this._id));
+            if (logger.isDebug) {
+                container.appendChild(doc.createComment("Inserted from " + this._id));
+            }
             container.appendChild(scriptNode);
         }
 
