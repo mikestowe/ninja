@@ -59,6 +59,7 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
                 In the mouse over event we need to validate if the mouse over is over a hud.
                 If it on top of a hud bring that single hud to the top to associate with.
             */
+
             this.application.ninja.stage.bindingView.handleMousemove(event);
             //this.doDraw(event);
         }
@@ -66,25 +67,26 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
 
     HandleLeftButtonUp: {
         value: function(event) {
-
-            if(this._escape) {
-                this._escape = false;
-                return;
-            }
-
-            if(this._hasDraw) {
-                this._hasDraw = false;
-                //this.endDraw(event);
-            } else {
-                this.doSelection(event);
-                if (this.application.ninja.selectedElements.length !== 0 ) {
-                    if(this.application.ninja.selectedElements[0].controller) {
-                        this.selectedComponent = this.application.ninja.selectedElements[0].controller;
-                    }
-                } else {
-                    this.selectedComponent = null;
+            if(!this.application.ninja.stage.bindingView._isDrawingConnection) {
+                if(this._escape) {
+                    this._escape = false;
+                    return;
                 }
-                this._isDrawing = false;
+
+                if(this._hasDraw) {
+                    this._hasDraw = false;
+                    //this.endDraw(event);
+                } else {
+                    this.doSelection(event);
+                    if (this.application.ninja.selectedElements.length !== 0 ) {
+                        if(this.application.ninja.selectedElements[0].controller) {
+                            this.selectedComponent = this.application.ninja.selectedElements[0].controller;
+                        }
+                    } else {
+                        this.selectedComponent = null;
+                    }
+                    this._isDrawing = false;
+                }
             }
             //this.endDraw(event);
             //NJevent("disableStageMove");

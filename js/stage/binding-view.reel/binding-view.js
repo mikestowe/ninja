@@ -13,42 +13,15 @@ var Montage = require("montage/core/core").Montage,
 
 exports.BindingView = Montage.create(Component, {
     //private Properties
+    _canvas: { value:null },
+    _context : { value: null },
+    _targetedElement: {value: null},
+    componentsList: { value: {} },
 
-    hudRepeater: {
-        value: null
-    },
-    _selectedComponent: {
-        value: null
-    },
+    hudRepeater: { value: null },
 
-    //Move variables
-    _translateX : {
-        value: 0
-    },
-
-    _translateY: {
-        value: 0
-    },
-
-    translateX : {
-        get: function() {
-            return this._translateX;
-        },
-        set: function(val) {
-            this._translateX = val;
-        }
-    },
-
-    translateY: {
-        get: function() {
-            return this._translateY;
-        },
-        set: function(val) {
-            this._translateY = val;
-        }
-    },
-
-    _width :{  value: 0 },
+    //Public Properties
+    _width :{ value: 0 },
     width: {
         get:function() {
             return this._width;
@@ -72,16 +45,6 @@ exports.BindingView = Montage.create(Component, {
                 this.needsDraw = true;
             }
         }
-    },
-
-    validateOverHud: {
-        value: function() {
-
-        }
-    },
-
-    componentsList: {
-        value: {}
     },
 
     _connectionElementStart: { value: null },
@@ -124,92 +87,53 @@ exports.BindingView = Montage.create(Component, {
         }
     },
 
-    _bindables: {
-        value: []
+    _boundComponents: { value: [] },
+    boundComponents: {
+        get: function() {
+            return this._boundComponents;
+        },
+        set: function(val) {
+            this._boundComponents = val;
+        }
     },
 
-    _nonVisualComponents: {
-        value:[]
-    },
-
-    _bindingViewCanvas: {
-        value:null
-    },
-    _canvas: {
-        value:null
-    },
-    _context : {
-        value: null
-    },
-
-    startConnector: {
-        value: null
-    },
-
-    //Public Objects
-    hudRepeater: { value: null },
-
-
-    //Public Properties
+    _selectedComponent: { value: null },
     selectedComponent: {
         get: function() {
             return this._selectedComponent;
         },
         set: function(val) {
+            this.boundComponents = [];
             if(this._selectedComponent !== val) {
-                this.bindables = [];
                 this.clearCanvas();
             this._selectedComponent = val;
             if(this._selectedComponent !== null) {
                 this.application.ninja.objectsController.currentObject = this.selectedComponent;
-                var arrBindings = this.application.ninja.objectsController.currentObjectBindings;
-                var arrProperties = this.application.ninja.objectsController.getPropertyList(this.selectedComponent, true);
-
-                //Add the first component which is the selected one to have a hud
-
-                this.componentsList[this.selectedComponent.identifier] = {"component":  this.selectedComponent, properties:[] };
-                this.application.ninja.objectsController.getPropertiesFromObject(this.selectedComponent, true).forEach(function(obj) {
-                    this.componentsList[this.selectedComponent.identifier].properties.push({"title":obj})
-                }.bind(this));
-                //Go through the loop and find every interacted object by bindings
-                arrBindings.forEach(function(obj) {
-                    if(typeof (this.componentsList[obj.boundObject.identifier]) === "undefined") {
-                        var componentListItem = {}
-                        componentListItem.component = obj.boundObject;
-                        componentListItem.properties = [];
-                        this.application.ninja.objectsController.getPropertiesFromObject(obj.boundObject, true).forEach(function(obj) {
-                            componentListItem.properties.push({"title":obj})
-                        }.bind(this));
-                        this.componentsList[obj.boundObject.identifier] = componentListItem;
-                    }
-                }.bind(this));
-                for(var key in this.componentsList){
-                    this.bindables.push(this.componentsList[key]);
-                }
-                // Get Bindings that exist;
-
-
-                //Get Properties of Elements in bindings;
+                this.boundComponents.push(this.selectedComponent);
             }
                 this.needsDraw = true;
             }
         }
     },
 
-    handleResizeMove: {
-        value: function(e) {
-            console.log(e);
+    handleShowBinding: {
+        value: function(bindingMeta) {
+            if(bindingMeta === null) return;
+            for(var j=0; j< bindingMeta.length; j++) {
+                var bindingExists = false;
+                for(var i =0; i < this.boundComponents; i++) {
+                    if(this.boundComponents[i] === bindingMeta[j].boundObject) {
+                        bindingExists = true;
+                    }
+                }
+                if(!bindingExists) {
+                    //this.boundComponents.push(bindingMeta[j].boundObject);
+                }
+            }
         }
     },
 
-    bindables: {
-        get: function() {
-            return this._bindables;
-        },
-        set: function(val) {
-            this._bindables = val;
-        }
-    },
+    _nonVisualComponents: { value:[] },
     nonVisualComponents: {
         get: function() {
             return this._nonVisualComponents;
@@ -218,6 +142,7 @@ exports.BindingView = Montage.create(Component, {
             this._nonVisualComponents = val;
         }
     },
+
     bindingViewCanvas: {
         get: function() {
             return this._bindingViewCanvas;
@@ -258,17 +183,14 @@ exports.BindingView = Montage.create(Component, {
                 this.canvas.height = this.application.ninja.stage.drawingCanvas.offsetHeight;
                 this.clearCanvas();
                 for(var i= 0; i < this.hudRepeater.childComponents.length; i++) {
-                    this.drawLine(this.hudRepeater.objects[i].component.element.offsetLeft,this.hudRepeater.objects[i].component.element.offsetTop, this.hudRepeater.childComponents[i].element.offsetLeft +3, this.hudRepeater.childComponents[i].element.offsetTop +3);
-
+                    this.drawLine(this.hudRepeater.objects[i].element.offsetLeft,this.hudRepeater.objects[i].element.offsetTop, this.hudRepeater.childComponents[i].element.offsetLeft +3, this.hudRepeater.childComponents[i].element.offsetTop +3);
                 }
-
                 if(this._isDrawingConnection) {
                     if (this.hudRepeater.childComponents.length > 1) {
-                        //this.object
+                        // Make things disappear
                     }
-                    this.drawLine(this._currentMousePosition.x,this._currentMousePosition.y,this._connectionPositionStart.x,this._connectionPositionStart.y,"#3333FF", 4);
+                    this.drawLine(this._currentMousePosition.x,this._currentMousePosition.y,this._connectionPositionStart.x,this._connectionPositionStart.y,"#5e9eff", 4);
                 }
-
             } else {
                 this.bindables = [];
                 this.clearCanvas();
@@ -369,12 +291,40 @@ exports.BindingView = Montage.create(Component, {
                 }
             }
             this.mouseOverHud = overHud;
-
+            if(this._isDrawingConnection && !overHud) {
+                //NOTE : Continue This content. mouse over select
+                var obj = this.application.ninja.stage.getElement(event, true);
+                if (obj)
+                {
+                    if (!obj.controller || obj === null)
+                    {
+                        if(this._targetedElement)
+                        {
+                            this._targetedElement.classList.remove("active-element-outline");
+                            this.boundComponents.pop();
+                            this._targetedElement = null;
+                        }
+                    }
+                    else
+                    {
+                        if (obj !== this._targetedElement)
+                        {
+                            if(this._targetedElement)
+                            {
+                                this._targetedElement.classList.remove("active-element-outline");
+                                this.boundComponents.pop();
+                            }
+                            this._targetedElement = obj;
+                            this._targetedElement.classList.add("active-element-outline");
+                            this.boundComponents.push(this._targetedElement.controller);
+                        }
+                    }
+                }
+            }
             if(this._isDrawingConnection) {
                 this._currentMousePosition = mousePoint;
                 this.needsDraw = true;
             }
-
         }
     },
 
@@ -398,6 +348,11 @@ exports.BindingView = Montage.create(Component, {
                     boundObject: this.connectionElementEnd,
                     boundObjectPropertyPath: this.connectionPropertyEnd
                 });
+            }
+            if(this._targetedElement !==null) {
+                this.boundComponents.pop();
+                this._targetedElement.classList.remove("active-element-outline");
+                this._targetedElement = null;
             }
             this._isDrawingConnection = false;
             this.needsDraw = true;

@@ -25,7 +25,7 @@
                     "element": {"#": "hudRepeater"}
                 },
                 "bindings": {
-                    "objects": {"<-": "@owner.bindables"}
+                    "objects": {"<-": "@owner.boundComponents"}
                 }
             },
             "objectsTray" : {
@@ -40,7 +40,7 @@
                     "element": {"#" : "hud"}
                 },
                 "bindings": {
-                    "bindingArgs": {"<-": "@hudRepeater.objectAtCurrentIteration"}
+                    "userComponent": {"<-": "@hudRepeater.objectAtCurrentIteration"}
                 },
                 "listeners": [
                     {

@@ -218,7 +218,7 @@ var objectsController = exports.ObjectsController = Montage.create(Montage, {
 
             if(value) {
                 this.currentObjectBindings = this.getObjectBindings(value);
-                console.log("Property list", this.getPropertyList(value, true));
+                //console.log("Property list", this.getPropertyList(value, true));
             } else {
                 this.currentObjectBindings = [];
             }
