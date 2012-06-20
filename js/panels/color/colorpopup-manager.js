@@ -29,49 +29,27 @@ exports.ColorPopupManager = Montage.create(Component, {
     	enumerable: false,
     	value: function () {
     		////////////////////////////////////////////////////////////
-            //TODO: Improve logic on handling closing the popup
-            ////////////////////////////////////////////////////////////
-            //Hiding popup on any panel(s) actions
-            this.eventManager.addEventListener("panelOrderChanged", function (e) {
-                this.application.ninja.colorController.colorPopupManager.hideColorPopup();
-            }.bind(this));
-            //
-            this.eventManager.addEventListener("panelClose", function (e) {
-                this.application.ninja.colorController.colorPopupManager.hideColorPopup();
-            }.bind(this));
-            //
-            this.eventManager.addEventListener("panelCollapsed", function (e) {
-                this.application.ninja.colorController.colorPopupManager.hideColorPopup();
-            }.bind(this));
-            //
-            this.eventManager.addEventListener("panelSelected", function (e) {
-                this.application.ninja.colorController.colorPopupManager.hideColorPopup();
-            }.bind(this));
-            //
-            this.eventManager.addEventListener("togglePanel", function (e) {
-                this.application.ninja.colorController.colorPopupManager.hideColorPopup();
-            }.bind(this));
-            //
-            this.eventManager.addEventListener("panelResizing", function (e) {
-                this.application.ninja.colorController.colorPopupManager.hideColorPopup();
-            }.bind(this));
-            //
-            this.eventManager.addEventListener("panelResizedStart", function (e) {
-                this.application.ninja.colorController.colorPopupManager.hideColorPopup();
-            }.bind(this));
-            //
-            this.eventManager.addEventListener("panelResizedEnd", function (e) {
-                this.application.ninja.colorController.colorPopupManager.hideColorPopup();
-            }.bind(this));
-            //
+            //Closing popups on resize
             window.addEventListener('resize', function (e) {
                 this.application.ninja.colorController.colorPopupManager.hideColorPopup();
             }.bind(this));
-            //
+            //Storing limits of popup
+            var top, bottom, left, right; 
+            //Closing popups if outside limits
             document.addEventListener('mousedown', function (e) {
-                //
-                if (e._event.srcElement.getAttribute('data-montage-id') === 'stageCanvas' || e._event.srcElement.id === 'mainContainer' || e._event.srcElement.getAttribute('data-montage-id') === 'drawingCanvas') {
-                	this.application.ninja.colorController.colorPopupManager.hideColorPopup();
+                //Checking for popup to be opened otherwise nothing happens
+                if (this._popupPanel.opened && this._popupPanel.popup && this._popupPanel.popup.element && !e._event.srcElement.inputType) {
+                	//Getting horizontal limits	
+                	left = parseInt(this._popupPanel.popup.element.style.left) + parseInt(this._popupPanel.popup.element.style.marginLeft);
+                	right = left + parseInt(this._popupPanel.popup.element.offsetWidth);
+                	//Getting vertical limits
+                	top = parseInt(this._popupPanel.popup.element.style.top) + parseInt(this._popupPanel.popup.element.style.marginTop);
+                	bottom = left + parseInt(this._popupPanel.popup.element.offsetHeight);
+                	//Checking click position in relation to limits
+                	if ((e._event.clientX < left || e._event.clientX > right) || (e._event.clientY < top || e._event.clientY > bottom)) {
+                		//Hides popups since click is outside limits
+	                	this.application.ninja.colorController.colorPopupManager.hideColorPopup();
+                	}
                 }
             }.bind(this));
             ////////////////////////////////////////////////////////////
