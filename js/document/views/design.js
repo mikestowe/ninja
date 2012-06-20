@@ -97,19 +97,6 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     },
     ////////////////////////////////////////////////////////////////////
     //
-    _lockedElements: { value: [], enumerable: false },
-    ////////////////////////////////////////////////////////////////////
-    //
-    lockedElements: {
-        get: function() {
-            return this._lockedElements;
-        },
-        set:function(value){
-            this._lockedElements = value;
-        }
-    },
-    ////////////////////////////////////////////////////////////////////
-    //
     getLiveNodeList: {
         value: function(useFilter) {
             if(useFilter) {
