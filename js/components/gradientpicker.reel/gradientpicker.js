@@ -52,6 +52,11 @@ exports.GradientPicker = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
     //
+    _trackData: {
+	    value: {width: 0, x: 0, y: 0}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
     prepareForDraw: {
     	value: function() {
     		//
@@ -62,7 +67,7 @@ exports.GradientPicker = Montage.create(Component, {
     willDraw: {
     	value: function() {
     		//Getting component views from layout
-    		this.element._trackWidth = parseInt(getComputedStyle(this.trackChips).getPropertyCSSValue('width').cssText);
+    		this._trackData.width = parseInt(getComputedStyle(this.trackChips).getPropertyCSSValue('width').cssText);
     		//TODO: Fix events and remove this hack
     		this.trackCover.addEventListener('mouseover', function () {
 				if (!this._updating) {    		
@@ -83,13 +88,13 @@ exports.GradientPicker = Montage.create(Component, {
     //
     draw: {
     	value: function() {
-    		//
+    		//Checking for mode to assign radio value
     		if (this.mode === 'linear') {
     			this.radioLinear.checked = 'true';
     		} else if (this.mode === 'radial') {
     			this.radioRadial.checked = 'true';
     		}
-    		//
+    		//Checkign for value to initialize stops
     		if (!this.value) {
     			this.addDefaultStops();
 			} else {
@@ -104,35 +109,17 @@ exports.GradientPicker = Montage.create(Component, {
     //
    	didDraw: {
     	value: function() {
-			//
+			//Adding event listener for stops
 			this.trackMain.addEventListener('click', this, false);
-    		
-    		
-    		
-    		
-    		
-    		////////////////////////////////////////////////////////////
-			////////////////////////////////////////////////////////////
-			//TODO: Determing a better way to get screen position
-			var element = this.trackMain;
-    		this.element._trackX = 0, this.element._trackY = 0;
-    		//
-   			while (element && !isNaN(element.offsetLeft) && !isNaN(element.offsetTop)) {
-    			this.element._trackX += element.offsetLeft - element.scrollLeft;
-    			this.element._trackY += element.offsetTop - element.scrollTop;
-    			element = element.parentNode;
-	    	}
-    		////////////////////////////////////////////////////////////
-    		////////////////////////////////////////////////////////////
-    		
-    		//This is forever changing, not sure why
-    		//console.log(this.element._trackX, this.element._trackY);
-    		
-    		
+    		//Getting position of track
+    		var point = webkitConvertPointFromNodeToPage(this.trackMain, new WebKitPoint(0, 0));
+    		//Setting position of track to calculate movement
+    		this._trackData.x = point.x;
+    		this._trackData.y = point.y;	
     	}
     },
     ////////////////////////////////////////////////////////////////////
-    //
+    //Default stops funtion (reset)
     addDefaultStops: {
     	value: function() {
     		this.addStop({color: {mode: 'rgb', value: {r: 255, g: 255, b: 255, a: 1, css: 'rgb(255, 255, 255)'}}, percent: 0}, true);
@@ -223,24 +210,10 @@ exports.GradientPicker = Montage.create(Component, {
 	    		} else if (percent>100) {
 	    			percent = 100;
 	    		}
-	    		
-	    		
-	    		
-	    		
-	    		////////////////////////////////////////////////////////////
-	    		////////////////////////////////////////////////////////////
-    			//TODO: toggling visibility because of a browser bug
-	    		stop.style.visibility = 'hidden'; //TODO: To be removed
-    			var adj = (parseInt(getComputedStyle(stop).getPropertyCSSValue('width').cssText)*percent/100)/this.element._trackWidth;
+	    		//
+    			var adj = (parseInt(getComputedStyle(stop).getPropertyCSSValue('width').cssText)*percent/100)/this._trackData.width;
     			stop.style.left = Math.round(percent-Math.round(adj*100))+'%';
     			stop.button.stopPosition = percent;
-    			stop.style.visibility = 'visible'; //TODO: To be removed
-    			////////////////////////////////////////////////////////////
-    			////////////////////////////////////////////////////////////
-    			
-    			
-    			
-    			
     		} catch (e) {
     			//TEMP
     		}
@@ -292,15 +265,15 @@ exports.GradientPicker = Montage.create(Component, {
     		//
     		this.application.ninja.colorController.colorPopupManager.hideColorChipPopup();
     		//
-    		if ((e._event.y+this.hack.y) > this.element._trackY+70 || (e._event.y+this.hack.y) < this.element._trackY) {
+    		if (e._event.y > this._trackData.y+70 || e._event.y < this._trackData.y) {
     			this.removeStop(this.currentStop);
     		}
     		//
-    		if (this.currentStop.button.stopPosition !== Math.round(((e._event.x+this.hack.x)-(this.element._trackX-23))/this.element._trackWidth*100)) {
+    		if (this.currentStop.button.stopPosition !== Math.round((e._event.x-this._trackData.x)/this._trackData.width*100)) {
     			this.trackCover.style.display = 'block';
     		}
     		//
-    		this.positionStop(this.currentStop, Math.round(((e._event.x+this.hack.x)-(this.element._trackX-23))/this.element._trackWidth*100));
+    		this.positionStop(this.currentStop, Math.round((e._event.x-this._trackData.x)/this._trackData.width*100));
     	}
     },
     ////////////////////////////////////////////////////////////////////
