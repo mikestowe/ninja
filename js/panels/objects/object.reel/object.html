@@ -21,14 +21,10 @@
             "labelText": {
                 "prototype": "montage/ui/dynamic-text.reel",
                 "properties": {
-                    "element": {"#": "label" }
+                    "element": {"#": "name" }
                 },
                 "bindings": {
-                    "value" : {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "label",
-                        "oneway": true
-                    }
+                    "value" : {"<-": "@owner.name"}
                 }
             }
 
@@ -41,7 +37,7 @@
 
 <li data-montage-id="object" draggable="true">
     <div data-montage-id="object-icon" class="object-icon"></div>
-    <span data-montage-id="label" class="object-label"></span>
+    <span data-montage-id="name" class="object-name"></span>
 </li>
 
 </body>
