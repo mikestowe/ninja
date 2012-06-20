@@ -52,17 +52,35 @@ exports.BindingHud = Montage.create(Component, {
             return this._userComponent;
         },
         set: function(val) {
-            if (typeof(val) !== "undefined") {
-                this._userComponent = val;
+            if(!val) { return; }
+
+            var controller = this.application.ninja.objectsController,
+                bindingView = this.parentComponent.parentComponent,
+                isOffStage, icon, iconOffsets;
+
+            this._userComponent = val;
+            this.properties = controller.getPropertiesFromObject(val, true);
+
+            controller.getObjectBindings(this.userComponent).forEach(function(obj) {
+                this.boundProperties.push(obj.sourceObjectPropertyPath);
+            }, this);
+
+            isOffStage = controller.isOffStageObject(val);
+
+            if(isOffStage) {
+                icon = bindingView.getOffStageIcon(val);
+                iconOffsets = this.getElementOffsetToParent(icon.element, bindingView.element);
+                this.title = icon.name;
+                this.x = iconOffsets.x;
+                this.y = iconOffsets.y - 80;
+            } else {
                 this.title = val.identifier;
                 this.x = val.element.offsetLeft;
                 this.y = val.element.offsetTop;
-                this.properties = this.application.ninja.objectsController.getPropertiesFromObject(val, true);
-                this.application.ninja.objectsController.getObjectBindings(this.userComponent).forEach(function(obj) {
-                    this.boundProperties.push(obj.sourceObjectPropertyPath);
-                }.bind(this));
-                this.needsDraw = true;
             }
+
+            this.needsDraw = true;
+
         }
     },
 
@@ -108,6 +126,18 @@ exports.BindingHud = Montage.create(Component, {
             this.isResizing = false;
             this.needsDraw = true;
             this.parentComponent.parentComponent.needsDraw = true;
+        }
+    },
+
+    getElementOffsetToParent : {
+        value: function(element, parent) {
+            var nodeToPage = webkitConvertPointFromNodeToPage(element, new WebKitPoint(0, 0)),
+                parentToPage = webkitConvertPointFromNodeToPage(parent, new WebKitPoint(0, 0));
+
+            return {
+                x : nodeToPage.x - parentToPage.x,
+                y : nodeToPage.y - parentToPage.y
+            }
         }
     },
 

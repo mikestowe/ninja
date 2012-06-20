@@ -48,8 +48,6 @@ exports.Object = Montage.create(Component, {
 
             this._identifier = value;
 
-            this.label = value;
-
             this.needsDraw = true;
         }
         
@@ -67,12 +65,28 @@ exports.Object = Montage.create(Component, {
 
             this._montageMetaData = data;
 
-            if(!this.identifier && data.label) {
-                this.label = data.label;
+            if(data.label) {
+                this.name = data.label;
                 this.needsDraw = true;
             }
         }
 
+    },
+
+    /* ---------------------
+     Event Handlers
+     --------------------- */
+
+    handleClick: {
+        value: function(e) {
+            this.parentComponent.parentComponent.displayHUDForObject(this.sourceObject);
+        }
+    },
+
+    prepareForDraw : {
+        value: function() {
+            this.iconElement.addEventListener('click', this, false);
+        }
     },
 
     draw : {

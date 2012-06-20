@@ -14,7 +14,9 @@
             "owner": {
                 "prototype": "js/stage/objects-tray.reel",
                 "properties": {
-                    "element": {"#": "objects-tray"}
+                    "element": {"#": "objects-tray"},
+                    "iconsRepetition": {"@": "repetition" },
+                    "offStageObjectsController": {"@": "arrayController"}
                 }
             },
             "repetition" : {
@@ -38,7 +40,13 @@
                 "bindings": {
                     "sourceObject" : {"<-": "@repetition.objectAtCurrentIteration"},
                     "identifier" : {"<-": "@repetition.objectAtCurrentIteration.identifier"}
-                }
+                },
+                "listeners": [
+                    {
+                        "type": "click",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             }
 
         }

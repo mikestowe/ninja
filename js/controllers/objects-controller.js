@@ -4,14 +4,13 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-var Montage = require("montage/core/core").Montage,
-    Component        = require("montage/ui/component").Component;
+var Montage = require("montage/core/core").Montage;
 
 var CATEGORIES  = {
 
 };
 
-var objectsController = exports.ObjectsController = Montage.create(Component, {
+var objectsController = exports.ObjectsController = Montage.create(Montage, {
 
     _currentDocument : {
         value : null,
@@ -191,6 +190,8 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
         }
     },
 
+    /* ----- Utils ----- */
+
     _hasPrototype : {
         value: function(object, prototypeName) {
             var prototypes = this.getPrototypes(object).map(function(proto) {
@@ -199,6 +200,18 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
             });
 
             return prototypes.indexOf(prototypeName) !== -1;
+        }
+    },
+
+    ///// Returns true if the element is "non-visual", i.e. is not a component,
+    ///// and has not element property
+
+    isOffStageObject : {
+        value: function(object) {
+            var isComponent = this._hasPrototype(object, "Component"),
+                hasValidElement = object.element && object.element.parentNode;
+
+            return !isComponent || !hasValidElement;
         }
     },
 

@@ -15,6 +15,26 @@ exports.ObjectsTray = Montage.create(Component, {
     hideClass : { value: 'hide-objects-tray'},
     _empty : { value: null },
     _workspaceMode : { value: null },
+
+    iconsRepetition : {
+        value: null
+    },
+    offStageObjectsController : {
+        value: null
+    },
+    
+    _showAllObjects : { value: null },
+    showAllObjects : {
+        get : function() { return this._showAllObjects; },
+        set : function(value) {
+            if(value === this._showAllObjects) { return; }
+            
+            this._showAllObjects = value;
+            
+            this.needsDraw = true;
+        }
+    },
+    
     workspaceMode : {
         get : function() { return this._workspaceMode; },
         set : function(value) {
@@ -43,6 +63,16 @@ exports.ObjectsTray = Montage.create(Component, {
         }
     },
 
+    offStageObjectFilter : {
+        value: function(obj) {
+            if(this.showAllObjects) {
+                return true;
+            }
+
+            return this.application.ninja.objectsController.isOffStageObject(obj);
+        }
+    },
+
     _hide : { value: null },
     hide : {
         get : function() { return this._hide; },
@@ -55,10 +85,19 @@ exports.ObjectsTray = Montage.create(Component, {
         }
     },
 
+    displayHUDForObject : {
+        value: function(object) {
+            this.parentComponent.boundComponents.push(object);
+        }
+    },
+
+    /* ---------------------
+     Draw Cycle
+     --------------------- */
 
     templateDidLoad: { 
         value: function() {
-            console.log('objects panel loaded');
+            this.offStageObjectsController.filterFunction = this.offStageObjectFilter.bind(this);
         }
     },
 
@@ -77,12 +116,15 @@ exports.ObjectsTray = Montage.create(Component, {
                 "oneway": true
             });
 
+        }
+    },
+    willDraw : {
+        value: function() {
             if(this.objects) {
-                this.empty = !this.objects.length;
+                this._empty = !this.offStageObjectsController.organizedObjects.length;
             } else {
-                this.empty = true;
+                this._empty = true;
             }
-
         }
     },
     draw : {
