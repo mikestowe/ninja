@@ -64,6 +64,7 @@ exports.Line = Object.create(GeomObj, {
 
             if(strokeMaterial) {
                 this._strokeMaterial = strokeMaterial;
+				if (strokeColor && this._strokeMaterial.hasProperty( "color" ))  this._strokeMaterial.setProperty( "color",  this._strokeColor );
             }
         }
     },

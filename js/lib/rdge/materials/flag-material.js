@@ -4,20 +4,28 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
+
+var Material = require("js/lib/rdge/materials/material").Material;
 var PulseMaterial = require("js/lib/rdge/materials/pulse-material").PulseMaterial;
 var Texture = require("js/lib/rdge/texture").Texture;
 
-var FlyMaterial = function FlyMaterial() {
+var FlagMaterial = function FlagMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-	this._name = "Fly";
-	this._shaderName = "fly";
+	this._name = "Flag";
+	this._shaderName = "flag";
 
-	this._defaultTexMap = 'assets/images/rocky-normal.jpg';
+	this._texMap = 'assets/images/us_flag.png';
 
 	this._time = 0.0;
-	this._dTime = 0.01;
+	this._dTime = 0.1;
+
+	this._speed = 1.0;
+    this._waveWidth = 1.0;
+    this._waveHeight = 1.0;
+
+	this._hasVertexDeformation = true;
 
     // array textures indexed by shader uniform name
     this._glTextures = [];
@@ -27,60 +35,60 @@ var FlyMaterial = function FlyMaterial() {
     ///////////////////////////////////////////////////////////////////////
 	// all defined in parent PulseMaterial.js
 	// load the local default value
-	var u_tex0_index	= 0,  u_speed_index = 1;
-	this._propNames			= ["u_tex0",		"u_speed" ];
-	this._propLabels		= ["Texture map",	"Speed" ];
-	this._propTypes			= ["file",			"float" ];
+	this._propNames			= ["u_tex0",        "u_waveWidth",      "u_waveHeight",		"u_speed" ];
+	this._propLabels		= ["Texture map",   "Wave Width",       "Wave Height",		"Speed" ];
+	this._propTypes			= ["file",          "float",            "float",			"float" ];
 	this._propValues		= [];
-    this._propValues[this._propNames[u_tex0_index]] = this._defaultTexMap.slice(0);
-    this._propValues[this._propNames[u_speed_index]] = 1.0;
 
-    ///////////////////////////////////////////////////////////////////////
-    // Material Property Accessors
-    ///////////////////////////////////////////////////////////////////////
-	this.isAnimated			= function()			{  return true;		};
-	this.getShaderDef		= function()			{  return flyMaterialDef;	};
+	this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
+    this._propValues[ this._propNames[1] ] = this._waveWidth;
+    this._propValues[ this._propNames[2] ] = this._waveHeight;
+    this._propValues[ this._propNames[3] ] = this._speed;
+
+
+	// a material can be animated or not. default is not.  
+	// Any material needing continuous rendering should override this method
+	this.isAnimated	= function()			{  return true;  };
+	this.getShaderDef		= function()	{  return flagMaterialDef;	}
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
 	// duplcate method requirde
 
-	this.init = function( world ) {
+	this.init = function( world )
+	{
 		// save the world
 		if (world)  this.setWorld( world );
 
 		// set up the shader
 		this._shader = new RDGE.jshader();
-		this._shader.def = flyMaterialDef;
+		this._shader.def = flagMaterialDef;
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = RDGE.createMaterialNode("flyMaterial" + "_" + world.generateUniqueNodeID());
+		this._materialNode = RDGE.createMaterialNode("flagMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;
-		if (this._shader && this._shader['default']) {
+		if (this._shader && this._shader['default'])
 			this._shader['default'].u_time.set( [this._time] );
-        }
 
 		// set the shader values in the shader
-        this.setShaderValues();
-		this.setResolution( [world.getViewportWidth(),world.getViewportHeight()] );
+		this.setShaderValues();
 		this.update( 0 );
-	};
+	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
  
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
-var flyMaterialDef =
-{
-    'shaders': 
+var flagMaterialDef =
+{'shaders': 
 	{
-		'defaultVShader':"assets/shaders/Basic.vert.glsl",
-		'defaultFShader':"assets/shaders/Fly.frag.glsl"
+		'defaultVShader':"assets/shaders/Flag.vert.glsl",
+		'defaultFShader':"assets/shaders/Flag.frag.glsl"
 	},
 	'techniques':
 	{ 
@@ -101,8 +109,9 @@ var flyMaterialDef =
 				{
 					'u_tex0': { 'type' : 'tex2d' },
 					'u_time' : { 'type' : 'float' },
-					'u_speed'  : { 'type' : 'float' },
-					'u_resolution'  :   { 'type' : 'vec2' },
+					'u_speed' : { 'type' : 'float' },
+					'u_waveWidth'  :   { 'type' : 'float' },
+					'u_waveHeight'  :   { 'type' : 'float' }
 				},
 
 				// render states
@@ -116,9 +125,12 @@ var flyMaterialDef =
 	}
 };
 
-FlyMaterial.prototype = new PulseMaterial();
+FlagMaterial.prototype = new PulseMaterial();
 
 if (typeof exports === "object") {
-    exports.FlyMaterial = FlyMaterial;
+    exports.FlagMaterial = FlagMaterial;
 }
+
+
+
 

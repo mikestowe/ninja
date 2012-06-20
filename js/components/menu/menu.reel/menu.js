@@ -83,19 +83,12 @@ exports.Menu = Montage.create(Component, {
 
     handleMousedown: {
         value: function(evt) {
-
             if(this.active && (this.getZIndex(evt.target) < 9000 || evt.target.id === "topMenu")) {
                 this._activeEntry.deselect();
                 this._activeEntry = null;
                 this.active = false;
-
-                //console.log(this.rep.objects[1]);
-                //this.controller.content[1].header = "BLAH";
+                this.element.ownerDocument.removeEventListener('mousedown', this, false);
             }
-
-//            console.log(evt.target.style['z-index']);
-//            console.log(this.getZIndex(evt.target));
-
         }
     },
 
