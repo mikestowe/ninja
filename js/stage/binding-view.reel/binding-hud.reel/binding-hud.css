@@ -66,6 +66,20 @@
     box-shadow: inset 0px 0px 0px 4px rgba(170, 170, 170, 0.34);/*inset 0px 0px 6px #AAA;*/
     /*border-bottom-right-radius: 50%;
     border-top-right-radius: 50%;*/
+}
 
+.scrollArea {
+    background-color:#666;
+    height:12px;
+    text-align: center;
+    display: none;
+}
 
+.scrollArea.disabled {
+    opacity: 0.5;
+}
+
+.hudRepetition {
+    max-height:54px;
+    overflow: hidden;
 }
