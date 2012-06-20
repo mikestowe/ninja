@@ -205,27 +205,37 @@ exports.BindingHud = Montage.create(Component, {
     },
 
     isOverScroller: {
-        value: function(mousePoint) {
+        value: function(e) {
             if(this.scrollSpace < this.properties.length) {
-                if (this.scrollInterval === null) {
-                    var newX = mousePoint.x - this.x;
-                    var newY = mousePoint.y - this.y;
-                    var scrollUpStartX = 5;
-                    var scrollUpEndX = scrollUpStartX + this.titleElement.offsetWidth;
-                    var scrollUpStartY = this.titleElement.offsetHeight;
-                    var scrollUpEndY = scrollUpStartY + this.scrollUp.offsetHeight;
+                var isOverScroller = false;
+                var mousePoint = webkitConvertPointFromPageToNode(this.element, new WebKitPoint(e.pageX, e.pageY));
 
-                    var scrollDownStartX = 5;
-                    var scrollDownEndX = scrollUpStartX + this.titleElement.offsetWidth;
-                    var scrollDownStartY = scrollUpEndY + this.optionsRepeater.element.offsetHeight;
-                    //scrollDownEndy to small find out y;
-                    var scrollDownEndY = scrollUpEndY + this.scrollDown.offsetHeight;
-                    console.log(scrollDownStartX,scrollDownEndX, scrollDownStartY, scrollDownEndY, newX, newY );
-                    if(scrollDownStartX < newX && (scrollDownEndX) > newX) {
-                        if(scrollDownStartY < newY && (scrollDownEndY) > newY) {
-                            debugger;
-                        }
+                var scrollUpStartX = 5;
+                var scrollUpEndX = scrollUpStartX + this.titleElement.offsetWidth;
+                var scrollUpStartY = this.titleElement.offsetHeight;
+                var scrollUpEndY = scrollUpStartY + this.scrollUp.offsetHeight;
+                if(scrollUpStartX < mousePoint.x && (scrollUpEndX) > mousePoint.x) {
+                    if(scrollUpStartY < mousePoint.y && (scrollUpEndY) > mousePoint.y) {
+                        this.handleScroll("up");
+                        isOverScroller = true;
                     }
+                }
+
+                var scrollDownStartX = 5;
+                var scrollDownEndX = scrollDownStartX + this.titleElement.offsetWidth;
+                var scrollDownStartY = scrollUpEndY + this.optionsRepeater.element.offsetHeight;
+                var scrollDownEndY = scrollDownStartY + this.scrollDown.offsetHeight;
+
+                if(scrollDownStartX < mousePoint.x && (scrollDownEndX) > mousePoint.x) {
+                    if(scrollDownStartY < mousePoint.y && (scrollDownEndY) > mousePoint.y) {
+                        this.handleScroll("down");
+                        isOverScroller = true;
+                    }
+                }
+
+                if(!isOverScroller) {
+                    clearInterval(this.scrollInterval);
+                    this.scrollInterval = null;
                 }
             }
         }
@@ -233,14 +243,16 @@ exports.BindingHud = Montage.create(Component, {
 
     handleScroll: {
         value: function(direction) {
-            if(direction === "down") {
-                this.scrollInterval = setInterval(function() {
-                    self.optionsRepeater.element.scrollTop += 18;
-                }, 200);
-            } else {
-                this.scrollInterval = setInterval(function() {
-                    self.optionsRepeater.element.scrollTop -= 18;
-                }, 200);
+            if (this.scrollInterval === null) {
+                if(direction === "down") {
+                    this.scrollInterval = setInterval(function() {
+                        this.optionsRepeater.element.scrollTop += 3;
+                    }.bind(this), 50);
+                } else {
+                    this.scrollInterval = setInterval(function() {
+                        this.optionsRepeater.element.scrollTop -= 3;
+                    }.bind(this), 50);
+                }
             }
         }
     },
@@ -262,7 +274,7 @@ exports.BindingHud = Montage.create(Component, {
                     }
                 }
             }
-            this.needsDraw = true;
+            //this.needsDraw = true;
         }
     },
 

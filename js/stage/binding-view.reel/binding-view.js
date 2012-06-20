@@ -289,7 +289,7 @@ exports.BindingView = Montage.create(Component, {
                     if(obj.y < mousePoint.y && (obj.y + obj.element.offsetHeight) > mousePoint.y) {
                         overHud = true;
                         if(this._isDrawingConnection) {
-                            obj.isOverScroller(mousePoint);
+                            obj.isOverScroller(e);
                         }
                     }
                 }
