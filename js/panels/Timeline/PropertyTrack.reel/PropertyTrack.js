@@ -302,46 +302,6 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         }
     },
 
-    splitPropTween:{
-        value:function (ev) {
-            console.log("splitting sub prop tween with new keyframe");
-            var clickPos = ev.target.parentElement.offsetLeft + ev.offsetX;
-            var i;
-            var tweensLength = this.propTweens.length - 1;
-            var prevTween, nextTween, splitTweenIndex;
-            for (i = 0; i < tweensLength; i++) {
-                prevTween = this.propTweens[i].tweenData.keyFramePosition;
-                nextTween = this.propTweens[i + 1].tweenData.keyFramePosition;
-                if (clickPos > prevTween && clickPos < nextTween) {
-                    //console.log(clickPos + " found on tween: "+ this.tweens[i+1].tweenData.tweenID);
-                    splitTweenIndex = this.propTweens[i + 1].tweenData.tweenID;
-                    this.propTweens[i + 1].tweenData.spanWidth = this.propTweens[i + 1].tweenData.keyFramePosition - clickPos;
-                    this.propTweens[i + 1].tweenData.spanPosition = ev.target.parentElement.offsetLeft + ev.offsetX;
-                    if (ev.target.className != "tween-span") {
-                        // don't set styles on timeline track if event is coming from the track
-                    } else {
-                        ev.target.style.width = this.propTweens[i + 1].tweenData.spanWidth + "px";
-                        ev.target.parentElement.style.left = clickPos + "px";
-                        ev.target.parentElement.children[1].style.left = (this.propTweens[i + 1].tweenData.spanWidth - 3) + "px";
-                    }
-                    var newTweenToInsert = {};
-                    newTweenToInsert.tweenData = {};
-                    newTweenToInsert.tweenData.spanWidth = clickPos - prevTween;
-                    newTweenToInsert.tweenData.keyFramePosition = clickPos;
-                    newTweenToInsert.tweenData.keyFrameMillisec = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80) * clickPos;
-                    newTweenToInsert.tweenData.tweenID = splitTweenIndex - 1;
-                    newTweenToInsert.tweenData.spanPosition = clickPos - newTweenToInsert.tweenData.spanWidth;
-                    newTweenToInsert.tweenData.tweenedProperties = [];
-                    newTweenToInsert.tweenData.tweenedProperties[this.trackEditorProperty] = this.ninjaStylesContoller.getElementStyle(this.animatedElement, this.trackEditorProperty);
-                    this.propTweens.splice(splitTweenIndex, 0, newTweenToInsert);
-                    break;
-                }
-            }
-            this.application.ninja.currentDocument.model.needsSave = true;
-        }
-    },
-
-    // splitTweenAt: Split a tween at a particular position (x coordinate)
     splitPropTweenAt:{
         value:function (position) {
             var i, j, nextComponentIndex,

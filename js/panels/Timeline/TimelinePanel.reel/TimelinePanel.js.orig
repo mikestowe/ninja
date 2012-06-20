@@ -596,6 +596,35 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function () {
             this.initTimeline();
 
+<<<<<<< HEAD
+            // Bind drag and drop event handlers
+            this.container_layers.addEventListener("dragstart", this.handleLayerDragStart.bind(this), false);
+            this.container_layers.addEventListener("dragend", this.handleLayerDragEnd.bind(this), false);
+            this.container_layers.addEventListener("dragover", this.handleLayerDragover.bind(this), false);
+            this.container_layers.addEventListener("drop", this.handleLayerDrop.bind(this), false);
+            
+            // Bind the handlers for the config menu
+            this.checkable_animated.addEventListener("click", this.handleAnimatedClick.bind(this), false);
+            this.tl_configbutton.addEventListener("click", this.handleConfigButtonClick.bind(this), false);
+            this.checkable_lock.addEventListener("click",this.handleLockLayerClick.bind(this),false);
+            this.checkable_visible.addEventListener("click",this.handleLayerVisibleClick.bind(this),false);
+            document.addEventListener("click", this.handleDocumentClick.bind(this), false);
+
+            this.addPropertyChangeListener("currentDocument.model.domContainer", this);
+
+            // Bind some bindings
+            Object.defineBinding(this, "currentSelectedContainer", {
+                boundObject:this.application.ninja,
+                boundObjectPropertyPath:"currentSelectedContainer",
+                oneway:true
+            });
+            
+            // Create the easing menu for future use.
+            this.easingMenu = EasingMenuPopup;
+            //this.easingMenu.show();
+
+=======
+>>>>>>> refs/heads/TimelineUberJD
         }
     },
     
@@ -866,8 +895,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             document.addEventListener("keydown", this.timelineLeftPaneKeydown.bind(this), false);
             document.addEventListener("keyup", this.timelineLeftPaneKeyup.bind(this), false);
             this.eventManager.addEventListener("updatedID", this.handleLayerIdUpdate.bind(this), false);
-			this.checkable_lock.addEventListener("click",this.handleLockLayerClick.bind(this),false);
-            this.checkable_visible.addEventListener("click",this.handleLayerVisibleClick.bind(this),false);
             
             // Bind some bindings
             Object.defineBinding(this, "currentSelectedContainer", {
