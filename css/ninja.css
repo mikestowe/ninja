@@ -677,7 +677,9 @@ nav.menuBar ul li:hover ul, nav.menuBar ul ul li:hover ul, nav.menuBar ul ul ul 
 
 .toolOptionsSpacer { margin-right: 9px; }
 
-.toolColorChipCtrl { width: 18px; height: 18px; margin-top: 1px; margin-left: 3px; margin-right: 8px; border: 1px black solid; }
+.toolColorChipCtrl { width: 16px; height: 16px; border: 1px #000 solid; }
+
+.toolColorChipContainer { background: url(../../../../../images/colorpanel/transparent.png) repeat; width: 18px; height: 18px; margin-top: 1px; margin-left: 3px; margin-right: 8px; border: 1px #777 solid; }
 
 .toolColorChipIcon { width: 20px; height: 20px; margin-top: 1px; -webkit-transform: scale(0.8); background-color: #282828; }
 
