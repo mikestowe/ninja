@@ -216,6 +216,7 @@ exports.BindingView = Montage.create(Component, {
             if(width === null) width = 1;
             if (color === null) color = "#CCC";
             this._context.lineWidth = width; // Set Line Thickness
+            this._context.lineCap = "round";
             this._context.strokeStyle = color; // Set Color
             this._context.beginPath(); // Start Drawing Line
             this._context.moveTo(fromX, fromY);
@@ -294,7 +295,7 @@ exports.BindingView = Montage.create(Component, {
             if(this._isDrawingConnection && !overHud) {
                 //NOTE : Continue This content. mouse over select
                 var obj = this.application.ninja.stage.getElement(event, true);
-                if (obj)
+                if (obj && obj.controller !== this.selectedComponent)
                 {
                     if (!obj.controller || obj === null)
                     {
