@@ -247,18 +247,18 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
     // TODO - Check why handleElementChange is being fired before handleAddElement
     handleElementChange: {
         value: function(event) {
-            this._elementChangeHelper(event);
+            this._elementChangeHelper(event, false);
         }
     },
 
     handleElementChanging: {
         value: function(event) {
-            this._elementChangeHelper(event);
+            this._elementChangeHelper(event, true);
         }
     },
 
     _elementChangeHelper: {
-        value: function(event) {
+        value: function(event, isChanging) {
             if(!event.detail || !event.detail.data) {
                 return;
             }
@@ -273,34 +273,44 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                     l,
                     t,
                     plane,
-                    changed = false;
+                    changed = false,
+                    adjustStagePadding = !isChanging || (event.detail.data.prop !== "matrix");
                 for(var i=0; i < len; i++) {
                     plane = els[i].elementModel.props3D.elementPlane;
                     if(plane) {
                         plane.init();
-                        l = plane._rect.m_left - docLeft;
-                        t = plane._rect.m_top - docTop;
-                        if(l < minLeft) {
-                            minLeft = l;
-                        }
-                        if(t < minTop) {
-                            minTop = t;
+                        if(adjustStagePadding) {
+                            l = plane._rect.m_left - docLeft;
+                            t = plane._rect.m_top - docTop;
+                            if(l < minLeft) {
+                                minLeft = l;
+                            }
+                            if(t < minTop) {
+                                minTop = t;
+                            }
                         }
                     }
                 }
 
-                if(minLeft !== stage.userPaddingLeft) {
-                    stage.userPaddingLeft = minLeft;
-                    changed = true;
-                }
-                if(minTop !== stage.userPaddingTop) {
-                    stage.userPaddingTop = minTop;
-                    changed = true;
+                if(adjustStagePadding) {
+                    if(minLeft !== stage.userPaddingLeft) {
+                        stage.userPaddingLeft = minLeft;
+                        changed = true;
+                    }
+                    if(minTop !== stage.userPaddingTop) {
+                        stage.userPaddingTop = minTop;
+                        changed = true;
+                    }
                 }
 
                 if(!changed) {
                     this.drawWorkingPlane();
                     this.draw3DCompass();
+                }
+
+                // TODO - Remove this once all stage drawing is consolidated into a single draw cycle
+                if(!isChanging) {
+                    this.application.ninja.toolsData.selectedToolInstance.captureSelectionDrawn(null);
                 }
             }
         }
