@@ -16,6 +16,9 @@ exports.ObjectsTray = Montage.create(Component, {
     _empty : { value: null },
     _workspaceMode : { value: null },
 
+    iconsRepetition : {
+        value: null
+    },
     offStageObjectsController : {
         value: null
     },

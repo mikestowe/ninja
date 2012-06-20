@@ -255,6 +255,14 @@ exports.BindingView = Montage.create(Component, {
         value:null
     },
 
+    getOffStageIcon : {
+        value: function(object) {
+            var index = this.objectsTray.offStageObjectsController.organizedObjects.indexOf(object);
+
+            return this.objectsTray.iconsRepetition.childComponents[index];
+        }
+    },
+
 
     // When mouse pointer is on a hud this value will be set to true
     _mouseOverHud: { value: false },
