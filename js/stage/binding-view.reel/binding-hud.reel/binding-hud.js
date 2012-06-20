@@ -26,34 +26,18 @@ exports.BindingHud = Montage.create(Component, {
             return this._userComponent;
         },
         set: function(val) {
-            this._userComponent = val;
-        }
-    },
-
-
-    bindingArgs: {
-        get: function() {
-            return this._bindingArgs;
-        },
-        set: function(val) {
             if (typeof(val) !== "undefined") {
-                this._bindingArgs = val;
-                this.userComponent = this.bindingArgs.component;
-                this.title = this.bindingArgs.component.identifier;
-                this.x = this._bindingArgs.component.element.offsetLeft;
-                this.y = this._bindingArgs.component.element.offsetTop;
-                this.properties = this._bindingArgs.properties;
+                this._userComponent = val;
+                this.title = val.identifier;
+                this.x = val.element.offsetLeft;
+                this.y = val.element.offsetTop;
+                this.properties = this.application.ninja.objectsController.getPropertiesFromObject(val, true);
                 this.needsDraw = true;
-            } else {
-                this.properties = [];
             }
         }
     },
 
-    properties: {
-        value: [
-        ]
-    },
+    properties: { value: [] },
 
     _isResizing: {
         value: null
@@ -149,19 +133,20 @@ exports.BindingHud = Montage.create(Component, {
 //                }
 //                this.properties.push({"title":obj, "bound": objBound});
 //            }.bind(this));
+            this.parentComponent.parentComponent.handleShowBinding(this.application.ninja.objectsController.getObjectBindings(this.userComponent));
         }
     },
 
     draw: {
         value: function() {
             this.titleElement.innerHTML = this.title;
-
-//            if(this.isResizing) {
-//                    this.timelineSplitter.collapsed = this.height - this._resizedHeight < 46;
-//                    this.panelSplitter.collapsed = this.width - this._resizedWidth < 30;
-//                }
             this.element.style.top = (this.y + this._resizedY) + "px";
             this.element.style.left = (this.x + this._resizedX) + "px";
+        }
+    },
+    didDraw: {
+        value: function() {
+
         }
     }
 });

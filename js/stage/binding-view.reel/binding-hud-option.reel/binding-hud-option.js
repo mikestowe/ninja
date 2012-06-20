@@ -30,27 +30,6 @@ exports.BindingHudOption = Montage.create(Component, {
         value: false
     },
 
-    _hudOptions: {
-        value: []
-    },
-
-    hudOptions: {
-        get: function() {
-            return this._hudOptions;
-        },
-        set: function(val) {
-            if (typeof(val) !== "undefined") {
-                this._hudOptions = val;
-                this.title = val.title;
-                this.bound = val.bound;
-            } else {
-                this._hudOptions = null;
-            }
-            this.needsDraw = true;
-
-        }
-    },
-
     prepareForDraw: {
         value: function() {
             // Set Up Listener for click and propagate up to Binding View
