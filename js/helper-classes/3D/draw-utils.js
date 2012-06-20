@@ -309,7 +309,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                 }
 
                 // TODO - Remove this once all stage drawing is consolidated into a single draw cycle
-                if(!isChanging) {
+                if(!isChanging && this.application.ninja.toolsData.selectedToolInstance.captureSelectionDrawn) {
                     this.application.ninja.toolsData.selectedToolInstance.captureSelectionDrawn(null);
                 }
             }
