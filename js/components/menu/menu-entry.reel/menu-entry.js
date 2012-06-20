@@ -9,18 +9,15 @@ var Component = require("montage/ui/component").Component;
 
 exports.MenuEntry = Montage.create(Component, {
     topHeader: {
-        value: null,
-        serializable: true
+        value: null
     },
 
     topHeaderText: {
-        value: null,
-        serializable: true
+        value: null
     },
 
     subEntries: {
-        value: null,
-        serializable: true
+        value: null
     },
 
     // Reference to the parent Menu component
@@ -36,8 +33,7 @@ exports.MenuEntry = Montage.create(Component, {
             if(value !== this._menu) {
                 this._menu = value;
             }
-        },
-        serializable: true
+        }
     },
 
     _data: {
@@ -52,8 +48,7 @@ exports.MenuEntry = Montage.create(Component, {
             if(this._data !== value) {
                 this._data = value;
             }
-        },
-        serializable: true
+        }
     },
 
     select: {
@@ -79,7 +74,7 @@ exports.MenuEntry = Montage.create(Component, {
             return this._menuIsActive;
         },
         set: function(value) {
-            if(value)  this.topHeader.addEventListener("mouseover", this, false);
+            if(value)  this.element.addEventListener("mouseover", this, false);
         }
     },
 
@@ -87,14 +82,12 @@ exports.MenuEntry = Montage.create(Component, {
         value: function(event) {
             // TODO: Hack! Rework this!
             this.parentComponent.ownerComponent.toggleActivation(this);
-//            this._menu.toggleActivation(this);
         }
     },
 
     handleMouseover: {
         value: function(event) {
             this.parentComponent.ownerComponent.activeEntry = this;
-//            this._menu.activeEntry = this;
         }
     },
 
@@ -106,13 +99,6 @@ exports.MenuEntry = Montage.create(Component, {
             this.topHeaderText.innerHTML = this.data.header;
 
             this.element.addEventListener("mousedown", this, true);
-
-            Object.defineBinding(this, "menuIsActive", {
-                boundObject: this._menu,
-                boundObjectPropertyPath: "active",
-                oneway: true
-            });
-
         }
     }
 });
