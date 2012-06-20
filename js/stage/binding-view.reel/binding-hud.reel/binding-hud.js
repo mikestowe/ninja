@@ -20,6 +20,10 @@ exports.BindingHud = Montage.create(Component, {
         value: null
     },
 
+    boundProperties: {
+        value: []
+    },
+
     _userComponent: { value: null  },
     userComponent: {
         get: function() {
@@ -32,6 +36,9 @@ exports.BindingHud = Montage.create(Component, {
                 this.x = val.element.offsetLeft;
                 this.y = val.element.offsetTop;
                 this.properties = this.application.ninja.objectsController.getPropertiesFromObject(val, true);
+                this.application.ninja.objectsController.getObjectBindings(this.userComponent).forEach(function(obj) {
+                    this.boundProperties.push(obj.sourceObjectPropertyPath);
+                }.bind(this));
                 this.needsDraw = true;
             }
         }
@@ -133,7 +140,7 @@ exports.BindingHud = Montage.create(Component, {
 //                }
 //                this.properties.push({"title":obj, "bound": objBound});
 //            }.bind(this));
-            this.parentComponent.parentComponent.handleShowBinding(this.application.ninja.objectsController.getObjectBindings(this.userComponent));
+            //this.parentComponent.parentComponent.handleShowBinding(this.application.ninja.objectsController.getObjectBindings(this.userComponent));
         }
     },
 

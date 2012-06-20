@@ -33,6 +33,10 @@ exports.BindingHudOption = Montage.create(Component, {
     prepareForDraw: {
         value: function() {
             // Set Up Listener for click and propagate up to Binding View
+            var matchesBound = this.parentComponent.parentComponent.boundProperties.filter(function(obj) {
+                return (obj === this.title);
+            }.bind(this));
+            if(matchesBound.length > 0) this.bound = true;
         }
     },
 
