@@ -21,7 +21,6 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
     //-------------------------------------------------------------------------
     // Snapping-specific properties
     _canSnap: { value: true },
-    _dragPlane: { value: null },
 	_snapParam: { value: null },
 	_snapIndex: { value: -1 },
 	_useQuadPt: { value: false },
@@ -163,15 +162,15 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 
                     if(!this._dragPlane)
                     {
-//                        if( this._inLocalMode && (this._startMatArray.length === 1) )
-//                        {
-//                            this._dragPlane = viewUtils.getUnprojectedElementPlane(this._clickedObject);
-//                            snapManager.setupDragPlaneFromPlane(this._dragPlane);
-//                        }
-//                        else
-//                        {
+                        if((this._handleMode !== null) && (this.application.ninja.toolsData.selectedTool.action === "SelectionTool"))
+                        {
+                            this._dragPlane = viewUtils.getUnprojectedElementPlane(this.application.ninja.selectedElements[0]);
+                            snapManager.setupDragPlaneFromPlane(this._dragPlane);
+                        }
+                        else
+                        {
                             this._dragPlane = snapManager.setupDragPlanes( hitRec, true );
-//                        }
+                        }
                     }
 
                     // only do quadrant snapping if the 4 corners of the element are in the drag plane
