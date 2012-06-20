@@ -811,48 +811,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         }
     },
 
-    splitTween:{
-        value:function (ev) {
-            var clickPos = ev.target.parentElement.offsetLeft + ev.offsetX,
-            	i,
-            	tweensLength = this.tweens.length-1,
-            	prevTween, nextTween, splitTweenIndex;
-
-            for(i=0; i<tweensLength; i++){
-                prevTween = this.tweens[i].tweenData.keyFramePosition;
-                nextTween = this.tweens[i+1].tweenData.keyFramePosition;
-                if(clickPos > prevTween && clickPos < nextTween){
-                    //console.log(clickPos + " found on tween: "+ this.tweens[i+1].tweenData.tweenID);
-                    splitTweenIndex = this.tweens[i+1].tweenData.tweenID;
-                    this.tweens[i+1].tweenData.spanWidth = this.tweens[i+1].tweenData.keyFramePosition - clickPos;
-                    this.tweens[i+1].tweenData.spanPosition = ev.target.parentElement.offsetLeft + ev.offsetX;
-                    if (ev.target.className != "tween-span") {
-                        // don't set styles on timeline track if event is coming from the track
-                    } else {
-                        ev.target.style.width = this.tweens[i + 1].tweenData.spanWidth + "px";
-                        ev.target.parentElement.style.left = clickPos + "px";
-                        ev.target.parentElement.children[1].style.left = (this.tweens[i + 1].tweenData.spanWidth - 3) + "px";
-                    }
-                    var newTweenToInsert = {};
-                    newTweenToInsert.tweenData = {};
-                    newTweenToInsert.tweenData.spanWidth = clickPos - prevTween;
-                    newTweenToInsert.tweenData.keyFramePosition = clickPos;
-                    newTweenToInsert.tweenData.keyFrameMillisec = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80) * clickPos;
-                    newTweenToInsert.tweenData.tweenID = splitTweenIndex - 1;
-                    newTweenToInsert.tweenData.spanPosition = clickPos - newTweenToInsert.tweenData.spanWidth;
-                    newTweenToInsert.tweenData.tweenedProperties = [];
-                    newTweenToInsert.tweenData.tweenedProperties["top"] = this.animatedElement.offsetTop + "px";
-                    newTweenToInsert.tweenData.tweenedProperties["left"] = this.animatedElement.offsetLeft + "px";
-                    newTweenToInsert.tweenData.tweenedProperties["width"] = this.animatedElement.offsetWidth + "px";
-                    newTweenToInsert.tweenData.tweenedProperties["height"] = this.animatedElement.offsetHeight + "px";
-                    this.tweens.splice(splitTweenIndex, 0, newTweenToInsert);
-                    break;
-                }
-            }
-            this.application.ninja.currentDocument.model.needsSave = true;
-        }
-    },
-
 	// splitTweenAt: Split a tween at a particular position (x coordinate)
     splitTweenAt: {
         value:function (position) {
