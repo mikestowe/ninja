@@ -4,6 +4,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
+var Texture = require("js/lib/rdge/texture").Texture;
+
+
 ///////////////////////////////////////////////////////////////////////
 // Class GLMaterial
 //      GL representation of a material.
@@ -15,19 +18,16 @@ var Material = function GLMaterial( world ) {
 	this._name = "GLMaterial";
 	this._shaderName = "undefined";
 
+	this._time = 0.0;
+	this._dTime = 0.01;
+
 	// keep a reference to the owning GLWorld
 	this._world = null;
     if(world) {
         this._world = world;
     }
 
-	this._shininess = 60;
-		
-	this._ambient  = [0.0, 0.0, 0.0,  1.0];
-	this._diffuse  = [0.0, 0.0, 0.0,  1.0];
-	this._specular = [0.0, 0.0, 0.0,  1.0];
-
-	this._texture = null;
+	this._glTextures = [];		// indexed by uniform name
 
 	// vertex deformation variables
 	this._hasVertexDeformation = false;
@@ -38,16 +38,14 @@ var Material = function GLMaterial( world ) {
 	this._shader = null;
 	this._materialNode = null;
 
+	// vertex deformation variables
+	this._hasVertexDeformation = false;
+	this._vertexDeformationRange = [0, 0, 1, 1];	// (xMin, yMin, xMax, yMax)
+	this._vertexDeformationTolerance = 0.02;
+
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this.getShininess = function() {
-        return this._shininess;
-    };
-
-	this.setShininess = function(s) {
-        this._shininess = s;
-    };
 
 	this.setName = function(n) {
         this._name = n;
@@ -73,30 +71,6 @@ var Material = function GLMaterial( world ) {
         return this._world;
     };
 
-	this.setAmbient	= function(r, g, b, a)	{
-        this._ambient = [r, g, b, a];
-    };
-
-	this.getAmbient = function() {
-        return [this._ambient[0], this._ambient[1], this._ambient[2], this._ambient[3]];
-    };
-
-	this.setDiffuse	= function(r, g, b, a)	{
-        this._diffuse = [r, g, b, a];
-    };
-
-	this.getDiffuse	= function() {
-        return [this._diffuse[0], this._diffuse[1], this._diffuse[2], this._diffuse[3]];
-    };
-
-	this.setSpecular = function(r, g, b, a)	{
-        this._specular = [r, g, b, a];
-    };
-
-	this.getSpecular = function() {
-        return [this._specular[0], this._specular[1], this._specular[2], this._specular[3]];
-    };
-
 	this.getShader = function() {
         return this._shader;
     };
@@ -110,6 +84,10 @@ var Material = function GLMaterial( world ) {
 	this.isAnimated	= function() {
         return false;
     };
+
+	this.getTechniqueName	= function() {
+		return 'default'
+	};
 
 	// the vertex shader can apply deformations requiring refinement in
 	// certain areas.
@@ -161,6 +139,43 @@ var Material = function GLMaterial( world ) {
 		}
 	};
 
+	this.hasProperty = function( prop )
+	{
+		var propNames = [],  dummy = [];
+		this.getAllProperties( propNames, dummy, dummy, dummy )
+		for (var i=0;  i<propNames.length;  i++)
+		{
+			if (prop === propNames[i])  return true;
+		}
+	};
+
+	this.getPropertyType = function( prop )
+	{
+		var n = this.getPropertyCount();
+		for (var i=0;  i<n;  i++)
+		{
+			if (prop === this._propNames[i])  return this._propTypes[i];
+		}
+	};
+
+    this.dup = function ()
+	{
+        // get the current values;
+        var propNames = [], propValues = [], propTypes = [], propLabels = [];
+        this.getAllProperties(propNames, propValues, propTypes, propLabels);
+        
+        // allocate a new material
+		var MaterialLibrary = require("js/models/materials-model").MaterialsModel;
+        var newMat = MaterialLibrary.createMaterialByShaderName( this.getShaderName() );
+
+		// copy over the current values;
+        var n = propNames.length;
+        for (var i = 0; i < n; i++)
+            newMat.setProperty(propNames[i], propValues[i]);
+
+        return newMat;
+    };
+
 	this.validateProperty = function( prop, value ) {
 		var rtnVal = false;
 		try
@@ -187,6 +202,7 @@ var Material = function GLMaterial( world ) {
 							rtnVal = ((valType == "object") && (value.length >= 3));
 							break;
 
+						case "angle":
 						case "float":
 							rtnVal = (valType == "number");
 							break;
@@ -204,22 +220,148 @@ var Material = function GLMaterial( world ) {
 			console.log( "setting invalid material property: " + prop + ", value: " + value );
 		}
 		
-		if (!rtnVal) {
-			console.log( "invalid material property: " + prop + " : " + value );
-        }
+//		if (!rtnVal && (prop != 'color')) {
+//			console.log( "invalid material property: " + prop + " : " + value );
+//        }
 
 		return rtnVal;
 	};
+
+	this.setProperty = function( prop,  value )
+	{
+		var ok = this.validateProperty( prop, value );
+		if (!ok && (prop != 'color')) {
+			//console.log( "invalid property in Material:" + prop + " : " + value );
+			return;
+		}
+
+		// get the technique if the shader is instantiated
+		var technique;
+		var material = this._materialNode;
+		if (material)  technique = material.shaderProgram[this.getTechniqueName()];
+
+		switch (this.getPropertyType(prop))
+		{
+			case "angle":
+			case "float":
+				this._propValues[prop] = value;
+				if (technique)  technique[prop].set( [value] );
+				break;
+
+			case "file":
+				this._propValues[prop] = value.slice();
+				if (technique)
+				{
+					var glTex = new Texture( this.getWorld(),  value );
+					this._glTextures[prop] = glTex;
+					glTex.render();
+					var tex = glTex.getTexture();
+					if (tex)  technique[prop].set( tex );
+				}
+				break;
+
+			case "color":
+			case "vector2d":
+			case "vector3d":
+				this._propValues[prop] = value.slice();
+				if (technique)  technique[prop].set( value );
+				break;
+		}
+	};
+
+	this.setShaderValues = function()
+	{
+		var material = this._materialNode;
+		if (material)
+		{
+			var technique = material.shaderProgram[this.getTechniqueName()];
+			if (technique)
+			{
+				var n = this.getPropertyCount();
+				for (var i=0;  i<n;  i++)
+				{
+					var prop = this._propNames[i],
+						value = this._propValues[prop];
+
+					switch (this._propTypes[i])
+					{
+						case "angle":
+						case "float":
+							technique[prop].set( [value] );
+							break;
+
+						case "file":
+							var glTex = this._glTextures[prop];
+							if (glTex)
+							{
+								var tex = glTex.getTexture();
+								if (tex)  technique[prop].set( tex );
+							}
+							else
+								this.setProperty( prop, value );
+							break;
+
+						case "color":
+						case "vector2d":
+						case "vector3d":
+							technique[prop].set( value );
+							break;
+					}
+				}
+			}
+		}
+	};
+
+	// JSON export
+	this.exportJSON = function()
+	{
+		var jObj =
+		{
+			'material'		: this.getShaderName(),
+			'name'			: this.getName(),
+			'dTime'         : this._dTime
+		};
+
+		var n = this.getPropertyCount();
+		for (var i=0;  i<n;  i++)
+		{
+			var	prop  = this._propNames[i],
+				value = this._propValues[prop];
+
+			jObj[prop] = value;
+		}
+
+		if (this.customExport)
+			jObj = this.customExport( jObj );
+
+		return jObj;
+	};
+	
+    this.importJSON = function (jObj) {
+        if (this.getShaderName() != jObj.material) throw new Error("ill-formed material");
+        this.setName(jObj.name);
+
+        try
+		{
+			for (var prop in jObj)
+			{
+				if ((prop != 'material') && (prop != 'name'))
+				{
+					var value = jObj[prop];
+					this.setProperty( prop, value );
+				}
+			}
+        }
+        catch (e) {
+            throw new Error("could not import material: " + jObj);
+        }
+    };
+
     ///////////////////////////////////////////////////////////////////////
     
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-	// duplcate method required by sub class
-	this.dup = function() {
-		throw new Error( "Material.dup() must be overridden by subclass" );
-	};
-
 	this.init = function( world ) {
 		throw new Error( "Material.init() must be overridden by subclass" );
 	};
@@ -256,78 +398,6 @@ var Material = function GLMaterial( world ) {
 		return tex;
 	};
 
-	/*
-	this.setRenderProperties = function( glContext, shaderProgram )
-	{
-		glContext.uniform1f( shaderProgram.materialShininessUniform, this._shininess );
-
-		if (this._texture)
-			this.prepareTextureForRender( 0 );
-		else
-			glContext.uniform1i( shaderProgram.useTextureUniform,	false  );
-
-		var amb = this._ambient,  diff = this._diffuse,  spec = this._specular;
-		glContext.uniform4f( shaderProgram.materialAmbientUniform,		 amb[0],  amb[1],  amb[2],  amb[3]);
-		glContext.uniform4f( shaderProgram.materialDiffuseUniform,		diff[0], diff[1], diff[2], diff[3]);
-		glContext.uniform4f( shaderProgram.materialSpecularUniform,		spec[0], spec[1], spec[2], spec[3]);
-	}
- 
- 
- 
-    this.prepareTextureForRender = function ( index )
-	{
-		// we will need to be able to handle multiple textures.
-		// currently only dealing with 1.
-		index = 0;
-		var texture = this._texture;
-
-		var gl = this.getWorld().getGLContext();
-		var shaderProgram = this.getWorld().getShaderProgram();
-
-		gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-		gl.uniform1i(shaderProgram.samplerUniform, 0);
-		gl.uniform1i( shaderProgram.useTextureUniform,	true  );
-    }
- 
-    this.textureLoadHandler = function (event)
-	{
-		var texture = this._texture;
-
-		var gl = this._world.getGLContext();
-		var shaderProgram = this._world.getShaderProgram();
-
-		gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-
-//		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-//		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-        gl.bindTexture(gl.TEXTURE_2D, null);
-
-		this._material._texture = this._texture;
-		this._world.render();
-	}
- 
- 
-    this.loadTexture = function( path )
-	{
-        var gl = this.getWorld().getGLContext();
-		var tex = gl.createTexture();
-        tex.image = new Image();
-		tex.image._world = this._world;
-		tex.image._material = this;
-		tex.image._texture = tex;
-        tex.image.onload = this.textureLoadHandler;
-        tex.image.src = path;
-    }
-	*/
 };
 
 if (typeof exports === "object") {
