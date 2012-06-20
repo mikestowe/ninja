@@ -47,6 +47,20 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
         }
     },
 
+    _areElementsIn2D : {
+        value: function () {
+            if(this.application.ninja.selectedElements.length) {
+                var len = this.application.ninja.selectedElements.length;
+                for(var i = 0; i < len; i++) {
+                    if(!MathUtils.isIdentityMatrix(this.application.ninja.selectedElements[i].elementModel.getProperty("mat"))) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    },
+
     startDraw: {
         value: function(event) {
             this.drawData = null;
@@ -70,7 +84,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             if(this._canSnap)
             {
                 this.initializeSnapping(event);
-                this._use3DMode = !this._areElementsOnSamePlane();
+//                this._use3DMode = !this._areElementsOnSamePlane();
+                this._use3DMode = !this._areElementsIn2D();
 //                console.log("use3DMode = " + this._use3DMode);
             }
             else
