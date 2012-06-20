@@ -459,10 +459,17 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		this._draggingType = newVal;
     	}
     },
-
-    layersDragged:{
-           value:[],
-           writable:true
+    
+    _elementsDragged: {
+    	value: []
+    },
+    elementsDragged: {
+    	get: function() {
+    		return this._elementsDragged;
+    	},
+    	set: function(newVal) {
+    		this._elementsDragged = newVal;
+    	}
     },
 
     dragLayerID : {
@@ -475,9 +482,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		}
     	}
     },
-    _dragLayerIndexes: {
-    	value: []
-    },
+
     _dropLayerID : {
     	value: null
     },
@@ -489,38 +494,58 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		if (newVal !== this._dropLayerID) {
     			this._dropLayerID = newVal;
     			
-    			var dropLayerIndex = this.getLayerIndexByID(this.dropLayerID),
-    				arrDragLayers = [], 
+    			var dropLayerIndex = this.getLayerIndexByID(newVal),
     				i = 0, 
-    				dragLayerIndexesLength = this._dragLayerIndexes.length;
+    				dragLayerIndexesLength = this.currentLayersSelected.length,
+    				dragAndDropDirection = 0,
+    				targetIndex;
     			
+    			if (dragLayerIndexesLength === 0) {
+    				// Nothing was dragged, so do nothing.
+    				return;
+    			}
+    			
+    			// Is this a move up or down?
+    			if (this.currentLayersSelected[0] > dropLayerIndex) {
+    				dragAndDropDirection = -1;
+    			} 
+    			targetIndex = dropLayerIndex + dragAndDropDirection;
+
     			// TODO: possibly we'll need to sort dragLayerIndexes so things don't get out of order?
     			
+    			// Get the target DOM element.
+    			if (typeof(this.arrLayers[targetIndex]) !== "undefined") {
+    				this._layerDroppedInPlace = this.arrLayers[targetIndex].layerData.stageElement;
+    			} else {
+    				this._layerDroppedInPlace = null;
+    			}
+    			
+				// Splice
     			for (i = 0; i < dragLayerIndexesLength; i++) {
-    				var myDraggingLayer = this.arrLayers[this._dragLayerIndexes[i]];
-    				arrDragLayers.push(myDraggingLayer);
+					var myDraggingLayer = this.arrLayers[this.currentLayersSelected[i]];
     				// Splice arrLayers
-    				this.arrLayers.splice(this._dragLayerIndexes[i], 1);
+    				this.arrLayers.splice(this.currentLayersSelected[i], 1);
     				this.arrLayers.splice(dropLayerIndex, 0, myDraggingLayer);
     			}
-    			this.layersDragged = arrDragLayers;
-    			this._layerDroppedInPlace = this.arrLayers[dropLayerIndex];
+    			this.elementsDragged = this.currentElementsSelected;
     			
     			// Cache the new info
     			this.cacheTimeline();
     			
     			// Clear drag and drop variables for future re-use
     			this._dropLayerID = null;
-    			this.dragLayerIndexes = [];
-    			this._dragLayerIndexes = [];
     			this.lastLayerClicked = 0;
 
     			// Sometimes, just to be fun, the drop and dragend events don't fire.
     			// So just in case, set the draw routine to delete the helper.
     			this._deleteHelper = true;
+    			this._needsDOMManipulation = true;
     			this.needsDraw = true;
     		}
     	}
+    },
+    _needsDOMManipulation: {
+    	value: false
     },
     _appendHelper: {
     	value: false
@@ -571,30 +596,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function () {
             this.initTimeline();
 
-            // Bind drag and drop event handlers
-            this.container_layers.addEventListener("dragstart", this.handleLayerDragStart.bind(this), false);
-            this.container_layers.addEventListener("dragend", this.handleLayerDragEnd.bind(this), false);
-            this.container_layers.addEventListener("dragover", this.handleLayerDragover.bind(this), false);
-            this.container_layers.addEventListener("drop", this.handleLayerDrop.bind(this), false);
-            
-            // Bind the handlers for the config menu
-            this.checkable_animated.addEventListener("click", this.handleAnimatedClick.bind(this), false);
-            this.tl_configbutton.addEventListener("click", this.handleConfigButtonClick.bind(this), false);
-            document.addEventListener("click", this.handleDocumentClick.bind(this), false);
-
-            this.addPropertyChangeListener("currentDocument.model.domContainer", this);
-
-            // Bind some bindings
-            Object.defineBinding(this, "currentSelectedContainer", {
-                boundObject:this.application.ninja,
-                boundObjectPropertyPath:"currentSelectedContainer",
-                oneway:true
-            });
-            
-            // Create the easing menu for future use.
-            this.easingMenu = EasingMenuPopup;
-            //this.easingMenu.show();
-
         }
     },
     
@@ -639,8 +640,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 		            		this._deleteHelper = false;
 		            	}
 		            }
-	                this.application.ninja.elementMediator.reArrangeDOM(this.layersDragged , this._layerDroppedInPlace);
-	                this.layersDragged =[];
+		            
+
 	    		}
     		} else if (this.draggingType === "keyframe") {
 	    		// Do we need to scroll the tracks?
@@ -657,7 +658,22 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            this.layout_markers.scrollLeft = this.layout_tracks.scrollLeft;
 	         	this.playheadmarker.style.top = this.layout_tracks.scrollTop + "px";
     		}
-
+    		
+    		// Do we need to manipulate the DOM?
+    		if (this._needsDOMManipulation === true) {
+				this.application.ninja.elementMediator.reArrangeDOM(this.elementsDragged , this._layerDroppedInPlace);
+				this.elementsDragged =[];
+    		}
+    	}
+    },
+    
+    didDraw: {
+    	value: function() {
+    		if (this._needsDOMManipulation === true) {
+    			this._needsDOMManipulation = false;
+    			// We have shuffled layers, so we need to update this.selectedLayers.
+    			this.selectLayers([])
+    		}
     	}
     },
 
@@ -855,11 +871,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 boundObjectPropertyPath:"currentSelectedContainer",
                 oneway:true
             });
+            this.addPropertyChangeListener("currentDocument.model.domContainer", this);
             
 			// Start the panel out in disabled mode by default
 			// (Will be switched on later, if appropriate).
             this.enablePanel(false);
 
+            // Create the easing menu for future use.
+            this.easingMenu = EasingMenuPopup;
         }
     },
 
@@ -1736,6 +1755,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
     
+    
+    /* Layer drag and drop */
     handleLayerDragStart : {
     	value: function(event) {
             var dragIcon = document.createElement("img");
@@ -1773,13 +1794,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		var myContainer = document.createElement("div"),
     			i = 0, 
     			currentLayersSelectedLength = this.currentLayersSelected.length;
-    		
+
     		for (i = 0; i < currentLayersSelectedLength; i++) {
     			var currentClone = this.layerRepetition.childComponents[this.currentLayersSelected[i]].element.cloneNode(true);
     			currentClone.classList.add("layerSelected");
     			myContainer.appendChild(currentClone);
-    			this._dragLayerIndexes.push(this.currentLayersSelected[i]);
     		}
+
     		this._dragAndDropHelper = myContainer;
             this._dragAndDropHelper.style.opacity = 0.8;
             this._dragAndDropHelper.style.position = "absolute";
@@ -1845,7 +1866,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     	}
     },
     
-    // Keyframe drag-and-drop
+    /* Keyframe drag and drop */
     handleKeyframeDragover: {
     	value: function(event) {
     		

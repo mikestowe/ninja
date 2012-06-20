@@ -483,30 +483,25 @@ exports.ElementMediator = Montage.create(Component, {
     },
 
     reArrangeDOM:{
-        value: function(layersDraggedArray, layerDroppedAfter) {
-            var documentRoot,length;
+        value: function(arrLayersDragged, dropTargetElement) {
+			var i = 0,
+				arrLayersDraggedLength = arrLayersDragged.length,
+				targetParentNode,
+				targetElement;
 
-            documentRoot = this.application.ninja.currentDocument.model.documentRoot;
-            length = layersDraggedArray.length;
+			if (arrLayersDraggedLength === 0) {
+				// Nothing was dragged, so return.
+				return;
+			}
+			
+			// Get the target parent node (this will be the parentNode of any of the dragging items)
+			targetParentNode = arrLayersDragged[0].parentNode;
 
-            for(var i=0; documentRoot.children[i]; i++) {
-                if(documentRoot.children[i] === layerDroppedAfter.layerData.stageElement) {
-                    if(length >0){
-                        documentRoot.children[i].parentNode.insertBefore(layersDraggedArray[length-1].layerData.stageElement, documentRoot.children[i]);
-                    }
-
-                    /* Will require for Multiple Drag n Drop */
-                    //length = length-1;
-                    //index = i;
-                    //if(length>0) {
-                        //while(layersDraggedArray[length]) {
-                            //documentRoot.children[index].parentNode.insertBefore(layersDraggedArray[length-1].layerData.elementsList[0],documentRoot.children[k].nextSibling);
-                            //length--;
-                            //index++;
-                        //}
-                    //}
-                }
-            }
+			
+			// Loop through arrLayersDragged and insertBefore the drop target element
+			for (i = 0; i < arrLayersDraggedLength; i++) {
+				targetParentNode.insertBefore(arrLayersDragged[i], dropTargetElement);
+			}
         }
     }
 });
