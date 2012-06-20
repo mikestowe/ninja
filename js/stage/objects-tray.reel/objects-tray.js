@@ -66,10 +66,7 @@ exports.ObjectsTray = Montage.create(Component, {
                 return true;
             }
 
-            var isComponent = this.application.ninja.objectsController._hasPrototype(obj, "Component"),
-                hasValidElement = obj.element && obj.element.parentNode;
-
-            return !isComponent || !hasValidElement;
+            return this.application.ninja.objectsController.isOffStageObject(obj);
         }
     },
 
@@ -85,6 +82,15 @@ exports.ObjectsTray = Montage.create(Component, {
         }
     },
 
+    displayHUDForObject : {
+        value: function(object) {
+            this.parentComponent.boundComponents.push(object);
+        }
+    },
+
+    /* ---------------------
+     Draw Cycle
+     --------------------- */
 
     templateDidLoad: { 
         value: function() {
@@ -107,12 +113,15 @@ exports.ObjectsTray = Montage.create(Component, {
                 "oneway": true
             });
 
+        }
+    },
+    willDraw : {
+        value: function() {
             if(this.objects) {
-                this.empty = !this.objects.length;
+                this._empty = !this.offStageObjectsController.organizedObjects.length;
             } else {
-                this.empty = true;
+                this._empty = true;
             }
-
         }
     },
     draw : {

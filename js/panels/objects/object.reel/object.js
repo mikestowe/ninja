@@ -75,6 +75,22 @@ exports.Object = Montage.create(Component, {
 
     },
 
+    /* ---------------------
+     Event Handlers
+     --------------------- */
+
+    handleClick: {
+        value: function(e) {
+            this.parentComponent.parentComponent.displayHUDForObject(this.sourceObject);
+        }
+    },
+
+    prepareForDraw : {
+        value: function() {
+            this.iconElement.addEventListener('click', this, false);
+        }
+    },
+
     draw : {
         value: function() {
             if(this.type) {

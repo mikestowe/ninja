@@ -39,7 +39,13 @@
                 "bindings": {
                     "sourceObject" : {"<-": "@repetition.objectAtCurrentIteration"},
                     "identifier" : {"<-": "@repetition.objectAtCurrentIteration.identifier"}
-                }
+                },
+                "listeners": [
+                    {
+                        "type": "click",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             }
 
         }

@@ -190,6 +190,8 @@ var objectsController = exports.ObjectsController = Montage.create(Montage, {
         }
     },
 
+    /* ----- Utils ----- */
+
     _hasPrototype : {
         value: function(object, prototypeName) {
             var prototypes = this.getPrototypes(object).map(function(proto) {
@@ -198,6 +200,18 @@ var objectsController = exports.ObjectsController = Montage.create(Montage, {
             });
 
             return prototypes.indexOf(prototypeName) !== -1;
+        }
+    },
+
+    ///// Returns true if the element is "non-visual", i.e. is not a component,
+    ///// and has not element property
+
+    isOffStageObject : {
+        value: function(object) {
+            var isComponent = this._hasPrototype(object, "Component"),
+                hasValidElement = object.element && object.element.parentNode;
+
+            return !isComponent || !hasValidElement;
         }
     },
 
