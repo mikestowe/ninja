@@ -15,7 +15,10 @@
                 "prototype": "js/stage/binding-view.reel/binding-hud.reel",
                 "properties": {
                     "element": {"#": "bindingHud"},
-                    "titleElement": {"#": "title"}
+                    "titleElement": {"#": "title"},
+                    "scrollUp": {"#":"scrollUp"},
+                    "scrollDown": {"#":"scrollDown"},
+                    "optionsRepeater": {"@": "repeater"}
                 }
             },
             "repeater": {
@@ -64,9 +67,11 @@
 <body>
     <section data-montage-id="bindingHud" class="bindingHud">
         <div data-montage-id="title" class="bindingTitle"></div>
+        <div data-montage-id="scrollUp" class="scrollArea scrollAreaTop disabled">Up</div>
         <div data-montage-id="hudRepetition" class="hudRepetition">
             <div data-montage-id="hudOption"></div>
         </div>
+        <div data-montage-id="scrollDown" class="scrollArea scrollAreaBottom">Down</div>
     </section>
 
 </body>

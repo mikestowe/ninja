@@ -280,12 +280,15 @@ exports.BindingView = Montage.create(Component, {
                 if(obj.x < mousePoint.x && (obj.x + obj.element.offsetWidth) > mousePoint.x) {
                     if(obj.y < mousePoint.y && (obj.y + obj.element.offsetHeight) > mousePoint.y) {
                         overHud = true;
+                        if(this._isDrawingConnection) {
+                            obj.isOverScroller(mousePoint);
+                        }
                     }
                 }
             }.bind(this));
             if(typeof (this.objectsTray.element) !== "undefined") {
                 if (this.objectsTray.element.offsetLeft < mousePoint.x && (this.objectsTray.element.offsetLeft + this.objectsTray.element.offsetWidth) > mousePoint.x ) {
-                    //console.log(this.objectsTray.element.offsetTop, (this.objectsTray.element.parentElement.offsetTop + this.objectsTray.element.offsetHeight) );
+                    //console.log(this.objectsTray.element.offsetTop, (this.objectsTray.element.parentElement.offsetTop + this.objectsTray.element.offsetHeight));
                     if(this.objectsTray.element.parentElement.offsetTop < mousePoint.y && (this.objectsTray.element.parentElement.offsetTop + this.objectsTray.element.offsetHeight) > mousePoint.y) {
                         overHud = true;
                     }

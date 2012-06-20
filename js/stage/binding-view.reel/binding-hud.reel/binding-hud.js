@@ -12,6 +12,24 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.BindingHud = Montage.create(Component, {
+    scrollUp: {
+        value: null
+    },
+    scrollable: {
+        value: false
+    },
+    scrollInterval: {
+        value: null
+    },
+    scrollDown: {
+        value: null
+    },
+    scrollSpace: {
+        value: 3
+    },
+    currentScrollDirection: {
+        value: null
+    },
     _bindingArgs: {
         value: null
     },
@@ -22,6 +40,10 @@ exports.BindingHud = Montage.create(Component, {
 
     boundProperties: {
         value: []
+    },
+
+    optionsRepeater: {
+        value: null
     },
 
     _userComponent: { value: null  },
@@ -141,6 +163,86 @@ exports.BindingHud = Montage.create(Component, {
 //                this.properties.push({"title":obj, "bound": objBound});
 //            }.bind(this));
             //this.parentComponent.parentComponent.handleShowBinding(this.application.ninja.objectsController.getObjectBindings(this.userComponent));
+            if(this.scrollSpace < this.properties.length) {
+                this.scrollUp.addEventListener("mouseover", this);
+                this.scrollDown.addEventListener("mouseover", this);
+                this.scrollUp.addEventListener("mouseout", this);
+                this.scrollDown.addEventListener("mouseout", this);
+                this.scrollUp.style.display = "block";
+                this.scrollDown.style.display = "block";
+            }
+        }
+    },
+
+    isOverScroller: {
+        value: function(mousePoint) {
+            if(this.scrollSpace < this.properties.length) {
+                if (this.scrollInterval === null) {
+                    var newX = mousePoint.x - this.x;
+                    var newY = mousePoint.y - this.y;
+                    var scrollUpStartX = 5;
+                    var scrollUpEndX = scrollUpStartX + this.titleElement.offsetWidth;
+                    var scrollUpStartY = this.titleElement.offsetHeight;
+                    var scrollUpEndY = scrollUpStartY + this.scrollUp.offsetHeight;
+
+                    var scrollDownStartX = 5;
+                    var scrollDownEndX = scrollUpStartX + this.titleElement.offsetWidth;
+                    var scrollDownStartY = scrollUpEndY + this.optionsRepeater.element.offsetHeight;
+                    //scrollDownEndy to small find out y;
+                    var scrollDownEndY = scrollUpEndY + this.scrollDown.offsetHeight;
+                    console.log(scrollDownStartX,scrollDownEndX, scrollDownStartY, scrollDownEndY, newX, newY );
+                    if(scrollDownStartX < newX && (scrollDownEndX) > newX) {
+                        if(scrollDownStartY < newY && (scrollDownEndY) > newY) {
+                            debugger;
+                        }
+                    }
+                }
+            }
+        }
+    },
+
+    handleScroll: {
+        value: function(direction) {
+            if(direction === "down") {
+                this.scrollInterval = setInterval(function() {
+                    self.optionsRepeater.element.scrollTop += 18;
+                }, 200);
+            } else {
+                this.scrollInterval = setInterval(function() {
+                    self.optionsRepeater.element.scrollTop -= 18;
+                }, 200);
+            }
+        }
+    },
+
+    handleMouseover: {
+        value: function(e) {
+            if(this.scrollSpace < this.properties.length) {
+                if (this.scrollInterval === null) {
+                    if (e._event.target.classList.contains("scrollAreaBottom")) {
+                        self = e._event.target.parentElement.controller;
+                        //e._event.target.parentElement.controller.currentScrollDirection = "down";
+                        this.scrollInterval = setInterval(function() {
+                            self.optionsRepeater.element.scrollTop += 3;
+                        }, 50);
+                    } else {
+                        this.scrollInterval = setInterval(function() {
+                            self.optionsRepeater.element.scrollTop -= 3;
+                        }, 50);
+                    }
+                }
+            }
+            this.needsDraw = true;
+        }
+    },
+
+
+
+    handleMouseout: {
+        value: function() {
+            clearInterval(this.scrollInterval);
+            this.scrollInterval = null;
+            this.currentScrollDirection = null;
         }
     },
 
@@ -149,11 +251,21 @@ exports.BindingHud = Montage.create(Component, {
             this.titleElement.innerHTML = this.title;
             this.element.style.top = (this.y + this._resizedY) + "px";
             this.element.style.left = (this.x + this._resizedX) + "px";
+
+//            if(this.currentScrollDirection !== null) {
+//                if(this.currentScrollDirection === "up") {
+//                    this.optionsRepeater.element.scrollTop -= 18;
+//                } else {
+//                    this.optionsRepeater.element.scrollTop += 18;
+//                }
+//            }
         }
     },
     didDraw: {
         value: function() {
-
+//            if (this.currentScrollDirection !== null) {
+//                this.needsDraw=true;
+//            }
         }
     }
 });
