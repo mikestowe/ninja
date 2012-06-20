@@ -14,6 +14,8 @@ precision highp float;
 attribute vec3 a_pos;
 attribute vec2 texcoord;
 
+// varying
+varying vec2	v_texCoord0;
 
 // matrix uniforms
 uniform mat4 u_mvMatrix;
@@ -22,5 +24,6 @@ uniform mat4 u_worldMatrix;
 
 void main(void)
 {
+	v_texCoord0 = texcoord;
 	gl_Position = u_projMatrix * u_mvMatrix * vec4(a_pos,1.0) ;
 }

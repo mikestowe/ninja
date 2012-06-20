@@ -4,11 +4,12 @@ precision highp float;
 
 uniform vec2 u_resolution;
 uniform float u_time;
+uniform float u_speed;
 
 void main(void)
 {
     vec2 p = -1.0 + 2.0 * gl_FragCoord.xy / u_resolution.xy;
-    vec2 cc = vec2( cos(.25*u_time), sin(.25*u_time*1.423) );
+    vec2 cc = vec2( cos(.25*u_time*u_speed), sin(.25*u_time*u_speed*1.423) );
 
     float dmin = 1000.0;
     vec2 z  = p*vec2(1.33,1.0);
