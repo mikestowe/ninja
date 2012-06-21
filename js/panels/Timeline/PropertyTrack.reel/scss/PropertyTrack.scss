@@ -17,7 +17,8 @@
 
 
 .content-main .collapsible-content .timeline-track {
- 	height: 20px;
+ 	height: 18px;
+    padding-top: 2px;
 	border-bottom: 1px solid $color-menu-divider;
     background-image: url("../images/gridline.jpg");
  }
@@ -25,4 +26,9 @@
 
 .timeline-track .content-main {
 	background-color: $color-menu-bg;
+}
+
+.prop-track .collapsible-content.collapsible-collapsed {
+	overflow: hidden;
+	height: 0px;
 }
