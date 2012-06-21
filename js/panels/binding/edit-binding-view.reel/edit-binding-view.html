@@ -33,7 +33,7 @@
                     "element": {"#": "sourceObjectField"}
                 },
                 "bindings": {
-                    "value": {"<<->": "@owner.sourceObjectIdentifier"}
+                    "value": {"<->": "@owner.sourceObjectIdentifier"}
                 },
                 "listeners" : [
                     {
@@ -49,7 +49,7 @@
                     "element": {"#": "boundObjectField"}
                 },
                 "bindings": {
-                    "value": {"<<->": "@owner.boundObjectIdentifier"}
+                    "value": {"<->": "@owner.boundObjectIdentifier"}
                 },
                 "listeners" : [
                     {
@@ -66,7 +66,7 @@
                     "identifier": "sourceProperty"
                 },
                 "bindings": {
-                    "value": {"<<->": "@owner.sourceObjectPropertyPath"}
+                    "value": {"<->": "@owner.sourceObjectPropertyPath"}
                 },
                 "listeners" : [
                     {
@@ -83,7 +83,7 @@
                     "identifier": "boundProperty"
                 },
                 "bindings": {
-                    "value": {"<<->": "@owner.boundObjectPropertyPath"}
+                    "value": {"<->": "@owner.boundObjectPropertyPath"}
                 },
                 "listeners" : [
                     {
@@ -93,7 +93,7 @@
                 ]
             },
             "directionCheckbox": {
-                "prototype": "montage/ui/checkbox.reel",
+                "prototype": "montage/ui/native/input-checkbox.reel",
                 "properties": {
                     "element": {"#": "direction-checkbox"}
                 },
@@ -102,7 +102,7 @@
                 }
             },
             "cancelButton" : {
-                "prototype": "montage/ui/button.reel",
+                "prototype": "montage/ui/native/button.reel",
                 "properties": {
                     "element": {"#": "cancel-button" },
                     "identifier": "cancelButton"
@@ -115,7 +115,7 @@
                 ]
             },
             "deleteButton" : {
-                "prototype": "montage/ui/button.reel",
+                "prototype": "montage/ui/native/button.reel",
                 "properties": {
                     "element": {"#": "delete-button" },
                     "identifier": "deleteButton"
@@ -128,13 +128,13 @@
                 ]
             },
             "saveButton" : {
-                "prototype": "montage/ui/button.reel",
+                "prototype": "montage/ui/native/button.reel",
                 "properties": {
                     "element": {"#": "save-button" },
                     "identifier": "saveButton"
                 },
                 "bindings" : {
-                    "enabled": {"<<->": "@owner.dirty"}
+                    "enabled": {"<->": "@owner.dirty"}
                 },
                 "listeners": [
                     {

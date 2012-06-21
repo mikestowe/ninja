@@ -183,7 +183,7 @@ exports.BindingView = Montage.create(Component, {
                 this.canvas.height = this.application.ninja.stage.drawingCanvas.offsetHeight;
                 this.clearCanvas();
                 for(var i= 0; i < this.hudRepeater.childComponents.length; i++) {
-                    this.drawLine(this.hudRepeater.objects[i].element.offsetLeft,this.hudRepeater.objects[i].element.offsetTop, this.hudRepeater.childComponents[i].element.offsetLeft +3, this.hudRepeater.childComponents[i].element.offsetTop +3);
+                    this.drawLine(this.hudRepeater.objects[i].element.offsetLeft,this.hudRepeater.objects[i].element.offsetTop, this.hudRepeater.childComponents[i].element.offsetLeft +3, this.hudRepeater.childComponents[i].element.offsetTop +3, "#CCC", 2);
                 }
                 if(this._isDrawingConnection) {
                     if (this.hudRepeater.childComponents.length > 1) {

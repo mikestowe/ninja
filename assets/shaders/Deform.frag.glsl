@@ -3,6 +3,7 @@ precision highp float;
 #endif
 
 uniform float u_time;
+uniform float u_speed;
 uniform vec2 u_resolution;
 //uniform vec4 mouse;
 uniform sampler2D u_tex0;
@@ -19,7 +20,7 @@ void main(void)
     float r2 = sqrt(dot(p+m,p+m));
 
     vec2 uv;
-    uv.x = 0.2*u_time + (r1-r2)*0.25;
+    uv.x = 0.2*u_time*u_speed + (r1-r2)*0.25;
     uv.y = sin(2.0*(a1-a2));
 
     float w = r1*r2*0.8;

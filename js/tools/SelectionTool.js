@@ -583,11 +583,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 this.mouseUpHitRec = DrawingToolBase.getUpdatedSnapPoint(point.x, point.y, do3DSnap, this.mouseDownHitRec);
                 if (this._mouseDownHitRec && this._mouseUpHitRec)
                 {
-                    data = this.getDrawingData(event);
-                    if(data)
-                    {
-                        this.modifyElements({pt0:data.mouseDownPos, pt1:data.mouseUpPos}, event);
-                    }
+                    this.modifyElements({pt0:this._mouseDownHitRec.calculateElementScreenPoint(),
+                                            pt1:this._mouseUpHitRec.calculateElementScreenPoint()}, event);
                 }
             }
         }

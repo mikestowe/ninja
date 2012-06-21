@@ -212,7 +212,7 @@ exports.BindingHud = Montage.create(Component, {
 
                 var scrollUpStartX = 5;
                 var scrollUpEndX = scrollUpStartX + this.titleElement.offsetWidth;
-                var scrollUpStartY = this.titleElement.offsetHeight;
+                var scrollUpStartY = this.titleElement.offsetHeight + 5;
                 var scrollUpEndY = scrollUpStartY + this.scrollUp.offsetHeight;
                 if(scrollUpStartX < mousePoint.x && (scrollUpEndX) > mousePoint.x) {
                     if(scrollUpStartY < mousePoint.y && (scrollUpEndY) > mousePoint.y) {

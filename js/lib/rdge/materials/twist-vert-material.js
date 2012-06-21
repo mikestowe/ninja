@@ -4,187 +4,138 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var MaterialParser = require("js/lib/rdge/materials/material-parser").MaterialParser;
+var Material = require("js/lib/rdge/materials/material").Material;
+var Texture = require("js/lib/rdge/texture").Texture;
+
 ///////////////////////////////////////////////////////////////////////
 // Class GLMaterial
 //      RDGE representation of a material.
 ///////////////////////////////////////////////////////////////////////
-function TwistVertMaterial() {
-    // initialize the inherited members
-    this.inheritedFrom = GLMaterial;
-    this.inheritedFrom();
+var TwistVertMaterial = function TwistVertMaterial()
+{
+	// initialize the inherited members
+	this.inheritedFrom = Material;
+	this.inheritedFrom();
 
-    ///////////////////////////////////////////////////////////////////////
-    // Instance variables
-    ///////////////////////////////////////////////////////////////////////
-    this._name = "TwistVertMaterial";
-    this._shaderName = "twistVert";
+	///////////////////////////////////////////////////////////////////////
+	// Instance variables
+	///////////////////////////////////////////////////////////////////////
+	this._name = "Twist Vertex";
+	this._shaderName = "twistVert";
 
-    this._color = [1, 0, 0, 1];
+	this._tex0 = 'assets/images/rocky-normal.jpg';
+	this._tex1 = 'assets/images/metal.png';
 
-    this._tex0 = 'assets/images/rocky-normal.jpg';
-    this._tex1 = 'assets/images/metal.png';
+	this._angle = 0.0;
+	this._deltaTime = 0.01;
+	this._speed = 1.0;
 
-    this._angle = 0.0;
-    this._deltaTime = 0.01;
+	///////////////////////////////////////////////////////////////////////
+	// Property Accessors
+	///////////////////////////////////////////////////////////////////////
+	this.getShaderName = function () { return this._shaderName; };
+	this.isAnimated = function () { return true; };
+	this.getShaderDef	= function()	{  return twistVertShaderDef;	};
+	this.getTechniqueName	= function() { return 'twistMe' };
+	
+	this.hasVertexDeformation = function () { return this._hasVertexDeformation; };
+	this._hasVertexDeformation = true;
+	this._vertexDeformationTolerance = 0.02; // should be a property
 
-    ///////////////////////////////////////////////////////////////////////
-    // Property Accessors
-    ///////////////////////////////////////////////////////////////////////
-    this.getColor = function () { return this._color; };
-    this.getShaderName = function () { return this._shaderName; };
+	///////////////////////////////////////////////////////////////////////
+	// Material Property Accessors
+	///////////////////////////////////////////////////////////////////////
+	this._propNames = [ "u_limit1",				"u_limit2",			"u_twistAmount",	"speed",		"u_tex0",						"u_tex1"];
+	this._propLabels = [ "Start Parameter",		"End Paramater",	"Twist Amount",		"Speed",		"Front facing texture map",		"Back facing texture map"];
+	this._propTypes = [ "float",				"float",			"angle",			"float",		"file",							"file"];
+	this._propValues = [];
 
-    this.isAnimated = function () { return true; };
-    this.hasVertexDeformation = function () { return this._hasVertexDeformation; };
-    this._hasVertexDeformation = true;
-    this._vertexDeformationTolerance = 0.02; // should be a property
+	// initialize the property values
+	this._propValues[this._propNames[0]] = 0.0;
+	this._propValues[this._propNames[1]] = 1.0;
+	this._propValues[this._propNames[2]] = 2.0 * Math.PI;
+	this._propValues[this._propNames[3]] = this._speed;
+	this._propValues[this._propNames[4]] = this._tex0.slice();
+	this._propValues[this._propNames[5]] = this._tex1.slice();
+	///////////////////////////////////////////////////////////////////////
 
-    ///////////////////////////////////////////////////////////////////////
-    // Methods
-    ///////////////////////////////////////////////////////////////////////
-    // duplcate method requirde
-    this.dup = function () { return new TwistVertMaterial(); };
+	///////////////////////////////////////////////////////////////////////
+	// Methods
+	///////////////////////////////////////////////////////////////////////
 
-    this.init = function (world) {
-        this.setWorld(world);
+	this.init = function (world)
+	{
+		this.setWorld(world);
 
-        // set up the shader
-        this._shader = new RDGE.jshader();
-        this._shader.def = twistVertShaderDef;
-        this._shader.init();
+		// set up the shader
+		this._shader = new RDGE.jshader();
+		this._shader.def = twistVertShaderDef;
+		this._shader.init();
 
-        // set the defaults
-        this._shader.twistMe.color.set(this.getColor());
-
-        // set up the material node
-        this._materialNode = RDGE.createMaterialNode("twistVertMaterial" + "_" + world.generateUniqueNodeID());
-        this._materialNode.setShader(this._shader);
-
-        // initialize the twist vert properties
-        this.updateShaderValues();
-    };
+		// set up the material node
+		this._materialNode = RDGE.createMaterialNode("twistVertMaterial" + "_" + world.generateUniqueNodeID());
+		this._materialNode.setShader(this._shader);
 
 
-    ///////////////////////////////////////////////////////////////////////
-    // Material Property Accessors
-    ///////////////////////////////////////////////////////////////////////
-    this._propNames = ["color", "u_limit1", "u_limit2", "u_center", "u_twistAmount", "u_tex0", "u_tex1"];
-    this._propLabels = ["Color", "Minimum Parameter Value", "Center Paramater Value", "Center", "Twist Amount", "Front facing texture map", "Back facing texture map"];
-    this._propTypes = ["color", "float", "float", "float", "float", "file", "file"];
-    this._propValues = [];
+		// initialize the twist vert properties
+        this.setShaderValues();
+	};
 
-    // initialize the property values
-    this._propValues[this._propNames[0]] = this._color.slice();
-    this._propValues[this._propNames[1]] = 0.25;
-    this._propValues[this._propNames[2]] = 0.75;
-    this._propValues[this._propNames[3]] = 0.0;
-    this._propValues[this._propNames[4]] = 2.0 * Math.PI;
-    this._propValues[this._propNames[5]] = this._tex0.slice();
-    this._propValues[this._propNames[6]] = this._tex1.slice();
-
-    this.setProperty = function (prop, value) {
-        // make sure we have legitimate input
-        if (this.validateProperty(prop, value)) {
-            switch (prop) {
-                case "color":
-                case "u_tex1":
-                case "u_tex0": this._propValues[prop] = value.slice(); break;
-                default: this._propValues[prop] = value; break;
-            }
-
-            this.updateShaderValues();
-        }
-    };
-    ///////////////////////////////////////////////////////////////////////
-
-    this.exportJSON = function () {
-        var jObj =
+	this.update = function (time)
+	{
+		if (this._shader && this._shader.twistMe)
 		{
-		    'material': this.getShaderName(),
-		    'name': this.getName(),
-		    'color': this._propValues["color"]
-		};
+			var technique = this._shader.twistMe;
+		   
+			var angle = this._angle;
+			angle += this._deltaTime * this._propValues["speed"];
+			if (angle > this._propValues["u_twistAmount"])
+			{
+				angle = this._propValues["u_twistAmount"];
+				this._deltaTime = -this._deltaTime;
+			}
+			else if (angle < 0.0)
+			{
+				angle = 0;
+				this._deltaTime = -this._deltaTime;
+			}
+			this._angle = angle;
+			this._shader.twistMe["u_twistAmount"].set([angle]);
 
-        return jObj;
-    };
+			var tex;
+			var glTex = this._glTextures["u_tex0"];
+			if (glTex)
+			{
+				//if (glTex.isAnimated())
+					glTex.render();
+				tex = glTex.getTexture();
+				if (tex)
+					technique.u_tex0.set( tex );
+			}
 
-    this.importJSON = function (jObj) {
-        if (this.getShaderName() != jObj.material) throw new Error("ill-formed material");
-        this.setName(jObj.name);
+			glTex = this._glTextures["u_tex1"];
+			if (glTex)
+			{
+				//if (glTex.isAnimated())
+					glTex.render();
+				tex = glTex.getTexture();
+				if (tex)
+					technique.u_tex1.set( tex );
+			}
 
-        try {
-            var color = jObj.color;
-            this.setProperty("color", color);
-        }
-        catch (e) {
-            throw new Error("could not import material: " + importStr);
-        }
-    };
-
-    this.update = function (time) {
-        if (this._shader && this._shader.twistMe) {
-            var angle = this._angle;
-            angle += this._deltaTime;
-            if (angle > this._propValues["u_twistAmount"]) {
-                angle = this._propValues["u_twistAmount"];
-                this._deltaTime = -this._deltaTime;
-            }
-            else if (angle < 0.0) {
-                angle = 0;
-                this._deltaTime = -this._deltaTime;
-            }
-            this._angle = angle;
-            this._shader.twistMe["u_twistAmount"].set([angle]);
-        }
-    };
-
-    this.updateShaderValues = function () {
-        if (this._shader && this._shader.twistMe) {
-            var nProps = this._propNames.length;
-            for (var i = 0; i < nProps; i++) {
-                var propName = this._propNames[i];
-                var propValue = this._propValues[propName];
-                switch (propName) {
-                    case "u_tex0":
-                    case "u_tex1":
-                    case "color": this._shader.twistMe[propName].set(propValue); break;
-                    default: this._shader.twistMe[propName].set([propValue]); break;
-                }
-            }
-        }
-    };
-
-    this.updateTextures = function () {
-        var material = this._materialNode;
-        if (material) {
-            var technique = material.shaderProgram['default'];
-            var renderer = RDGE.globals.engine.getContext().renderer;
-            if (renderer && technique) {
-                var texMapName = this._propValues[this._propNames[5]];
-                var wrap = 'REPEAT', mips = true;
-                var tex = this.loadTexture(texMapName, wrap, mips);
-                if (tex) technique.u_tex0.set(tex);
-
-                texMapName = this._propValues[this._propNames[6]];
-                tex = this.loadTexture(texMapName, wrap, mips);
-                if (tex) technique.u_tex1.set(tex);
-            }
-        }
-    };
+		}
+	}
 };
-
-///////////////////////////////////////////////////////////////////////////////////////
-// RDGE shader
 
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 twistVertShaderDef =
 {
-    'shaders': { // shader files
-        'defaultVShader': "assets/shaders/TwistVert.vert.glsl",
-        'defaultFShader': "assets/shaders/TwistVert.frag.glsl"
-    },
-    'techniques': { // rendering control
-        'twistMe': [ // simple color pass
+	'shaders': { // shader files
+		'defaultVShader': "assets/shaders/TwistVert.vert.glsl",
+		'defaultFShader': "assets/shaders/TwistVert.frag.glsl"
+	},
+	'techniques': { // rendering control
+		'twistMe': [ // simple color pass
 			{
 			'vshader': 'defaultVShader',
 			'fshader': 'defaultFShader',
@@ -192,25 +143,29 @@ twistVertShaderDef =
 			// attributes
 			'attributes':
 				 {
-				     'vert': { 'type': 'vec3' },
-				     'normal': { 'type': 'vec3' },
-				     'texcoord': { 'type': 'vec2' }
+					 'vert': { 'type': 'vec3' },
+					 'normal': { 'type': 'vec3' },
+					 'texcoord': { 'type': 'vec2' }
 				 },
 			// attributes
 			'params':
 				 {
-				     'color': { 'type': 'vec4' },
-
-				     'u_limit1': { 'type': 'float' },
-				     'u_limit2': { 'type': 'float' },
-				     'u_limit3': { 'type': 'float' },
-				     'u_minVal': { 'type': 'float' },
-				     'u_maxVal': { 'type': 'float' },
-				     'u_center': { 'type': 'float' },
-				     'u_twistAmount': { 'type': 'float' }
+					'u_tex0': { 'type' : 'tex2d' },
+					'u_tex1': { 'type' : 'tex2d' },
+					 'u_limit1': { 'type': 'float' },
+					 'u_limit2': { 'type': 'float' },
+					 'u_minVal': { 'type': 'float' },
+					 'u_maxVal': { 'type': 'float' },
+					 'u_center': { 'type': 'float' },
+					 'u_twistAmount': { 'type': 'float' },
+					 'speed': { 'type': 'float' }
 				 }
-            }
+			}
 		]
-    }
+	}
 };
+
+if (typeof exports === "object") {
+	exports.TwistVertMaterial = TwistVertMaterial;
+}
 

@@ -14,9 +14,16 @@ var drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils;
 
 exports.DrawingToolBase = Montage.create(Component, {
 
-    dragPlane: {
-        value: null
+   dragPlane:
+    {
+        get: function () {
+            return this.application.ninja.toolsData.selectedToolInstance._dragPlane;
+        },
+        set: function (value) {
+            this.application.ninja.toolsData.selectedToolInstance._dragPlane = value;
+        }
     },
+
     /**
      * Used on the initial MouseDown for Drawing Tools
      * 

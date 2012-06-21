@@ -16,20 +16,36 @@ attribute vec2 texcoord;
 
 // scalar uniforms
 uniform float u_time;
+uniform float u_speed;
+uniform float u_waveWidth;
+uniform float u_waveHeight;
 
 // matrix uniforms
 uniform mat4 u_mvMatrix;
 uniform mat4 u_projMatrix;
 uniform mat4 u_worldMatrix;
 
+// varying variables
+varying vec2 v_uv;
+
+
 void main()
 {
-	float angle = (u_time%360)*2;
+	float time = u_time * u_speed;
+	const float pi = 3.14159;
+	float angle = time;
 
-	a_pos.z  = sin( a_pos.x + angle);
-	a_pos.z += sin( a_pos.y/2 + angle);
-	a_pos.z *= a_pos.x * 0.09;
-	gl_Position = u_projMatrix * u_mvMatrix * vec4(a_pos,1.0) ;
+    v_uv = texcoord;
 
-	gl_FragColor = v_color;
+	float x = 2.0*pi*texcoord.x/u_waveWidth;
+	float y = 2.0*pi*texcoord.y;
+
+    vec3 v = a_pos;
+	v.z  = sin( x + angle );
+	v.z += sin( 0.2*y + angle);
+	v.z *= u_waveHeight;
+	v.z -=  2.0*u_waveHeight;
+	v.z *= x * 0.09;
+	
+    gl_Position = u_projMatrix * u_mvMatrix * vec4(v,1.0) ;
 }
