@@ -129,44 +129,73 @@ exports.ColorPanelPopup = Montage.create(Component, {
     draw: {
     	value: function() {
     		//
-    		this.drawPalette(this.defaultPalette);
-    		//
-    		if (!this.colorManager.gradient) {
-    			this.drawGradient(this.defaultGradient);
+    		if (!this.props || (this.props && this.props.palette)) {
+    			//
+    			this.btnPalette.addEventListener('click', function () {
+   					this.popupSwitchInputTo(this.palettes);
+   				}.bind(this), true);
+    			//
+    			this.drawPalette(this.defaultPalette);
+    		} else {
+	    		this.btnPalette.style.display = 'none';
     		}
     		//
-	    	this.application.ninja.colorController.colorView.addButton('hexinput', this.element.getElementsByClassName('cp_pu_hottext_hex')[0]);
+    		if (!this.props || (this.props && this.props.gradient)) {
+    			//
+    			this.btnGradient.addEventListener('click', function () {
+   					this.popupSwitchInputTo(this.gradients);
+   				}.bind(this), true);
+    			//
+    			if (!this.colorManager.gradient) {
+    				this.drawGradient(this.defaultGradient);
+    			}
+    		} else {
+	    		this.btnGradient.style.display = 'none';
+    		}
+    		//
+	    	this.application.ninja.colorController.colorView.addButton('hexinput', this.inputHex);
 	       	//
 	       	this._components.combo.slider.needsDraw = true;
 	       	this._components.combo.hottext.needsDraw = true;
-   			//
-   			this.element.getElementsByClassName('cp_pu_nocolor')[0].addEventListener('click', function () {
-   				this.setNoColor();
-    		}.bind(this), true);
+	       	//
+	       	if (!this.props || (this.props && this.props.nocolor)) {
+   				//
+	   			this.btnNocolor.addEventListener('click', function () {
+   					this.setNoColor();
+   				}.bind(this), true);
+    		} else {
+    			this.btnNocolor.style.display = 'none';
+    		}
     		//
-    		this.element.getElementsByClassName('cp_pu_palettes')[0].addEventListener('click', function () {
-   				this.popupSwitchInputTo(this.palettes);
-    		}.bind(this), true);
+    		if (!this.props || (this.props && this.props.wheel)) {
+    			//
+	    		this.btnWheel.addEventListener('click', function () {
+   					this.popupSwitchInputTo(this.wheel);
+   				}.bind(this), true);
+   				//
+   				this._components.wheel.addEventListener('firstDraw', this, false);
+   				this._components.wheel.needsDraw = true;
+    		} else {
+	    		this.btnWheel.style.display = 'none';
+    		}
     		//
-    		this.element.getElementsByClassName('cp_pu_wheel')[0].addEventListener('click', function () {
-   				this.popupSwitchInputTo(this.wheel);
-    		}.bind(this), true);
+    		if (!this.props || (this.props && this.props.image)) {
+    			//
+    			this.btnImage.style.opacity = .2;//TODO: Remove, visual feedback for disable button
+    			this.btnImage.addEventListener('click', function () {
+   					//this.popupSwitchInputTo(this.images);
+   				}.bind(this), true);
+    		} else {
+    			this.btnImage.style.display = 'none';
+    		}
     		//
-    		this.element.getElementsByClassName('cp_pu_gradients')[0].addEventListener('click', function () {
-   				this.popupSwitchInputTo(this.gradients);
-    		}.bind(this), true);
-    		//
-    		this.element.getElementsByClassName('cp_pu_images')[0].style.opacity = .2;//TODO: Remove, visual feedback for disable button
-    		this.element.getElementsByClassName('cp_pu_images')[0].addEventListener('click', function () {
-   				//this.popupSwitchInputTo(this.images);
-    		}.bind(this), true);
-    		//
-    		this.application.ninja.colorController.colorView.addButton('current', this.element.getElementsByClassName('cp_pu_color_current')[0]);
-    		this.application.ninja.colorController.colorView.addButton('previous', this.element.getElementsByClassName('cp_pu_color_previous')[0]);
-    		//
-    		this._components.wheel.addEventListener('firstDraw', this, false);
-    		//
-    		this._components.wheel.needsDraw = true;
+    		if (!this.props || (this.props && this.props.history)) {
+    			this.application.ninja.colorController.colorView.addButton('current', this.btnCurrent);
+    			this.application.ninja.colorController.colorView.addButton('previous', this.btnPrevious);
+    		} else {
+	    		this.btnCurrent.style.display = 'none';
+	    		this.btnPrevious.style.display = 'none';
+    		}
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -202,7 +231,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     				break
     		}
     		//Checking for a gradient to be current color
-    		if (this.colorManager.gradient) {
+    		if (this.colorManager.gradient && (!this.props || (this.props && this.props.gradient))) {
     			if (this.colorManager.colorHistory[this.colorManager.input] && this.colorManager.colorHistory[this.colorManager.input][this.colorManager.colorHistory[this.colorManager.input].length-1].m !== 'gradient') {
     				//If no gradient set, using default
     				this.drawGradient(this.defaultGradient);
@@ -265,7 +294,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     			this.application.ninja.colorController.popupTab = 'gradient';
     		}
     		//
-    		this.application.ninja.colorController.colorPopupManager.hideColorChipPopup();
+    		if (!this.isPopupChip) this.application.ninja.colorController.colorPopupManager.hideColorChipPopup();
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -413,7 +442,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     destroy: {
     	value: function() {
     		//
-    		this.application.ninja.colorController.colorView.removeButton('hexinput', this.element.getElementsByClassName('cp_pu_hottext_hex')[0]);
+    		this.application.ninja.colorController.colorView.removeButton('hexinput', this.inputHex);
     		Object.deleteBinding(this._components.combo.hottext, "value");
     		Object.deleteBinding(this._components.combo.slider, "value");
     		Object.deleteBinding(this._components.wheel, "value");
