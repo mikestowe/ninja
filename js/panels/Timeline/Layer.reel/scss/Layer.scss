@@ -74,7 +74,8 @@
 
 /******************************************/
 
-.container-layer {
+.container-layer,
+.container-layer.selected {
 	background-color: $color-panel-bg;
 	color: $color-panel-text;
 	font-size: 12px;
@@ -108,7 +109,7 @@
 
 
 .layerSelected .label-layer {
-	background-color: $color-panel-hilite-bg;
+	background-color: $color-menu-hilite-bg;
 	color: $color-panel-hilite-text;
 }
 .content-layer {
@@ -196,6 +197,9 @@
 	top: 3px;
 	right: 31px;
 }
+.timeline-track .collapsible-content {
+	position: relative;
+}
 .collapsible-content .layout-table {
 	width: 99.9%;
 }
@@ -270,10 +274,10 @@
 .content-style .item-template {
 	display: none;
 }
+.style-row {
+	height: 20px;
+}
 .content-style .layout-row.selected .layout-cell {
 	background-color: $color-panel-hilite-bg;
 	color: $color-panel-hilite-text;
-}
-.style-row {
-	height: 20px;
 }

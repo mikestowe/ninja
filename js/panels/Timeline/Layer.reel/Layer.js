@@ -12,6 +12,7 @@ var LayerStyle = require("js/panels/Timeline/Style.reel").LayerStyle;
 var DynamicText = require("montage/ui/dynamic-text.reel").DynamicText;
 var defaultEventManager = require("montage/core/event/event-manager").defaultEventManager;
 var nj = require("js/lib/NJUtils").NJUtils;
+var ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 var Layer = exports.Layer = Montage.create(Component, {
 
@@ -78,6 +79,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	value: false
     },
     styleRepetition : {
+        serializable: true,
     	get: function() {
     		return this._styleRepetition;
     	},
@@ -88,10 +90,39 @@ var Layer = exports.Layer = Montage.create(Component, {
     _styleCounter : {
     	value: 0
     },
+    styleCounter:{
+        serializable:true,
+        get:function () {
+            return this._styleCounter;
+        },
+        set:function (newVal) {
+            this._styleCounter = newVal;
+        }
+    },
+    _selectedStyleIndex: {
+    	value: false
+    },
+    selectedStyleIndex: {
+    	get: function() {
+    		return this._selectedStyleIndex;
+    	},
+    	set: function(newVal) {
+    		if (typeof(newVal) === "undefined") {
+    			return;
+    		}
+    		if (newVal !== this._selectedStyleIndex) {
+    			this._selectedStyleIndex = newVal;
+    			this.layerData.selectedStyleIndex = newVal;
+    		}
+    	}
+    },
+    _storedStyleIndex : {
+        value: false
+    },
 
-	/* Layer models: the name, ID, and selected and animation booleans for the layer */
+    /* Layer models: the name, ID, and selected and animation booleans for the layer */
     _layerName:{
-    	value: "Default Layer Name"
+    	value: ""
     },
     
     layerName:{
@@ -100,13 +131,22 @@ var Layer = exports.Layer = Montage.create(Component, {
             return this._layerName;
         },
         set:function(newVal){
+			if (this._layerEditable.value !== newVal) {
+				this._layerEditable.value = newVal;
+			}
+			if (this._layerName !== newVal) {
+				this._layerName = newVal;
+			}
+			if (this.layerData.layerName !== newVal) {
+				this.layerData.layerName = newVal;
+			}
 
-			this._layerEditable.value = newVal;
-	    	this._layerName = newVal;
-	    	this.layerData.layerName = newVal;
 	    	if (typeof(this.dynamicLayerName) !== "undefined") {
-	    		this.dynamicLayerName.value = newVal;
+	    		if (this.dynamicLayerName.value !== newVal) {
+	    			this.dynamicLayerName.value = newVal;
+	    		}
 	    	}
+	    	this.needsDraw = true;
         }
     },
     _layerID:{
@@ -150,6 +190,20 @@ var Layer = exports.Layer = Montage.create(Component, {
     	}
     },
     
+    _stageElement: {
+    	value: null
+    },
+    
+    stageElement: {
+    	get: function() {
+    		return this._stageElement;
+    	},
+    	set: function(newVal) {
+    		this._stageElement = newVal;
+    		this.layerData.stageElement = newVal;
+    	}
+    },
+    
     
     _elementsList : {
     	value: []
@@ -164,7 +218,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	}
     },
     
-    /* Position and Transform hottext values */
+    /* Position and Size hottext values */
     _dtextPositionX : {
         value:null
     },
@@ -179,7 +233,6 @@ var Layer = exports.Layer = Montage.create(Component, {
         		this._dtextPositionX = value;
         		this.layerData.dtextPositionX = value;
         	}
-            
         }
     },
     
@@ -237,60 +290,6 @@ var Layer = exports.Layer = Montage.create(Component, {
         }
     },
     
-    _dtextSkewX : {
-        value:null
-    },
-
-    dtextSkewX:{
-    	serializable: true,
-        get:function(){
-            return this._dtextSkewX;
-        },
-        set:function(value){
-        	if (this._dtextSkewX !== value) {
-        		this._dtextSkewX = value;
-        		this.layerData.dtextSkewX = value;
-        	}
-            
-        }
-    },
-    
-    _dtextSkewY : {
-        value:null
-    },
-
-    dtextSkewY:{
-    	serializable: true,
-        get:function(){
-            return this._dtextSkewY;
-        },
-        set:function(value){
-        	if (this._dtextSkewY !== value) {
-        		this._dtextSkewY = value;
-        		this.layerData.dtextSkewY = value;
-        	}
-            
-        }
-    },
-    
-    _dtextRotate : {
-        value:null
-    },
-
-    dtextRotate:{
-    	serializable: true,
-        get:function(){
-            return this._dtextRotate;
-        },
-        set:function(value){
-        	if (this._dtextRotate !== value) {
-        		this._dtextRotate = value;
-        		this.layerData.dtextRotate = value;
-        	}
-            
-        }
-    },
-    
     /* isSelected: whether or not the layer is currently selected. */
     _isSelected:{
         value: false
@@ -306,6 +305,10 @@ var Layer = exports.Layer = Montage.create(Component, {
         		if (value === false) {
         			// If changing from true to false, we need to deselect any associated styles
         			this.selectStyle(false);
+        		} else {
+        		    if (this._storedStyleIndex !== false) {
+        		        this.selectStyle(this._storedStyleIndex);
+        		    }
         		}
         		this._isSelected = value;
         		this.layerData.isSelected = value;
@@ -365,6 +368,41 @@ var Layer = exports.Layer = Montage.create(Component, {
         	this.layerData.isVisible = value;
         }
     },
+
+    _isLock:{
+        value: false
+    },
+
+    isLock:{
+        get:function(){
+            return this._isLock;
+        },
+        set:function(value){
+            if (this._isLock !== value) {
+                this._isLock = value;
+
+            }
+            this.layerData.isLock = value;
+        }
+    },
+
+    _isHidden:{
+        value: false
+    },
+
+    isHidden:{
+        get:function(){
+            return this._isHidden;
+        },
+        set:function(value){
+            if (this._isHidden !== value) {
+                this._isHidden = value;
+
+            }
+            this.layerData._isHidden = value;
+        }
+    },
+
     
     _justAdded: {
     	value: false
@@ -399,20 +437,6 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this._isMainCollapsed = newVal;
 			this.layerData.isMainCollapsed = newVal;
 
-    	}
-    },
-    
-    _isTransformCollapsed : {
-    	value: true
-    },
-    isTransformCollapsed : {
-    	serializable: true,
-    	get: function() {
-    		return this._isTransformCollapsed;
-    	},
-    	set: function(newVal) {
-			this._isTransformCollapsed = newVal;
-			this.layerData.isTransformCollapsed = newVal;
     	}
     },
     
@@ -497,10 +521,10 @@ var Layer = exports.Layer = Montage.create(Component, {
         	
             this.layerName = this.layerData.layerName;
             this.layerID = this.layerData.layerID;
+            this.stageElement = this.layerData.stageElement
             this.arrLayerStyles = this.layerData.arrLayerStyles;
             this.isMainCollapsed = this.layerData.isMainCollapsed;
             this.isPositionCollapsed = this.layerData.isPositionCollapsed;
-            this.isTransformCollapsed = this.layerData.isTransformCollapsed;
             this.isSelected = this.layerData.isSelected;
             this.isActive = this.layerData.isActive;
             this.isStyleCollapsed = this.layerData.isStyleCollapsed;
@@ -512,12 +536,15 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.dtextScaleX = this.layerData.dtextScaleX;
             this.dtextScaleY = this.layerData.dtextScaleY;
             this.dtextRotate = this.layerData.dtextRotate;
-            this._isFirstDraw = this.layerData._isFirstDraw;
+            //this._isFirstDraw = this.layerData._isFirstDraw;
             this.layerTag = this.layerData.layerTag;
             this.isVisible = this.layerData.isVisible;
             this.isAnimated = this.layerData.isAnimated;
             this.docUUID = this.layerData.docUUID;
+            this.selectedStyleIndex = this.layerData.selectedStyleIndex;
             this.needsDraw = boolNeedsDraw;
+            this.isLock = this.layerData.isLock;
+            this.isHidden = this.layerData.isHidden;
         }
     },
     
@@ -564,8 +591,9 @@ var Layer = exports.Layer = Montage.create(Component, {
         	// Collapser event handlers.
             this.mainCollapser.clicker.addEventListener("click", this.handleMainCollapserClick.bind(this), false);
             this.positionCollapser.clicker.addEventListener("click", this.handlePositionCollapserClick.bind(this), false);
-            this.transformCollapser.clicker.addEventListener("click", this.handleTransformCollapserClick.bind(this), false);
             this.styleCollapser.clicker.addEventListener("click", this.handleStyleCollapserClick.bind(this), false);
+            this.layerLock.addEventListener("click",this.handleLayerLock.bind(this),false);
+            this.visibilityButton.addEventListener("click",this.handleLayerVisibility.bind(this),false);
 
             // Add event listeners to add and delete style buttons
             this.buttonAddStyle.addEventListener("click", this.handleAddStyleClick.bind(this), false);
@@ -582,14 +610,58 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.element.addEventListener("dragleave", this.handleDragleave.bind(this), false);
 			this.element.addEventListener("dragstart", this.handleDragstart.bind(this), false);
 			this.element.addEventListener("drop", this.handleDrop.bind(this), false);
+
+            this.eventManager.addEventListener("elementChange",this,false);
+
+            this.leftControl.identifier = "left";
+            this.leftControl.addEventListener("changing",this,false);
+            this.leftControl.addEventListener("change",this,false);
+
+            this.topControl.identifier = "top";
+            this.topControl.addEventListener("changing",this,false);
+            this.topControl.addEventListener("change",this,false);
+
+            this.widthControl.identifier = "width";
+            this.widthControl.addEventListener("changing",this,false);
+            this.widthControl.addEventListener("change",this,false);
+
+            this.heightControl.identifier = "height";
+            this.heightControl.addEventListener("changing",this,false);
+            this.heightControl.addEventListener("change",this,false);
+
+            el=this.layerData.stageElement;
+            this.dtextPositionX = parseFloat(ElementsMediator.getProperty(el, "left"));
+            this.dtextPositionY = parseFloat(ElementsMediator.getProperty(el, "top"));
+            this.dtextScaleY = parseFloat(ElementsMediator.getProperty(el, "height"));
+            this.dtextScaleX= parseFloat(ElementsMediator.getProperty(el, "width"));
         }
     },
+
     draw: {
     	value: function() {
+    		var boolHasClass = this.element.classList.contains("layerSelected");
+            if (this.isSelected && !boolHasClass) {
+            	//console.log('Layer.draw, adding selection for layer ', this.layerName)
+            	this.element.classList.add("layerSelected");
+            	
+            }
+			if (!this.isSelected && boolHasClass) {
+            	//console.log('Layer.draw, removing selection for layer ', this.layerName)
+            	this.element.classList.remove("layerSelected");
+            }
+            // Enable or disable the delete style button as appropriate
             if (this.isSelected) {
-            	this.element.classList.add("selected");
+            	if (this.selectedStyleIndex !== false) {
+            		this.selectStyle(this.selectedStyleIndex);
+            		this.buttonDeleteStyle.classList.remove("disabled");
+            	}
             } else {
-            	this.element.classList.remove("selected");
+            	this.buttonDeleteStyle.classList.add("disabled");
+            }
+            
+            // Update layer name?
+            if (this.layerName !== this.layer_label_text.innerText) {
+            	this.layer_label_text.innerText = this.layerName;
             }
     	}
     },
@@ -597,16 +669,25 @@ var Layer = exports.Layer = Montage.create(Component, {
     	value: function() {
     		// console.log("Layer.didDraw: Layer "+ this.layerID );
     		if (this._isFirstDraw === true) {
-    			if (this.isSelected === true) {
-    				if (this.application.ninja.currentDocument._uuid === this._docUUID) {
-		    			// Once we're done drawing the first time we need to tell the TimelinePanel if
-		    			// this layer is supposed to be selected.
-		    			//console.log('layerName ' +  this.layerName);
-		    			this.parentComponent.parentComponent.selectedLayerID = this.layerID;
-					}
-    			}
     			this._isFirstDraw = false;
     			this.layerData._isFirstDraw = false;
+	    		
+	    		if (this.isMainCollapsed === false) {
+					this.mainCollapser.myContent.style.height = "auto";
+					this.mainCollapser.myContent.classList.remove(this.mainCollapser.collapsedClass);
+					this.mainCollapser.clicker.classList.remove(this.mainCollapser.collapsedClass);
+	    		}
+	    		if (this.isPositionCollapsed === false) {
+					this.positionCollapser.myContent.style.height = "auto";
+					this.positionCollapser.myContent.classList.remove(this.positionCollapser.collapsedClass);
+					this.positionCollapser.clicker.classList.remove(this.positionCollapser.collapsedClass);
+	    		}
+	    		if (this.isStyleCollapsed === false) {
+					this.styleCollapser.myContent.style.height = "auto";
+					this.styleCollapser.myContent.classList.remove(this.styleCollapser.collapsedClass);
+					this.styleCollapser.clicker.classList.remove(this.styleCollapser.collapsedClass);
+	    		}
+    			
     		}
     	}
     },
@@ -625,111 +706,140 @@ var Layer = exports.Layer = Montage.create(Component, {
 		}
 	},
 	addStyle : {
-		value: function() {
+		value: function(styleProperty, existingRule) {
 			// Add a new style rule.  It should be added above the currently selected rule, 
 			// Or at the end, if no rule is selected.
 
 			var newLength = 0, 
-				mySelection = 0,
+				// mySelection = 0,
 				// newStyle = LayerStyle.create(),
 				newStyle = {},
 				newEvent = document.createEvent("CustomEvent");
-			
+			/*
 			this.isStyleCollapsed = false;
 			this.layerData.isStyleCollapsed = false;
 			this.triggerOutgoingBinding();
+			*/
 			
 			newEvent.initCustomEvent("layerEvent", false, true);
 			newEvent.layerEventLocale = "styles";
 			newEvent.layerEventType = "newStyle";
 			newEvent.layerID = this.layerID;
-			newEvent.styleID = this.layerID + "@" + this._styleCounter;
+            newEvent.styleIndex = this.styleCounter;
+			newEvent.styleID = this.layerID + "@" + this.styleCounter; // is this property needed?
 			
 			newStyle.styleID = newEvent.styleID;
 			newStyle.whichView = "hintable";
-			newStyle.editorProperty = "";
+            newStyle.editorProperty = "";
+            if(styleProperty){
+                newStyle.editorProperty = styleProperty;
+                newEvent.layerEventType = "restoreStyle";
+                newEvent.trackEditorProperty = styleProperty;
+                if(existingRule){
+                    newEvent.existingRule = existingRule;
+                }
+            }
 			newStyle.editorValue = "";
 			newStyle.ruleTweener = false;
 			newStyle.isSelected = false;
+            newStyle.colorelement = "";
+            this.arrLayerStyles.push(newStyle);
+            this.selectStyle(this.arrLayerStyles.length -1);
 
-			if (!!this.styleRepetition.selectedIndexes) {
-				mySelection = this.styleRepetition.selectedIndexes[0];
-				this.arrLayerStyles.splice(mySelection, 0, newStyle);
-				//this.styleRepetition.selectedIndexes = [mySelection];
-				this.selectStyle(mySelection);
-			} else {
-				newLength = this.arrLayerStyles.length;
-				this.arrLayerStyles.push(newStyle);
-				mySelection = this.arrLayerStyles.length;
-				// this.styleRepetition.selectedIndexes = [mySelection-1];
-				this.selectStyle(mySelection-1);
-			}
-			
 			// Set up the event info and dispatch the event
+            this.styleCounter += 1;
+			// newEvent.styleSelection = mySelection;
+			//defaultEventManager.dispatchEvent(newEvent);
+			
+			// Dispatch the event to the TimelineTrack component associated with this Layer.
+			var myIndex = this.application.ninja.timeline.getActiveLayerIndex(),
+				arrTracks = document.querySelectorAll('[data-montage-id="track"]');
 
-			newEvent.styleSelection = mySelection;
-			defaultEventManager.dispatchEvent(newEvent);
-
-
+			if (myIndex !== false) {
+				arrTracks[myIndex].dispatchEvent(newEvent);
+			}
 		}
 	},
+
 	deleteStyle : {
 		value: function() {
-			var newEvent = document.createEvent("CustomEvent"),
-				selectedIndex = 0;
-			if (this.arrLayerStyles.length > 0) {
-				if (!!this.styleRepetition.selectedIndexes) {
-					
-					selectedIndex = this.styleRepetition.selectedIndexes[0];
+		
+			// Only delete a style if we have one or more styles, and one of them is selected
+			if ((this.arrLayerStyles.length > 0) && (this.selectedStyleIndex !== false)) {
+				var newEvent = document.createEvent("CustomEvent");
 
-					// Set up the event info and dispatch the event
-					newEvent.initCustomEvent("layerEvent", false, true);
-					newEvent.layerEventLocale = "styles";
-					newEvent.layerEventType = "deleteStyle";
-					newEvent.layerID = this.layerID;
-					newEvent.styleID = this.arrLayerStyles[selectedIndex].styleID;
-					newEvent.styleSelection = selectedIndex;
-					defaultEventManager.dispatchEvent(newEvent);
-					
-					// Delete the style from the view
-					this.arrLayerStyles.splice(selectedIndex, 1);
-					
-					// Was that the last style?
-					if (this.arrLayerStyles.length === 0) {
-						this.buttonDeleteStyle.classList.add("disabled");
-					}
-					
+				// Set up the event info and dispatch the event
+				newEvent.initCustomEvent("layerEvent", false, true);
+				newEvent.layerEventLocale = "styles";
+				newEvent.layerEventType = "deleteStyle";
+				newEvent.layerID = this.layerID;
+				newEvent.styleID = this.selectedStyleIndex;
+				newEvent.selectedStyleIndex = this.selectedStyleIndex;
+
+				// Dispatch the event to the TimelineTrack component associated with this Layer.
+				var myIndex = this.application.ninja.timeline.getActiveLayerIndex(),
+					arrTracks = document.querySelectorAll('[data-montage-id="track"]');
+	
+				if (myIndex !== false) {
+					arrTracks[myIndex].dispatchEvent(newEvent);
 				}
-			}
+					
+				// Delete the style from the view
+				this.arrLayerStyles.splice(this.selectedStyleIndex, 1);
+				
+				// Set selection to none
+				this.selectedStyleIndex = false;
+				
+				// Disable the delete style button, because now nothing is selected
+				this.buttonDeleteStyle.classList.add("disabled");
+			}	
 		}
 	},
 	selectStyle : {
 		value: function(styleIndex) {
-
     		// Select a style based on its index.
     		// use layerIndex = false to deselect all styles.
     		var i = 0,
     			arrLayerStylesLength = this.arrLayerStyles.length;
-
-    		// First, update this.arrStyles[].isSelected
-    		for (i = 0; i < arrLayerStylesLength; i++) {
-    			if (i === styleIndex) {
-    				this.arrLayerStyles[i].isSelected = true;
-    			} else {
-    				this.arrLayerStyles[i].isSelected = false;
-    			}
-    		}
-    		
+    			
+            if (styleIndex === false) {
+                if (arrLayerStylesLength === 0) {
+                    // No styles selected, so do nothing.
+                    return;
+                }
+                for (i = 0; i < arrLayerStylesLength; i++) {
+                    if (this.arrLayerStyles[i].isSelected === true) {
+                        this.arrLayerStyles[i].isSelected = false;
+                    }
+                }
+            } else {
+                for (i = 0; i < arrLayerStylesLength; i++) {
+                    if (i === styleIndex) {
+                        this.arrLayerStyles[i].isSelected = true;
+                    } else {
+                        if (this.arrLayerStyles[i].isSelected === true) {
+                            this.arrLayerStyles[i].isSelected = false;
+                        }
+                    }
+                }
+                this.selectedStyleIndex = styleIndex;
+                this._storedStyleIndex = styleIndex;
+            }
+            
+            
+            
+    		/*
     		// Next, update this.styleRepetition.selectedIndexes.
     		if (styleIndex !== false) {
-    			this.styleRepetition.selectedIndexes = [styleIndex];
+    			//this.styleRepetition.selectedIndexes = [styleIndex];
     			this.buttonDeleteStyle.classList.remove("disabled");
     		} else {
-    			this.styleRepetition.selectedIndexes = null;
+    			//this.styleRepetition.selectedIndexes = null;
     			if (typeof(this.buttonDeleteStyle) !== "undefined") {
     				this.buttonDeleteStyle.classList.add("disabled");
     			}
     		}
+    		*/
 			
 		}
 	},
@@ -747,6 +857,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     				this.arrLayerStyles[i].isActive = false;
     			}
     		}
+    		//console.log("Layer.getActiveStyleIndex, returnVal ", returnVal)
     		return returnVal;
     	}
     },
@@ -754,20 +865,31 @@ var Layer = exports.Layer = Montage.create(Component, {
     
 	/* Begin: Event handlers */
 	handleLayerNameChange: {
-		value: function(event) {		
-			this.dynamicLayerName.value = this._layerEditable.value;
-			this.application.ninja.timeline.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.dynamicLayerName.value;
-			this.needsDraw = true;
-			this.application.ninja.currentDocument.model.needsSave = true;
+		value: function(event) {
+			
+			if (this._layerEditable.value !== this.layerName) {
+				this.layerName = this._layerEditable.value;
+				this.application.ninja.currentDocument.model.needsSave = true;
+				this.layerData.stageElement.setAttribute("id",this._layerEditable.value);
+			}
 		}
 	},
 	handleAddStyleClick: {
 		value: function(event) {
+
+			this.isStyleCollapsed = false;
+			this.layerData.isStyleCollapsed = false;
+			this.triggerOutgoingBinding();
+
 			this.addStyle();
+
 		}
 	},
 	handleDeleteStyleClick: {
 		value: function(event) {
+		    if (event.target.classList.contains("disabled")) {
+		        return;
+		    }
 			this.deleteStyle();
 		}
 	},
@@ -783,19 +905,25 @@ var Layer = exports.Layer = Montage.create(Component, {
 			if (this._layerEditable.enteredValue.length === 0) {
 				newVal = this._layerEditable._preEditValue;
 			}
-			this.dynamicLayerName.value = newVal;
 			this.layerName = newVal;
-			this.application.ninja.timeline.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = newVal;
-			this.application.ninja.currentDocument.model.needsSave = true;
-			this.needsDraw = true;
+			if (newVal !== this.layerName) {
+				this.layerName = newVal;
+				this.application.ninja.currentDocument.model.needsSave = true;
+				this.layerData.stageElement.setAttribute("id", newVal);
+			}
 		}
 	},
 	handleMousedown: {
 		value: function(event) {
+			if (event.target.classList.contains("button-delete")) {
+				return;
+			}
 			this.layerData.isActive = true;
-			var ptrParent = nj.queryParentSelector(event.target, ".content-style");
+			var ptrParent = nj.queryParentSelector(event.target, ".content-style"),
+				activeStyleIndex = this.getActiveStyleIndex();
+			this.selectedStyleIndex = activeStyleIndex;
 			if (ptrParent !== false) {
-				this.selectStyle(this.getActiveStyleIndex());
+				this.selectStyle(this.selectedStyleIndex);
 			}
 		}
 	},
@@ -834,19 +962,6 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.triggerOutgoingBinding();
 		}
 	},
-	handleTransformCollapserClick : {
-		value: function(event) {
-			this.transformCollapser.bypassAnimation = false;
-			this.bypassAnimation = false;
-			this.layerData.bypassAnimation = false;
-			if (this.isTransformCollapsed) {
-				this.isTransformCollapsed = false;
-			} else {
-				this.isTransformCollapsed = true;
-			}
-			this.triggerOutgoingBinding();
-		}
-	},
 	handleStyleCollapserClick : {
 		value: function(event) {
 			this.styleCollapser.bypassAnimation = false;
@@ -876,17 +991,24 @@ var Layer = exports.Layer = Montage.create(Component, {
 	},
 	handleDragleave: {
 		value: function(event) {
+			if (this.parentComponent.parentComponent.draggingType !== "layer") {
+				return;
+			}
 			this.element.classList.remove("dragOver");
 		}
 	},
 	handleDragstart: {
 		value: function(event) {
-			this.parentComponent.parentComponent.dragLayerID = this.layerID;
+			//this.parentComponent.parentComponent.dragLayerID = this.layerID;
             event.dataTransfer.setData('Text', 'Layer');
+            this.parentComponent.parentComponent.draggingType = "layer";
 		}
 	},
 	handleDragover: {
 		value: function(event) {
+			if (this.parentComponent.parentComponent.draggingType !== "layer") {
+				return;
+			}
 			event.preventDefault();
 			this.element.classList.add("dragOver");
 			event.dataTransfer.dropEffect = "move";
@@ -896,6 +1018,9 @@ var Layer = exports.Layer = Montage.create(Component, {
 	
 	handleDrop : {
 		value: function(event) {
+			if (this.parentComponent.parentComponent.draggingType !== "layer") {
+				return;
+			}
 			event.stopPropagation();
 			this.element.classList.remove("dragOver");
 			if (this.parentComponent.parentComponent.dragLayerID !== this.layerID) {
@@ -904,6 +1029,312 @@ var Layer = exports.Layer = Montage.create(Component, {
 			return false;
 		}
 	},
+
+    handleLeftChange: {
+        value: function(event) {
+            var prevPosition;
+            if(this.application.ninja.timeline.selectedStyle==="left" ||this.application.ninja.timeline.selectedStyle==="master" ){
+                if(!event.wasSetByCode) {
+                    if(this.savedPosition) prevPosition = [this.savedPosition + "px"];
+                        this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "left", [this.leftControl.value + "px"] , "Change", "timeline", prevPosition);
+                        this.savedPosition = null;
+                }
+
+            }
+        }
+    },
+
+    handleTopChange: {
+        value: function(event) {
+            var prevPosition;
+            if(this.application.ninja.timeline.selectedStyle==="top" ||this.application.ninja.timeline.selectedStyle==="master" ){
+                if(!event.wasSetByCode) {
+                    if(this.savedPosition) prevPosition = [this.savedPosition + "px"];
+
+                    this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "top", [this.topControl.value + "px"] , "Change", "timeline", prevPosition);
+                    this.savedPosition = null;
+                }
+            }
+        }
+    },
+
+    handleWidthChange:{
+        value: function(event) {
+            var prevPosition;
+            if(this.application.ninja.timeline.selectedStyle==="width" ||this.application.ninja.timeline.selectedStyle==="master" ){
+                if(!event.wasSetByCode) {
+                    if(this.savedPosition) prevPosition = [this.savedPosition + "px"];
+
+                    this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "width", [this.dtextScaleX + "px"] , "Change", "timeline", prevPosition);
+                    this.savedPosition = null;
+                }
+            }
+        }
+    },
+
+    handleHeightChange:{
+        value: function(event) {
+            var prevPosition;
+            if(this.application.ninja.timeline.selectedStyle==="height" ||this.application.ninja.timeline.selectedStyle==="master" ){
+                if(!event.wasSetByCode) {
+                    if(this.savedPosition) prevPosition = [this.savedPosition + "px"];
+
+                    this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "height", [this.dtextScaleY + "px"] , "Change", "timeline", prevPosition);
+                    this.savedPosition = null;
+                }
+            }
+        }
+    },
+
+    handleLeftChanging: {
+        value: function(event) {
+
+            if(this.application.ninja.timeline.selectedStyle==="left" ||this.application.ninja.timeline.selectedStyle==="master" ){
+                if(!event.wasSetByCode) {
+                    if(!this.savedPosition) this.savedPosition = this.leftPosition;
+                    this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "left", [this.leftControl.value + "px"] , "Changing", "timeline");
+                }
+            }
+
+        }
+    },
+
+    handleTopChanging: {
+        value: function(event) {
+            if(this.application.ninja.timeline.selectedStyle==="top" ||this.application.ninja.timeline.selectedStyle==="master" ){
+                if(!event.wasSetByCode) {
+                    if(!this.savedPosition) this.savedPosition = this.topPosition;
+                    this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "top", [this.topControl.value + "px"] , "Changing", "timeline");
+                }
+            }
+
+        }
+    },
+
+    handleWidthChanging:{
+        value: function(event) {
+            if(this.application.ninja.timeline.selectedStyle==="width" ||this.application.ninja.timeline.selectedStyle==="master" ){
+                if(!event.wasSetByCode) {
+                    if(!this.savedPosition) this.savedPosition = this.dtextScaleX;
+                    this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "width", [this.dtextScaleX + "px"] , "Changing", "timeline");
+                }
+            }
+
+        }
+    },
+
+    handleHeightChanging:{
+        value: function(event) {
+            if(this.application.ninja.timeline.selectedStyle==="height" ||this.application.ninja.timeline.selectedStyle==="master" ){
+                if(!event.wasSetByCode) {
+                    if(!this.savedPosition) this.savedPosition = this.dtextScaleY;
+                    this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "height", [this.dtextScaleY + "px"] , "Changing", "timeline");
+                }
+            }
+
+        }
+    },
+
+
+    handleElementChange:{
+        value:function(event){
+            if(this.layerData){
+                var el =this.layerData.stageElement;
+                var length = this.arrLayerStyles.length , i , k=0;
+
+                    this.dtextPositionX = parseFloat(ElementsMediator.getProperty(el, "left"));
+                    this.dtextPositionY = parseFloat(ElementsMediator.getProperty(el, "top"));
+                    this.dtextScaleY = parseFloat(ElementsMediator.getProperty(el, "height"));
+                    this.dtextScaleX= parseFloat(ElementsMediator.getProperty(el, "width"));
+
+
+                    for(i=0; i<length; i++){
+                        if (event.detail.data.prop === "color"){
+                            var currentValue1 = ElementsMediator.getColor(this.layerData.stageElement,event.detail.data.isFill,event.detail.data.borderSide);
+                            if(event.detail.data.isFill){
+                                while(k <length){
+                                    if(this.arrLayerStyles[k].editorProperty === "background-color"){
+                                        this.arrLayerStyles[k].colorelement.color(currentValue1.colorMode, currentValue1.color);
+                                        this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
+                                        break;
+                                    }
+                                    k++;
+                                }
+                            }else if (event.detail.data.borderSide === "bottom"){
+                                k=0;
+                                    while(k <length){
+                                        if(this.arrLayerStyles[k].editorProperty  === "bottom-border-color"){
+                                        this.arrLayerStyles[k].colorelement.color(currentValue1.colorMode, currentValue1.color);
+                                        this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
+                                        break;
+                                        }
+                                    k++;
+                                    }
+                                }else if (event.detail.data.borderSide === "top"){
+                                    k=0;
+                                    while(k <length){
+                                        if(this.arrLayerStyles[k].editorProperty  === "top-border-color"){
+                                        this.arrLayerStyles[k].colorelement.color(currentValue1.colorMode, currentValue1.color);
+                                        this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
+                                        break;
+                                        }
+                                    k++;
+                                    }
+                                }else if(event.detail.data.borderSide === "left"){
+                                    k=0;
+                                    while(k <length){
+                                        if(this.arrLayerStyles[k].editorProperty  === "left-border-color"){
+                                        this.arrLayerStyles[k].colorelement.color(currentValue1.colorMode, currentValue1.color);
+                                        this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
+                                        break;
+                                        }
+                                    k++;
+                                    }
+                                }else if(event.detail.data.borderSide === "right"){
+                                    k=0;
+                                    while(k <length){
+                                        if(this.arrLayerStyles[k].editorProperty  === "right-border-color"){
+                                        this.arrLayerStyles[k].colorelement.color(currentValue1.colorMode, currentValue1.color);
+                                        this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
+                                        break;
+                                        }
+                                    k++;
+                                    }
+                                }
+                            break;
+                        }else if (event.detail.source === "tween" || event.detail.data.prop === "background-color" ||event.detail.data.prop === "border-top-color"|| event.detail.data.prop === "border-right-color"|| event.detail.data.prop === "border-left-color" || event.detail.data.prop === "border-bottom-color" ){
+
+                            k=0;
+                            while(k <length){
+                                if(this.arrLayerStyles[k].editorProperty === event.detail.data.prop){
+                                   var tempElement = this.arrLayerStyles[k];
+
+                                break;
+                                }
+                            k++;
+                            }
+                            if(event.detail.data.prop === "background-color"){
+
+                                var currentValue = ElementsMediator.getColor(this.layerData.stageElement,true);
+                                tempElement.colorelement.color(currentValue.colorMode, currentValue.color);
+                                this.application.ninja.timeline.selectedStyle = event.detail.data.prop;
+                            }else {
+                                if(event.detail.data.prop === "border-bottom-color"){
+                                    currentValue = ElementsMediator.getColor(this.layerData.stageElement,false,"bottom");
+                                    tempElement.colorelement.color(currentValue.colorMode, currentValue.color);
+                                    this.application.ninja.timeline.selectedStyle = event.detail.data.prop;
+                                }else if(event.detail.data.prop === "border-top-color"){
+                                    currentValue = ElementsMediator.getColor(this.layerData.stageElement,false,"top");
+                                    tempElement.colorelement.color(currentValue.colorMode, currentValue.color);
+                                    this.application.ninja.timeline.selectedStyle = event.detail.data.prop;
+                                }else if (event.detail.data.prop === "border-left-color"){
+                                     currentValue = ElementsMediator.getColor(this.layerData.stageElement,false,"left");
+                                     tempElement.colorelement.color(currentValue.colorMode, currentValue.color);
+                                     this.application.ninja.timeline.selectedStyle = event.detail.data.prop;
+                                }else if (event.detail.data.prop === "border-right-color"){
+                                     currentValue = ElementsMediator.getColor(this.layerData.stageElement,false,"right");
+                                     tempElement.colorelement.color(currentValue.colorMode, currentValue.color);
+                                     this.application.ninja.timeline.selectedStyle = event.detail.data.prop;
+                                }
+                            }
+                        }else{
+                            this.arrLayerStyles[i].editorValue = parseFloat(ElementsMediator.getProperty(el, this.arrLayerStyles[i].editorProperty))
+                            this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
+                        }
+                    }
+            }
+        }
+    },
+
+    handleUpdatedID:{
+        value:function(event){
+            var i= this.application.ninja.timeline.arrLayers.length;
+            if(event.detail.id){
+                for(var k=0;k<i;k++){
+                    if(this.application.ninja.timeline.arrLayers[k].layerData.layerID=== this.application.ninja.timeline.currentLayerSelected.layerData.layerID){
+                        this.application.ninja.timeline.currentLayerSelected.layerData.layerName = event.detail.id;
+                        this.application.ninja.timeline.triggerLayerBinding(k);
+                        this.needsDraw=true;
+                    }
+                }
+
+            }
+        }
+    },
+
+    handleLayerLock: {
+        value: function() {
+           var i = 0;
+           var arrlength = this.application.ninja.timeline.arrLayers.length;
+           var lockElementArrLength = this.application.ninja.currentDocument.lockedElements.length;
+           if(!this.layerData.isLock){
+               for(i = 0; i < arrlength; i++){
+                  if(this.application.ninja.timeline.arrLayers[i].layerData.isLock){
+                      this.application.ninja.timeline.arrLayers[i].layerData.isLock = false;
+                      this.application.ninja.timeline.arrLayers[i].layerData.isSelected = false;
+                      for(var k = 0; k < lockElementArrLength; k++){
+                          if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.stageElement){
+                              this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                              break;
+                          }
+                      }
+                  }
+               }
+               this.layerData.isSelected = false;
+               this.application.ninja.timeline.selectLayers([]);
+               this.application.ninja.currentDocument.lockedElements.push(this.layerData.stageElement);
+           } else {
+               this.layerData.isSelected = true;
+               for(k = 0; k<lockElementArrLength; k++){
+                 if(this.application.ninja.currentDocument.lockedElements[k] === this.layerData.stageElement){
+                     this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                     break;
+                 }
+               }
+
+           }
+           this.layerData.isLock = !this.layerData.isLock;
+
+        }
+    },
+
+    handleLayerVisibility:{
+        value:function(){
+            var i = 0;
+            var arrlength = this.application.ninja.timeline.arrLayers.length;
+            var lockElementArrLength=this.application.ninja.currentDocument.lockedElements.length;
+            if(!this.layerData.isHidden){
+                for(i = 0; i<arrlength; i++){
+                    if(this.application.ninja.timeline.arrLayers[i].layerData.isHidden){
+                        this.application.ninja.timeline.arrLayers[i].layerData.isHidden = false;
+                        this.application.ninja.timeline.arrLayers[i].layerData.stageElement.style.visibility = "visible";
+                        for(var k = 0;k < lockElementArrLength;k++){
+                            if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.stageElement){
+                                this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                                break;
+                            }
+                        }
+                    }
+
+                }
+             this.layerData.stageElement.style.visibility = "hidden";
+             this.application.ninja.currentDocument.lockedElements.push(this.layerData.stageElement);
+
+            } else {
+                this.layerData.stageElement.style.visibility = "visible";
+                for(var k = 0; k < lockElementArrLength; k++){
+                    if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.stageElement){
+                        this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                        break;
+                    }
+                }
+            }
+            this.layerData.isHidden = !this.layerData.isHidden;
+
+        }
+    },
+
+
 	/* End: Event handlers */
 	
 	/* Begin: Logging routines */
