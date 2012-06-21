@@ -1051,6 +1051,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     createPositionTracks:{
         value:function(){
             // create track objects for position and transform tracks and push into arrays
+            
+            // ... but only do it if we haven't already.
+            if (this.arrPositionTracks.length > 0) {
+            	return;
+            }
 
             // create 'left' track
             var newLeftTrack = {};

@@ -595,7 +595,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     prepareForDraw:{
         value:function () {
             this.initTimeline();
-
         }
     },
     
