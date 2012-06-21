@@ -15,10 +15,12 @@
                        "properties": {
                            "element": {"#": "track"},
                            "tweenRepetition" : {"@" : "tweenRepetition"},
+                           "track_lanes" : {"#" : "track_lanes"},
                            "tween": {"@" : "tween"},
+                           "positionTracksRepetition" : {"@" : "positionTracksRepetition"},
+                           "positionPropertyTrack" : {"@" : "positionPropertyTrack"},
                            "mainCollapser" : {"@" : "mainCollapser"},
                            "positionCollapser" : {"@" : "positionCollapser"},
-                           "transformCollapser" : {"@" : "transformCollapser"},
                            "styleCollapser" : {"@" : "styleCollapser"}
                        }
                    },
@@ -51,7 +53,6 @@
                    	       }
                    	   }
                    },
-
                    "styleTrackRepetition": {
                        "prototype": "montage/ui/repetition.reel",
                    	   "properties": {
@@ -66,10 +67,23 @@
                    	       }
                    	   }
                    },
+                   "stylePropertyTrack" : {
+               	        "prototype" : "js/panels/Timeline/PropertyTrack.reel",
+               			"properties" : {
+               				"element":{"#": "style-track-base"}
+               			},
+                        "bindings" : {
+                            "propTrackData" : {
+                           	    "boundObject" : {"@" : "styleTrackRepetition"},
+                           	    "boundObjectPropertyPath" : "objectAtCurrentIteration.propTrackData",
+                           	    "oneway" : false
+                           	}
+                        }
+               	   },
                    "positionTracksRepetition": {
                        "prototype": "montage/ui/repetition.reel",
                    	   "properties": {
-                   	       "element": {"#": "content-position-tracks"},
+                   	       "element": {"#": "content_position_tracks"},
                    	       "isSelectionEnabled" : false
                    	   },
                    	   "bindings": {
@@ -83,28 +97,15 @@
 					"positionPropertyTrack" : {
 						"prototype" : "js/panels/Timeline/PropertyTrack.reel",
 						"properties" : {
-							"element":{"#": "position-track-base"}
-						}
-					},
-                   "transformTracksRepetition": {
-                       "prototype": "montage/ui/repetition.reel",
-                   	   "properties": {
-                   	       "element": {"#": "content-transform-tracks"},
-                   	       "isSelectionEnabled" : false
-                   	   },
-                   	   "bindings": {
-                   	       "objects": {
-                   	           "boundObject": {"@": "owner"},
-                   	           "boundObjectPropertyPath": "arrTransformTracks",
-                   	           "oneway": false
-                   	       }
-                   	   }
-                   },
-					"transformPropertyTrack" : {
-						"prototype" : "js/panels/Timeline/PropertyTrack.reel",
-						"properties" : {
-							"element":{"#": "transform-track-base"}
-						}
+							"element":{"#": "position_track_base"}
+						},
+                        "bindings" : {
+                            "propTrackData" : {
+                                 "boundObject" : {"@" : "positionTracksRepetition"},
+                                 "boundObjectPropertyPath" : "objectAtCurrentIteration.propTrackData",
+                                 "oneway" : false
+                            }
+                        }
 					},
 					
 					"mainCollapser" : {
@@ -135,8 +136,8 @@
 					"positionCollapser" : {
 						"prototype" : "js/panels/timeline/Collapser",
 						"properties" : {
-							"element" : {"#" : "content-position-tracks"},
-							"myContent" : {"#":"content-position-tracks"},
+							"element" : {"#" : "content_position_collapser"},
+							"myContent" : {"#":"content_position_collapser"},
 							"contentHeight" : 40,
 							"isLabelClickable" : false,
 							"clicker" : {"#" : "label-position"},
@@ -147,31 +148,6 @@
 							"isToggling" : {
 								"boundObject" : {"@" : "owner" },
 								"boundObjectPropertyPath" : "isPositionCollapsed",
-								"oneway" : false
-							},
-							"bypassAnimation" : {
-								"boundObject" : {"@": "owner"},
-								"boundObjectPropertyPath" : "bypassAnimation",
-								"oneway" : false
-							}
-						}
-					},
-					
-					"transformCollapser" : {
-						"prototype" : "js/panels/timeline/Collapser",
-						"properties" : {
-							"element" : {"#" : "content-transform-tracks"},
-							"myContent" : {"#":"content-transform-tracks"},
-							"contentHeight" : 40,
-							"isLabelClickable" : false,
-							"clicker" : {"#" : "label-transform"},
-							"isCollapsed" : true,
-							"isAnimated" : true	
-						},
-						"bindings" : {
-							"isToggling" : {
-								"boundObject" : {"@" : "owner" },
-								"boundObjectPropertyPath" : "isTransformCollapsed",
 								"oneway" : false
 							},
 							"bypassAnimation" : {
@@ -214,28 +190,26 @@
 	<body>
 
     	<div data-montage-id="track" class="timeline-track">
-            <div data-montage-id="track_lanes" class="tracklane">
+            <div data-montage-id="track_lanes" class="tracklane" style="position: relative;">
                 <div data-montage-id="track_lane"></div>
             </div>
             <div class="label-main collapsible-label collapsible-collapsed" data-montage-id="label-main"></div>
             <div class="collapsible-content collapsible-collapsed content-main" data-montage-id="content-main">
             	<div class="label-position collapsible-label collapsible-collapsed" data-montage-id="label-position">
-            		
-            	</div>
-            	<div class="content-position collapsible-content collapsible-collapsed" data-montage-id="content-position-tracks">
-            		<div data-montage-id="position-track-base"></div>
-            	</div>
-            	<div class="label-transform collapsible-label collapsible-collapsed" data-montage-id="label-transform">
-            		
-            	</div>
-            	<div class="content-transform collapsible-content collapsible-collapsed" data-montage-id="content-transform-tracks">
-            		<div data-montage-id="transform-track-base"></div>
-            	</div>
+
+                </div>
+                <div class="content-position collapsible-content collapsible-collapsed"
+                     data-montage-id="content_position_collapser">
+                    <div data-montage-id="content_position_tracks">
+                        <div data-montage-id="position_track_base"></div>
+                    </div>
+                </div>
+
             	<div class="label-styles collapsible-label collapsible-collapsed" data-montage-id="label-styles">
             		
             	</div>
             	<div data-montage-id="content-styles" class="content-styles collapsible-content collapsible-collapsed">
-            		<div class="timeline-track"></div>
+            		<div data-montage-id="style-track-base"></div>
             	</div>
             </div>
     	</div>

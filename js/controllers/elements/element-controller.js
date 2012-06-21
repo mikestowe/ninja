@@ -15,19 +15,19 @@ exports.ElementController = Montage.create(Component, {
         
         	if (el.getAttribute) el.setAttribute('data-ninja-node', 'true');
         	
-            if(this.application.ninja.timeline.currentLayerSelected) {
-                var selectedLayerIndex = this.application.ninja.timeline.getLayerIndexByID(this.application.ninja.timeline.currentLayerSelected.layerData.layerID);
-
-                if(selectedLayerIndex === 0) {
-                    this.application.ninja.currentDocument.model.domContainer.appendChild(el);
-                } else {
-                    var element = this.application.ninja.timeline.arrLayers[selectedLayerIndex].layerData.elementsList[0];
+        	// Updated to use new methods in TimelinePanel. JR.
+        	var insertionIndex = this.application.ninja.timeline.getInsertionIndex();
+        	if (insertionIndex === false) {
+        		this.application.ninja.currentDocument.model.domContainer.appendChild(el);
+        	} else {
+	        	if (insertionIndex === 0) {
+	        		this.application.ninja.currentDocument.model.domContainer.appendChild(el);
+	        	} else {
+                    var element = this.application.ninja.timeline.arrLayers[insertionIndex].layerData.stageElement;
                     element.parentNode.insertBefore(el, element.nextSibling);
-                }
-            } else {
-                this.application.ninja.currentDocument.model.domContainer.appendChild(el);
-            }
-
+	        	}
+        	}
+        	
             if(styles) {
                 this.application.ninja.stylesController.setElementStyles(el, styles);
             }
@@ -83,24 +83,24 @@ exports.ElementController = Montage.create(Component, {
 
             // Return cached value if one exists
             if(isFill) {
-                if(el.elementModel.fill) {
-                    return el.elementModel.fill;
-                }
+//                if(el.elementModel.fill) {
+//                    return el.elementModel.fill;
+//                }
                 //TODO: Once logic for color and gradient is established, this needs to be revised
                 color = this.getProperty(el, "background-color");
                 image = this.getProperty(el, "background-image");
             } else {
                 // Try getting border color from specific side first
                 if(borderSide) {
-                    color = this.getProperty(el, "border-" + borderSide + "-color");
+                    color = this.getProperty(el, "border-" + borderSide + "-color",true);
                     image = this.getProperty(el, "border-" + borderSide + "-image");
                 }
 
                 // If no color was found, look up the shared border color
                 if(!color && !image) {
-                    if(el.elementModel.stroke) {
-                        return el.elementModel.stroke;
-                    }
+//                    if(el.elementModel.stroke) {
+//                        return el.elementModel.stroke;
+//                    }
 
                     color = this.getProperty(el, "border-color");
                     image = this.getProperty(el, "border-image");
@@ -132,7 +132,7 @@ exports.ElementController = Montage.create(Component, {
     },
 
     setColor: {
-        value: function(el, color, isFill) {
+        value: function(el, color, isFill,borderSide) {
             var mode = color.mode;
 
             if(isFill) {
