@@ -13,7 +13,9 @@
                         "owner": {
                             "prototype": "js/panels/Timeline/Span.reel",
                             "properties": {
-                                "element": {"#": "spanspace"}
+                                "element": {"#": "spanspace"},
+                                "container_easing" : {"#" : "container_easing"},
+                                "easing_choice" : {"#": "easing_choice"}
                             }
                         }
 
@@ -23,6 +25,12 @@
 	<body>
 
     	<div data-montage-id="spanspace" class="tween_span">
+    		<div class="tween_span_bar"></div>
+    		<div data-montage-id="container_easing" class="container-easing-choice">
+    			<div data-montage-id="easing_choice" class="easing-choice">
+    				ease-out
+    			</div>
+    		</div>
     	</div>
 
     </body>
