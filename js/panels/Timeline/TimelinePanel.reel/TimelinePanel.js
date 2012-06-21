@@ -1975,7 +1975,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 				returnVal = false,
 				arrLayersLength = this.arrLayers.length;
 			for (i = 0; i < arrLayersLength; i++) {
-				if (this.arrLayers[i].isSelected === true) {
+				if (this.arrLayers[i].layerData.isSelected === true) {
 					returnVal = i;
 				}
 			}
