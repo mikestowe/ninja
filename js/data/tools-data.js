@@ -47,7 +47,7 @@ exports.ToolsData = Montage.create(Montage, {
         value: 12
     },
     bindingToolIndex: {
-        value: 12
+        value: 13
     },
 
     // NOTE: additions or removal of any tools, or any changes in the order of these entries requires updating the constant index properties above. 

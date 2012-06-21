@@ -23,13 +23,6 @@ exports.ObjectsPanel = Montage.create(Component, {
         }
     },
 
-
-    templateDidLoad: { 
-        value: function() {
-            console.log('objects panel loaded');
-        }
-    },
-
     prepareForDraw : {
         value: function() {
 
@@ -39,14 +32,6 @@ exports.ObjectsPanel = Montage.create(Component, {
                 "oneway": true
             });
 
-        }
-    },
-    draw : {
-        value: function() {
-            console.log("objects panel draw");
-            if(this.objects) {
-
-            }
         }
     }
 

@@ -454,8 +454,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     initMontage: {
         value: function (scripttags) {
             var self = this;
-        	//
-            //debugger;
+
         	this.iframe.contentWindow.document.body.addEventListener('mjsTemplateReady', function () {
         		//Initializing template with user's seriliazation
         		var template = this.iframe.contentWindow.mjsTemplate.create();

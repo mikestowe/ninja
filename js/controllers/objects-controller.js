@@ -47,12 +47,6 @@ var objectsController = exports.ObjectsController = Montage.create(Montage, {
                 Object.deleteBinding(this, 'objects');
                 this._isBoundToModelObjects = true;
             }
-
-//            Object.defineBinding(this, 'objects', {
-//                boundObject: this.currentDocument.model,
-//                boundObjectPropertyPath: 'mObjects',
-//                oneway: false
-//            });
         }
     },
     
