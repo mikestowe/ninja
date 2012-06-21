@@ -118,9 +118,17 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 return;
             }
 
-            if(!this._currentDocument && value.currentView === "design") {
-                this.enablePanel(true);
-            }
+			// Should we enable the panel? 
+			if (typeof(this._currentDocument) !== "undefined") {
+				// We have a document, or at least we have initialized the panel.  
+				// What view are we in?
+				if (typeof(value) !== "undefined") {
+					if (value.currentView === "design") {
+						// We are in design view, so enable the panel.
+						this.enablePanel(true);
+					}
+				}
+			}
 
             this._currentDocument = value;
 
@@ -893,7 +901,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.drawTimeMarkers();
             // Document switching
             // Check to see if we have saved timeline information in the currentDocument.
-            //console.log("TimelinePanel.initTimelineForDocument");
+            // console.log("TimelinePanel.initTimelineForDocument");
 
             if ((typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined")) {
             //	console.log('TimelinePanel.initTimelineForDocument: new Document');
