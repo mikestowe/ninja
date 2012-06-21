@@ -17,6 +17,8 @@
 
 var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
+var ElementsMediator =  	require("js/mediators/element-mediator").ElementMediator
+
 
 var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 
@@ -56,6 +58,7 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 			return this._isSelected;
 		},
 		set: function(newVal) {
+
 			if (newVal !== this._isSelected) {
 				this._isSelected = newVal;
 				this.needsDraw = true;
@@ -190,7 +193,43 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
  			this.needsDraw = true;
  		}
  	},
- 	
+
+    addedColorChips:
+        { value: false },
+
+    _colorelement: {
+        writable:true
+    },
+
+    colorelement: {
+        enumerable: true,
+        get: function () {
+            return this._colorelement;
+        },
+        set: function (value) {
+            if (value !== this._colorelement) {
+                this._colorelement = value;
+            }
+        }
+    },
+
+    _fill: {
+        enumerable: false,
+        value: { colorMode: 'rgb', color: { r: 255, g: 255, b: 255, a: 1, css: 'rgb(255,255,255)', mode: 'rgb', wasSetByCode: true, type: 'change' }, webGlColor: [1, 1, 1, 1] }
+    },
+
+    fill: {
+        enumerable: true,
+        get: function () {
+            return this._fill;
+        },
+        set: function (value) {
+            if (value !== this._fill) {
+                this._fill = value;
+            }
+        }
+    },
+
  	handleMousedown: {
  		value: function(event) {
  			this.isActive = true;
@@ -213,10 +252,12 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     			this._showView();
     		}
     		if (this.isSelected) {
-    			this.element.classList.add("selected");
+    			this.element.classList.add("style-selected");
     		} else {
-    			this.element.classList.remove("selected");
+    			this.element.classList.remove("style-selected");
     		}
+
+
     	}
     },
     didDraw: {
@@ -243,7 +284,6 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 		value: function(event) {
 			// this should be handled via binding, but somehow is not. Setting manually for now.
 		    this.editorProperty = this.myHintable.value;
-		    
 		    // Change views.
 		    this.whichView = "propval";
 		}
@@ -308,6 +348,12 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 			// First, get the appropriate editor type from the data structure.
 			var tweenable = {},
 				i = 0;
+
+            if (this.ruleTweener === true) {
+               return;
+            } else {
+               this.ruleTweener = true;
+            }
 				
 			tweenable.tweener = "input";
 
@@ -325,17 +371,45 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 				this.valueEditorHottext.units = tweenable.units;
 				this.valueEditorHottext.minValue = tweenable.min;
 				this.valueEditorHottext.maxValue = tweenable.max;
+                this.valueEditorHottext.identifier="hottext";
+                el = this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement;
+                this.editorValue = parseFloat(ElementsMediator.getProperty(el, this.editorProperty));
+                this.valueEditorHottext.value = this.editorValue
+                this.valueEditorHottext.addEventListener("change",this,false);
+                this.valueEditorHottext.addEventListener("changing",this,false);
 				this.valueEditorHottext.needsDraw = true;
 			} else if (tweenable.tweener === "color" ) {
 				this.editorInputContainer.classList.add("hidden");
 				this.editorColorContainer.classList.remove("hidden");
 				this.editorHottextContainer.classList.add("hidden");
+
+                if(tweenable.colorType === "fill"){
+                    this._isFill = true;
+                }else{
+                    if(tweenable.colorType === "stroke"){
+                        this._isFill = false;
+                        this._borderSide = tweenable.strokePosition
+                    }
+                }
+
+                if (this.addedColorChips === false && this.application.ninja.colorController.colorPanelDrawn) {
+                    // setup fill color
+                    this._fillColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80 };
+                    this.application.ninja.colorController.addButton("chip", this._fillColorCtrl);
+                    this.colorelement = this._fillColorCtrl;
+                    var currentValue = ElementsMediator.getColor(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement,this._isFill,this._borderSide)
+                    this.application.ninja.timeline.selectedStyle = this.editorProperty;
+                    this._fillColorCtrl.addEventListener("change", this.handleFillColorChange.bind(this), false);
+                    this._fillColorCtrl.color(currentValue.colorMode, currentValue.color);
+                    this.addedColorChips = true;
+                }
 				// TODO: set up color chip here.
 			} else if (tweenable.tweener === "input"){
 				this.editorInputContainer.classList.remove("hidden");
 				this.editorColorContainer.classList.add("hidden");
 				this.editorHottextContainer.classList.add("hidden");
 				this.valueEditorInput.value = this.editorValue;
+                this.valueEditorInput.addEventListener("blur",this,false);
 			} else {
 				this.log("Warning: unknown tweenable -"+tweenable.tweener+"- specified in style.js.")
 			}
@@ -345,296 +419,347 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 	/* === END: Controllers === */
     
     _myTweenables: {
-    	value: [
-    		{
-    			"property" : "background-color",
-    			"tweener" : "color",
-    			"units" : "",
-    			"min" : "",
-    			"max" : "",
-    			"default" :"#FFFFFF"
-    		},
-    		{
-    			"property" : "background-position-x",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "background-position-y",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "border-color",
-    			"tweener" : "color",
-    			"units" : "",
-    			"min" : "",
-    			"max" : "",
-    			"default" : "#FFFFFF"
-    		},
-    		{
-    			"property" : "border-width",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "border-bottom-color",
-    			"tweener" : "color",
-    			"units" : "",
-    			"default" : "#FFFFFF"
-    		},
-    		{
-    			"property" : "border-bottom-width",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "border-left-color",
-    			"tweener" : "color",
-    			"units" : "",
-    			"default" : "#FFFFFF"
-    		},
-    		{
-    			"property" : "border-left-width",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "border-top-color",
-    			"tweener" : "color",
-    			"units" : "",
-    			"default" : "#FFFFFF"
-    		},
-    		{
-    			"property" : "border-top-width",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "border-right-color",
-    			"tweener" : "color",
-    			"units" : "",
-    			"default" : "#FFFFFF"
-    		},
-    		{
-    			"property" : "border-right-width",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "border-radius",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "bottom",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "color",
-    			"tweener" : "color",
-    			"units" : "",
-    			"default" : "#FFFFFF"
-    		},
-    		{
-    			"property" : "margin",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "margin-left",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "margin-right",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "margin-top",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "margin-bottom",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "padding",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "padding-left",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "padding-right",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "padding-top",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "padding-bottom",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "max-height",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "max-width",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "min-height",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "min-width",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "opacity",
-    			"tweener" : "hottext",
-    			"units" : "%",
-    			"min" : 0,
-    			"max" : 100,
-    			"default" : 100
-    		},
-    		{
-    			"property" : "text-indent",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "top",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "right",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "left",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "width",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "height",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		}
-    	]
-    	
+        value: [
+            {
+                "property" : "background-color",
+                "tweener" : "color",
+                "units" : "",
+                "min" : "",
+                "max" : "",
+                "default" :"#FFFFFF",
+                "colorType" :"fill"
+            },
+            {
+                "property" : "background-position-x",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "background-position-y",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "border-color",
+                "tweener" : "color",
+                "units" : "",
+                "min" : "",
+                "max" : "",
+                "default" : "#FFFFFF",
+                "colorType" : "stroke",
+                "strokePosition" : false
+            },
+            {
+                "property" : "border-width",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "border-bottom-color",
+                "tweener" : "color",
+                "units" : "",
+                "default" : "#FFFFFF",
+                "colorType" : "stroke",
+                "strokePosition" : "bottom"
+
+            },
+            {
+                "property" : "border-bottom-width",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "border-left-color",
+                "tweener" : "color",
+                "units" : "",
+                "default" : "#FFFFFF",
+                "colorType" : "stroke",
+                "strokePosition" : "left"
+
+            },
+            {
+                "property" : "border-left-width",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "border-top-color",
+                "tweener" : "color",
+                "units" : "",
+                "default" : "#FFFFFF",
+                "colorType" : "stroke",
+                "strokePosition" : "top"
+
+            },
+            {
+                "property" : "border-top-width",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "border-right-color",
+                "tweener" : "color",
+                "units" : "",
+                "default" : "#FFFFFF",
+                "colorType" : "stroke",
+                "strokePosition" : "right"
+
+            },
+            {
+                "property" : "border-right-width",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "border-radius",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "bottom",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "color",
+                "tweener" : "color",
+                "units" : "",
+                "default" : "#FFFFFF"
+            },
+            {
+                "property" : "margin",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "margin-left",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "margin-right",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "margin-top",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "margin-bottom",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "padding",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "padding-left",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "padding-right",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "padding-top",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "padding-bottom",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "max-height",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "max-width",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "min-height",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "min-width",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "opacity",
+                "tweener" : "hottext",
+                "units" : "",
+                "min" : 0,
+                "max" : 100,
+                "default" : 100
+            },
+            {
+                "property" : "text-indent",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "top",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "right",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "left",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "width",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "height",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            }
+        ]
+
     },
+
+    handleFillColorChange: {
+        value: function (event) {
+            if(this.application.ninja.timeline.selectedStyle === "color" ||this.application.ninja.timeline.selectedStyle === this.editorProperty){
+                var fillColorObject={};
+                fillColorObject.color=event._event.color;
+                fillColorObject.mode=event._event.colorMode;
+                ElementsMediator.setColor([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], fillColorObject, this._isFill, "Change", "timeline",null,this._borderSide)
+            }
+        }
+    },
+
+    handleHottextChange:{
+        value:function(event){
+            if(this.application.ninja.timeline.selectedStyle === this.editorProperty){
+                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [this.editorValue + event.target._units]  , "Change", "timeline");
+            }
+        }
+    },
+
+    handleHottextChanging:{
+        value:function(event){
+            if(this.application.ninja.timeline.selectedStyle === this.editorProperty){
+               this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [this.editorValue + event.target._units]  , "Changing", "timeline");
+             }
+        }
+    },
+
+    handleBlur:{
+        value:function(event){
+            if(this.application.ninja.timeline.selectedStyle === this.editorProperty){
+                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [event.target.value] , "Change", "timeline");
+            }
+        }
+    },
+
 	
 	/* Begin: Logging routines */
     _boolDebug: {

@@ -1,0 +1,85 @@
+@charset "UTF-8";
+
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+/* Layer.scss
+ * Main SCSS file for EasingMenu component, compiled by SASS into the file css/EasingMenu.css.
+ */
+ 
+// Import theme settings
+@import "../../../../../scss/imports/themes/default/colors";
+// @import "../../../../../scss/imports/themes/default/fonts";
+@import "../../../../../scss/imports/themes/default/mixins";
+
+// Import generic mixins and styles
+@import "../../../../../scss/imports/scss/mixins";
+// @import "../../../../../scss/imports/scss/Base";
+
+/*
+ * Easing picker
+ */
+
+.container-easing-choice {
+  position: absolute;
+  top: 2px;
+  right: 8px;
+  font-size: 10px;
+  line-height: 8px;
+  border: 1px solid $color-menu-border;
+  color: $color-menu-text;
+  background-color: $color-menu-bg;
+}
+.container-easing,
+.container-easing-choice .easing-choice,
+.container-easing-choices .easing-choices {
+  font-size: 10px;
+  width: 70px;
+  white-space: nowrap;
+}
+.container-easing,
+.container-easing-choice .easing-choice {
+  height: 10px;
+}
+.container-easing-easing-choice .easing-choice {
+  position: absolute;
+  top: 0px;
+  left: 3px;
+  width: 67px;
+  cursor: pointer;
+}
+.container-easing-choices .easing-choices {
+  position: absolute;
+  bottom: -1px;
+  left: -1px;
+  z-index: 100;
+  height: auto;
+  border: 1px solid $color-menu-border;
+  color: $color-menu-text;
+  background-color: $color-menu-bg;
+  overflow: hidden;
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
+.container-easing-choices .easing-choices li {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 3px;
+  cursor: pointer;
+}
+
+.container-easing-choices .easing-choices li:hover,
+.container-easing-choices .easing-choices li.easing-selected {
+  color: $color-menu-hilite-text;
+  background-color: $color-menu-hilite-bg;
+}
+.container-easing-choices .easing-choices li.easing-selected {
+  cursor: default;
+}

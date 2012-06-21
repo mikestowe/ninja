@@ -17,12 +17,19 @@
 						"styleRepetition" : {"@":"repetition1"},
 						"dynamicLayerName" : {"@":"dtext1"},
 						"dynamicLayerTag" : {"@": "dtext2"},
+						"layer_label_text" : {"#": "layer-label-text"},
 						"mainCollapser" : {"@" : "mainCollapser"},
 						"positionCollapser" : {"@" : "positionCollapser"},
-						"transformCollapser" : {"@" : "transformCollapser"},
 						"styleCollapser" : {"@" : "styleCollapser"},
 						"clickerMain" : {"#" : "clicker-main"},
-						"myLabel" : {"#" : "myLabel"}
+						"myLabel" : {"#" : "myLabel"},
+                        "leftControl": {"@" : "dtext_position_x"},
+                        "topControl": {"@" : "dtext_position_y"},
+                        "widthControl": {"@" : "dtext_scale_x"},
+                        "heightControl": {"@" : "dtext_scale_y"},
+                        "styleType":{"@" : "style"},
+                        "layerLock":{"#" : "layerLock"},
+                        "visibilityButton":{"#" : "visibilityButton"}
                     }
                 },
 	            "dtext1" : {
@@ -34,7 +41,7 @@
 	            		"value" : {
 	            			"boundObject" : {"@": "owner"},
 	            			"boundObjectPropertyPath" : "layerName",
-	            			"oneway" : false
+	            			"oneway" : true
 	            		}
 	            	}
 	            },
@@ -105,7 +112,12 @@
 	            			"boundObject" : {"@": "repetition1"},
 	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.ruleTweener",
 	            			"oneway" : false
-	            		}
+	            		},
+                        "colorelement" : {
+                            "boundObject" : {"@": "repetition1"},
+                            "boundObjectPropertyPath" : "objectAtCurrentIteration.colorelement",
+                            "oneway" : false
+                        }
 	            	}
 	            },
 				"dtext_position_x" : {
@@ -148,10 +160,10 @@
                     "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             	    "properties": {
             	        "element": {"#": "scale-x"},
-            	        "maxValue" : 100,
-                        "minValue" : 0,
-                        "acceptableUnits" : "%",
-                        "units" : "%",
+            	        "maxValue" : 100000,
+                        "minValue" : -100000,
+                        "acceptableUnits" : "px",
+                        "units" : "px",
                         "value" : 0
             	    },
 	                "bindings": {
@@ -166,70 +178,16 @@
                     "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             	    "properties": {
             	        "element": {"#": "scale-y"},
-            	        "maxValue" : 100,
-                        "minValue" : 0,
-                        "acceptableUnits" : "%",
-                        "units" : "%",
+            	        "maxValue" : 100000,
+                        "minValue" : -100000,
+                        "acceptableUnits" : "px",
+                        "units" : "px",
                         "value" : 0
             	    },
 	                "bindings": {
 	                    "value": {
 	                        "boundObject": {"@": "owner"},
 	                        "boundObjectPropertyPath": "dtextScaleY",
-	                        "oneway": false
-	                    }
-	                }
-				},
-				"dtext_skew_x" : {
-                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
-            	    "properties": {
-            	        "element": {"#": "skew-x"},
-            	        "maxValue" : 100,
-                        "minValue" : 0,
-                        "acceptableUnits" : "%",
-                        "units" : "%",
-                        "value" : 0
-            	    },
-	                "bindings": {
-	                    "value": {
-	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "dtextSkewX",
-	                        "oneway": false
-	                    }
-	                }
-				},
-				"dtext_skew_y" : {
-                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
-            	    "properties": {
-            	        "element": {"#": "skew-y"},
-            	        "maxValue" : 100,
-                        "minValue" : 0,
-                        "acceptableUnits" : "%",
-                        "units" : "%",
-                        "value" : 0
-            	    },
-	                "bindings": {
-	                    "value": {
-	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "dtextSkewY",
-	                        "oneway": false
-	                    }
-	                }
-				},
-				"dtext_rotate" : {
-                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
-            	    "properties": {
-            	        "element": {"#": "rotation"},
-            	        "maxValue" : 360,
-                        "minValue" : -360,
-                        "acceptableUnits" : "degrees",
-                        "units" : "degrees",
-                        "value" : 0
-            	    },
-	                "bindings": {
-	                    "value": {
-	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "dtextRotate",
 	                        "oneway": false
 	                    }
 	                }
@@ -275,26 +233,6 @@
 					}
 				},
 					
-				"transformCollapser" : {
-					"prototype" : "js/panels/timeline/Collapser",
-					"properties" : {
-						"element" : {"#" : "content-transform"},
-						"myContent" : {"#":"content-transform"},
-						"contentHeight" : 60,
-						"isLabelClickable" : true,
-						"clicker" : {"#" : "clicker-transform"},
-						"isCollapsed" : true,
-						"isAnimated" : true	
-					},
-					"bindings" : {
-						"isToggling" : {
-							"boundObject" : {"@" : "owner" },
-							"boundObjectPropertyPath" : "isTransformCollapsed",
-							"oneway" : false
-						}
-					}
-				},
-					
 				"styleCollapser" : {
 					"prototype" : "js/panels/timeline/Collapser",
 					"properties" : {
@@ -326,12 +264,12 @@
 				<span data-montage-id="layer-tag" class="layer-tag"></span>
 				<span class="collapsible-label" data-montage-id="layer-label-text" spellcheck="false">Label</span>
 				<span class="collapsible-clicker collapsible-collapsed" data-montage-id="clicker-main"></span>
-				<div class="cssbutton button-lock"></div>
-				<div class="cssbutton button-visible"></div>
+                <div class="cssbutton button-lock" data-montage-id="layerLock"></div>
+                <div class="cssbutton button-visible" data-montage-id="visibilityButton"></div>
 			</div>
 			<div class="collapsible-content content-layer collapsible-collapsed" data-montage-id="content-main">
 				<div class="label-position">
-					<span class="collapsible-label">Position</span>
+					<span class="collapsible-label">Position and Size</span>
 					<span class="collapsible-clicker clicker-position collapsible-collapsed" data-montage-id="clicker-position"></span>
 				</div>
 				<div class="content-position collapsible-content collapsible-collapsed" data-montage-id="content-position">
@@ -344,36 +282,15 @@
 							<div class="cell-property">Top</div>
 							<div class="cell-value"><div data-montage-id="position-y"></div></div>
 						</div>
+                        <div class="container-row">
+                            <div class="cell-property">Width</div>
+                            <div class="cell-value"><div data-montage-id="scale-x"></div></div>
+                        </div>
+                        <div class="container-row">
+                            <div class="cell-property">Height</div>
+                            <div class="cell-value"><div data-montage-id="scale-y"></div></div>
+                        </div>
 					</div>
-				</div>
-				<div class="label-transform">
-					<span class="collapsible-label">Transform</span>
-					<span class="clicker-transform collapsible-clicker collapsible-collapsed" data-montage-id="clicker-transform"></span>
-				</div>
-				<div class="content-transform collapsible-content collapsible-collapsed" data-montage-id="content-transform">
-					<div class="layout-tablew">
-						<div class="container-row">
-							<div class="cell-property">Width</div>
-							<div class="cell-value"><div data-montage-id="scale-x"></div></div>
-						</div>
-						<div class="container-row">
-							<div class="cell-property">Height</div>
-							<div class="cell-value"><div data-montage-id="scale-y"></div></div>
-						</div>
-						<div class="container-row">
-							<div class="cell-property">Skew X</div>
-							<div class="cell-value"><div data-montage-id="skew-x"></div></div>
-						</div>
-						<div class="container-row">
-							<div class="cell-property">Skew Y</div>
-							<div class="cell-value"><div data-montage-id="skew-y"></div></div>
-						</div>
-						<div class="container-row">
-							<div class="cell-property">Rotation</div>
-							<div class="cell-value"><div data-montage-id="rotation"></div></div>
-						</div>
-					</div>
-					
 				</div>
 				<div class="label-style">
 					<span class="collapsible-label">Style</span>

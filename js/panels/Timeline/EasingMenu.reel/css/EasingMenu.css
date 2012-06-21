@@ -1,0 +1,86 @@
+@charset "UTF-8";
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+/* Layer.scss
+ * Main SCSS file for EasingMenu component, compiled by SASS into the file css/EasingMenu.css.
+ */
+/*
+ * Easing picker
+ */
+/* line 26, ../scss/EasingMenu.scss */
+.container-easing-choice {
+  position: absolute;
+  top: 2px;
+  right: 8px;
+  font-size: 10px;
+  line-height: 8px;
+  border: 1px solid black;
+  color: white;
+  background-color: #474747;
+}
+
+/* line 38, ../scss/EasingMenu.scss */
+.container-easing,
+.container-easing-choice .easing-choice,
+.container-easing-choices .easing-choices {
+  font-size: 10px;
+  width: 70px;
+  white-space: nowrap;
+}
+
+/* line 44, ../scss/EasingMenu.scss */
+.container-easing,
+.container-easing-choice .easing-choice {
+  height: 10px;
+}
+
+/* line 47, ../scss/EasingMenu.scss */
+.container-easing-easing-choice .easing-choice {
+  position: absolute;
+  top: 0px;
+  left: 3px;
+  width: 67px;
+  cursor: pointer;
+}
+
+/* line 54, ../scss/EasingMenu.scss */
+.container-easing-choices .easing-choices {
+  position: absolute;
+  bottom: -1px;
+  left: -1px;
+  z-index: 100;
+  height: auto;
+  border: 1px solid black;
+  color: white;
+  background-color: #474747;
+  overflow: hidden;
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+/* line 68, ../scss/EasingMenu.scss */
+.container-easing-choices .easing-choices li {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 3px;
+  cursor: pointer;
+}
+
+/* line 79, ../scss/EasingMenu.scss */
+.container-easing-choices .easing-choices li:hover,
+.container-easing-choices .easing-choices li.easing-selected {
+  color: #242424;
+  background-color: #b2b2b2;
+}
+
+/* line 83, ../scss/EasingMenu.scss */
+.container-easing-choices .easing-choices li.easing-selected {
+  cursor: default;
+}

@@ -20,6 +20,7 @@
                         "track_container": {"#": "right_inside"},
                         "timeline_leftpane" : {"#" : "leftpane_inside"},
                         "layer_tracks": {"#": "layer_tracks"},
+                        "layout_tracks": {"#": "layout_tracks"},
                         "master_track": {"#": "master_track"},
                         "time_markers" : {"#": "timeline_markers"},
                         "layerRepetition" : {"@": "repetition1"},
@@ -31,11 +32,12 @@
                         "container_tracks" : {"#" : "container-tracks"},
                         "end_hottext" : {"@" : "endHottext"},
                         "container_layers" : {"#" : "container-layers"},
+                        "container_tracks" : {"#" : "container-tracks"},
                         "timeline_disabler" : {"#" : "timeline-disabler"},
-                        "checkable_relative" : {"#" : "checkable_relative"},
-                        "checkable_absolute" : {"#" : "checkable_absolute"},
                         "checkable_animated" : {"#" : "checkable_animated"},
-                        "tl_configbutton" : {"#" : "tl-configbutton"}
+                        "tl_configbutton" : {"#" : "tl-configbutton"},
+                        "checkable_lock" : {"#" : "checkable_lock"},
+                        "checkable_visible":{"#" : "checkable_visible"}
                     }
                 },
 
@@ -177,10 +179,9 @@
                                 <div class="layer-master">Master Layer
 	                                <div class="tl-configbutton" data-montage-id="tl-configbutton">
 	                                	<div class="tl-dropdown">
-											<div class="checkable" data-montage-id="checkable_relative">Use relative positioning</div>
-											<div class="checkable checked" data-montage-id="checkable_absolute">Use absolute positioning</div>
-											<div class="nj-divider divider-horizontal"></div>
 	                                		<div class="checkable" data-montage-id="checkable_animated">Show only animated layers</div>
+                                            <div class="checkable" data-montage-id="checkable_lock">Lock Layers</div>
+                                            <div class="checkable" data-montage-id="checkable_visible">Visibility of Layers</div>
 	                                	</div>
 	                                </div>
                                 
@@ -210,7 +211,7 @@
 
 
                         <div data-montage-id="layer_tracks" class="tl_layertracks">
-                        	<div class="layout-tracks">
+                        	<div class="layout-tracks" data-montage-id="layout_tracks">
 	                            <div data-montage-id="playhead_marker" class="playheadmarker"></div>
 	                            <div data-montage-id="master_track" class="mastertrack">
                                     <div data-montage-id="time_bar" class="timebar"></div>
