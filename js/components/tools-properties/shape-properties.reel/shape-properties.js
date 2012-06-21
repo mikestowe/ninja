@@ -179,14 +179,14 @@ var ShapeProperties = exports.ShapeProperties = Montage.create(ToolProperties, {
                 this[this._selectedSubTool.properties].visible = true;
 
                 if (this._selectedSubTool.id === "LineTool") {
-                    this._fillColorCtrl.style["display"] = "none";
-                    this._fillColorCtrl.visible = false;
+                    this._fillColorCtrlContainer.style["display"] = "none";
+                    this._fillColorCtrlContainer.visible = false;
                     this._fillColorCtrlIcon.style["display"] = "none";
                     this._fillColorCtrlIcon.visible = false;                    
                     this.endDivider.style["display"] = "none";
                 } else {
-                    this._fillColorCtrl.style["display"] = "";
-                    this._fillColorCtrl.visible = true;
+                    this._fillColorCtrlContainer.style["display"] = "";
+                    this._fillColorCtrlContainer.visible = true;
                     this._fillColorCtrlIcon.style["display"] = "";
                     this._fillColorCtrlIcon.visible = true;
                     this.endDivider.style["display"] = "";

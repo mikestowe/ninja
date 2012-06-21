@@ -1,45 +1,50 @@
 @charset "UTF-8";
+
 /* <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
+
 /* Span.scss
  * Main SCSS file for Span component, compiled by SASS into the file css/Span.css.
  */
-/* line 22, ../scss/Span.scss */
-.tween_span {
-  position: absolute;
-  height: 16px;
-}
+ 
+// Import theme settings
+@import "../../../../../scss/imports/themes/default/colors";
+// @import "../../../../../scss/imports/themes/default/fonts";
+@import "../../../../../scss/imports/themes/default/mixins";
 
-/* line 26, ../scss/Span.scss */
+// Import generic mixins and styles
+@import "../../../../../scss/imports/scss/mixins";
+// @import "../../../../../scss/imports/scss/Base";
+
+.tween_span{
+    position: absolute;
+    height: 16px;
+}
 .tween_span .tween_span_bar {
-  width: 100%;
-  height: 100%;
-  background-color: #fff;
-  opacity: 0.15;
+	width: 100%;
+	height: 100%;
+	background-color: #fff;
+	opacity: 0.15;
 }
 
-/* line 33, ../scss/Span.scss */
 .tween_span.spanHighlight .tween_span_bar {
-  background-color: #a0c8ff;
-  opacity: 0.4;
+    background-color: #a0c8ff;
+    opacity: 0.4;
 }
 
-/* line 38, ../scss/Span.scss */
 .container-easing-choice {
   position: absolute;
   top: 2px;
   right: 8px;
   font-size: 10px;
   line-height: 8px;
-  border: 1px solid black;
-  color: white;
-  background-color: #474747;
+  border: 1px solid $color-menu-border;
+  color: $color-menu-text;
+  background-color: $color-menu-bg;
 }
-
-/* line 50, ../scss/Span.scss */
 .container-easing-choice,
 .container-easing-choice .easing-choice,
 .container-easing-choices .easing-choices {
@@ -47,14 +52,10 @@
   width: 70px;
   white-space: nowrap;
 }
-
-/* line 56, ../scss/Span.scss */
 .container-easing-choice,
 .container-easing-choice .easing-choice {
   height: 10px;
 }
-
-/* line 59, ../scss/Span.scss */
 .container-easing-choice .easing-choice {
   position: absolute;
   top: 0px;
