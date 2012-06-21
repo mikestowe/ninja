@@ -170,17 +170,20 @@ exports.MenuData = Montage.create(Component, {
                         {
                             "displayText" : "Cut",
                             "hasSubMenu" : false,
-                            "enabled": false
+                            "enabled": true,
+                            "action":   "executeCut"
                         },
                         {
                             "displayText" : "Copy",
                             "hasSubMenu" : false,
-                            "enabled": false
+                            "enabled": true,
+                            "action":   "executeCopy"
                         },
                         {
                             "displayText" : "Paste",
                             "hasSubMenu" : false,
-                            "enabled": false
+                            "enabled": true,
+                            "action":   "executePaste"
                         }
                     ]
                 },

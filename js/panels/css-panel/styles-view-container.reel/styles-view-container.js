@@ -129,7 +129,7 @@ exports.StylesViewContainer = Montage.create(Component, {
         }
     },
     handleSelectionChange: {
-        value: function() {
+        value: function(e) {
             var elements = this.application.ninja.selectedElements,
                 elementsCopy = this._copy(elements);
 
