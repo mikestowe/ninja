@@ -12,7 +12,7 @@
     font-size: 11px;
     box-shadow: inset 0px 0px 0px 0px #CCC;
     border-radius: 6px;
-    padding: 3px 3px 8px;
+    padding: 3px 1px 1px;
     border:1px solid #000;
     text-shadow: 1px 1px 0px #000;
 }
@@ -38,16 +38,18 @@
     position:relative;
     /*border-bottom:1px solid #505050;*/
     line-height:16px;
-    padding:1px 20px 1px 10px;
+    padding:1px 25px 1px 8px;
 }
 
 .bindingHud .hudOption .connectorBubble:hover {
-    box-shadow: inset 0px 0px 6px #5e9eff;
+    background-color: #1B52A7;
+    box-shadow: inset 0px 2px 2px 1px rgba(15, 15, 15, 0.78), 0 1px #474747;
     cursor: pointer;
 }
 
 .bindingHud .hudOption.bound .connectorBubble {
     background:  -webkit-linear-gradient(top, #d0e4f7 0%,#73b1e7 24%,#0a77d5 50%,#539fe1 79%,#87bcea 100%);
+    box-shadow: none;
 }
 
 .bindingHud .hudOption:last-child {
@@ -56,28 +58,46 @@
 
 .bindingHud .hudOption .connectorBubble {
     position: absolute;
-    right: 3px;
+    right: 5px;
     top: 3px;
     border-radius: 50%;
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-left: 0px;
     display: block;
-    box-shadow: inset 0px 0px 0px 4px rgba(170, 170, 170, 0.34);/*inset 0px 0px 6px #AAA;*/
-    /*border-bottom-right-radius: 50%;
-    border-top-right-radius: 50%;*/
+    background-color: #313131;
+    box-shadow: inset 0px 2px 7px 1px #0F0F0F, 0 1px #424242;
+
 }
 
-.scrollArea {
-    background-color:#666;
-    height:12px;
-    text-align: center;
+.splitter.scrollArea {
+    background-color: transparent;
+    background-size: 12%;
+    background-position-y: 2px;
     display: none;
+    height:11px;
+    text-align: center;
+}
+.splitter.scrollAreaTop {
+    border-top: 1px solid #353535;
+    box-shadow: 0 -1px 0 0 #141414;
+}
+.splitter.scrollAreaBottom {
+    -webkit-transform: rotate(180deg);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom: 1px solid #353535;
+    box-shadow: 0 1px 0 0 #141414;
+    margin-top: 4px;
 }
 
 .scrollArea.disabled {
     opacity: 0.5;
 }
+.splitter.scrollArea:hover:not(.disabled) {
+    background-color: #252525;
+}
+
 
 .hudRepetition {
     max-height:54px;
