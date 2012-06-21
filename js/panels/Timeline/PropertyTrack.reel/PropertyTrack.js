@@ -17,7 +17,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         value:function(){
             this.element.addEventListener("click", this, false);
             this.trackID = this.parentComponent.parentComponent.parentComponent.trackID;
-            this.animatedElement = this.parentComponent.parentComponent.parentComponent.parentComponent.animatedElement;
+            this.animatedElement = this.parentComponent.parentComponent.parentComponent.animatedElement;
             this.ninjaStylesContoller = this.application.ninja.stylesController;
         }
     },
