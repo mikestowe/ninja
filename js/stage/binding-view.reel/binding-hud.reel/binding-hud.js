@@ -25,7 +25,7 @@ exports.BindingHud = Montage.create(Component, {
         value: null
     },
     scrollSpace: {
-        value: 3
+        value: 8
     },
     currentScrollDirection: {
         value: null
@@ -198,6 +198,7 @@ exports.BindingHud = Montage.create(Component, {
                 this.scrollDown.addEventListener("mouseover", this);
                 this.scrollUp.addEventListener("mouseout", this);
                 this.scrollDown.addEventListener("mouseout", this);
+                this.optionsRepeater.element.style.maxHeight = (this.scrollSpace * 18) + "px"
                 this.scrollUp.style.display = "block";
                 this.scrollDown.style.display = "block";
             }

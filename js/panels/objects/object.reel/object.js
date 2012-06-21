@@ -16,6 +16,17 @@ exports.Object = Montage.create(Component, {
     iconElement              : { value: null },
     type                     : { value: null },
 
+
+    _name : { value: null },
+    name: {
+        get: function() {
+            return this._name;
+        },
+        set: function(val) {
+            this.name = val;
+        }
+    },
+
     _sourceObject : { value: null },
     sourceObject : {
         get: function() {
