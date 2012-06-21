@@ -39,7 +39,7 @@
     width: 160px;
 }
 
-.optionsTextTool .toolColorChipCtrl {
-    margin-left: 6px;
+.fontColorChipContainer {
+    margin-left: 10px !important;
     margin-right: 0px;
 }
