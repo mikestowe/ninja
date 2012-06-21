@@ -136,6 +136,7 @@ exports.Properties = Montage.create(Component, {
                     ElementsMediator.setAttribute(this.application.ninja.currentDocument.model.documentRoot, "class", this.elementClass.value, "Change", "pi", this.application.ninja.currentDocument.model.documentRoot.elementModel.elementClass);
                 }
             }
+            NJevent("updatedID",this.application.ninja.selectedElements[0]);
         }
     },
     
