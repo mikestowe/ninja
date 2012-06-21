@@ -210,7 +210,58 @@ exports.IoMediator = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     createFileFromBinary:{
         enumerable: false,
-        value: function(blob, filename){
+        value: function(blob, callback){
+            var reader = new FileReader(), file = reader.readAsArrayBuffer(blob), url, uri, dir, save, counter, tempName, element, rules, fileName, fileNameOverride,
+                rootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1])),
+                rootUri = this.application.ninja.documentController.documentHackReference.root;
+
+            reader.fileName = blob.name, reader.fileType = blob.type, reader.rootUrl = rootUrl, reader.rootUri = rootUri;
+            if(callback && callback.position){reader.filePosition = callback.position;}
+
+            reader.onload = function (e) {
+                if(e.currentTarget.fileType.indexOf('image') !== -1 ){
+                    if (this.application.ninja.coreIoApi.directoryExists({uri: e.currentTarget.rootUri+'images'}).status === 204) {
+                        uri = e.currentTarget.rootUri+'images';
+                        url = e.currentTarget.rootUrl+'images';
+                    } else if (this.application.ninja.coreIoApi.directoryExists({uri: e.currentTarget.rootUri+'img'}).status === 204) {
+                        uri = e.currentTarget.rootUri+'img';
+                        url = e.currentTarget.rootUrl+'img';
+                    } else {
+                        dir = this.application.ninja.coreIoApi.createDirectory({uri: e.currentTarget.rootUri+'images'});
+                        if (dir.success && dir.status === 201) {
+                            uri = e.currentTarget.rootUri+'images';
+                            url = e.currentTarget.rootUrl+'images';
+                        } else {
+                            //TODO: HANDLE ERROR ON CREATING FOLDER
+                        }
+                    }
+                    //fileName is undefined while pasting image from clipboard
+                    fileNameOverride = e.currentTarget.fileName ? e.currentTarget.fileName : ("image." + e.currentTarget.fileType.substring((e.currentTarget.fileType.indexOf("/")+1), e.currentTarget.fileType.length));//like image.png
+
+                    if (this.application.ninja.coreIoApi.fileExists({uri: uri+'/'+fileNameOverride}).status === 404) {
+                        save = this.application.ninja.coreIoApi.createFile({uri: uri+'/'+fileNameOverride, contents: e.currentTarget.result, contentType: e.currentTarget.fileType});
+                        fileName = fileNameOverride;
+                    } else {
+                        counter = 1;
+                        tempName = fileNameOverride.split('.'+(fileNameOverride.split('.')[fileNameOverride.split('.').length-1]))[0];
+                        tempName += '_'+counter+'.'+(fileNameOverride.split('.')[fileNameOverride.split('.').length-1]);
+                        while (this.application.ninja.coreIoApi.fileExists({uri: uri+'/'+tempName}).status !== 404) {
+                            counter++;
+                            tempName = fileNameOverride.split('.'+(fileNameOverride.split('.')[fileNameOverride.split('.').length-1]))[0];
+                            tempName += '_'+counter+'.'+(fileNameOverride.split('.')[fileNameOverride.split('.').length-1]);
+                        }
+                        save = this.application.ninja.coreIoApi.createFile({uri: uri+'/'+tempName, contents: e.currentTarget.result, contentType: e.currentTarget.fileType});
+                        fileName = tempName;
+                    }
+
+                    if(callback && callback.addFileToStage && (typeof callback.addFileToStage === "function")){
+                        callback.addFileToStage({"save": save, "url": url, "filename":  fileName, "filePosition": e.currentTarget.filePosition, "fileType":e.currentTarget.fileType});
+                    }
+
+                }else{
+                    //TODO: HANDLE NOT AN IMAGE
+                }
+            }.bind(this);
 
         }
     }
