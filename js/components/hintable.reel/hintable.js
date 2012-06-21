@@ -140,19 +140,6 @@ exports.Hintable = Montage.create(Editable, {
             }
         }
     },
-    value : {
-        get: function() {
-            return this._getFirstTextNode().textContent;
-        },
-        set: function(str) {
-            var node = this._getFirstTextNode();
-            if (node.textContent !== str) {
-            	node.textContent = str;
-            }
-            
-            //node.innerText = str;
-        }
-    },
 
     handleKeydown : {
         value : function handleKeydown(e) {
