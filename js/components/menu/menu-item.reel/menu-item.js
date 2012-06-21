@@ -134,6 +134,7 @@ exports.MenuItem = Montage.create(Component, {
 
     captureMousedown: {
         value: function(event) {
+
             if(this.data.radio && this.checked) return;
 
             if( ( this.enabled === true || this.enabled > 0 ) && (this.submenu === false) ) {
