@@ -50,6 +50,7 @@ var Keyboard = exports.Keyboard = {
     X:88,
     Y:89,
     Z:90,
+    F5:116,
     F6:117,
     PLUS:187,
     MINUS:189
@@ -115,7 +116,7 @@ exports.KeyboardMediator = Montage.create(Component, {
 
 
                 // Shortcut for Selection Tool is V
-                if(evt.keyCode === Keyboard.V) {
+                if((evt.keyCode === Keyboard.V) && !(evt.ctrlKey || evt.metaKey)) {
                     evt.preventDefault();
                     this.application.ninja.handleSelectTool({ "detail": this.application.ninja.toolsData.defaultToolsData[this.application.ninja.toolsData.selectionToolIndex] });
                     return;
@@ -218,7 +219,11 @@ exports.KeyboardMediator = Montage.create(Component, {
 
                 // F6 keyboard shortcut to add a keyframe to the timeline
                 if (evt.keyCode == Keyboard.F6) {
-                    this.application.ninja.timeline.handleKeyframeShortcut();
+                    this.application.ninja.timeline.handleKeyframeShortcut("insert");
+                    return;
+                }
+                if (evt.keyCode == Keyboard.F5) {
+                    this.application.ninja.timeline.handleKeyframeShortcut("remove");
                     return;
                 }
 
