@@ -117,36 +117,42 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             if (value === this._currentDocument) {
                 return;
             }
-
+            this._currentDocument = value;
+            
+            var boolDoc = false,
+            	boolView = false;
+            	
 			// Should we enable the panel? 
-			if (typeof(this._currentDocument) !== "undefined") {
-				// We have a document, or at least we have initialized the panel.  
-				// What view are we in?
-				if (typeof(value) !== "undefined") {
-					if (value.currentView === "design") {
-						// We are in design view, so enable the panel.
-						this.enablePanel(true);
-					}
+			// Only if we have both a document and we're in design view.
+			if (typeof(value) !== "undefined") {
+				if (value.currentView === "design") {
+					// We are in design view.
+					boolView = true;
 				}
 			}
+			if (typeof(this._currentDocument) !== "undefined") {
+				// We have a document, or at least we have initialized the panel.  
+				boolDoc = true;
+			}
 
-            this._currentDocument = value;
-
-            if(!value) {
+            if(boolDoc === false) {
                 this._boolCacheArrays = false;
                 this.clearTimelinePanel();
                 this._boolCacheArrays = true;
                 this.enablePanel(false);
-            } else if(this._currentDocument.currentView === "design") {
-                this._boolCacheArrays = false;
-                this.clearTimelinePanel();
-                this._boolCacheArrays = true;
-
-                // Rebind the document events for the new document context
-                this._bindDocumentEvents();
-                
-                // Initialize the timeline for the document.
-                this.initTimelineForDocument();
+            } else {
+            	if(boolView === true) {
+	                this._boolCacheArrays = false;
+	                this.clearTimelinePanel();
+	                this._boolCacheArrays = true;
+	
+	                // Rebind the document events for the new document context
+	                this._bindDocumentEvents();
+	                
+	                // Initialize the timeline for the document.
+	                this.initTimelineForDocument();
+            		this.enablePanel(true);
+				}
             }
         }
     },
