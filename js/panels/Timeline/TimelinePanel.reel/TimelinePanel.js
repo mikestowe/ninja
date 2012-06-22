@@ -750,6 +750,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	    		    this.application.ninja.currentDocument.tlCurrentLayersSelected = this.currentLayersSelected;
 	    		    for (i = 0; i < hashLength; i++ ) {
 	    		    	if (this.application.ninja.currentDocument.tlBreadcrumbHash[i].containerUuid === this.currentDocument.model.domContainer.uuid) {
+	    		    		this.application.ninja.currentDocument.tlBreadcrumbHash[i].arrLayers = this.arrLayers;
 	    		    		boolHash = true;
 	    		    	}
 	    		    }
