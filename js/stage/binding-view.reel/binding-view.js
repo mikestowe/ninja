@@ -170,36 +170,78 @@ exports.BindingView = Montage.create(Component, {
             this.application.ninja.stage._iframeContainer.addEventListener("scroll", this, false);
             this.element.addEventListener("mousedown", this, false);
             this.element.addEventListener("mousemove", this, false);
+
+            Object.defineBinding(this, 'currentDocument', {
+                boundObject : this.application.ninja,
+                boundObjectPropertyPath : "documentList.selectedObjects.0",
+                oneway: true
+            });
+
+        }
+    },
+
+    _currentDocument : { value: null },
+    currentDocument : {
+        get : function() { return this._currentDocument; },
+        set : function(value) {
+            if(value === this._currentDocument) { return; }
+
+
+            this._currentDocument = value;
+            if(value) {
+                this.hide = (value.currentView === 'code');
+            }
+
+            this.needsDraw = true;
+        }
+    },
+
+    _hide : { value: null },
+    hide : {
+        get : function() { return this._hide; },
+        set : function(value) {
+            if(value === this._hide) { return; }
+
+            this._hide = value;
+
+            this.needsDraw = true;
         }
     },
 
     draw: {
         value: function() {
 
-            this.element.style.width = this.width + "px";
-            this.element.style.height = this.height + "px";
-            if(this.selectedComponent !== null) {
-                this.canvas.width  = this.application.ninja.stage.drawingCanvas.offsetWidth;
-                this.canvas.height = this.application.ninja.stage.drawingCanvas.offsetHeight;
-                this.clearCanvas();
-                for(var i= 0; i < this.hudRepeater.childComponents.length; i++) {
-                    this.drawLine(this.hudRepeater.objects[i].element.offsetLeft,this.hudRepeater.objects[i].element.offsetTop, this.hudRepeater.childComponents[i].element.offsetLeft +3, this.hudRepeater.childComponents[i].element.offsetTop +3, "#CCC", 2);
-                }
-                if(this._isDrawingConnection) {
-                    if (this.hudRepeater.childComponents.length > 1) {
-                        // Make things disappear
+            if(this.hide) {
+                console.log('hiding vinding view');
+                this.element.style.setProperty('display', 'none');
+            } else {
+                console.log("showing binding view");
+                this.element.style.removeProperty('display');
+                this.element.style.width = this.width + "px";
+                this.element.style.height = this.height + "px";
+                if(this.selectedComponent !== null) {
+                    this.canvas.width  = this.application.ninja.stage.drawingCanvas.offsetWidth;
+                    this.canvas.height = this.application.ninja.stage.drawingCanvas.offsetHeight;
+                    this.clearCanvas();
+                    for(var i= 0; i < this.hudRepeater.childComponents.length; i++) {
+                        this.drawLine(this.hudRepeater.objects[i].element.offsetLeft,this.hudRepeater.objects[i].element.offsetTop, this.hudRepeater.childComponents[i].element.offsetLeft +3, this.hudRepeater.childComponents[i].element.offsetTop +3, "#CCC", 2);
                     }
-                    this.drawLine(this._currentMousePosition.x,this._currentMousePosition.y,this._connectionPositionStart.x,this._connectionPositionStart.y,"#5e9eff", 4);
+                    if(this._isDrawingConnection) {
+                        if (this.hudRepeater.childComponents.length > 1) {
+                            // Make things disappear
+                        }
+                        this.drawLine(this._currentMousePosition.x,this._currentMousePosition.y,this._connectionPositionStart.x,this._connectionPositionStart.y,"#5e9eff", 4);
+                    }
+                } else {
+                    this.bindables = [];
+                    this.clearCanvas();
                 }
-            } else {
-                this.bindables = [];
-                this.clearCanvas();
-            }
 
-            if(this.mouseOverHud && !this._isDrawingConnection) {
-                if(!this.element.classList.contains("mousedOverHud")) { this.element.classList.add("mousedOverHud"); }
-            } else {
-                if(this.element.classList.contains("mousedOverHud")) { this.element.classList.remove("mousedOverHud"); }
+                if(this.mouseOverHud && !this._isDrawingConnection) {
+                    if(!this.element.classList.contains("mousedOverHud")) { this.element.classList.add("mousedOverHud"); }
+                } else {
+                    if(this.element.classList.contains("mousedOverHud")) { this.element.classList.remove("mousedOverHud"); }
+                }
             }
 
         }
