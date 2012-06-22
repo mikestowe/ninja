@@ -333,7 +333,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
 
     //returns the intersection point between the two segments (null if no intersection)
     segSegIntersection2D: {
-        value: function (seg0Start, seg0End, seg1Start, seg1End, epsilon) {
+        value: function (seg0Start, seg0End, seg1Start, seg1End, epsilon, mustLieInSegements) {
             //check for parallel segments
             var denom = (seg1End[1] - seg1Start[1]) * (seg0End[0] - seg0Start[0]) - (seg1End[0] - seg1Start[0]) * (seg0End[1] - seg0Start[1]);
             if (Math.abs(denom) <= epsilon) {
@@ -349,7 +349,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
             paramSeg1 /= denom;
 
             //check whether the parameters are both between 0 and 1
-            if (Math.abs(paramSeg0) > 1.0 || Math.abs(paramSeg1) > 1.0) {
+            if (mustLieInSegements && (Math.abs(paramSeg0) > 1.0 || Math.abs(paramSeg1) > 1.0)) {
                 return null; //no intersection unless the the intersection point lies on both segments
             }
 
