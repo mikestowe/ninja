@@ -1034,17 +1034,15 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     handleKeyframeShortcut:{
-        value:function(){
-            //console.log(this.currentLayersSelected);
-            //console.log(this.trackRepetition);
+        value:function(action){
             var tempEv = {};
             tempEv.offsetX = this.playheadmarker.offsetLeft;
+            tempEv.actionType = action;
             if (typeof(this.trackRepetition.childComponents[this.currentLayersSelected[0]]) !== "undefined") {
             	this.trackRepetition.childComponents[this.currentLayersSelected[0]].handleKeyboardShortcut(tempEv);
             } else {
             	// oops, we do not have a layer selected.  We should growl at the user.  For now, this will fail silently.
             }
-            
         }
     },
 
