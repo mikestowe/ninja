@@ -1188,10 +1188,15 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             var bounds3D = this.viewUtils.getElementBoundsInGlobal(stageRoot);
 
             var l = MathUtils.segSegIntersection2D(bounds3D[0], bounds3D[3], [0, 0, 0], [0, stage.canvas.height, 0], 0.1);
+            if(!l) return;
             var r = MathUtils.segSegIntersection2D(bounds3D[0], bounds3D[3], [stage.canvas.width, 0, 0], [stage.canvas.width, stage.canvas.height, 0], 0.1);
+            if(!r) return;
 
             var t = MathUtils.segSegIntersection2D(bounds3D[0], bounds3D[1], [0, 0, 0], [stage.canvas.width, 0, 0], 0.1);
+            if(!t) return;
             var b = MathUtils.segSegIntersection2D(bounds3D[0], bounds3D[1], [0, stage.canvas.height, 0], [stage.canvas.width, stage.canvas.height, 0], 0.1);
+            if(!b) return;
+
             context.save();
             context.strokeStyle = "#333";
             context.lineWidth = 0.5;
