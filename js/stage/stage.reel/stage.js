@@ -279,6 +279,10 @@ exports.Stage = Montage.create(Component, {
     _userPaddingLeft: { value: 0 },
     _userPaddingTop: { value: 0 },
 
+    // keep track of the elements that determine the minimum left and top scrollable amount
+    minLeftElement: { value: null },
+    minTopElement: { value: null },
+
     userPaddingLeft: {
         get: function() { return this._userPaddingLeft; },
         set: function(value) {
