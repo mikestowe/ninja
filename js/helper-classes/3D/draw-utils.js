@@ -1211,6 +1211,8 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
             context.closePath();
             context.stroke();
+
+            context.fillText("(0, 0)", bounds3D[0][0] + 4, bounds3D[0][1] - 6);
             context.restore();
         }
     },
