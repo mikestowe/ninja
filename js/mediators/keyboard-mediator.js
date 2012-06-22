@@ -116,7 +116,7 @@ exports.KeyboardMediator = Montage.create(Component, {
 
 
                 // Shortcut for Selection Tool is V
-                if(evt.keyCode === Keyboard.V) {
+                if((evt.keyCode === Keyboard.V) && !(evt.ctrlKey || evt.metaKey)) {
                     evt.preventDefault();
                     this.application.ninja.handleSelectTool({ "detail": this.application.ninja.toolsData.defaultToolsData[this.application.ninja.toolsData.selectionToolIndex] });
                     return;
