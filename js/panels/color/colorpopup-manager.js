@@ -33,7 +33,6 @@ exports.ColorPopupManager = Montage.create(Component, {
             window.addEventListener('resize', function (e) {
                 this.application.ninja.colorController.colorPopupManager.hideColorPopup();
             }.bind(this));
-            
             //Closing popups if outside limits
             document.addEventListener('mousedown', function (e) {
             	//
@@ -58,6 +57,8 @@ exports.ColorPopupManager = Montage.create(Component, {
     //
     popupHitCheck: {
 	  	value: function (element, e) {
+	  		//Prevent any action for button to handle toggling
+	  		if (e._event.target.inputType || e._event.target.colorMode) return true;
 	  		//Storing limits of popup 
 	  		var top, bottom, left, right;
 	  		//Checking for popup to be opened otherwise nothing happens
@@ -263,6 +264,9 @@ exports.ColorPopupManager = Montage.create(Component, {
 			        this._popupChipBase.props.x = (e._event.clientX - e._event.offsetX)+'px';
 			        this._popupChipBase.props.y = (e._event.target.clientHeight/2+e._event.clientY - e._event.offsetY)+'px';
 		        }
+		        //
+		        this._popupChipBase.props.source = e._event.srcElement;
+		        //
     			this._popupChipBase.colorManager = ColorModel.create();
     			//
     			this._popupChipBase.addEventListener('change', this, false);
@@ -361,7 +365,68 @@ exports.ColorPopupManager = Montage.create(Component, {
 				e._target.base.popup.element.style.opacity = 1;
 				//Popup was added, so it's opened
 		        e._target.base.opened = true;
-	        }/*
+		        //
+		        if (e._target.base.props && e._target.base.props.source) {
+		        	//
+			        var cbtn = e._target.base.props.source, color, hsv;
+			        //
+			        if (cbtn.colorMode === 'rgb') {
+		        		//
+		        		if (cbtn.colorValue && !isNaN(cbtn.colorValue.r)) {
+		        			color = cbtn.colorValue;
+		        		} else if (cbtn.colorValue && cbtn.colorValue.color){
+	        				color = cbtn.colorValue.color;
+	        			} else {
+	        				return;
+	        			}
+	        			//
+	        			hsv = this.colorManager.rgbToHsv(color.r, color.g, color.b);
+	        		} else if (cbtn.colorMode === 'hsl') {
+	        			//
+	        			if (cbtn.colorValue && !isNaN(cbtn.colorValue.h)) {
+	       					color = cbtn.colorValue;
+		        		} else if (cbtn.colorValue && cbtn.colorValue.color){
+	        				color = cbtn.colorValue.color;
+	        			} else {
+	        				return;
+	        			}
+	        			//
+	        			color = this.colorManager.hslToRgb(color.h/360, color.s/100, color.l/100);
+	        			//
+	        			hsv = this.colorManager.rgbToHsv(color.r, color.g, color.b);
+	        		}
+	        		//
+	        		if (hsv) {
+		        		hsv.wasSetByCode = false;
+	        			hsv.type = 'change';
+	        			e._target.base._components.wheel.value = hsv;
+	        		}
+		        }
+	        }
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        /*
  else if (e._target._element.className === 'cc_popup') {
 	        	this._popupChipBase.removeEventListener('firstDraw', this, false);
 	        	//Creating an instance of the popup and sending in created color popup content
@@ -429,7 +494,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     				this._popupChipBase.colorManager.hsv = {h: e._event.hsv.h, s: e._event.hsv.s, v: e._event.hsv.v, type: e._event.type, wasSetByCode: e._event.wasSetByCode};
     				this.colorChipChange(e);
     			} else {
-	    			console.log(e._event);
+	    			//console.log(e._event);
     			}
     			return;
     		}
