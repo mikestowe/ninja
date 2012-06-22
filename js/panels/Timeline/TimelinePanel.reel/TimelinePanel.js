@@ -733,11 +733,26 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			if (this._boolCacheArrays) {
 				// ... but only if we're supposed to.
                 if(this.currentDocument) {
+                	var i = 0, 
+                		hashLength = this.application.ninja.currentDocument.tlBreadcrumbHash.length,
+                		boolHash = false;
+                		
 	    		    this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
 	    		    this.application.ninja.currentDocument.tlCurrentSelectedContainer = this.currentDocument.model.domContainer;
 	    		    this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
 	    		    this.application.ninja.currentDocument.tlCurrentLayerSelected = this.currentLayerSelected;
 	    		    this.application.ninja.currentDocument.tlCurrentLayersSelected = this.currentLayersSelected;
+	    		    for (i = 0; i < hashLength; i++ ) {
+	    		    	if (this.application.ninja.currentDocument.tlBreadcrumbHash[i].containerUuid === this.currentDocument.model.domContainer.uuid) {
+	    		    		boolHash = true;
+	    		    	}
+	    		    }
+	    		    if (boolHash === false) {
+		    		    var newHash = {};
+		    		    newHash.containerUuid = this.currentDocument.model.domContainer.uuid;
+		    		    newHash.arrLayers = this.arrLayers;
+		    		    this.application.ninja.currentDocument.tlBreadcrumbHash.push(newHash);
+	    		    }
                 }
 	    		this.application.ninja.currentDocument.tlCurrentElementsSelected = this.currentElementsSelected;
 			}
@@ -754,6 +769,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		this.application.ninja.currentDocument.tlCurrentLayerSelected = false;
     		this.application.ninja.currentDocument.tlCurrentLayersSelected = false;
     		this.application.ninja.currentDocument.tlCurrentElementsSelected = [];
+    		this.application.ninja.currentDocument.tlBreadcrumbHash = [];
     	}
     },
     
@@ -934,20 +950,36 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			} else if (this.application.ninja.currentDocument.setLevel) {
                 // console.log('TimelinePanel.initTimelineForDocument: breadCrumbClick');
 				// Information stored, but we're moving up or down in the breadcrumb.
-				// Get the current selection and restore timeline info for its children.
-                var parentNode = this.currentDocument.model.domContainer,
+				
+				var i = 0,
+					hash = this.application.ninja.currentDocument.tlBreadcrumbHash,
+					hashLength = hash.length,
+					boolHashed = false,
+					parentNode = this.currentDocument.model.domContainer,
                 	storedCurrentLayerNumber = this.application.ninja.currentDocument.tllayerNumber;
-                this.temparrLayers = [];
-                
-                for (myIndex = 0; parentNode.children[myIndex]; myIndex++) {
-                    this._openDoc = true;
-                    this.restoreLayer(parentNode.children[myIndex]);
+                	this.temparrLayers = [];
 
-                }
+				// It's possible there is something stored in the breadcrumb hash in currentdocument, so check there first.
+				for (i = 0; i < hashLength; i++ ) {
+    		    	if (hash[i].containerUuid === this.currentDocument.model.domContainer.uuid) {
+    		    		this.temparrLayers = hash[i].arrLayers
+    		    		boolHashed = true;
+    		    	}
+    		    }
+				
+				// Possibly nothing was in the hash, so check and if so fall back to old restoreLayer method.
+				if (boolHashed === false) {
+	                for (myIndex = 0; parentNode.children[myIndex]; myIndex++) {
+	                    this._openDoc = true;
+	                    this.restoreLayer(parentNode.children[myIndex]);
+	                }
+				}
+				
                 // Draw the repetition.
                 this.arrLayers = this.temparrLayers;
                 this.currentLayerNumber = storedCurrentLayerNumber;
                 this.application.ninja.currentDocument.setLevel = false;
+                this.resetMasterDuration();
 
             } else {
             //	console.log('TimelinePanel.initTimelineForDocument: else fallback');
