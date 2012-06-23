@@ -43,7 +43,7 @@ exports.GradientPicker = Montage.create(Component, {
         get: function() {return this._mode;},
         set: function(value) {
         	//
-        	this.application.ninja.colorController.colorPopupManager.hideColorChipPopup();
+        	this.application.ninja.colorController.colorPopupManager.hideGradientChipPopup();
         	//
             this._mode = value;
             //
@@ -132,7 +132,7 @@ exports.GradientPicker = Montage.create(Component, {
     	value: function(data, silent) {
     		if (this.application.ninja.colorController.colorPopupManager) {
     			//Hiding any open popups (of gradient buttons)
-    			this.application.ninja.colorController.colorPopupManager.hideColorChipPopup();
+    			this.application.ninja.colorController.colorPopupManager.hideGradientChipPopup();
     			//Creating stop elements
     			var stop = document.createElement('div'),
     				holder = document.createElement('div'),
@@ -160,7 +160,7 @@ exports.GradientPicker = Montage.create(Component, {
 				//Initialing button with color data
 				button.color(data.color.mode, data.color.value);
 				//Button popup data
-				button.props = {side: 'top', align: 'center', nocolor: false, wheel: true, palette: true, gradient: false, image: false, offset: -84, panel: true, history: false};
+				button.props = {side: 'top', align: 'center', nocolor: false, wheel: true, palette: true, gradient: false, image: false, offset: -84, gradientPopup: true, history: false};
 				//Listening for color events from button
 				button.addEventListener('change', this, false);
 				//Dispatching event depending on type of mode
@@ -263,7 +263,7 @@ exports.GradientPicker = Montage.create(Component, {
     		//
     		this._updating = true;
     		//
-    		this.application.ninja.colorController.colorPopupManager.hideColorChipPopup();
+    		this.application.ninja.colorController.colorPopupManager.hideGradientChipPopup();
     		//
     		if (e._event.y > this._trackData.y+70 || e._event.y < this._trackData.y) {
     			this.removeStop(this.currentStop);

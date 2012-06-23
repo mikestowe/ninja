@@ -36,16 +36,28 @@ exports.ColorPopupManager = Montage.create(Component, {
             //Closing popups if outside limits
             document.addEventListener('mousedown', function (e) {
             	//
-            	if (this._popupBase && !this._popupChipBase) {
+            	if (this._popupBase && !this._popupChipBase && !this._popupGradientChipBase) {
             		if(!this.popupHitCheck(this._popupBase, e)) {
 	            		this.hideColorPopup();
             		}
-            	} else if (!this._popupBase && this._popupChipBase) {
+            	} else if (!this._popupBase && this._popupChipBase && !this._popupGradientChipBase) {
 	            	if(!this.popupHitCheck(this._popupChipBase, e)) {
 	            		this.hideColorChipPopup();
             		}
-            	} else if (this._popupBase && this._popupChipBase) {
+            	} else if (this._popupBase && this._popupChipBase && !this._popupGradientChipBase) {
 	            	if(!this.popupHitCheck(this._popupBase, e) && !this.popupHitCheck(this._popupChipBase, e)) {
+	            		this.hideColorPopup();
+            		}
+            	} else if (this._popupBase && this._popupChipBase && this._popupGradientChipBase) {
+	            	if(!this.popupHitCheck(this._popupBase, e) && !this.popupHitCheck(this._popupChipBase, e) && !this.popupHitCheck(this._popupGradientChipBase, e)) {
+	            		this.hideColorPopup();
+            		}
+            	} else if (!this._popupBase && this._popupChipBase && this._popupGradientChipBase) {
+	            	if(!this.popupHitCheck(this._popupChipBase, e) && !this.popupHitCheck(this._popupGradientChipBase, e)) {
+	            		this.hideColorChipPopup();
+            		}
+            	} else if (this._popupBase && !this._popupChipBase && this._popupGradientChipBase) {
+	            	if(!this.popupHitCheck(this._popupBase, e) && !this.popupHitCheck(this._popupGradientChipBase, e)) {
 	            		this.hideColorPopup();
             		}
             	}
@@ -74,9 +86,11 @@ exports.ColorPopupManager = Montage.create(Component, {
                		//Hides popups since click is outside limits
 	               	return false;
                	} else {
+               		//Keeps popup open since click inside area
 	               	return true;
                	}
             } else {
+            	//Hides popups since element not detected
 	            return false;
             }
 	  	}  
@@ -92,6 +106,11 @@ exports.ColorPopupManager = Montage.create(Component, {
     	value: null
     },
     ////////////////////////////////////////////////////////////////////
+    //
+    _popupGradientChipBase: {
+    	value: null
+    },
+    ////////////////////////////////////////////////////////////////////
     //Storing color manager
     _colorManager: {
         value: null
@@ -99,33 +118,33 @@ exports.ColorPopupManager = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     colorManager: {
-        get: function() {
-            return this._colorManager;
-        },
-        set: function(value) {
-        	this._colorManager = value;
-        }
+        get: function() {return this._colorManager;},
+        set: function(value) {this._colorManager = value;}
     },
     ////////////////////////////////////////////////////////////////////
     //
     _colorPopupDrawing: {
-    	enumerable: true,
     	value: false
     },
     ////////////////////////////////////////////////////////////////////
     //
 	_colorChipPopupDrawing: {
-    	enumerable: true,
+    	value: false
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+	_colorGradientPopupDrawing: {
     	value: false
     },
     ////////////////////////////////////////////////////////////////////
     //TODO: Remove and use montage's built in component
     showColorPopup: {
-    	enumerable: true,
     	value: function (x, y, side, align) {
+    		//Check to see if popup is drawing, avoids errors
     		if (this._colorPopupDrawing) {
     			return;
     		}
+    		//Check for toggling view
     		if (this._popupBase && this._popupBase.opened) {
     			//Toogles if called and opened
     			this.hideColorPopup();
@@ -138,7 +157,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     				this._hasinit = true;
     			}
     			////////////////////////////////////////////////////
-    			//Creating popup from m-js component
+    			//Creating popup
     			var popup = document.createElement('div');
     			document.body.appendChild(popup);
     			//
@@ -158,13 +177,13 @@ exports.ColorPopupManager = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     hideColorPopup: {
-    	enumerable: true,
     	value: function () {
     		if (this._popupBase && this._popupBase.opened) {
     			//
     			this._popupBase.popup.removeEventListener('didDraw', this, false);
     			//
     			this.hideColorChipPopup();
+    			this.hideGradientChipPopup();
     			//Making sure to return color manager to either stroke or fill (might be a Hack for now)
     			if (this.colorManager.input !== 'stroke' && this.colorManager.input !== 'fill' && this.application.ninja.colorController.colorView.previousInput) {
     				this.colorManager.input = this.application.ninja.colorController.colorView.previousInput;
@@ -187,7 +206,6 @@ exports.ColorPopupManager = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     colorChipChange: {
-    	enumerable: true,
     	value: function (e) {
     		//
     		var ctx,
@@ -224,16 +242,58 @@ exports.ColorPopupManager = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
     //
+    colorGradientChipChange: {
+    	value: function (e) {
+    		//
+    		var ctx,
+    			cvs = this.application.ninja.colorController.colorView.currentChip.getElementsByTagName('canvas')[0],
+    			rgb = this._popupGradientChipBase.colorManager.rgb,
+				hsl = this._popupGradientChipBase.colorManager.hsl,
+				alpha = this._popupGradientChipBase.colorManager.alpha.value;
+    		//
+    		if (cvs) {
+	    		ctx = cvs.getContext('2d');
+    			ctx.clearRect(0, 0, cvs.width, cvs.height);
+    			ctx.beginPath();
+    			ctx.lineWidth = 2;
+	    		ctx.strokeStyle = "#666";
+    			ctx.moveTo(0, 0);
+	  			ctx.lineTo(cvs.width, 0);
+	  			ctx.lineTo(cvs.width, cvs.height);
+	  			ctx.lineTo(0, cvs.height);
+	  			ctx.lineTo(0, 0);
+				ctx.stroke();
+				ctx.beginPath();
+    			ctx.lineWidth = 2;
+    			ctx.strokeStyle = "#333";
+    			ctx.moveTo(2, 2);
+		  		ctx.lineTo(cvs.width-2, 2);
+	  			ctx.lineTo(cvs.width-2, cvs.height-2);
+		 		ctx.lineTo(2, cvs.height-2);
+	  			ctx.lineTo(2, 1);
+				ctx.stroke();
+			}
+    		//
+    		this.application.ninja.colorController.colorView.currentChip.color('rgb', {r: rgb.r, g: rgb.g, b: rgb.b, a: alpha, css: 'rgba('+rgb.r+', '+rgb.g+', '+rgb.b+', '+alpha+')'});
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
     showColorChipPopup: {
-    	enumerable: true,
     	value: function (e) {
     		if (this._colorChipPopupDrawing) {
     			return;
     		}
-    		if (this._popupChipBase && this._popupChipBase.opened) {
+    		if (this._popupChipBase && this._popupChipBase.opened && (!this._popupChipBase.props || (this._popupChipBase.props && !this._popupChipBase.props.gradientPopup)) && !e._event.srcElement.props.gradientPopup) {
     			//Toogles if called and opened
     			this.hideColorChipPopup();
+    			return;
     		} else {
+    			//
+    			if (e._event.srcElement.props.gradientPopup) {
+	    			this.showGradientChipPopup(e);
+	    			return;
+    			}
     			this._colorChipPopupDrawing = true;
     			////////////////////////////////////////////////////
     			//Initializing events
@@ -241,10 +301,8 @@ exports.ColorPopupManager = Montage.create(Component, {
     				this.init();
     				this._hasinit = true;
     			}
-    			
-    			
     			////////////////////////////////////////////////////
-    			//Creating popup from m-js component
+    			//Creating popup
     			var popup = document.createElement('div');
     			document.body.appendChild(popup);
     			//
@@ -254,7 +312,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     			if (e._event.srcElement.props) {
     				this._popupChipBase.props = e._event.srcElement.props;
     			} else {
-    				this._popupChipBase.props = {side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, panel: false, history: false};
+    				this._popupChipBase.props = {side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, history: false};
     			}
     			//
     			if (this._popupChipBase.props.offset) {
@@ -274,55 +332,17 @@ exports.ColorPopupManager = Montage.create(Component, {
     			//
     			this._popupChipBase.needsDraw = true;
     			this._popupChipBase.addEventListener('firstDraw', this, false);
-    			
-    			
-    			
-    			
-    			
-    			
-    			/*
-////////////////////////////////////////////////////
-    			//Creating popup from m-js component
-    			var popup = document.createElement('div');
-    			document.body.appendChild(popup);
-    			//
-    			this._popupChipBase.event = e._event;
-    			this._popupChipBase = ColorChipPopup.create();
-    			this._popupChipBase.element = popup;
-    			this._popupChipBase.colorManager = this.colorManager;
-    			if (e._event.srcElement.props) {
-    				this.colorChipProps = e._event.srcElement.props;
-    			} else {
-    				this.colorChipProps = {side: 'top', align: 'center', wheel: true, palette: true, gradient: true, image: true, panel: false};
-    			}
-    			//
-    			if (!this.colorChipProps.panel) {
-			    	this.hideColorPopup();
-			    }
-    			//
-    			this._popupChipBase.popupModes = {};
-    			this._popupChipBase.popupModes.gradient = this.colorChipProps.gradient;
-    			this._popupChipBase.popupModes.image = this.colorChipProps.image;
-    			this._popupChipBase.popupModes.wheel = this.colorChipProps.wheel;
-    			this._popupChipBase.popupModes.palette = this.colorChipProps.palette;
-    			this._popupChipBase.popupModes.nocolor = this.colorChipProps.nocolor; 	
-    			//
-    			this._popupChipBase.addEventListener('change', this, false);
-		    	this._popupChipBase.addEventListener('changing', this, false);
-    			//
-    			this._popupChipBase.needsDraw = true;
-    			this._popupChipBase.addEventListener('firstDraw', this, false);
-*/
         	}
     	}
     },
     ////////////////////////////////////////////////////////////////////
     //
     hideColorChipPopup: {
-    	enumerable: true,
     	value: function () {
     		//
     		if (this._popupChipBase && this._popupChipBase.opened) {
+    			//
+    			this.hideGradientChipPopup();
     			//
     			this._popupChipBase.popup.removeEventListener('didDraw', this, false);
     			//Making sure to return color manager to either stroke or fill (might be a Hack for now)
@@ -339,9 +359,83 @@ exports.ColorPopupManager = Montage.create(Component, {
     	}
     },
     ////////////////////////////////////////////////////////////////////
+    //
+    showGradientChipPopup: {
+    	value: function (e) {
+    		if (this._colorGradientPopupDrawing) {
+    			return;
+    		}
+    		if (this._popupGradientChipBase && this._popupGradientChipBase.opened) {
+    			//Toogles if called and opened
+	    		this.hideGradientChipPopup();
+    			return;
+    		} else {
+	    		//
+    			this._colorGradientPopupDrawing = true;
+    			////////////////////////////////////////////////////
+    			//Initializing events
+    			if (!this._hasinit) {
+    				this.init();
+    				this._hasinit = true;
+    			}
+    			////////////////////////////////////////////////////
+    			//Creating popup
+    			var popup = document.createElement('div');
+    			document.body.appendChild(popup);
+    			//
+    			this._popupGradientChipBase = ColorPanelPopup.create();
+    			this._popupGradientChipBase.element = popup;
+    			this._popupGradientChipBase.isPopupChip = true;
+    			if (e._event.srcElement.props) {
+    				this._popupGradientChipBase.props = e._event.srcElement.props;
+    			} else {
+    				this._popupGradientChipBase.props = {side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, history: false};
+    			}
+    			//
+    			if (this._popupGradientChipBase.props.offset) {
+			    	this._popupGradientChipBase.props.x = (e._event.clientX - e._event.offsetX + this._popupGradientChipBase.props.offset)+'px';
+			       	this._popupGradientChipBase.props.y = (e._event.target.clientHeight/2+e._event.clientY - e._event.offsetY)+'px';
+		     	} else {
+			        this._popupGradientChipBase.props.x = (e._event.clientX - e._event.offsetX)+'px';
+			        this._popupGradientChipBase.props.y = (e._event.target.clientHeight/2+e._event.clientY - e._event.offsetY)+'px';
+		        }
+		        //
+		        this._popupGradientChipBase.props.source = e._event.srcElement;
+		        //
+    			this._popupGradientChipBase.colorManager = ColorModel.create();
+    			//
+    			this._popupGradientChipBase.addEventListener('change', this, false);
+		    	this._popupGradientChipBase.addEventListener('changing', this, false);
+    			//
+    			this._popupGradientChipBase.needsDraw = true;
+    			this._popupGradientChipBase.addEventListener('firstDraw', this, false);
+        	}
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    hideGradientChipPopup: {
+    	value: function () {
+    		//
+    		if (this._popupGradientChipBase && this._popupGradientChipBase.opened) {
+    			//
+    			this._popupGradientChipBase.popup.removeEventListener('didDraw', this, false);
+    			//Making sure to return color manager to either stroke or fill (might be a Hack for now)
+    			if (this.colorManager.input !== 'stroke' && this.colorManager.input !== 'fill' && this.application.ninja.colorController.colorView.previousInput) {
+    				this.colorManager.input = this.application.ninja.colorController.colorView.previousInput;
+    			}
+    			//
+                this.application.ninja.popupManager.removePopup(this._popupGradientChipBase.popup.element);
+	    		this._popupGradientChipBase.opened = false;
+	    		//TODO: Fix HACK of removing popup
+	    		this._popupGradientChipBase.popup.base.destroy();
+	    		this._popupGradientChipBase.popup = null;
+	    	}
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
     //Reworking logic, firstDraw bubbles up, so target must be checked
     handleFirstDraw: {
-    	enumerable: false,
     	value: function (e) {
     		if (e._target._element.className === 'cpp_popup') {
     			e._target.removeEventListener('firstDraw', this, false);
@@ -356,6 +450,8 @@ exports.ColorPopupManager = Montage.create(Component, {
 			} else if (e._target._element.className === 'default_popup' && e._target._content.className === 'cpp_popup') {
 				if (!e._target.base.isPopupChip) {
 					this._colorPopupDrawing = false;
+				} else  if (e._target.base.props && e._target.base.props.gradientPopup) {
+					this._colorGradientPopupDrawing = false;
 				} else {
 					this._colorChipPopupDrawing = false;
 				}
@@ -400,6 +496,8 @@ exports.ColorPopupManager = Montage.create(Component, {
 		        		hsv.wasSetByCode = false;
 	        			hsv.type = 'change';
 	        			e._target.base._components.wheel.value = hsv;
+	        		} else {
+		        		e._target.base.colorManager.applyNoColor(false);
 	        		}
 		        }
 	        }
@@ -487,12 +585,19 @@ exports.ColorPopupManager = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     handleChange: {
-    	enumerable: false,
     	value: function (e) {
-    		if (this._popupChipBase && this._popupChipBase.opened) {
+    		if (this._popupChipBase && this._popupChipBase.opened && !this._popupGradientChipBase) {
     			if (e._event.hsv) {
     				this._popupChipBase.colorManager.hsv = {h: e._event.hsv.h, s: e._event.hsv.s, v: e._event.hsv.v, type: e._event.type, wasSetByCode: e._event.wasSetByCode};
     				this.colorChipChange(e);
+    			} else {
+	    			//console.log(e._event);
+    			}
+    			return;
+    		} else if (this._popupGradientChipBase && this._popupGradientChipBase.opened) {
+    			if (e._event.hsv) {
+    				this._popupGradientChipBase.colorManager.hsv = {h: e._event.hsv.h, s: e._event.hsv.s, v: e._event.hsv.v, type: e._event.type, wasSetByCode: e._event.wasSetByCode};
+    				this.colorGradientChipChange(e);
     			} else {
 	    			//console.log(e._event);
     			}
@@ -517,7 +622,6 @@ exports.ColorPopupManager = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     handleChanging: {
-    	enumerable: false,
     	value: function (e) {
     		if (e._event.hsv) {
     			//
@@ -562,8 +666,6 @@ exports.ColorPopupManager = Montage.create(Component, {
 	    			}
 	    			return;
 				}
-				
-				
     			//Applying color to all buttons in array
     			for(i=0; this.application.ninja.colorController.colorView._buttons[input][i]; i++) {
     				//TODO: Remove this and combine to single method for live updating colors

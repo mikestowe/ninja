@@ -60,7 +60,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     	value: function () {
     		//
     		this._components = null;
-    		this._components = {wheel: null, combo: null};
+    		this._components = {wheel: null, combo: null, gradient: null};
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -369,27 +369,30 @@ exports.ColorPanelPopup = Montage.create(Component, {
     drawGradient: {
     	value: function (g) {
     		//TODO: Remove container, insert in reel
-    		var container = document.createElement('div'), gradient = GradientPicker.create();
+    		var container = document.createElement('div');
+    		//
+    		this._components.gradient = GradientPicker.create();
+    		//
     		this.gradients.appendChild(container);
     		//Creating gradient picker from components
-    		gradient.element = container;
-    		gradient.hack = this.hack; // TODO: Remove
+    		this._components.gradient.element = container;
+    		this._components.gradient.hack = this.hack; // TODO: Remove
     		//
     		if (g && g.value && g.value.stops) {
     			if (g.value.gradientMode) {
-    				gradient._mode = g.value.gradientMode;
-    				gradient.value = g.value.stops;
+    				this._components.gradient._mode = g.value.gradientMode;
+    				this._components.gradient.value = g.value.stops;
     			} else {
-    				gradient._mode = 'linear';
-    				gradient.value = g.value.stops;
+    				this._components.gradient._mode = 'linear';
+    				this._components.gradient.value = g.value.stops;
     			}
     		} else {
-    			gradient._mode = this.defaultGradient.gradientMode;
-    			gradient.value = this.defaultGradient.stops;
+    			this._components.gradient._mode = this.defaultGradient.gradientMode;
+    			this._components.gradient.value = this.defaultGradient.stops;
     		}
     		//
-    		gradient.needsDraw = true;
-    		gradient.addEventListener('change', function (e){
+    		this._components.gradient.needsDraw = true;
+    		this._components.gradient.addEventListener('change', function (e){
     			//
     			if (!e._event.wasSetByCode) {
     				this.colorManager.gradient = {value: e._event.gradient, type: 'change', wasSetByCode: false};
