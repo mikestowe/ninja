@@ -212,10 +212,8 @@ exports.BindingView = Montage.create(Component, {
         value: function() {
 
             if(this.hide) {
-                console.log('hiding vinding view');
                 this.element.style.setProperty('display', 'none');
             } else {
-                console.log("showing binding view");
                 this.element.style.removeProperty('display');
                 this.element.style.width = this.width + "px";
                 this.element.style.height = this.height + "px";
@@ -338,7 +336,6 @@ exports.BindingView = Montage.create(Component, {
             }.bind(this));
             if(typeof (this.objectsTray.element) !== "undefined") {
                 if (this.objectsTray.element.offsetLeft < mousePoint.x && (this.objectsTray.element.offsetLeft + this.objectsTray.element.offsetWidth) > mousePoint.x ) {
-                    //console.log(this.objectsTray.element.offsetTop, (this.objectsTray.element.parentElement.offsetTop + this.objectsTray.element.offsetHeight));
                     if(this.objectsTray.element.parentElement.offsetTop < mousePoint.y && (this.objectsTray.element.parentElement.offsetTop + this.objectsTray.element.offsetHeight) > mousePoint.y) {
                         overHud = true;
                     }
@@ -395,7 +392,6 @@ exports.BindingView = Montage.create(Component, {
                 //debugger;
             this.connectionElementEnd = nodeEl.parentElement.controller.parentComponent.parentComponent.userComponent;
             this.connectionPropertyEnd = nodeEl.parentElement.controller.title;
-            //console.log(this.connectionElementStart, this.connectionPropertyStart, this.connectionElementEnd, this.connectionPropertyEnd);
                 this.application.ninja.objectsController.addBinding({
                     sourceObject: this.connectionElementStart,
                     sourceObjectPropertyPath: this.connectionPropertyStart,
@@ -417,7 +413,6 @@ exports.BindingView = Montage.create(Component, {
         value: function(e) {
             // We are looking for a mouse down on an option to start the connection visual
             if(e._event.target.classList.contains("connectorBubble")) {
-                //console.log(e._event.target.parentElement.controller.parentComponent.parentComponent.userComponent);
                 this.connectionElementStart = e._event.target.parentElement.controller.parentComponent.parentComponent.userComponent;
                 this.connectionPropertyStart = e._event.target.parentElement.controller.title;
                 this._isDrawingConnection = true;
