@@ -106,18 +106,6 @@ exports.BindingItem = Montage.create(Component, {
 
     /* -------------- Component Draw Cycle -------------- */
 
-    templateDidLoad : {
-        value: function() {
-            console.log("loaded binding item");
-        }
-    },
-
-    prepareForDraw: {
-        value: function() {
-            console.log("preparing to draw binding item");
-        }
-    },
-
     draw : {
         value: function() {
             if(this.oneway) {

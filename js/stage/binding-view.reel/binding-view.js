@@ -109,7 +109,9 @@ exports.BindingView = Montage.create(Component, {
             this._selectedComponent = val;
             if(this._selectedComponent !== null) {
                 this.application.ninja.objectsController.currentObject = this.selectedComponent;
-                this.boundComponents.push(this.selectedComponent);
+                if (this.selectedComponent !== null) {
+                    this.boundComponents.push(this.selectedComponent);
+                }
             }
                 this.needsDraw = true;
             }
@@ -217,7 +219,7 @@ exports.BindingView = Montage.create(Component, {
                 this.element.style.removeProperty('display');
                 this.element.style.width = this.width + "px";
                 this.element.style.height = this.height + "px";
-                if(this.selectedComponent !== null) {
+                if(this.selectedComponent !== null && typeof(this.selectedComponent) !== "undefined") {
                     this.canvas.width  = this.application.ninja.stage.drawingCanvas.offsetWidth;
                     this.canvas.height = this.application.ninja.stage.drawingCanvas.offsetHeight;
                     this.clearCanvas();

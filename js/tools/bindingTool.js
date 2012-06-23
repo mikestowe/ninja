@@ -34,7 +34,12 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
                 NJevent("enableStageMove");
                 this.application.ninja.workspaceMode = "binding";
                 if (this.application.ninja.selectedElements.length !== 0 ) {
-                    this.selectedComponent = this.application.ninja.selectedElements[0].controller;
+                    if(typeof(this.application.ninja.selectedElements[0].controller) !== "undefined") {
+                        this.selectedComponent = this.application.ninja.selectedElements[0].controller;
+                    } else {
+                        this.selectedComponent = null;
+                    }
+
                 }
             }
             else
@@ -81,6 +86,8 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
                     if (this.application.ninja.selectedElements.length !== 0 ) {
                         if(this.application.ninja.selectedElements[0].controller) {
                             this.selectedComponent = this.application.ninja.selectedElements[0].controller;
+                        } else {
+                            this.selectedComponent = null;
                         }
                     } else {
                         this.selectedComponent = null;
