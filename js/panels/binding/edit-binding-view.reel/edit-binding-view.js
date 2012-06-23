@@ -142,10 +142,10 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
         set: function(value) {
             if(value === this._bindingArgs) { return; }
 
-            this._bindingArgs = value;
-
             // clear form values
             this.clearForm();
+
+            this._bindingArgs = value;
 
             if(value) {
                 // set up hints for hintable components
