@@ -296,14 +296,18 @@ exports.TextProperties = Montage.create(ToolProperties, {
 
     handleFontSelectionChange: {
         value: function(e) {
-            this.application.ninja.stage.textTool.doAction("fontname", this.fontSelection.value);
             this.application.ninja.stage.textTool.element.focus();
+            this.application.ninja.stage.textTool.doAction("fontname", this.fontSelection.value);
+
+            //Note: Set Font Color on selection to ColorChip Component;
+            //this.this.application.ninja.stage.textTool.foreColor
+
         }
     },
 
     handleFontColorChange: {
         value: function(e) {
-            this.application.ninja.stage.textTool.element.style.color = e._event.color.css;
+            this.application.ninja.stage.textTool.foreColor = e._event.color.css;
             this.application.ninja.stage.textTool.element.focus();
             //this.application.ninja.stage.textTool.doAction("forecolor",e._event.color.css);
 

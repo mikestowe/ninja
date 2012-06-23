@@ -6,7 +6,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = require("montage/core/core").Montage,
     DrawingTool = require("js/tools/drawing-tool").DrawingTool,
-    //RichTextEditor = ("node_modules/labs/rich-text-editor.reel").RichTextEditor,
     ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 exports.TextTool = Montage.create(DrawingTool, {
@@ -23,22 +22,30 @@ exports.TextTool = Montage.create(DrawingTool, {
             return this._selectedElement;
         },
         set: function(val) {
-            if (this._selectedElement !== null) {
-                this.selectedElement.innerHTML = this.application.ninja.stage.textTool.value;
-                this.application.ninja.stage.textTool.value = "";
-                this.application.ninja.stage.textTool.element.style.display = "none";
-                ElementsMediator.setProperty(this.application.ninja.selectedElements, "color", [window.getComputedStyle(this.application.ninja.stage.textTool.element)["color"]], "Change", "textTool");
-            }
             //Set Selected Element
+            if (this._selectedElement !== null) {
+                this.applyStyle();
+            }
             this._selectedElement = val;
-            if(val !== null) {
+            if(this._selectedElement !== null) {
                 this.drawTextTool();
                 this.handleScroll();
                 this.application.ninja.stage._iframeContainer.addEventListener("scroll", this, false);
             } else {
                 this.application.ninja.stage._iframeContainer.removeEventListener("scroll", this);
             }
+
         }
+    },
+
+    applyStyle: {
+        value: function() {
+            this.selectedElement.innerHTML = this.application.ninja.stage.textTool.value;
+            this.application.ninja.stage.textTool.value = "";
+            this.application.ninja.stage.textTool.element.style.display = "none";
+            //ElementsMediator.setProperty([this.selectedElement], "color", [window.getComputedStyle(this.application.ninja.stage.textTool.element)["color"]], "Change", "textTool");
+        }
+
     },
 
     HandleLeftButtonDown: {
