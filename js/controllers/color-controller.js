@@ -254,7 +254,12 @@ exports.ColorController = Montage.create(Component, {
         			gradient.css = css;
         			//
         			arr = css.split('from(');
-        			arr = arr[1].split('),');
+        			//
+        			if (arr.length > 1) {
+        				arr = arr[1].split('),');
+        			} else {
+	        			arr = (css.split(css.split('color-stop(')[0])[1]).split('),');
+        			}
         			//
         			for (i=0; arr[i]; i++) {
         				arr[i] = arr[i].replace(/ color-stop\(/i, "");
@@ -264,14 +269,20 @@ exports.ColorController = Montage.create(Component, {
         					arr[i] = arr[i].replace(/\)\)/i, "");
         				}
         				//
-        				if (i === 0) {
+        				if (i === 0 && arr[i].indexOf('color-stop') === -1) {
         					arr[i] = {css: arr[i], percent: 0};
         				} else if (i === arr.length-1) {
-        					arr[i] = {css: arr[i], percent: 100};
+        					temp = arr[i].split(', rgb');
+        					if (temp.length > 1) {
+	        					arr[i] = {css: 'rgb'+temp[1].replace(/\)\)/i, ""), percent: Math.round(parseFloat(temp[0])*100)};
+        					} else {
+        						arr[i] = {css: arr[i], percent: 100};
+        					}
         				} else {
         					//
         					if (arr[i].indexOf('rgb') >= 0 && arr[i].indexOf('rgba') < 0) {
         						temp = arr[i].split(', rgb');
+        						temp[0] = temp[0].replace(/color\-stop\(/gi, '');
 	        					arr[i] = {css: 'rgb'+temp[1], percent: Math.round(parseFloat(temp[0])*100)};
         					} else if (arr[i].indexOf('rgba') >= 0) {
     	    					temp = arr[i].split(', rgba');
