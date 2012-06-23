@@ -281,6 +281,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     		this.document.body.removeChild(this.document.getElementsByTagName('ninjaloadinghack')[0]);
    			//Getting style and link tags in document
             var htags = this.document.getElementsByTagName('html'),
+                bannerWrapper,
                 userStyles,
                 stags = this.document.getElementsByTagName('style'),
             	ltags = this.document.getElementsByTagName('link'), i, orgNodes,
@@ -326,6 +327,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             //TODO: Verify appropiate location for this operation
     		if (this._template && this._template.type === 'banner') {
     			this.documentRoot = this.document.body.getElementsByTagName('ninja-content')[0];
+                bannerWrapper = this.documentRoot.parentNode;
     		} else {
     			this.documentRoot = this.document.body;
     		}
@@ -347,6 +349,11 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             if(this.documentRoot) {
                 if(userStyles = this.documentRoot.getAttribute('style')) {
                     this.documentRoot.setAttribute('data-ninja-style', userStyles);
+                }
+            }
+            if(bannerWrapper) {
+                if(userStyles = bannerWrapper.getAttribute('style')) {
+                    bannerWrapper.setAttribute('data-ninja-style', userStyles);
                 }
             }
     		//Making callback if specified
