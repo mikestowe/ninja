@@ -8,7 +8,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 //
 var Montage =			require("montage/core/core").Montage,
 	Component =			require("montage/ui/component").Component,
-	ColorChipPopup =	require("js/panels/Color/colorchippopup.reel").ColorChipPopup,
 	ColorPanelPopup =	require("js/panels/Color/colorpanelpopup.reel").ColorPanelPopup,
 	ColorModel =        require("js/models/color-model").ColorModel;
 ////////////////////////////////////////////////////////////////////////
@@ -294,6 +293,7 @@ exports.ColorPopupManager = Montage.create(Component, {
 	    			this.showGradientChipPopup(e);
 	    			return;
     			}
+    			//
     			this._colorChipPopupDrawing = true;
     			////////////////////////////////////////////////////
     			//Initializing events
@@ -586,7 +586,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     //
     handleChange: {
     	value: function (e) {
-    		if (this._popupChipBase && this._popupChipBase.opened && !this._popupGradientChipBase) {
+    		if (this._popupChipBase && this._popupChipBase.opened && (!this._popupGradientChipBase || (this._popupGradientChipBase && !this._popupGradientChipBase.opened))) {
     			if (e._event.hsv) {
     				this._popupChipBase.colorManager.hsv = {h: e._event.hsv.h, s: e._event.hsv.s, v: e._event.hsv.v, type: e._event.type, wasSetByCode: e._event.wasSetByCode};
     				this.colorChipChange(e);
