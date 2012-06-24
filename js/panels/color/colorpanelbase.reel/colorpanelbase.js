@@ -480,7 +480,11 @@ exports.ColorPanelBase = Montage.create(Component, {
                         }
                         if (c && c.css) {
                             this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
-                            this.style.backgroundColor = c.css;
+                            if (m === 'gradient') {
+                            	this.style.backgroundImage = c.css;
+                            } else {
+	                            this.style.backgroundColor = c.css;
+                            }
                         } else {
                             this.drawNoColor(this, this.cvs);
                         }

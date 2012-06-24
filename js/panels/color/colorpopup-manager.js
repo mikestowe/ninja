@@ -106,7 +106,17 @@ exports.ColorPopupManager = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
     //
+    _popupChipBtn: {
+    	value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
     _popupGradientChipBase: {
+    	value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    _popupGradientChipBtn: {
     	value: null
     },
     ////////////////////////////////////////////////////////////////////
@@ -208,7 +218,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     	value: function (e) {
     		//
     		var ctx,
-    			cvs = this.application.ninja.colorController.colorView.currentChip.getElementsByTagName('canvas')[0],
+    			cvs = this._popupChipBtn.getElementsByTagName('canvas')[0],
     			rgb = this._popupChipBase.colorManager.rgb,
 				hsl = this._popupChipBase.colorManager.hsl,
 				alpha = this._popupChipBase.colorManager.alpha.value;
@@ -236,7 +246,7 @@ exports.ColorPopupManager = Montage.create(Component, {
 				ctx.stroke();
 			}
     		//
-    		this.application.ninja.colorController.colorView.currentChip.color('rgb', {r: rgb.r, g: rgb.g, b: rgb.b, a: alpha, css: 'rgba('+rgb.r+', '+rgb.g+', '+rgb.b+', '+alpha+')'});
+    		this._popupChipBtn.color('rgb', {r: rgb.r, g: rgb.g, b: rgb.b, a: alpha, css: 'rgba('+rgb.r+', '+rgb.g+', '+rgb.b+', '+alpha+')'});
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -245,7 +255,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     	value: function (e) {
     		//
     		var ctx,
-    			cvs = this.application.ninja.colorController.colorView.currentChip.getElementsByTagName('canvas')[0],
+    			cvs = this._popupGradientChipBtn.getElementsByTagName('canvas')[0],
     			rgb = this._popupGradientChipBase.colorManager.rgb,
 				hsl = this._popupGradientChipBase.colorManager.hsl,
 				alpha = this._popupGradientChipBase.colorManager.alpha.value;
@@ -273,7 +283,7 @@ exports.ColorPopupManager = Montage.create(Component, {
 				ctx.stroke();
 			}
     		//
-    		this.application.ninja.colorController.colorView.currentChip.color('rgb', {r: rgb.r, g: rgb.g, b: rgb.b, a: alpha, css: 'rgba('+rgb.r+', '+rgb.g+', '+rgb.b+', '+alpha+')'});
+    		this._popupGradientChipBtn.color('rgb', {r: rgb.r, g: rgb.g, b: rgb.b, a: alpha, css: 'rgba('+rgb.r+', '+rgb.g+', '+rgb.b+', '+alpha+')'});
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -293,6 +303,8 @@ exports.ColorPopupManager = Montage.create(Component, {
 	    			this.showGradientChipPopup(e);
 	    			return;
     			}
+    			//
+    			this._popupChipBtn = this.application.ninja.colorController.colorView.currentChip;
     			//
     			this._colorChipPopupDrawing = true;
     			////////////////////////////////////////////////////
@@ -370,6 +382,8 @@ exports.ColorPopupManager = Montage.create(Component, {
 	    		this.hideGradientChipPopup();
     			return;
     		} else {
+    			//
+    			this._popupGradientChipBtn = this.application.ninja.colorController.colorView.currentChip;
 	    		//
     			this._colorGradientPopupDrawing = true;
     			////////////////////////////////////////////////////
@@ -590,16 +604,20 @@ exports.ColorPopupManager = Montage.create(Component, {
     			if (e._event.hsv) {
     				this._popupChipBase.colorManager.hsv = {h: e._event.hsv.h, s: e._event.hsv.s, v: e._event.hsv.v, type: e._event.type, wasSetByCode: e._event.wasSetByCode};
     				this.colorChipChange(e);
-    			} else {
-	    			//console.log(e._event);
+    			} else if (!this._popupBase || (this._popupBase && !this._popupBase.opened)){
+	    			if (e._event.gradient && !e._event.wasSetByCode) {
+	    				//
+		    			this._popupChipBtn.color('gradient', e._event.gradient);
+	    			}
     			}
     			return;
     		} else if (this._popupGradientChipBase && this._popupGradientChipBase.opened) {
     			if (e._event.hsv) {
     				this._popupGradientChipBase.colorManager.hsv = {h: e._event.hsv.h, s: e._event.hsv.s, v: e._event.hsv.v, type: e._event.type, wasSetByCode: e._event.wasSetByCode};
     				this.colorGradientChipChange(e);
-    			} else {
-	    			//console.log(e._event);
+    			} else if (!this._popupBase || (this._popupBase && !this._popupBase.opened)){
+	    			//
+		    		this._popupChipBtn.color('gradient', e._event.gradient);
     			}
     			return;
     		}
