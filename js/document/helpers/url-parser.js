@@ -53,7 +53,7 @@ exports.UrlParser = Montage.create(Component, {
         	//Getting file URI (not URL since we must load through I/O API)
 			var css = {}, file;
 			css.cssUrl =  href.split(this.application.ninja.coreIoApi.rootUrl)[1];
-			css.fileUri = this.application.ninja.coreIoApi.cloudData.root + css.cssUrl;
+			css.fileUri = this.application.ninja.coreIoApi.cloudData.root + unescape(css.cssUrl);
 			//Loading data from CSS file
 			file = this.application.ninja.coreIoApi.readFile({uri: css.fileUri});
 			//Checking for file to be writable on disk
