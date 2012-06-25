@@ -262,6 +262,12 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
         }
     },
 
+    handleDirectionCheckboxAction : {
+        value: function(e) {
+            this.dirty = true;
+        }
+    },
+
 
     /* -------------------
      Dirty handler

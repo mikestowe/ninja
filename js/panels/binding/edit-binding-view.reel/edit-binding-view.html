@@ -95,11 +95,18 @@
             "directionCheckbox": {
                 "prototype": "montage/ui/native/input-checkbox.reel",
                 "properties": {
-                    "element": {"#": "direction-checkbox"}
+                    "element": {"#": "direction-checkbox"},
+                    "identifier": "directionCheckbox"
                 },
                 "bindings": {
                     "checked": {"<-": "@owner.oneway"}
-                }
+                },
+                "listeners" : [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "cancelButton" : {
                 "prototype": "montage/ui/native/button.reel",
