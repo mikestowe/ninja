@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.
@@ -366,12 +366,16 @@
                 }
             },
 
+            "clipboardController": {
+                "prototype": "js/controllers/clipboard-controller"
+            },
+
             "owner": {
                 "prototype": "js/ninja.reel",
                 "properties": {
                     "element":              {"#": "main"},
-                    "rulerTop":        		{"#": "rulerTop"},
-                    "rulerLeft":        	{"#": "rulerLeft"},
+                    "rulerTop":             {"#": "rulerTop"},
+                    "rulerLeft":            {"#": "rulerLeft"},
                     "appModel":             {"@": "appModel"},
                     "toolsData":            {"@": "toolsData1"},
                     "toolsList":            {"@": "toolsList"},
@@ -385,10 +389,10 @@
                     "popupManager":         {"@": "popupManager1"},
 					"colorController":      {"@": "colorController1"},
                     "stylesController":     {"@": "stylesController"},
-                    "presetsController":     {"@": "presetsController"},
+                    "presetsController":    {"@": "presetsController"},
                     "filePickerController": {"@": "filePickerController"},
                     "newFileController":    {"@": "newFileController"},
-                    "coreIoApi":    		{"@": "coreIoApi1"},
+                    "coreIoApi":            {"@": "coreIoApi1"},
                     "documentBar":          {"@": "documentBar"},
                     "editorViewOptions":    {"@": "editorViewOptions"},
                     "ioMediator":           {"@": "ioMediator"},
@@ -401,6 +405,7 @@
                     "timelineSplitter":     {"@": "splitter4"},
                     "toolsSplitter":        {"@": "splitter2"},
                     "optionsSplitter":      {"@": "splitter1"},
+					"clipboardController":  {"@": "clipboardController"},
                     "documentList":         {"@": "documentList"}
                 }
             }
