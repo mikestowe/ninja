@@ -85,7 +85,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
                 }
    			});
    			//
-   			if (this.application.ninja.colorController.colorView) {
+   			if (this.application.ninja.colorController.colorView && this.props.panel) {
 	    		Object.defineBinding(this._components.combo.slider, "value", {
     				boundObject: this.application.ninja.colorController.colorView._combo[3].slider,
        			    boundObjectPropertyPath: "value",
@@ -447,7 +447,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     		//
     		this.application.ninja.colorController.colorView.removeButton('hexinput', this.inputHex);
     		Object.deleteBinding(this._components.combo.hottext, "value");
-    		Object.deleteBinding(this._components.combo.slider, "value");
+    		if (this.props.panel) Object.deleteBinding(this._components.combo.slider, "value");
     		Object.deleteBinding(this._components.wheel, "value");
     		this._components.wheel = null;
     	}

@@ -206,7 +206,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     			//
     			this._popupBase = ColorPanelPopup.create();
     			this._popupBase.element = popup;
-    			this._popupBase.props = {x: x, y: y, side: side, align: align, wheel: true, palette: true, gradient: true, image: true, nocolor: true, history: true};
+    			this._popupBase.props = {x: x, y: y, side: side, align: align, wheel: true, palette: true, gradient: true, image: true, nocolor: true, history: true, panel: true};
     			this._popupBase.colorManager = this.colorManager;
     			//
     			this._popupBase.addEventListener('change', this, false);
