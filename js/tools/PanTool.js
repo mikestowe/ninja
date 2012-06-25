@@ -47,8 +47,8 @@ exports.PanTool = Montage.create(toolBase,
     HandleLeftButtonDown: {
         value : function ( event ) {
             // Determine the maximum horizontal and vertical scroll values
-            this._maxHorizontalScroll = this.application.ninja.currentDocument.model.documentRoot.scrollWidth - this.application.ninja.stage._canvas.width - 11;
-            this._maxVerticalScroll = this.application.ninja.currentDocument.model.documentRoot.scrollHeight - this.application.ninja.stage._canvas.height - 11;
+            this._maxHorizontalScroll = this.application.ninja.currentDocument.model.views.design.document.body.scrollWidth - this.application.ninja.stage._canvas.width - 11;
+            this._maxVerticalScroll = this.application.ninja.currentDocument.model.views.design.document.body.scrollHeight - this.application.ninja.stage._canvas.height - 11;
             if((this._maxHorizontalScroll > 0) || (this._maxVerticalScroll > 0) || this._altKeyDown)
             {
                 this._isDrawing = true;
@@ -239,6 +239,8 @@ exports.PanTool = Montage.create(toolBase,
 						this._localPt = [cop[0] + localPt[0],  cop[1] + localPt[1],  localPt[2]];
 						viewUtils.popViewportObj();
 					}
+                    this._localPt[0] = Math.round(this._localPt[0]);
+                    this._localPt[1] = Math.round(this._localPt[1]);
 					this._globalPt = MathUtils.transformAndDivideHomogeneousPoint( this._localPt,  localToGlobalMat );
 					var tmpLocal   = MathUtils.transformAndDivideHomogeneousPoint( this._globalPt, globalToLocalMat );
 
