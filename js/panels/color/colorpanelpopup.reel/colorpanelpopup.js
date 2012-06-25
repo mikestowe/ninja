@@ -153,7 +153,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
 	    		this.btnGradient.style.display = 'none';
     		}
     		//
-	    	this.application.ninja.colorController.colorView.addButton('hexinput', this.inputHex);
+	    	this.application.ninja.colorController.colorView.addButton('hexinput', this.inputHex, this.colorManager);
 	       	//
 	       	this._components.combo.slider.needsDraw = true;
 	       	this._components.combo.hottext.needsDraw = true;

@@ -170,7 +170,7 @@ exports.ColorPanelBase = Montage.create(Component, {
             this.addButton('current', this.btnCurrent);
             this.addButton('previous', this.btnPrevious);
             //
-            this.addButton('hexinput', this.hextext);
+            this.addButton('hexinput', this.hextext, this.colorManager);
             this.addButton('reset', this.btnDefault);
             this.addButton('nocolor', this.btnNoColor);
             this.addButton('swap', this.btnSwap);
@@ -461,7 +461,7 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     addButton: {
-        value: function (type, button) {
+        value: function (type, button, manager) {
             //
             switch (type.toLocaleLowerCase()) {
                 case 'chip':
@@ -487,7 +487,7 @@ exports.ColorPanelBase = Montage.create(Component, {
                             }
                         } else {
                             this.drawNoColor(this, this.cvs);
-                        }
+                        }9
                         this.colorValue = c;
                         this.colorMode = m;
                         this.otherInput = false;
@@ -677,8 +677,8 @@ exports.ColorPanelBase = Montage.create(Component, {
                 case 'hexinput':
                     var hexinp = HotText.create();
                     hexinp.element = button;
-                    hexinp.labelFunction = this._updateHexValue.bind(this);
-                    hexinp.inputFunction = this._hottextHexInput.bind(this);
+                    hexinp.labelFunction = this._updateHexValue.bind(manager);
+                    hexinp.inputFunction = this._hottextHexInput.bind(manager);
                     hexinp.needsDraw = true;
                     this._buttons.hexinput.push(hexinp);
                     return hexinp;
@@ -1248,23 +1248,23 @@ exports.ColorPanelBase = Montage.create(Component, {
             }
             //Checking for panel mode and converting the color to the panel mode
             if (this._panelMode === 'hsl') {
-                rgb = this.colorManager.hexToRgb(color);
+                rgb = this.hexToRgb(color);
                 if (rgb) {
-                    update = this.colorManager.rgbToHsl(rgb.r, rgb.g, rgb.b);
+                    update = this.rgbToHsl(rgb.r, rgb.g, rgb.b);
                     update.wasSetByCode = false;
                     update.type = 'change';
-                    this.colorManager.hsl = update;
+                    this.hsl = update;
                 } else {
-                    this.colorManager.applyNoColor(false);
+                    this.applyNoColor(false);
                 }
             } else {
-                update = this.colorManager.hexToRgb(color);
+                update = this.hexToRgb(color);
                 if (update) {
                     update.wasSetByCode = false;
                     update.type = 'change';
-                    this.colorManager.rgb = update;
+                    this.rgb = update;
                 } else {
-                    this.colorManager.applyNoColor(false);
+                    this.applyNoColor(false);
                 }
             }
         }
@@ -1273,7 +1273,7 @@ exports.ColorPanelBase = Montage.create(Component, {
     //
     _updateHexValue: {
         value: function (v) {
-            return this.colorManager.hex;
+            return this.hex;
         }
     },
     ////////////////////////////////////////////////////////////////////

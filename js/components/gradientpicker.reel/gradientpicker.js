@@ -160,7 +160,7 @@ exports.GradientPicker = Montage.create(Component, {
 				//Initialing button with color data
 				button.color(data.color.mode, data.color.value);
 				//Button popup data
-				button.props = {side: 'top', align: 'center', nocolor: false, wheel: true, palette: true, gradient: false, image: false, offset: -84, gradientPopup: true, history: false};
+				button.props = {side: 'top', align: 'center', nocolor: false, wheel: true, palette: false, gradient: false, image: false, offset: -84, gradientPopup: true, history: false};
 				//Listening for color events from button
 				button.addEventListener('change', this, false);
 				//Dispatching event depending on type of mode

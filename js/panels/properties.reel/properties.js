@@ -373,7 +373,7 @@ exports.Properties = Montage.create(Component, {
                         }
                     }
                 }
-
+                if (previousInput === 'chip') return;
                 this.application.ninja.colorController.colorModel.input =  previousInput;
                 var color = this.application.ninja.colorController.colorModel.colorHistory[previousInput][this.application.ninja.colorController.colorModel.colorHistory[previousInput].length-1];
     			color.c.wasSetByCode = true;

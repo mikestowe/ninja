@@ -217,6 +217,8 @@ exports.ColorPopupManager = Montage.create(Component, {
     colorChipChange: {
     	value: function (e) {
     		//
+    		if (!this._popupChipBtn) return;
+    		//
     		var ctx,
     			cvs = this._popupChipBtn.getElementsByTagName('canvas')[0],
     			rgb = this._popupChipBase.colorManager.rgb,
@@ -253,6 +255,8 @@ exports.ColorPopupManager = Montage.create(Component, {
     //
     colorGradientChipChange: {
     	value: function (e) {
+    		//
+    		if (!this._popupGradientChipBtn) return;
     		//
     		var ctx,
     			cvs = this._popupGradientChipBtn.getElementsByTagName('canvas')[0],
@@ -403,7 +407,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     			if (e._event.srcElement.props) {
     				this._popupGradientChipBase.props = e._event.srcElement.props;
     			} else {
-    				this._popupGradientChipBase.props = {side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, history: false};
+    				this._popupGradientChipBase.props = {side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: false, history: false};
     			}
     			//
     			if (this._popupGradientChipBase.props.offset) {
