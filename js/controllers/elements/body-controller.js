@@ -19,6 +19,14 @@ exports.BodyController = Montage.create(ElementController, {
             el.elementModel.props3D.matrix3d = mat;
             el.elementModel.props3D.perspectiveDist = dist;
 
+            if(this.application.ninja.currentDocument.model.views.design._template) {
+                if(!MathUtils.isIdentityMatrix(mat)) {
+                    el.parentNode.style.backgroundColor = "transparent";
+                } else {
+                    el.parentNode.style.removeProperty("background-color");
+                }
+            }
+
             this.application.ninja.stage.updatedStage = true;
 
             if(update3DModel) {
@@ -34,7 +42,11 @@ exports.BodyController = Montage.create(ElementController, {
                 case "background-image":
                     return this.application.ninja.colorController.getColorObjFromCss(this.application.ninja.stylesController.getElementStyle(el, "background-image"));
                 case "background-color":
-                    return this.application.ninja.colorController.getColorObjFromCss(this.application.ninja.stylesController.getElementStyle(el, "background-color"));
+                    if(this.application.ninja.currentDocument.model.views.design._template) {
+                        return this.application.ninja.colorController.getColorObjFromCss(this.application.ninja.stylesController.getElementStyle(el.parentNode, "background-color"));
+                    } else {
+                        return this.application.ninja.colorController.getColorObjFromCss(this.application.ninja.stylesController.getElementStyle(el, "background-color"));
+                    }
                 case "border":
                     return 0;
                 case "height":
@@ -56,7 +68,11 @@ exports.BodyController = Montage.create(ElementController, {
                     this.application.ninja.stylesController.setElementStyle(el, "background-image", value);
                     break;
                 case "background-color":
-                    this.application.ninja.stylesController.setElementStyle(el, "background-color", value);
+                    if(this.application.ninja.currentDocument.model.views.design._template) {
+                        this.application.ninja.stylesController.setElementStyle(el.parentNode, "background-color", value);
+                    } else {
+                        this.application.ninja.stylesController.setElementStyle(el, "background-color", value);
+                    }
                     break;
                 case "overflow":
                 case "width":

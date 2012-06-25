@@ -186,6 +186,7 @@ NinjaCvsRt.GLRuntime = Object.create(Object.prototype, {
 				this._canvas.rdgeid = id;
 				RDGE.globals.engine.registerCanvas(this._canvas, this);
 				RDGE.RDGEStart( this._canvas );
+				this._canvas.task.start();
 			}
 			else
 			{
