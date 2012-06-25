@@ -58,7 +58,15 @@ var objectsController = exports.ObjectsController = Montage.create(Montage, {
         value: function(bindingArgs) {
             if(!bindingArgs.sourceObject || !bindingArgs.sourceObjectPropertyPath || !bindingArgs) { return; }
 
-            Object.defineBinding(bindingArgs.sourceObject, bindingArgs.sourceObjectPropertyPath, bindingArgs);
+            var sourceObject = bindingArgs.sourceObject,
+                sourcePath = bindingArgs.sourceObjectPropertyPath,
+                sourceDescriptor = sourceObject._bindingDescriptors;
+
+            if(sourceDescriptor && sourceDescriptor[sourcePath]) {
+                this.removeBinding(bindingArgs);
+            }
+
+            Object.defineBinding(sourceObject, sourcePath, bindingArgs);
             this.currentObjectBindings = this.getObjectBindings(bindingArgs.sourceObject);
         }
     },
