@@ -1185,8 +1185,38 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             var context = this.application.ninja.stage.gridContext;
             var stage = this.application.ninja.stage;
             var stageRoot = this.application.ninja.currentDocument.model.documentRoot;
-            var bounds3D = this.viewUtils.getElementBoundsInGlobal(stageRoot);
 
+            // draw an outline around the template body if stage has any transforms
+            if(stage.currentDocument.model.views.design._template && !MathUtils.isIdentityMatrix(this.viewUtils.getMatrixFromElement(stageRoot))) {
+                var saveContext = this.getDrawingSurfaceElement();
+                this.setDrawingSurfaceElement(this.application.ninja.stage.gridCanvas);
+
+                var stagePt = MathUtils.getPointOnPlane([0,0,1,0]);
+                var stageMat = this.getPlaneToWorldMatrix([0,0,1], stagePt);
+                var width = this.snapManager.getStageWidth(),
+                    height = this.snapManager.getStageHeight(),
+                    pt0 = [0, 0, 0],
+                    pt1 = [0, height, 0],
+                    delta = [width, 0, 0];
+
+                this._gridLineArray.length = 0;
+                this.drawGridLines(pt0, pt1, delta, stageMat, 2);
+
+                pt0 = [0, 0, 0];
+                pt1 = [width, 0, 0];
+                delta = [0, height, 0];
+                this.drawGridLines(pt0, pt1, delta, stageMat, 2);
+
+                this._lineColor = "red";
+                for (var i = 0; i < 4; i++) {
+                    this.drawIntersectedLine(this._gridLineArray[i], this._drawingContext);
+                }
+
+                this.setDrawingSurfaceElement(saveContext);
+            }
+
+            // draw reference lines across origin
+            var bounds3D = this.viewUtils.getElementBoundsInGlobal(stageRoot);
             var l = MathUtils.segSegIntersection2D(bounds3D[0], bounds3D[3], [0, 0, 0], [0, stage.canvas.height, 0], 0.1);
             if(!l) return;
             var r = MathUtils.segSegIntersection2D(bounds3D[0], bounds3D[3], [stage.canvas.width, 0, 0], [stage.canvas.width, stage.canvas.height, 0], 0.1);
