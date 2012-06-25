@@ -249,6 +249,10 @@ exports.Stage = Montage.create(Component, {
                 this.currentDocument.model.documentOffsetTop = this._documentOffsetTop;
                 this.currentDocument.model.userContentLeft = this._userContentLeft;
                 this.currentDocument.model.userContentTop = this._userContentTop;
+                this.currentDocument.model.templateLeft = this.templateLeft;
+                this.currentDocument.model.templateTop = this.templateTop;
+                this.currentDocument.model.minLeftElement = this.minLeftElement;
+                this.currentDocument.model.minTopElement = this.minTopElement;
 
                 //call configure false with the old document on the selected tool to tear down down any temp. stuff
                 this.application.ninja.toolsData.selectedToolInstance._configure(false);
@@ -278,6 +282,9 @@ exports.Stage = Montage.create(Component, {
 
     _userPaddingLeft: { value: 0 },
     _userPaddingTop: { value: 0 },
+
+    templateLeft: { value: 0 },
+    templateTop: { value: 0 },
 
     // keep track of the elements that determine the minimum left and top scrollable amount
     minLeftElement: { value: null },
@@ -378,6 +385,10 @@ exports.Stage = Montage.create(Component, {
                 this._userContentTop = this.currentDocument.model.userContentTop;
                 this._scrollLeft = this.currentDocument.model.scrollLeft;
                 this._scrollTop = this.currentDocument.model.scrollTop;
+                this.templateLeft = this.currentDocument.model.templateLeft;
+                this.templateTop = this.currentDocument.model.templateTop;
+                this.minLeftElement = this.currentDocument.model.minLeftElement;
+                this.minTopElement = this.currentDocument.model.minTopElement;
             } else {
                 this._userPaddingLeft = 0;
                 this._userPaddingTop = 0;
@@ -387,6 +398,10 @@ exports.Stage = Montage.create(Component, {
                 this._userContentTop = 0;
                 this._scrollLeft = 0;
                 this._scrollTop = 0;
+                this.templateLeft = 0;
+                this.templateTop = 0;
+                this.minLeftElement = null;
+                this.minTopElement = null;
             }
 
             // Recalculate the canvas sizes because of splitter resizing
@@ -404,9 +419,11 @@ exports.Stage = Montage.create(Component, {
                 var initialTop = parseInt((this.canvas.height - designView._template.size.height)/2);
                 if(initialLeft > this.documentOffsetLeft) {
                     this.userPaddingLeft = -initialLeft;
+                    this.templateLeft = -initialLeft;
                 }
                 if(initialTop > this.documentOffsetTop) {
                     this.userPaddingTop = -initialTop;
+                    this.templateTop = -initialTop;
                 }
             }
 

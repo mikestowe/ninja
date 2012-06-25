@@ -145,6 +145,8 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                 if(useStageValues) {
                     initL = stage.userPaddingLeft;
                     initT = stage.userPaddingTop;
+                    minLeft = stage.templateLeft;
+                    minTop = stage.templateTop;
                     this._recalculateScrollOffsets = false;
                 }
                 for(i=0; i<len; i++) {
