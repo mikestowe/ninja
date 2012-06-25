@@ -343,8 +343,6 @@ exports.Stage = Montage.create(Component, {
             // Hide the canvas
             this.hideCanvas(true);
 
-            this.eventManager.addEventListener( "appMouseUp", this, false);
-
             this.eventManager.addEventListener( "enableStageMove", this, false);
             this.eventManager.addEventListener( "disableStageMove", this, false);
 
@@ -454,6 +452,7 @@ exports.Stage = Montage.create(Component, {
 
     enableMouseInOut: {
         value: function() {
+            document.addEventListener("mouseup", this, true);
             this._drawingCanvas.addEventListener("mouseout", this, false);
             this._drawingCanvas.addEventListener("mouseover", this, false);
         }
@@ -463,6 +462,19 @@ exports.Stage = Montage.create(Component, {
         value: function() {
             this._drawingCanvas.removeEventListener("mouseout", this, false);
             this._drawingCanvas.removeEventListener("mouseover", this, false);
+        }
+    },
+
+    captureMouseup: {
+        value: function(event) {
+            var target = event._event.target.getAttribute("data-montage-id");
+
+            if(target && target === "drawingCanvas") {
+                return true;
+            } else {
+                this.handleAppMouseUp(event);
+                return true;
+            }
         }
     },
 
@@ -480,6 +492,11 @@ exports.Stage = Montage.create(Component, {
 
     handleMousedown: {
         value: function(event) {
+
+            // Increase the canvas to cover the scroll bars
+            this._drawingCanvas.height = this._drawingCanvas.height + 11;
+            this._drawingCanvas.width = this._drawingCanvas.width + 11;
+
             // Call the focus manager to set focus to blur any focus'd elements
             this.focusManager.setFocus();
 
@@ -509,13 +526,18 @@ exports.Stage = Montage.create(Component, {
 
     handleMouseup: {
         value: function(event) {
+            // Restore canvas to un-cover the scroll bars.
+            this._drawingCanvas.height = this._drawingCanvas.height - 11;
+            this._drawingCanvas.width = this._drawingCanvas.width - 11;
             // If the mouse up comes from dismissing the context menu return
+
             if(this.contextMenu) {
                 this.contextMenu = false;
                 return;
             }
 
-            //this.disableMouseInOut();
+            this.disableMouseInOut();
+            document.removeEventListener("mouseup", this, true);
 
             this.application.ninja.toolsData.selectedToolInstance.HandleLeftButtonUp(event);
 
@@ -563,12 +585,17 @@ exports.Stage = Montage.create(Component, {
     handleAppMouseUp: {
         value: function(event) {
             if(this.outFlag) {
+                this._drawingCanvas.height = this._drawingCanvas.height - 11;
+                this._drawingCanvas.width = this._drawingCanvas.width - 11;
+
                 if(this.application.ninja.toolsData.selectedToolInstance.isDrawing) {
                     this.application.ninja.toolsData.selectedToolInstance.HandleLeftButtonUp(event);
                 }
                 this.disableMouseInOut();
                 this.outFlag = false;
             }
+
+            document.removeEventListener("mouseup", this, true);
         }
     },
 
