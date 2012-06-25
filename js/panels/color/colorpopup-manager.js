@@ -283,7 +283,11 @@ exports.ColorPopupManager = Montage.create(Component, {
 				ctx.stroke();
 			}
     		//
-    		this._popupChipBtn.color('rgb', {r: rgb.r, g: rgb.g, b: rgb.b, a: alpha, css: 'rgba('+rgb.r+', '+rgb.g+', '+rgb.b+', '+alpha+')'});
+    		if (rgb) {
+    			this._popupChipBtn.color('rgb', {r: rgb.r, g: rgb.g, b: rgb.b, a: alpha, css: 'rgba('+rgb.r+', '+rgb.g+', '+rgb.b+', '+alpha+')'});
+    		} else {
+	    		this._popupChipBtn.color('rgb', {r: 255, g: 255, b: 255, a: alpha, css: 'rgba(255, 255, 255, '+alpha+')'});
+    		}
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -322,7 +326,11 @@ exports.ColorPopupManager = Montage.create(Component, {
 				ctx.stroke();
 			}
     		//
-    		this._popupGradientChipBtn.color('rgb', {r: rgb.r, g: rgb.g, b: rgb.b, a: alpha, css: 'rgba('+rgb.r+', '+rgb.g+', '+rgb.b+', '+alpha+')'});
+    		if (rgb) {
+    			this._popupGradientChipBtn.color('rgb', {r: rgb.r, g: rgb.g, b: rgb.b, a: alpha, css: 'rgba('+rgb.r+', '+rgb.g+', '+rgb.b+', '+alpha+')'});
+    		} else {
+	    		this._popupGradientChipBtn.color('rgb', {r: 255, g: 255, b: 255, a: alpha, css: 'rgba(255, 255, 255, '+alpha+')'});
+    		}
     	}
     },
     ////////////////////////////////////////////////////////////////////
