@@ -20,49 +20,84 @@ exports.ColorPopupManager = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
     //
-    _hasInit: {
-    	value: false
+    _hasCloseEvents: {
+	 	value: false  
     },
     ////////////////////////////////////////////////////////////////////
     //
-    init: {
+    addCloseEvents: {
     	value: function () {
+    		//
+    		this._hasCloseEvents = true;
     		////////////////////////////////////////////////////////////
             //Closing popups on resize
-            window.addEventListener('resize', function (e) {
-                this.application.ninja.colorController.colorPopupManager.hideColorPopup();
-            }.bind(this));
+            window.addEventListener('resize', this, false);
             //Closing popups if outside limits
-            document.addEventListener('mousedown', function (e) {
-            	//
-            	if (this._popupBase && !this._popupChipBase && !this._popupGradientChipBase) {
-            		if(!this.popupHitCheck(this._popupBase, e)) {
-	            		this.hideColorPopup();
-            		}
-            	} else if (!this._popupBase && this._popupChipBase && !this._popupGradientChipBase) {
-	            	if(!this.popupHitCheck(this._popupChipBase, e)) {
-	            		this.hideColorChipPopup();
-            		}
-            	} else if (this._popupBase && this._popupChipBase && !this._popupGradientChipBase) {
-	            	if(!this.popupHitCheck(this._popupBase, e) && !this.popupHitCheck(this._popupChipBase, e)) {
-	            		this.hideColorPopup();
-            		}
-            	} else if (this._popupBase && this._popupChipBase && this._popupGradientChipBase) {
-	            	if(!this.popupHitCheck(this._popupBase, e) && !this.popupHitCheck(this._popupChipBase, e) && !this.popupHitCheck(this._popupGradientChipBase, e)) {
-	            		this.hideColorPopup();
-            		}
-            	} else if (!this._popupBase && this._popupChipBase && this._popupGradientChipBase) {
-	            	if(!this.popupHitCheck(this._popupChipBase, e) && !this.popupHitCheck(this._popupGradientChipBase, e)) {
-	            		this.hideColorChipPopup();
-            		}
-            	} else if (this._popupBase && !this._popupChipBase && this._popupGradientChipBase) {
-	            	if(!this.popupHitCheck(this._popupBase, e) && !this.popupHitCheck(this._popupGradientChipBase, e)) {
-	            		this.hideColorPopup();
-            		}
-            	}
-            }.bind(this));
+            document.addEventListener('mousedown', this, false);
             ////////////////////////////////////////////////////////////
     	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    removeCloseEvents: {
+    	value: function () {
+    		//
+    		this._hasCloseEvents = false;
+    		////////////////////////////////////////////////////////////
+            //Closing popups on resize
+            window.removeEventListener('resize', this, false);
+            //Closing popups if outside limits
+            document.removeEventListener('mousedown', this, false);
+            ////////////////////////////////////////////////////////////
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    handleMousedown: {
+	  	value: function (e) {
+		  	//
+		  	this.closeAllPopups(e);
+	  	}  
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    handleResize: {
+	  	value: function (e) {
+		  	//
+		  	this.hideColorPopup();
+	  	}  
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    closeAllPopups: {
+		value: function (e) {
+			//
+        	if (this._popupBase && !this._popupChipBase && !this._popupGradientChipBase) {
+        		if(!this.popupHitCheck(this._popupBase, e)) {
+            		this.hideColorPopup();
+        		}
+        	} else if (!this._popupBase && this._popupChipBase && !this._popupGradientChipBase) {
+            	if(!this.popupHitCheck(this._popupChipBase, e)) {
+            		this.hideColorChipPopup();
+        		}
+        	} else if (this._popupBase && this._popupChipBase && !this._popupGradientChipBase) {
+            	if(!this.popupHitCheck(this._popupBase, e) && !this.popupHitCheck(this._popupChipBase, e)) {
+            		this.hideColorPopup();
+        		}
+        	} else if (this._popupBase && this._popupChipBase && this._popupGradientChipBase) {
+            	if(!this.popupHitCheck(this._popupBase, e) && !this.popupHitCheck(this._popupChipBase, e) && !this.popupHitCheck(this._popupGradientChipBase, e)) {
+            		this.hideColorPopup();
+        		}
+        	} else if (!this._popupBase && this._popupChipBase && this._popupGradientChipBase) {
+            	if(!this.popupHitCheck(this._popupChipBase, e) && !this.popupHitCheck(this._popupGradientChipBase, e)) {
+            		this.hideColorChipPopup();
+        		}
+        	} else if (this._popupBase && !this._popupChipBase && this._popupGradientChipBase) {
+            	if(!this.popupHitCheck(this._popupBase, e) && !this.popupHitCheck(this._popupGradientChipBase, e)) {
+            		this.hideColorPopup();
+        		}
+        	}
+		}  
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -161,9 +196,8 @@ exports.ColorPopupManager = Montage.create(Component, {
     			this._colorPopupDrawing = true;
     			////////////////////////////////////////////////////
     			//Initializing events
-    			if (!this._hasinit) {
-    				this.init();
-    				this._hasinit = true;
+    			if (!this._hasCloseEvents) {
+    				this.addCloseEvents();
     			}
     			////////////////////////////////////////////////////
     			//Creating popup
@@ -191,6 +225,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     			//
     			this._popupBase.popup.removeEventListener('didDraw', this, false);
     			//
+    			this.removeCloseEvents();
     			this.hideColorChipPopup();
     			this.hideGradientChipPopup();
     			//Making sure to return color manager to either stroke or fill (might be a Hack for now)
@@ -313,9 +348,8 @@ exports.ColorPopupManager = Montage.create(Component, {
     			this._colorChipPopupDrawing = true;
     			////////////////////////////////////////////////////
     			//Initializing events
-    			if (!this._hasinit) {
-    				this.init();
-    				this._hasinit = true;
+    			if (!this._hasCloseEvents) {
+    				this.addCloseEvents();
     			}
     			////////////////////////////////////////////////////
     			//Creating popup
@@ -358,6 +392,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     		//
     		if (this._popupChipBase && this._popupChipBase.opened) {
     			//
+    			this.removeCloseEvents();
     			this.hideGradientChipPopup();
     			//
     			this._popupChipBase.popup.removeEventListener('didDraw', this, false);
@@ -392,9 +427,8 @@ exports.ColorPopupManager = Montage.create(Component, {
     			this._colorGradientPopupDrawing = true;
     			////////////////////////////////////////////////////
     			//Initializing events
-    			if (!this._hasinit) {
-    				this.init();
-    				this._hasinit = true;
+    			if (!this._hasCloseEvents) {
+    				this.addCloseEvents();
     			}
     			////////////////////////////////////////////////////
     			//Creating popup
@@ -519,85 +553,6 @@ exports.ColorPopupManager = Montage.create(Component, {
 	        		}
 		        }
 	        }
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        /*
- else if (e._target._element.className === 'cc_popup') {
-	        	this._popupChipBase.removeEventListener('firstDraw', this, false);
-	        	//Creating an instance of the popup and sending in created color popup content
-    			if (this.colorChipProps.offset) {
-			       	this._popupChipBase.popup = this.application.ninja.popupManager.createPopup(this._popupChipBase.element, {x: (this._popupChipBase.event.clientX - this._popupChipBase.event.offsetX + this.colorChipProps.offset)+'px', y: (this._popupChipBase.event.target.clientHeight/2+this._popupChipBase.event.clientY - this._popupChipBase.event.offsetY)+'px'}, {side: this.colorChipProps.side, align: this.colorChipProps.align});
-		     	} else {
-			        this._popupChipBase.popup = this.application.ninja.popupManager.createPopup(this._popupChipBase.element, {x: (this._popupChipBase.event.clientX - this._popupChipBase.event.offsetX)+'px', y: (this._popupChipBase.event.target.clientHeight/2+this._popupChipBase.event.clientY - this._popupChipBase.event.offsetY)+'px'}, {side: this.colorChipProps.side, align: this.colorChipProps.align});
-		        }
-			    //
-		    	if (!this.colorChipProps.panel) {
-		       		this.colorManager.input = 'chip';
-		     	}
-		    	//Hiding popup while it draws
-				this._popupChipBase.popup.element.style.opacity = 0;
-		   	    //Storing popup for use when closing
-				this._popupChipBase.popup.base = this._popupChipBase;
-				//Displaying popup once it's drawn
-				this._popupChipBase.popup.addEventListener('firstDraw', this, false);
-	        } else if (e._target._element.className === 'default_popup' && e._target._content.className === 'cc_popup') {
-	        	this._popupChipBase.popup.removeEventListener('firstDraw', this, false);
-	        	//
-	        	this._colorChipPopupDrawing = false;
-	        	//
-				var hsv, color = this._popupChipBase.event.srcElement.colorValue;
-				//
-				this._popupChipBase.popup.element.style.opacity = 1;
-				//
-				this._popupChipBase.opened = true;
-	        	//
-	        	if (this._popupChipBase.event.srcElement.colorMode === 'rgb') {
-		        	if (this._popupChipBase.event.srcElement.colorValue && this._popupChipBase.event.srcElement.colorValue.r) {
-		        		color = this._popupChipBase.event.srcElement.colorValue;
-	    	    	} else if (this._popupChipBase.event.srcElement.colorValue && this._popupChipBase.event.srcElement.colorValue.color){
-	        			color = this._popupChipBase.event.srcElement.colorValue.color;
-	        		} else {
-	        			return;
-	        		}
-		   			hsv = this.colorManager.rgbToHsv(color.r, color.g, color.b);
-	     			hsv.wasSetByCode = false;
-	    	    	hsv.type = 'change';
-	        		this._popupChipBase.popup.base._colorChipWheel.value = hsv;
-	        	} else if (this._popupChipBase.event.srcElement.colorMode === 'hsl') {
-	        		if (this._popupChipBase.event.srcElement.colorValue.h) {
-	       				color = this._popupChipBase.event.srcElement.colorValue;
-	    			} else{
-		        		color = this._popupChipBase.event.srcElement.colorValue.color;
-	    	    	}
-	        		color = this.colorManager.hslToRgb(color.h/360, color.s/100, color.l/100);
-	        		hsv = this.colorManager.rgbToHsv(color.r, color.g, color.b);
-	   				hsv.wasSetByCode = false;
-     				hsv.type = 'change';
-		        	this._popupChipBase.popup.base._colorChipWheel.value = hsv;
-	    		}
-	        }
-*/
     	}
     },
     ////////////////////////////////////////////////////////////////////
