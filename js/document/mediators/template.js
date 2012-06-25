@@ -158,6 +158,15 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     ninjaContentTagDoc.removeAttribute('style');
                     ninjaContentTagDoc.removeAttribute('data-ninja-style');
                 }
+                // TODO - clean up into single method
+                ninjaContentTagMem = template.document.getElementsByTagName('ninja-viewport')[0], ninjaContentTagDoc = template.file.content.document.getElementsByTagName('ninja-viewport')[0];
+                if (ninjaContentTagMem && ninjaContentTagMem.getAttribute('data-ninja-style') !== null) {
+                    ninjaContentTagDoc.setAttribute('style', ninjaContentTagMem.getAttribute('data-ninja-style'));
+                    ninjaContentTagDoc.removeAttribute('data-ninja-style');
+                } else if (ninjaContentTagMem && ninjaContentTagMem.getAttribute('data-ninja-style') === null) {
+                    ninjaContentTagDoc.removeAttribute('style');
+                    ninjaContentTagDoc.removeAttribute('data-ninja-style');
+                }
             } else {
                 if (template.body && template.body.getAttribute('data-ninja-style') !== null) {
                     template.file.content.document.body.setAttribute('style', template.body.getAttribute('data-ninja-style'));
