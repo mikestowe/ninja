@@ -267,9 +267,12 @@ exports.ComponentsPanel = Montage.create(Component, {
             }
             that = this;
             element = this.makeComponent(component.component);
-
-            this.application.ninja.currentDocument.model.views.design.iframe.contentWindow.addComponent(element,
-                {name: component.name, path: component.module, firstDraw: {cb: this.componentInstanceOnFirstDraw, ctx: this}},
+            this.application.ninja.currentDocument.model.views.design.iframe.contentWindow.addComponent(element, {
+                    identifier: this.CreateUniqueComponentName(component.name),
+                    name: component.name,
+                    path: component.module,
+                    firstDraw: {cb: this.componentInstanceOnFirstDraw, ctx: this}
+                },
                 function(instance, element) {
 
                     //var pos = that.getStageCenter();
@@ -289,7 +292,8 @@ exports.ComponentsPanel = Montage.create(Component, {
 
                     //that.application.ninja.elementMediator.addElements(element, styles);
                     ElementController.addElement(element, styles);
-                });
+                }
+            );
 
         }
     },
@@ -387,6 +391,29 @@ exports.ComponentsPanel = Montage.create(Component, {
             //}
 
             //return this.centerStage;
+        }
+    },
+
+    CreateUniqueComponentName: {
+        value: function(name) {
+            for(var i=1; i < 1000; i++) {
+                if(!this.ComponentNameExists(name + i)) {
+                    return name + i;
+                }
+            }
+        }
+    },
+
+    ComponentNameExists: {
+        value: function(name) {
+            var filteredList = this.application.ninja.currentDocument.model.mObjects.filter(function(obj){
+                if(name === obj.identifier) return true;
+            });
+            if (filteredList.length > 0) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 });
