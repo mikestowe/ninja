@@ -261,6 +261,7 @@
     z-index: 92;
     background-color: #b50003;
     opacity: 0.5;
+    visibility: hidden;
 }
 .playheadmarker{
     height: 100%;
@@ -282,7 +283,7 @@
     border-top: #c7a19f thin solid;
     border-right: #ffffff thin solid;
 }
-.endhottext{
+.timelinegutter .endhottext{
     float: right;
     font-family: 'Droid Sans';
     font-size: 12px;
