@@ -114,7 +114,7 @@ exports.ColorPopupManager = Montage.create(Component, {
                	right = left + parseInt(element.popup.element.offsetWidth);
                	//Getting vertical limits
                	top = parseInt(element.popup.element.style.top) + parseInt(element.popup.element.style.marginTop);
-               	bottom = left + parseInt(element.popup.element.offsetHeight);
+               	bottom = top + parseInt(element.popup.element.offsetHeight);
                	//Checking click position in relation to limits
                	if ((e._event.clientX < left || e._event.clientX > right) || (e._event.clientY < top || e._event.clientY > bottom)) {
                		//Hides popups since click is outside limits
