@@ -15,7 +15,9 @@
     "notifications",
     "webRequest",
     "webRequestBlocking",
-    "http://ninja/*"
+    "http://ninja/*",
+    "clipboardRead",
+    "clipboardWrite"
   ],
   "requirements": {
     "3D": {

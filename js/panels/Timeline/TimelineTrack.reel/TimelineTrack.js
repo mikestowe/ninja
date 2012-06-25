@@ -702,15 +702,17 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     handleKeyboardShortcut:{
         value:function(ev){
-            if (this.tweens.length < 1) {
-                this.insertTween(0);
-                this.addAnimationRuleToElement(ev);
-                this.updateKeyframeRule();
-            } else {
-                //this.handleNewTween(ev);
-                
-            	// Split a tween!
-            	this.splitTweenAt(this.application.ninja.timeline.playheadmarker.offsetLeft)
+            if(ev.actionType == "insert"){
+                if (this.tweens.length < 1) {
+                    this.insertTween(0);
+                    this.addAnimationRuleToElement(ev);
+                    this.updateKeyframeRule();
+                } else {
+                    this.handleNewTween(ev);
+                    this.updateKeyframeRule();
+                }
+            } else if(ev.actionType == "remove"){
+                this.removeTween();
                 this.updateKeyframeRule();
             }
         }
@@ -795,9 +797,42 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 this.createMatchingPositionSizeTween(newTween);
             }
 
-
-
             this.application.ninja.currentDocument.model.needsSave = true;
+        }
+    },
+
+    removeTween:{
+        value:function(){
+            var tweenIDToRemove = this.application.ninja.timeline.selectedTweens[0].tweenID,
+                oldPosition = this.application.ninja.timeline.selectedTweens[0].spanPosition,
+                oldSpanWidth = this.application.ninja.timeline.selectedTweens[0].spanWidth;
+
+            if(tweenIDToRemove == this.tweens[this.tweens.length-1].tweenData.tweenID){
+                this.trackDuration = this.tweens[this.tweens.length-2].tweenData.keyFrameMillisec;
+                this.tweens.pop();
+                return;
+            }
+
+            // Update the next tween to have new span position and width.
+            this.tweens[tweenIDToRemove + 1].tweenData.spanPosition = oldPosition;
+            this.tweens[tweenIDToRemove + 1].spanPosition = oldPosition;
+            this.tweens[tweenIDToRemove + 1].tweenData.spanWidth = this.tweens[tweenIDToRemove + 1].tweenData.spanWidth + oldSpanWidth;
+            this.tweens[tweenIDToRemove + 1].spanWidth = this.tweens[tweenIDToRemove + 1].spanWidth + oldSpanWidth;
+
+            // redraw the tweens
+            for(var i in this.tweenRepetition.childComponents){
+                this.tweenRepetition.childComponents[i].setData();
+            }
+
+            // remove the selected tween
+            this.tweens.splice(tweenIDToRemove, 1);
+            this.application.ninja.currentDocument.model.needsSave = true;
+
+            // update the tween ids
+            for (var j = 0; j < this.tweens.length; j++) {
+                this.tweens[j].tweenID = j;
+                this.tweens[j].tweenData.tweenID = j;
+            }
         }
     },
 
@@ -955,6 +990,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             	newTween.tweenData.easing = "none";
                             }
                             this.tweens.push(newTween);
+                            this.createMatchingPositionSizeTween(newTween);
                         }
                         this.nextKeyframe += 1;
                     }
@@ -982,8 +1018,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function(ruleSet){
             for(var i in ruleSet){
                 var styleProp = ruleSet[i][0].style[0];
-                //console.log(styleProp);
-                //console.log(ruleSet[i]);
                 this.application.ninja.timeline.layerRepetition.childComponents[0].addStyle(styleProp, ruleSet[i]);
             }
         }

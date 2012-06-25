@@ -368,6 +368,41 @@ var Layer = exports.Layer = Montage.create(Component, {
         	this.layerData.isVisible = value;
         }
     },
+
+    _isLock:{
+        value: false
+    },
+
+    isLock:{
+        get:function(){
+            return this._isLock;
+        },
+        set:function(value){
+            if (this._isLock !== value) {
+                this._isLock = value;
+
+            }
+            this.layerData.isLock = value;
+        }
+    },
+
+    _isHidden:{
+        value: false
+    },
+
+    isHidden:{
+        get:function(){
+            return this._isHidden;
+        },
+        set:function(value){
+            if (this._isHidden !== value) {
+                this._isHidden = value;
+
+            }
+            this.layerData._isHidden = value;
+        }
+    },
+
     
     _justAdded: {
     	value: false
@@ -508,6 +543,8 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.docUUID = this.layerData.docUUID;
             this.selectedStyleIndex = this.layerData.selectedStyleIndex;
             this.needsDraw = boolNeedsDraw;
+            this.isLock = this.layerData.isLock;
+            this.isHidden = this.layerData.isHidden;
         }
     },
     
@@ -555,6 +592,8 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.mainCollapser.clicker.addEventListener("click", this.handleMainCollapserClick.bind(this), false);
             this.positionCollapser.clicker.addEventListener("click", this.handlePositionCollapserClick.bind(this), false);
             this.styleCollapser.clicker.addEventListener("click", this.handleStyleCollapserClick.bind(this), false);
+            this.layerLock.addEventListener("click",this.handleLayerLock.bind(this),false);
+            this.visibilityButton.addEventListener("click",this.handleLayerVisibility.bind(this),false);
 
             // Add event listeners to add and delete style buttons
             this.buttonAddStyle.addEventListener("click", this.handleAddStyleClick.bind(this), false);
@@ -1220,6 +1259,78 @@ var Layer = exports.Layer = Montage.create(Component, {
                 }
 
             }
+        }
+    },
+
+    handleLayerLock: {
+        value: function() {
+           var i = 0;
+           var arrlength = this.application.ninja.timeline.arrLayers.length;
+           var lockElementArrLength = this.application.ninja.currentDocument.lockedElements.length;
+           if(!this.layerData.isLock){
+               for(i = 0; i < arrlength; i++){
+                  if(this.application.ninja.timeline.arrLayers[i].layerData.isLock){
+                      this.application.ninja.timeline.arrLayers[i].layerData.isLock = false;
+                      this.application.ninja.timeline.arrLayers[i].layerData.isSelected = false;
+                      for(var k = 0; k < lockElementArrLength; k++){
+                          if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.stageElement){
+                              this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                              break;
+                          }
+                      }
+                  }
+               }
+               this.layerData.isSelected = false;
+               this.application.ninja.timeline.selectLayers([]);
+               this.application.ninja.currentDocument.lockedElements.push(this.layerData.stageElement);
+           } else {
+               this.layerData.isSelected = true;
+               for(k = 0; k<lockElementArrLength; k++){
+                 if(this.application.ninja.currentDocument.lockedElements[k] === this.layerData.stageElement){
+                     this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                     break;
+                 }
+               }
+
+           }
+           this.layerData.isLock = !this.layerData.isLock;
+
+        }
+    },
+
+    handleLayerVisibility:{
+        value:function(){
+            var i = 0;
+            var arrlength = this.application.ninja.timeline.arrLayers.length;
+            var lockElementArrLength=this.application.ninja.currentDocument.lockedElements.length;
+            if(!this.layerData.isHidden){
+                for(i = 0; i<arrlength; i++){
+                    if(this.application.ninja.timeline.arrLayers[i].layerData.isHidden){
+                        this.application.ninja.timeline.arrLayers[i].layerData.isHidden = false;
+                        this.application.ninja.timeline.arrLayers[i].layerData.stageElement.style.visibility = "visible";
+                        for(var k = 0;k < lockElementArrLength;k++){
+                            if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.stageElement){
+                                this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                                break;
+                            }
+                        }
+                    }
+
+                }
+             this.layerData.stageElement.style.visibility = "hidden";
+             this.application.ninja.currentDocument.lockedElements.push(this.layerData.stageElement);
+
+            } else {
+                this.layerData.stageElement.style.visibility = "visible";
+                for(var k = 0; k < lockElementArrLength; k++){
+                    if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.stageElement){
+                        this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                        break;
+                    }
+                }
+            }
+            this.layerData.isHidden = !this.layerData.isHidden;
+
         }
     },
 

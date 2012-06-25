@@ -244,6 +244,38 @@ exports.ViewUtils = Montage.create(Component, {
         }
     },
 
+    getElementBoundsInGlobal: {
+        value: function (elt) {
+            this.pushViewportObj(elt);
+            var bounds3D = this.getElementViewBounds3D(elt);
+            var tmpMat = this.getLocalToGlobalMatrix(elt);
+
+            var zoomFactor = 1;
+            var stage = this.application.ninja.stage;
+            if (stage._viewport && stage._viewport.style && stage._viewport.style.zoom) {
+                zoomFactor = Number(stage._viewport.style.zoom);
+            }
+
+            var sSL = stage._scrollLeft;
+            var sST = stage._scrollTop;
+
+            for (var j=0;  j<4;  j++) {
+                var localPt = bounds3D[j];
+                var tmpPt = this.localToGlobal2(localPt, tmpMat);
+
+                if(zoomFactor !== 1) {
+                    tmpPt = vecUtils.vecScale(3, tmpPt, zoomFactor);
+
+                    tmpPt[0] += sSL*(zoomFactor - 1);
+                    tmpPt[1] += sST*(zoomFactor - 1);
+                }
+                bounds3D[j] = tmpPt;
+            }
+            this.popViewportObj();
+            return bounds3D;
+        }
+    },
+
     getCenterOfProjection: {
         value: function() {
             var cop;

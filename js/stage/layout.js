@@ -46,6 +46,9 @@ exports.Layout = Montage.create(Component, {
                 return;
             }
 
+            drawUtils._eltArray.length = 0;
+            drawUtils._planesArray.length = 0;
+
             this._currentDocument = value;
 
             if(!value) {

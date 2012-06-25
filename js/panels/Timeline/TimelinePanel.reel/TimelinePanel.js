@@ -776,6 +776,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		this.application.ninja.currentDocument.tlCurrentLayerSelected = false;
     		this.application.ninja.currentDocument.tlCurrentLayersSelected = false;
     		this.application.ninja.currentDocument.tlCurrentElementsSelected = [];
+            this.application.ninja.currentDocument.lockedElements = [];
     		this.application.ninja.currentDocument.tlBreadcrumbHash = [];
     	}
     },
@@ -895,13 +896,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             document.addEventListener("keydown", this.timelineLeftPaneKeydown.bind(this), false);
             document.addEventListener("keyup", this.timelineLeftPaneKeyup.bind(this), false);
             this.eventManager.addEventListener("updatedID", this.handleLayerIdUpdate.bind(this), false);
+			this.checkable_lock.addEventListener("click",this.handleLockLayerClick.bind(this),false);
+            this.checkable_visible.addEventListener("click",this.handleLayerVisibleClick.bind(this),false);
             
-            // Bind some bindings
-            Object.defineBinding(this, "currentSelectedContainer", {
-                boundObject:this.application.ninja,
-                boundObjectPropertyPath:"currentSelectedContainer",
-                oneway:true
-            });
             this.addPropertyChangeListener("currentDocument.model.domContainer", this);
             
 			// Start the panel out in disabled mode by default
@@ -1077,17 +1074,15 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     handleKeyframeShortcut:{
-        value:function(){
-            //console.log(this.currentLayersSelected);
-            //console.log(this.trackRepetition);
+        value:function(action){
             var tempEv = {};
             tempEv.offsetX = this.playheadmarker.offsetLeft;
+            tempEv.actionType = action;
             if (typeof(this.trackRepetition.childComponents[this.currentLayersSelected[0]]) !== "undefined") {
             	this.trackRepetition.childComponents[this.currentLayersSelected[0]].handleKeyboardShortcut(tempEv);
             } else {
             	// oops, we do not have a layer selected.  We should growl at the user.  For now, this will fail silently.
             }
-            
         }
     },
 
@@ -1185,7 +1180,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             for (i = 0; i < arrLayersLength; i++) {
             	if (this.arrLayers[i].layerData.isSelected === true) {
             		if (arrSelectedIndexes.indexOf(i) < 0) {
-
 						this.arrLayers[i].layerData.isSelected = false;
 	            		this.triggerLayerBinding(i);
             		}
@@ -1203,11 +1197,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Loop through arrLayers and do the selection.
             for (i = 0; i < arrLayersLength; i++) {
             	if (arrSelectedIndexes.indexOf(i) > -1) {
-            		this.arrLayers[i].layerData.isSelected = true;
-            		this.arrLayers[i].isSelected = true;
-            		this.triggerLayerBinding(i);
-            		arrSelectedLayers.push(i);
-            		arrCurrentElementsSelected.push(this.arrLayers[i].layerData.stageElement);
+                    if(!this.arrLayers[i].layerData.isLock){
+                        this.arrLayers[i].layerData.isSelected = true;
+                        this.arrLayers[i].isSelected = true;
+                        this.triggerLayerBinding(i);
+                        arrSelectedLayers.push(i);
+                        arrCurrentElementsSelected.push(this.arrLayers[i].layerData.stageElement);
+                    }else{
+                        this.arrLayers[i].layerData.isSelected = false;
+                        this.triggerLayerBinding(i);
+                    }
             	}
             }
 
@@ -1461,6 +1460,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             thingToPush.layerData._isFirstDraw = true;
             thingToPush.layerData.created = true;
             thingToPush.layerData.stageElement = object;
+            thingToPush.layerData.isLock = false;
+            thingToPush.layerData.isHidden = false;
+
 
             if (this.checkable_animated.classList.contains("checked")) {
             	thingToPush.layerData.isVisible = false;
@@ -1776,6 +1778,74 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			event.currentTarget.classList.add("checked");
     		}
     	}
+    },
+
+    handleLockLayerClick:{
+        value:function(event){
+
+           var arrLayersLength = this.arrLayers.length;
+           var lockElementArrLength = this.application.ninja.currentDocument.lockedElements.length;
+           var i = 0;
+
+           if(event.currentTarget.classList.contains("checked")){
+               event.currentTarget.classList.remove("checked");
+               for(i=0;i<arrLayersLength;i++){
+                   this.arrLayers[i].layerData.isLock = false;
+                   this.arrLayers[i].layerData.isSelected = true;
+                   for(var k = 0; k<lockElementArrLength; k++){
+                     if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.stageElement){
+                         this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                         break;
+                     }
+                   }
+
+               }
+           } else {
+               for(i = 0;i < arrLayersLength;i++){
+                   if(!this.arrLayers[i].layerData.isLock){
+                       this.arrLayers[i].layerData.isLock = true;
+                       this.arrLayers[i].layerData.isSelected = false;
+                       this.application.ninja.currentDocument.lockedElements.push(this.arrLayers[i].layerData.stageElement);
+                   }
+                   this.selectLayers([]);
+
+               }
+               event.currentTarget.classList.add("checked");
+           }
+        }
+    },
+
+    handleLayerVisibleClick:{
+        value:function(event){
+           var arrLayersLength = this.arrLayers.length;
+           var lockElementArrLength = this.application.ninja.currentDocument.lockedElements.length;
+           var i = 0;
+
+           if(event.currentTarget.classList.contains("checked")){
+               event.currentTarget.classList.remove("checked");
+               for(i = 0; i < arrLayersLength; i++){
+                   this.arrLayers[i].layerData.isHidden = false;
+                   this.arrLayers[i].layerData.stageElement.style.visibility = "visible";
+                   for(var k=0;k<lockElementArrLength;k++){
+                       if(this.application.ninja.currentDocument.lockedElements[k] === this.application.ninja.timeline.arrLayers[i].layerData.stageElement){
+                           this.application.ninja.currentDocument.lockedElements.splice(k,1);
+                           break;
+                       }
+                   }
+
+               }
+           } else {
+               for(i = 0; i < arrLayersLength; i++){
+                   if(!this.arrLayers[i].layerData.isHidden){
+                       this.arrLayers[i].layerData.isHidden = true;
+                       this.arrLayers[i].layerData.stageElement.style.visibility = "hidden";
+                       this.application.ninja.currentDocument.lockedElements.push(this.arrLayers[i].layerData.stageElement);
+                   }
+
+               }
+               event.currentTarget.classList.add("checked");
+           }
+        }
     },
 
 	// A layer's ID has been updated in the property panel. We need to update
