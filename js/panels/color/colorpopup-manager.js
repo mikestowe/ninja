@@ -544,6 +544,12 @@ exports.ColorPopupManager = Montage.create(Component, {
 	        			hsv = this.colorManager.rgbToHsv(color.r, color.g, color.b);
 	        		}
 	        		//
+	        		if (color && color.a && !e._target.base.props.panel) {
+		        		e._target.base._components.combo.slider.value = color.a*100;
+	        		} else if (!e._target.base.props.panel){
+		        		e._target.base._components.combo.slider.value = 100;
+	        		}
+	        		//
 	        		if (hsv) {
 		        		hsv.wasSetByCode = false;
 	        			hsv.type = 'change';
@@ -567,6 +573,8 @@ exports.ColorPopupManager = Montage.create(Component, {
 	    			if (e._event.gradient && !e._event.wasSetByCode) {
 	    				//
 		    			this._popupChipBtn.color('gradient', e._event.gradient);
+	    			} else if (!isNaN(e._target._xStart) && !e._event.wasSetByCode) {
+	    				this.colorChipChange(e);
 	    			}
     			}
     			return;
@@ -600,6 +608,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     //
     handleChanging: {
     	value: function (e) {
+    		if (!this._popupBase || !this._popupBase.opened) return;
     		if (e._event.hsv) {
     			//
     			if(e._target._colorBarCanvas && this.colorManager.input !== 'chip') {
