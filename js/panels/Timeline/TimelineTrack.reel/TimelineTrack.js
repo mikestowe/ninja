@@ -709,15 +709,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     this.updateKeyframeRule();
                 } else {
                     this.handleNewTween(ev);
-
-                    // Split a tween!
-                    //this.splitTweenAt(this.application.ninja.timeline.playheadmarker.offsetLeft);
                     this.updateKeyframeRule();
                 }
             } else if(ev.actionType == "remove"){
                 this.removeTween();
+                this.updateKeyframeRule();
             }
-
         }
     },
 
@@ -799,8 +796,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
                 this.createMatchingPositionSizeTween(newTween);
             }
-
-
 
             this.application.ninja.currentDocument.model.needsSave = true;
         }
@@ -995,6 +990,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             	newTween.tweenData.easing = "none";
                             }
                             this.tweens.push(newTween);
+                            this.createMatchingPositionSizeTween(newTween);
                         }
                         this.nextKeyframe += 1;
                     }
@@ -1022,8 +1018,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function(ruleSet){
             for(var i in ruleSet){
                 var styleProp = ruleSet[i][0].style[0];
-                //console.log(styleProp);
-                //console.log(ruleSet[i]);
                 this.application.ninja.timeline.layerRepetition.childComponents[0].addStyle(styleProp, ruleSet[i]);
             }
         }
