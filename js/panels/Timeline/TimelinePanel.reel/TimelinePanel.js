@@ -1401,12 +1401,20 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
 	timelineLeftPaneKeydown: {
 		value: function(event) {
+			var ua = navigator.userAgent.toLowerCase(),
+				boolIsMac = false;
+			if (ua.indexOf("mac") > -1) {
+				boolIsMac = true;
+			}
 			if (event.keyCode === 16) {
 				// Shift key has been pressed
 				this._isShiftPressed = true;
 			}
-			if (event.keyCode === 17) {
+			if ((event.keyCode === 17) && !boolIsMac) {
 				// Control key has been pressed
+				this._isControlPressed = true;
+			}
+			if (event.metaKey === true) {
 				this._isControlPressed = true;
 			}
 		}
@@ -1414,12 +1422,20 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     
 	timelineLeftPaneKeyup: {
 		value: function(event) {
+			var ua = navigator.userAgent.toLowerCase(),
+				boolIsMac = false;
+			if (ua.indexOf("mac") > -1) {
+				boolIsMac = true;
+			}
 			if (event.keyCode === 16) {
 				// Shift key has been released
 				this._isShiftPressed = false;
 			}
-			if (event.keyCode === 17) {
+			if ((event.keyCode === 17) && !boolIsMac) {
 				// Control key has been released
+				this._isControlPressed = false;
+			}
+			if (event.metaKey === false) {
 				this._isControlPressed = false;
 			}
 		}
