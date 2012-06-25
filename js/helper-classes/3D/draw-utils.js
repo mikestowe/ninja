@@ -73,6 +73,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
     // Properties that require element planes to be updated
 	_updatePlaneProps : {value: ["matrix", "left", "top", "width", "height"], writable: false },
+	_recalculateScrollOffsets : { value: false },
 
 	///////////////////////////////////////////////////////////////////////
 	// Property accessors
@@ -117,7 +118,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 	},
 
     initializeFromDocument:{
-        value:function(adjustScrollOffsets){
+        value:function(adjustScrollOffsets, useStageValues){
             var i,
                 documentRootChildren = this.application.ninja.currentDocument.model.views.design.getLiveNodeList(true),
                 stage = this.application.ninja.stage,
@@ -141,6 +142,13 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                     t,
                     plane,
                     elt;
+                if(useStageValues) {
+                    initL = stage.userPaddingLeft;
+                    initT = stage.userPaddingTop;
+                    minLeft = stage.templateLeft;
+                    minTop = stage.templateTop;
+                    this._recalculateScrollOffsets = false;
+                }
                 for(i=0; i<len; i++) {
                     elt = documentRootChildren[i];
                     plane = this.addElement(elt);
@@ -149,17 +157,19 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                         t = plane._rect.m_top - docTop;
                         if(l < minLeft) {
                             minLeft = l;
+                            stage.minLeftElement = elt;
                         }
                         if(t < minTop) {
                             minTop = t;
+                            stage.minTopElement = elt;
                         }
                     }
                 }
                 if(minLeft !== initL) {
-                    stage.userPaddingLeft = minLeft;
+                    stage.userPaddingLeft = (minLeft < 0) ? minLeft : 0;
                 }
                 if(minTop !== initT) {
-                    stage.userPaddingTop = minTop;
+                    stage.userPaddingTop = (minTop < 0) ? minTop : 0;
                 }
             }
         }
@@ -274,9 +284,11 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                     t,
                     plane,
                     changed = false,
+                    elt,
                     adjustStagePadding = !isChanging || (event.detail.data.prop !== "matrix");
                 for(var i=0; i < len; i++) {
-                    plane = els[i].elementModel.props3D.elementPlane;
+                    elt = els[i];
+                    plane = elt.elementModel.props3D.elementPlane;
                     if(plane) {
                         plane.init();
                         if(adjustStagePadding) {
@@ -284,22 +296,34 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                             t = plane._rect.m_top - docTop;
                             if(l < minLeft) {
                                 minLeft = l;
+                                stage.minLeftElement = elt;
+                            } else if((elt === stage.minLeftElement) && (l > minLeft)) {
+                                this._recalculateScrollOffsets = true;
                             }
+
                             if(t < minTop) {
                                 minTop = t;
+                                stage.minTopElement = elt;
+                            } else if((elt === stage.minTopElement) && (t > minTop)) {
+                                this._recalculateScrollOffsets = true;
                             }
                         }
                     }
                 }
 
                 if(adjustStagePadding) {
-                    if(minLeft !== stage.userPaddingLeft) {
-                        stage.userPaddingLeft = minLeft;
+                    if(this._recalculateScrollOffsets && !isChanging) {
+                        this.initializeFromDocument(true, true);
                         changed = true;
-                    }
-                    if(minTop !== stage.userPaddingTop) {
-                        stage.userPaddingTop = minTop;
-                        changed = true;
+                    } else {
+                        if(minLeft !== stage.userPaddingLeft) {
+                            stage.userPaddingLeft = minLeft;
+                            changed = true;
+                        }
+                        if(minTop !== stage.userPaddingTop) {
+                            stage.userPaddingTop = minTop;
+                            changed = true;
+                        }
                     }
                 }
 
