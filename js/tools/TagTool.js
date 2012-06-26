@@ -81,7 +81,7 @@ exports.TagTool = Montage.create(DrawingTool, {
     // TODO: Add position support
     insertElement: {
         value: function(drawData) {
-            var element, styles;
+            var element, styles, color;
 
             // Create the element
             if(this.options.selectedElement === "custom") {
@@ -95,8 +95,15 @@ exports.TagTool = Montage.create(DrawingTool, {
             styles = document.application.njUtils.stylesFromDraw(element, ~~drawData.width, ~~drawData.height, drawData);
 
             // Add color
-            if(this.options.getProperty("fill.colorMode") !== "nocolor") {
-                styles['background-color'] = this.options.getProperty("fill.color.css");
+            color = this.options.fill;
+            switch(color.colorMode) {
+                case "nocolor":
+                    break;
+                case "gradient":
+                    styles['background-image'] = color.color.css;
+                    break;
+                default:
+                    styles['background-color'] = color.color.css;
             }
 
             // Add the element and styles
