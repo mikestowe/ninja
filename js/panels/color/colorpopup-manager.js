@@ -569,6 +569,7 @@ exports.ColorPopupManager = Montage.create(Component, {
 	        		}
 	        		//
 	        		if (color && color.a && !e._target.base.props.panel) {
+	        			e._target.base.colorManager.alpha = color.a;
 		        		e._target.base._components.combo.slider.value = color.a*100;
 	        		} else if (!e._target.base.props.panel){
 		        		e._target.base._components.combo.slider.value = 100;
