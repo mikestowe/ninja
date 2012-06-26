@@ -22,8 +22,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     function insert(str) {
       editor.replaceRange(str, result.from, result.to);
     }
-    // Ninja override: don't autocomplete to reduce user's typing errors
-//    if (completions.length == 1) {insert(completions[0]); return true;}
+      
+    if (completions.length == 1) {insert(completions[0]); return true;}
 
     // Build the select widget
     var complete = document.createElement("div");

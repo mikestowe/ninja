@@ -32,7 +32,7 @@ exports.CodeEditorController = Montage.create(Component, {
             if(!value) {
 
             } else if(this._currentDocument.currentView === "code") {
-                this.autocomplete = !this.codeCompletionSupport[this._currentDocument.model.file.extension];
+                this.autocomplete = this.codeCompletionSupport[this._currentDocument.model.file.extension];
                 this._currentDocument.model.views.code.editor.focus();
                 this.applySettings();
             }
@@ -132,6 +132,9 @@ exports.CodeEditorController = Montage.create(Component, {
                            };
 
             //configure auto code completion if it is supported for that document type
+
+            this.autocomplete = this.codeCompletionSupport[documentType];
+
             if(this.autocomplete) {
 
                 editorOptions.onKeyEvent = function(cm, keyEvent){

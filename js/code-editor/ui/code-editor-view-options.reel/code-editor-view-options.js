@@ -121,6 +121,12 @@ exports.CodeEditorViewOptions = Montage.create(Component, {
               oneway : false
             });
 
+            Object.defineBinding(this.codeCompleteCheck , "checked", {
+              boundObject: this.application.ninja.codeEditorController,
+              boundObjectPropertyPath: "automaticCodeComplete",
+              oneway : false
+            });
+
         }
     },
 
@@ -137,6 +143,8 @@ exports.CodeEditorViewOptions = Montage.create(Component, {
             } else {
                 this.autoCompleteLabel.classList.remove("disabled");
             }
+
+            this.codeCompleteCheck.checked = false;
         }
     },
 
