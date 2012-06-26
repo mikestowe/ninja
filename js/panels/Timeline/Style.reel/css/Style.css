@@ -73,5 +73,6 @@ div.style-row .container-propvals {
   background-color: #b2b2b2;
   color: #242424; }
 
-.color-chip-position {
-  margin-top: 0px; }
+.toolColorChipCtrl.color-chip-position {
+  margin-top: 0px;
+  height: 14px; }
