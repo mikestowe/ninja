@@ -258,7 +258,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     			cvs = this._popupChipBtn.getElementsByTagName('canvas')[0],
     			rgb = this._popupChipBase.colorManager.rgb,
 				hsl = this._popupChipBase.colorManager.hsl,
-				alpha = this._popupChipBase.colorManager.alpha.value;
+				alpha = this._popupChipBase.colorManager.alpha.value || this._popupChipBase.colorManager.alpha;
     		//
     		if (cvs) {
 	    		ctx = cvs.getContext('2d');
@@ -284,9 +284,17 @@ exports.ColorPopupManager = Montage.create(Component, {
 			}
     		//
     		if (rgb) {
-    			this._popupChipBtn.color('rgb', {r: rgb.r, g: rgb.g, b: rgb.b, a: alpha, css: 'rgba('+rgb.r+', '+rgb.g+', '+rgb.b+', '+alpha+')'});
+    			if (alpha) {
+    				this._popupChipBtn.color('rgb', {r: rgb.r, g: rgb.g, b: rgb.b, a: alpha, css: 'rgba('+rgb.r+', '+rgb.g+', '+rgb.b+', '+alpha+')'});
+    			} else {
+	    			this._popupChipBtn.color('rgb', {r: rgb.r, g: rgb.g, b: rgb.b, a: 1, css: 'rgba('+rgb.r+', '+rgb.g+', '+rgb.b+', 1)'});
+    			}
     		} else {
-	    		this._popupChipBtn.color('rgb', {r: 255, g: 255, b: 255, a: alpha, css: 'rgba(255, 255, 255, '+alpha+')'});
+    			if (alpha) {
+		    		this._popupChipBtn.color('rgb', {r: 255, g: 255, b: 255, a: alpha, css: 'rgba(255, 255, 255, '+alpha+')'});
+		    	} else {
+			    	this._popupChipBtn.color('rgb', {r: 255, g: 255, b: 255, a: 1, css: 'rgba(255, 255, 255, 1)'});
+		    	}
     		}
     	}
     },
@@ -301,7 +309,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     			cvs = this._popupGradientChipBtn.getElementsByTagName('canvas')[0],
     			rgb = this._popupGradientChipBase.colorManager.rgb,
 				hsl = this._popupGradientChipBase.colorManager.hsl,
-				alpha = this._popupGradientChipBase.colorManager.alpha.value;
+				alpha = this._popupGradientChipBase.colorManager.alpha.value || this._popupGradientChipBase.colorManager.alpha;
     		//
     		if (cvs) {
 	    		ctx = cvs.getContext('2d');
@@ -327,9 +335,17 @@ exports.ColorPopupManager = Montage.create(Component, {
 			}
     		//
     		if (rgb) {
-    			this._popupGradientChipBtn.color('rgb', {r: rgb.r, g: rgb.g, b: rgb.b, a: alpha, css: 'rgba('+rgb.r+', '+rgb.g+', '+rgb.b+', '+alpha+')'});
+    			if (alpha) {
+    				this._popupGradientChipBtn.color('rgb', {r: rgb.r, g: rgb.g, b: rgb.b, a: alpha, css: 'rgba('+rgb.r+', '+rgb.g+', '+rgb.b+', '+alpha+')'});
+    			} else {
+	    			this._popupGradientChipBtn.color('rgb', {r: rgb.r, g: rgb.g, b: rgb.b, a: 1, css: 'rgba('+rgb.r+', '+rgb.g+', '+rgb.b+', 1)'});
+    			}
     		} else {
-	    		this._popupGradientChipBtn.color('rgb', {r: 255, g: 255, b: 255, a: alpha, css: 'rgba(255, 255, 255, '+alpha+')'});
+    			if (alpha) {
+		    		this._popupGradientChipBtn.color('rgb', {r: 255, g: 255, b: 255, a: alpha, css: 'rgba(255, 255, 255, '+alpha+')'});
+		    	} else {
+			    	this._popupGradientChipBtn.color('rgb', {r: 255, g: 255, b: 255, a: 1, css: 'rgba(255, 255, 255, 1)'});
+		    	}
     		}
     	}
     },
