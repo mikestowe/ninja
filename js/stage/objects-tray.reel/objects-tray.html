@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="objects-tray.css">
+
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype": "js/stage/objects-tray.reel",
+                "properties": {
+                    "element": {"#": "objects-tray"},
+                    "iconsRepetition": {"@": "repetition" },
+                    "offStageObjectsController": {"@": "arrayController"}
+                }
+            },
+            "repetition" : {
+                "prototype": "montage/ui/repetition.reel",
+                "properties": {
+                    "element": {"#": "list"},
+                    "contentController": {"@": "arrayController"}
+                }
+            },
+            "arrayController": {
+                "prototype": "montage/ui/controller/array-controller",
+                "bindings": {
+                    "content": {"<-": "@owner.objects"}
+                }
+            },
+            "objectComponent": {
+                "prototype": "js/panels/objects/object.reel",
+                "properties": {
+                    "element": {"#": "list-item"}
+                },
+                "bindings": {
+                    "sourceObject" : {"<-": "@repetition.objectAtCurrentIteration"},
+                    "identifier" : {"<-": "@repetition.objectAtCurrentIteration.identifier"}
+                },
+                "listeners": [
+                    {
+                        "type": "click",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            }
+
+        }
+    </script>
+
+</head>
+<body>
+
+
+<section data-montage-id="objects-tray" class="objects-tray">
+    <ul data-montage-id="list" class="objects-list">
+        <li data-montage-id="list-item" class="list-item"></li>
+    </ul>
+</section>
+
+</body>
+</html>
