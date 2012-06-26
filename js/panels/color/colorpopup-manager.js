@@ -502,10 +502,12 @@ exports.ColorPopupManager = Montage.create(Component, {
     		if (this._popupGradientChipBase && this._popupGradientChipBase.opened) {
     			//
     			this._popupGradientChipBase.popup.removeEventListener('didDraw', this, false);
-    			//Making sure to return color manager to either stroke or fill (might be a Hack for now)
-    			if (this.colorManager.input !== 'stroke' && this.colorManager.input !== 'fill' && this.application.ninja.colorController.colorView.previousInput) {
+    			//TODO: Add correct input setback
+    			/*
+if (this.colorManager.input !== 'stroke' && this.colorManager.input !== 'fill' && this.application.ninja.colorController.colorView.previousInput) {
     				this.colorManager.input = this.application.ninja.colorController.colorView.previousInput;
     			}
+*/
     			//
                 this.application.ninja.popupManager.removePopup(this._popupGradientChipBase.popup.element);
 	    		this._popupGradientChipBase.opened = false;

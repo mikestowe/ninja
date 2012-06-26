@@ -295,6 +295,8 @@ exports.ColorPanelPopup = Montage.create(Component, {
     		}
     		//
     		if (!this.isPopupChip) this.application.ninja.colorController.colorPopupManager.hideColorChipPopup();
+    		//
+    		this.application.ninja.colorController.colorPopupManager.hideGradientChipPopup();
     	}
     },
     ////////////////////////////////////////////////////////////////////
