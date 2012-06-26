@@ -683,9 +683,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             // This needs to move to a keyboard shortcut that is TBD
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
 
-            this.application.ninja.timeline.playheadmarker.style.left = ev.offsetX + "px";
+            var targetElementOffset = this.findXOffset(ev.currentTarget),
+            	position = (event.pageX - targetElementOffset) - 18;
+
+            this.application.ninja.timeline.playheadmarker.style.left = position + "px";
             var currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
-            var currentMillisec = currentMillisecPerPixel * ev.offsetX;
+            var currentMillisec = currentMillisecPerPixel * position;
             this.application.ninja.timeline.updateTimeText(currentMillisec);
 
             if (ev.shiftKey) {
@@ -733,23 +736,25 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             } else {
             	// We will be splitting a tween.  Get the x-coordinate of the mouse click within the target element.
             	// You'd think you could use the event.x info for that, right? NO. We must use page values, calculating offsets and scrolling.
-
-            	// Here's an easy function that adds up offsets and scrolls and returns the page x value of an element
-				var findXOffset = function(obj) {
-					var curleft = 0;
-					if (obj.offsetParent) {
-						do {
-								curleft += (obj.offsetLeft-obj.scrollLeft);
-					
-							} while (obj = obj.offsetParent);
-					}
-					return curleft;
-				}
-				var targetElementOffset = findXOffset(ev.currentTarget),
+				var targetElementOffset = this.findXOffset(ev.currentTarget),
 					position = event.pageX - targetElementOffset;
 
                 this.splitTweenAt(position-18);
             }
+        }
+    },
+
+    findXOffset:{
+        value:function (obj) {
+            // Here's an easy function that adds up offsets and scrolls and returns the page x value of an element
+            var curleft = 0;
+            if (obj.offsetParent) {
+                do {
+                    curleft += (obj.offsetLeft - obj.scrollLeft);
+
+                } while (obj = obj.offsetParent);
+            }
+            return curleft;
         }
     },
 
