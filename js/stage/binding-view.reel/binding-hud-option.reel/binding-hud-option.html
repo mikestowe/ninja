@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="binding-hud-option.css">
+
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype": "js/stage/binding-view.reel/binding-hud-option.reel",
+                "properties": {
+                    "element": {"#": "hudOption"}
+                }
+            },
+            "label": {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#": "hudLabel"}
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.title"}
+                }
+            }
+        }
+    </script>
+
+</head>
+<body>
+    <div data-montage-id="hudOption" class="hudOption">
+        <label data-montage-id="hudLabel" class="hudLabel">Label</label>
+        <div class="connectorBubble"></div>
+    </div>
+</body>
+</html>
