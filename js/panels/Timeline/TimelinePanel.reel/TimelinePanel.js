@@ -869,12 +869,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			this.checkable_lock.addEventListener("click",this.handleLockLayerClick.bind(this),false);
             this.checkable_visible.addEventListener("click",this.handleLayerVisibleClick.bind(this),false);
             
-            // Bind some bindings
-            Object.defineBinding(this, "currentSelectedContainer", {
-                boundObject:this.application.ninja,
-                boundObjectPropertyPath:"currentSelectedContainer",
-                oneway:true
-            });
             this.addPropertyChangeListener("currentDocument.model.domContainer", this);
             
 			// Start the panel out in disabled mode by default
@@ -1034,17 +1028,15 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     handleKeyframeShortcut:{
-        value:function(){
-            //console.log(this.currentLayersSelected);
-            //console.log(this.trackRepetition);
+        value:function(action){
             var tempEv = {};
             tempEv.offsetX = this.playheadmarker.offsetLeft;
+            tempEv.actionType = action;
             if (typeof(this.trackRepetition.childComponents[this.currentLayersSelected[0]]) !== "undefined") {
             	this.trackRepetition.childComponents[this.currentLayersSelected[0]].handleKeyboardShortcut(tempEv);
             } else {
             	// oops, we do not have a layer selected.  We should growl at the user.  For now, this will fail silently.
             }
-            
         }
     },
 

@@ -19,6 +19,7 @@ exports.Stage = Montage.create(Component, {
     // TODO - Need to figure out how to remove this dependency
     // Needed by some tools that depend on selectionDrawn event to set up some logic
     drawNow: { value : false },
+    switchedFromCodeDoc: { value : false },
 
     // TO REVIEW
     zoomFactor: {value : 1 },
@@ -256,6 +257,8 @@ exports.Stage = Montage.create(Component, {
 
                 //call configure false with the old document on the selected tool to tear down down any temp. stuff
                 this.application.ninja.toolsData.selectedToolInstance._configure(false);
+            } else if(this.currentDocument && (this.currentDocument.currentView === "code")) {
+                this.switchedFromCodeDoc = true;   // Switching from code document affects stage's size and scrollbar
             }
 
             this._currentDocument = value;
@@ -266,7 +269,8 @@ exports.Stage = Montage.create(Component, {
                 drawUtils._eltArray.length = 0;
                 drawUtils._planesArray.length = 0;
             } else if(this._currentDocument.currentView === "design") {
-                this.restoreAllPanels();
+                this.restoreAllPanels(this.switchedFromCodeDoc);
+                this.switchedFromCodeDoc = false;
                 this.hideCanvas(false);
                 this.showRulers();
 
@@ -1271,11 +1275,11 @@ exports.Stage = Montage.create(Component, {
         }
     },
     restoreAllPanels:{
-        value:function(){
-            this.application.ninja.panelSplitter.restore();
-            this.application.ninja.timelineSplitter.restore();
-            this.application.ninja.toolsSplitter.restore();
-            this.application.ninja.optionsSplitter.restore();
+        value:function(onSwitchDocument){
+            this.application.ninja.panelSplitter.restore(onSwitchDocument);
+            this.application.ninja.timelineSplitter.restore(onSwitchDocument);
+            this.application.ninja.toolsSplitter.restore(onSwitchDocument);
+            this.application.ninja.optionsSplitter.restore(onSwitchDocument);
         }
     },
 
