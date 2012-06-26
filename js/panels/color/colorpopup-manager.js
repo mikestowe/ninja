@@ -605,6 +605,7 @@ exports.ColorPopupManager = Montage.create(Component, {
 	    			if (e._event.gradient && !e._event.wasSetByCode) {
 	    				//
 		    			this._popupChipBtn.color('gradient', e._event.gradient);
+		    			this._popupChipBase._components.hex.value = null;
 	    			} else if (!isNaN(e._target._xStart) && !e._event.wasSetByCode) {
 	    				this.colorChipChange(e);
 	    			}
@@ -617,6 +618,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     			} else if (!this._popupBase || (this._popupBase && !this._popupBase.opened)){
 	    			if (e._event.gradient && !e._event.wasSetByCode) {
 			    		this._popupChipBtn.color('gradient', e._event.gradient);
+			    		this._popupChipBase._components.hex.value = null;
 			    	} else if (!isNaN(e._target._xStart) && !e._event.wasSetByCode) {
     					this.colorGradientChipChange(e);
     				}

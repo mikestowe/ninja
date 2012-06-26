@@ -482,12 +482,14 @@ exports.ColorPanelBase = Montage.create(Component, {
                             this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
                             if (m === 'gradient') {
                             	this.style.backgroundImage = c.css;
+                            	this.style.backgroundColor = 'transparent';
                             } else {
 	                            this.style.backgroundColor = c.css;
+	                            this.style.backgroundImage = 'none';
                             }
                         } else {
                             this.drawNoColor(this, this.cvs);
-                        }9
+                        }
                         this.colorValue = c;
                         this.colorMode = m;
                         this.otherInput = false;
