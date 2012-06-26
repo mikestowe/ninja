@@ -969,6 +969,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             newTween.tweenData.tweenID = 0;
                             newTween.tweenData.spanPosition = 0;
                             this.tweens.push(newTween);
+                            this.createMatchingPositionSizeTween(newTween);
                         }
                         else {
                             tempTiming = trackTiming.split("s");

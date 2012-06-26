@@ -316,7 +316,9 @@ var Tween = exports.Tween = Montage.create(Component, {
             if(this.parentComponent.parentComponent.isSubproperty){
                 // set property specific style on element
                 var currentValue = this.tweenedProperties[this.parentComponent.parentComponent.trackEditorProperty];
-                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], this.parentComponent.parentComponent.trackEditorProperty, [currentValue], "Change", "tween");
+                var el = this.parentComponent.parentComponent.animatedElement;
+                var prop = this.parentComponent.parentComponent.trackEditorProperty;
+                this.application.ninja.elementMediator.setProperty([el], prop, [currentValue], "Change", "tween");
             } else {
                 // move animated element to correct position on stage
                 var currentTop = this.tweenedProperties["top"];
