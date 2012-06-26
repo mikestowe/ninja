@@ -27,6 +27,9 @@ exports.Stage = Montage.create(Component, {
     _canvasSelectionPrefs:  { value: { "thickness" : 1.0, "color" : "#46a1ff" } },
     _canvasDrawingPrefs:    { value: { "thickness" : 1.0, "color" : "#000" } },
     drawingContextPreferences: { get: function() { return this._canvasDrawingPrefs; } },
+    bindingView: {
+        value: null
+    },
 
     _iframeContainer: {
         value: null,
@@ -320,9 +323,8 @@ exports.Stage = Montage.create(Component, {
         value: function() {
             if(this.resizeCanvases) {
                 // TODO GET THE SCROLL SIZE FROM THE CSS -- 11 px
-                this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this._gridCanvas.width = this.element.offsetWidth - 11 ;
-                this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this._gridCanvas.height = this.element.offsetHeight - 11;// - 26 - 26;
-
+                this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this._gridCanvas.width = this.bindingView.width = this.element.offsetWidth - 11;
+                this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this._gridCanvas.height =  this.bindingView.height = this.element.offsetHeight - 11;// - 26 - 26;
                 // Hack for now until a full component
                 this.layout.draw();
                 if(this.currentDocument && (this.currentDocument.currentView === "design")) {
@@ -407,8 +409,8 @@ exports.Stage = Montage.create(Component, {
             }
 
             // Recalculate the canvas sizes because of splitter resizing
-            this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this._gridCanvas.width = this.element.offsetWidth - 11 ;
-            this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this._gridCanvas.height = this.element.offsetHeight - 11;
+            this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this._gridCanvas.width = this.bindingView.width = this.element.offsetWidth - 11 ;
+            this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this._gridCanvas.height = this.bindingView.height = this.element.offsetHeight - 11;
 
             designView.iframe.contentWindow.addEventListener("scroll", this, false);
 

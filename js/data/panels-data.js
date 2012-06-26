@@ -12,6 +12,7 @@ exports.PanelsData = Montage.create(Montage, {
         value: [
         {
             name: "Color",
+            groups: ["default"],
             height: 200,
             minHeight: 200,
             maxHeight: null,
@@ -24,6 +25,7 @@ exports.PanelsData = Montage.create(Montage, {
         },
         {
             name: "Properties",
+            groups: ["default", "ws-binding"],
             minHeight: 200,
             height: 200,
             maxHeight: null,
@@ -36,6 +38,7 @@ exports.PanelsData = Montage.create(Montage, {
         },
         {
             name: "Materials",
+            groups: ["default"],
             minHeight: 100,
             height: 100,
             maxHeight: null,
@@ -48,6 +51,7 @@ exports.PanelsData = Montage.create(Montage, {
         },
         {
             name: "Components",
+            groups: ["default", "ws-binding"],
             minHeight: 100,
             height: 200,
             maxHeight: null,
@@ -72,8 +76,9 @@ exports.PanelsData = Montage.create(Montage, {
 //        },
         {
             name: "CSS",
-            height: 200,
-            minHeight: 200,
+            groups: ["default"],
+            minHeight: 195,
+            height: 195,
             maxHeight: null,
             flexible: true,
             scrollable: false,
@@ -84,6 +89,7 @@ exports.PanelsData = Montage.create(Montage, {
         },
         {
             name: "Presets",
+            groups: ["default"],
             minHeight: 100,
             height: 100,
             maxHeight: null,
@@ -96,6 +102,7 @@ exports.PanelsData = Montage.create(Montage, {
         },
         {
             name: "History",
+            groups: ["default"],
             minHeight: 100,
             height: 100,
             maxHeight: null,
@@ -105,7 +112,34 @@ exports.PanelsData = Montage.create(Montage, {
             open: true,
             modulePath: "js/panels/history-panel/history.reel",
             moduleName: "History"
+        },
+        {
+            name: "Binding",
+            groups: ["ws-binding"],
+            minHeight: 100,
+            height: 100,
+            maxHeight: null,
+            flexible: true,
+            collapsed: true,
+            scrollable: true,
+            open: true,
+            modulePath: "js/panels/binding-panel.reel",
+            moduleName: "BindingPanel"
         }
+//            ,
+//        {
+//            name: "Objects",
+//            groups: ["ws-binding"],
+//            minHeight: 100,
+//            height: 100,
+//            maxHeight: null,
+//            flexible: true,
+//            collapsed: true,
+//            scrollable: true,
+//            open: true,
+//            modulePath: "js/panels/objects/objects-panel.reel",
+//            moduleName: "ObjectsPanel"
+//        }
     ]
     }
 
