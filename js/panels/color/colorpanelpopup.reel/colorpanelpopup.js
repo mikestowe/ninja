@@ -60,7 +60,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     	value: function () {
     		//
     		this._components = null;
-    		this._components = {wheel: null, combo: null, gradient: null};
+    		this._components = {wheel: null, combo: null, gradient: null, hex: null};
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -153,7 +153,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
 	    		this.btnGradient.style.display = 'none';
     		}
     		//
-	    	this.application.ninja.colorController.colorView.addButton('hexinput', this.inputHex, this.colorManager);
+	    	this._components.hex = this.application.ninja.colorController.colorView.addButton('hexinput', this.inputHex, this.colorManager);
 	       	//
 	       	this._components.combo.slider.needsDraw = true;
 	       	this._components.combo.hottext.needsDraw = true;

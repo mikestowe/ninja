@@ -259,6 +259,8 @@ exports.ColorPopupManager = Montage.create(Component, {
     			rgb = this._popupChipBase.colorManager.rgb,
 				hsl = this._popupChipBase.colorManager.hsl,
 				alpha = this._popupChipBase.colorManager.alpha.value || this._popupChipBase.colorManager.alpha;
+			//
+			this._popupChipBase._components.hex.value = this._popupChipBase.colorManager.hex;
     		//
     		if (cvs) {
 	    		ctx = cvs.getContext('2d');
@@ -310,6 +312,8 @@ exports.ColorPopupManager = Montage.create(Component, {
     			rgb = this._popupGradientChipBase.colorManager.rgb,
 				hsl = this._popupGradientChipBase.colorManager.hsl,
 				alpha = this._popupGradientChipBase.colorManager.alpha.value || this._popupGradientChipBase.colorManager.alpha;
+			//
+			this._popupGradientChipBase._components.hex.value = this._popupGradientChipBase.colorManager.hex;
     		//
     		if (cvs) {
 	    		ctx = cvs.getContext('2d');
