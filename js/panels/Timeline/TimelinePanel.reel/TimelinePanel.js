@@ -243,6 +243,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     	value: false
     },
     
+    _areTracksCollapsing: {
+    	value: false
+    },
+    
     _currentOpenSpanMenu: {
     	value: false
     },
@@ -687,6 +691,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			// We have shuffled layers, so we need to update this.selectedLayers.
     			this.selectLayers([])
     		}
+
+    		// Do we need to scroll the layers?
+    		if (this._areTracksCollapsing !== false) {
+    			//console.log("diddraw: user_layers, layout_tracks", this.user_layers.scrollTop, this.layout_tracks.scrollTop);
+	            //this.layout_tracks.scrollTop = this.user_layers.scrollTop;\
+	            this.layout_tracks.scrollTop = this._areTracksCollapsing;
+    			this._areTracksCollapsing = false;
+    		}
     	}
     },
 
@@ -1097,11 +1109,25 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.drawTimeMarkers();
         }
     },
+    
+    synchScrollbars: {
+    	value: function(intScrollBy) {
+    		//this.updateLayerScroll();
+    		//this.user_layers.scrollTop = 0;
+    		//this.layout_tracks.scrollTop = this.user_layers.scrollTop;
+    		//console.log("synch: user_layers, layout_tracks", this.user_layers.scrollTop, this.layout_tracks.scrollTop);
+    		this._areTracksCollapsing = this.layout_tracks.scrollTop - intScrollBy;
+    		this.needsDraw = true;
+
+    	}
+    },
 
     updateLayerScroll:{
         value:function () {
+        	//console.log("TimelinePanel.updateLayerScroll")
         	this._areTracksScrolling = true;
         	this.needsDraw = true;
+        	
         }
     },
 

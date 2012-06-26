@@ -945,12 +945,14 @@ var Layer = exports.Layer = Montage.create(Component, {
 				this.isMainCollapsed = false;
 			} else {
 				this.isMainCollapsed = true;
+				this.application.ninja.timeline.synchScrollbars(43);
 			}
 			this.triggerOutgoingBinding();
 		}
 	},
 	handlePositionCollapserClick : {
 		value: function(event) {
+			var myHeight = this.positionCollapser.element.offsetHeight;
 			this.positionCollapser.bypassAnimation = false;
 			this.bypassAnimation = false;
 			this.layerData.bypassAnimation = false;
@@ -958,12 +960,14 @@ var Layer = exports.Layer = Montage.create(Component, {
 				this.isPositionCollapsed = false;
 			} else {
 				this.isPositionCollapsed = true;
+				this.application.ninja.timeline.synchScrollbars(myHeight);
 			}
 			this.triggerOutgoingBinding();
 		}
 	},
 	handleStyleCollapserClick : {
 		value: function(event) {
+			var myHeight = this.styleCollapser.element.offsetHeight;
 			this.styleCollapser.bypassAnimation = false;
 			this.bypassAnimation = false;
 			this.layerData.bypassAnimation = false;
@@ -971,6 +975,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 				this.isStyleCollapsed = false;
 			} else {
 				this.isStyleCollapsed = true;
+				this.application.ninja.timeline.synchScrollbars(myHeight);
 			}
 			this.triggerOutgoingBinding();
 		}
