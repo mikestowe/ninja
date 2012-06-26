@@ -73,6 +73,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
     // Properties that require element planes to be updated
 	_updatePlaneProps : {value: ["matrix", "left", "top", "width", "height"], writable: false },
+	_recalculateScrollOffsets : { value: false },
 
 	///////////////////////////////////////////////////////////////////////
 	// Property accessors
@@ -117,7 +118,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 	},
 
     initializeFromDocument:{
-        value:function(adjustScrollOffsets){
+        value:function(adjustScrollOffsets, useStageValues){
             var i,
                 documentRootChildren = this.application.ninja.currentDocument.model.views.design.getLiveNodeList(true),
                 stage = this.application.ninja.stage,
@@ -141,6 +142,13 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                     t,
                     plane,
                     elt;
+                if(useStageValues) {
+                    initL = stage.userPaddingLeft;
+                    initT = stage.userPaddingTop;
+                    minLeft = stage.templateLeft;
+                    minTop = stage.templateTop;
+                    this._recalculateScrollOffsets = false;
+                }
                 for(i=0; i<len; i++) {
                     elt = documentRootChildren[i];
                     plane = this.addElement(elt);
@@ -149,17 +157,19 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                         t = plane._rect.m_top - docTop;
                         if(l < minLeft) {
                             minLeft = l;
+                            stage.minLeftElement = elt;
                         }
                         if(t < minTop) {
                             minTop = t;
+                            stage.minTopElement = elt;
                         }
                     }
                 }
                 if(minLeft !== initL) {
-                    stage.userPaddingLeft = minLeft;
+                    stage.userPaddingLeft = (minLeft < 0) ? minLeft : 0;
                 }
                 if(minTop !== initT) {
-                    stage.userPaddingTop = minTop;
+                    stage.userPaddingTop = (minTop < 0) ? minTop : 0;
                 }
             }
         }
@@ -274,9 +284,11 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                     t,
                     plane,
                     changed = false,
+                    elt,
                     adjustStagePadding = !isChanging || (event.detail.data.prop !== "matrix");
                 for(var i=0; i < len; i++) {
-                    plane = els[i].elementModel.props3D.elementPlane;
+                    elt = els[i];
+                    plane = elt.elementModel.props3D.elementPlane;
                     if(plane) {
                         plane.init();
                         if(adjustStagePadding) {
@@ -284,22 +296,34 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                             t = plane._rect.m_top - docTop;
                             if(l < minLeft) {
                                 minLeft = l;
+                                stage.minLeftElement = elt;
+                            } else if((elt === stage.minLeftElement) && (l > minLeft)) {
+                                this._recalculateScrollOffsets = true;
                             }
+
                             if(t < minTop) {
                                 minTop = t;
+                                stage.minTopElement = elt;
+                            } else if((elt === stage.minTopElement) && (t > minTop)) {
+                                this._recalculateScrollOffsets = true;
                             }
                         }
                     }
                 }
 
                 if(adjustStagePadding) {
-                    if(minLeft !== stage.userPaddingLeft) {
-                        stage.userPaddingLeft = minLeft;
+                    if(this._recalculateScrollOffsets && !isChanging) {
+                        this.initializeFromDocument(true, true);
                         changed = true;
-                    }
-                    if(minTop !== stage.userPaddingTop) {
-                        stage.userPaddingTop = minTop;
-                        changed = true;
+                    } else {
+                        if(minLeft !== stage.userPaddingLeft) {
+                            stage.userPaddingLeft = minLeft;
+                            changed = true;
+                        }
+                        if(minTop !== stage.userPaddingTop) {
+                            stage.userPaddingTop = minTop;
+                            changed = true;
+                        }
                     }
                 }
 
@@ -630,6 +654,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 		value: function ()
 		{
             this.application.ninja.stage.clearGridCanvas();
+            this.drawStageOutline();
 			if (!this.isDrawingGrid()) return;
 
 			var saveContext = this.getDrawingSurfaceElement();
@@ -701,21 +726,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			this._lineColor = saveColor;
 			this._drawingContext.lineWidth = saveLineWidth;
 
-            if(this.application.ninja.currentDocument.model.documentRoot.id !== "UserContent") {
-                // draw an outline around the body
-                var stagePt = MathUtils.getPointOnPlane([0,0,1,0]);
-                var stageMat = this.getPlaneToWorldMatrix([0,0,1], stagePt);
-    //            glmat4.multiply( tMat, stageMat, stageMat);
-                pt0 = [0, 0, 0];
-                pt1 = [0, height, 0];
-                delta = [width, 0, 0];
-                this.drawGridLines(pt0, pt1, delta, stageMat, 2);
-                pt0 = [0, 0, 0];
-                pt1 = [width, 0, 0];
-                delta = [0, height, 0];
-                this.drawGridLines(pt0, pt1, delta, stageMat, 2);
-            }
-
 			// draw the lines
 			this.redrawGridLines();
 
@@ -738,15 +748,11 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                 var sourceSpaceMat = this.viewUtils.getLocalToGlobalMatrix( this._sourceSpaceElt );
 				for (var i = 0; i < nLines; i++) {
 					// transform the points from working plane space to world space
-					//var t0 = mat.multiply(p0),
-					//	t1 = mat.multiply(p1);
 					var t0 = glmat4.multiplyVec3( mat, p0, [] ),
 						t1 = glmat4.multiplyVec3( mat, p1, [] );
 
 					// transform from world space to global screen space
 					if (this._sourceSpaceElt) {
-//						t0 = this.viewUtils.localToGlobal(t0, this._sourceSpaceElt);
-//						t1 = this.viewUtils.localToGlobal(t1, this._sourceSpaceElt);
 						t0 = this.viewUtils.localToGlobal2(t0, sourceSpaceMat);
 						t1 = this.viewUtils.localToGlobal2(t1, sourceSpaceMat);
 					}
@@ -764,9 +770,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					line.setVisibility(vis);
 
 					// increment the points to the next position
-//					p0 = p0.add(d); p0[3] = 1.0;
 					p0 = vecUtils.vecAdd(4, p0, d); p0[3] = 1.0;
-//					p1 = p1.add(d); p1[3] = 1.0;
 					p1 = vecUtils.vecAdd(4, p1, d); p1[3] = 1.0;
 				}
 			}
@@ -819,24 +823,11 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			// draw the lines
             var line,
 			    nLines = this._gridLineArray.length;
-            if(this.application.ninja.currentDocument.model.documentRoot.id !== "UserContent") {
-			    nLines = this._gridLineArray.length-4;
-            }
 
 			for (var i = 0; i < nLines; i++) {
 				line = this._gridLineArray[i];
 				this.drawIntersectedLine(line, this._drawingContext);
 			}
-
-            if(this.application.ninja.currentDocument.model.documentRoot.id !== "UserContent") {
-                this._lineColor = "red";
-                i = nLines;
-                nLines += 4;
-                for (; i < nLines; i++) {
-                    line = this._gridLineArray[i];
-                    this.drawIntersectedLine(line, this._drawingContext);
-                }
-            }
 
 			this.popState();
 		}
@@ -1212,6 +1203,73 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			this._sourceSpaceElt = saveSource;
 		}
 	},
+
+    drawStageOutline : {
+        value: function() {
+            var context = this.application.ninja.stage.gridContext;
+            var stage = this.application.ninja.stage;
+            var stageRoot = this.application.ninja.currentDocument.model.documentRoot;
+
+            // draw an outline around the template body if stage has any transforms
+            if(stage.currentDocument.model.views.design._template && !MathUtils.isIdentityMatrix(this.viewUtils.getMatrixFromElement(stageRoot))) {
+                var saveContext = this.getDrawingSurfaceElement();
+                this.setDrawingSurfaceElement(this.application.ninja.stage.gridCanvas);
+
+                var stagePt = MathUtils.getPointOnPlane([0,0,1,0]);
+                var stageMat = this.getPlaneToWorldMatrix([0,0,1], stagePt);
+                var width = this.snapManager.getStageWidth(),
+                    height = this.snapManager.getStageHeight(),
+                    pt0 = [0, 0, 0],
+                    pt1 = [0, height, 0],
+                    delta = [width, 0, 0];
+
+                this._gridLineArray.length = 0;
+                this.drawGridLines(pt0, pt1, delta, stageMat, 2);
+
+                pt0 = [0, 0, 0];
+                pt1 = [width, 0, 0];
+                delta = [0, height, 0];
+                this.drawGridLines(pt0, pt1, delta, stageMat, 2);
+
+                this._lineColor = "red";
+                for (var i = 0; i < 4; i++) {
+                    this.drawIntersectedLine(this._gridLineArray[i], this._drawingContext);
+                }
+
+                this.setDrawingSurfaceElement(saveContext);
+            }
+
+            // draw reference lines across origin
+            var bounds3D = this.viewUtils.getElementBoundsInGlobal(stageRoot);
+            var l = MathUtils.segSegIntersection2D(bounds3D[0], bounds3D[3], [0, 0, 0], [0, stage.canvas.height, 0], 0.1);
+            if(!l) return;
+            var r = MathUtils.segSegIntersection2D(bounds3D[0], bounds3D[3], [stage.canvas.width, 0, 0], [stage.canvas.width, stage.canvas.height, 0], 0.1);
+            if(!r) return;
+
+            var t = MathUtils.segSegIntersection2D(bounds3D[0], bounds3D[1], [0, 0, 0], [stage.canvas.width, 0, 0], 0.1);
+            if(!t) return;
+            var b = MathUtils.segSegIntersection2D(bounds3D[0], bounds3D[1], [0, stage.canvas.height, 0], [stage.canvas.width, stage.canvas.height, 0], 0.1);
+            if(!b) return;
+
+            context.save();
+            context.strokeStyle = "#333";
+            context.lineWidth = 0.5;
+
+            context.beginPath();
+
+            context.moveTo(l[0], l[1]);
+            context.lineTo(r[0], r[1]);
+
+            context.moveTo(t[0], t[1]);
+            context.lineTo(b[0], b[1]);
+
+            context.closePath();
+            context.stroke();
+
+            context.fillText("(0, 0)", bounds3D[0][0] + 4, bounds3D[0][1] - 6);
+            context.restore();
+        }
+    },
 
 	draw3DCompass : {
 		value: function() {

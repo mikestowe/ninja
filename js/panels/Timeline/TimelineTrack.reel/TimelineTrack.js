@@ -682,6 +682,15 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             // TEMP - if the SHIFT key is down, add a new keyframe or split an existing span
             // This needs to move to a keyboard shortcut that is TBD
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
+
+            var targetElementOffset = this.findXOffset(ev.currentTarget),
+            	position = (event.pageX - targetElementOffset) - 18;
+
+            this.application.ninja.timeline.playheadmarker.style.left = position + "px";
+            var currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
+            var currentMillisec = currentMillisecPerPixel * position;
+            this.application.ninja.timeline.updateTimeText(currentMillisec);
+
             if (ev.shiftKey) {
                 if (this.tweens.length < 1) {
                     this.insertTween(0);
@@ -709,15 +718,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     this.updateKeyframeRule();
                 } else {
                     this.handleNewTween(ev);
-
-                    // Split a tween!
-                    //this.splitTweenAt(this.application.ninja.timeline.playheadmarker.offsetLeft);
                     this.updateKeyframeRule();
                 }
             } else if(ev.actionType == "remove"){
                 this.removeTween();
+                this.updateKeyframeRule();
             }
-
         }
     },
 
@@ -730,23 +736,25 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             } else {
             	// We will be splitting a tween.  Get the x-coordinate of the mouse click within the target element.
             	// You'd think you could use the event.x info for that, right? NO. We must use page values, calculating offsets and scrolling.
-
-            	// Here's an easy function that adds up offsets and scrolls and returns the page x value of an element
-				var findXOffset = function(obj) {
-					var curleft = 0;
-					if (obj.offsetParent) {
-						do {
-								curleft += (obj.offsetLeft-obj.scrollLeft);
-					
-							} while (obj = obj.offsetParent);
-					}
-					return curleft;
-				}
-				var targetElementOffset = findXOffset(ev.currentTarget),
+				var targetElementOffset = this.findXOffset(ev.currentTarget),
 					position = event.pageX - targetElementOffset;
 
                 this.splitTweenAt(position-18);
             }
+        }
+    },
+
+    findXOffset:{
+        value:function (obj) {
+            // Here's an easy function that adds up offsets and scrolls and returns the page x value of an element
+            var curleft = 0;
+            if (obj.offsetParent) {
+                do {
+                    curleft += (obj.offsetLeft - obj.scrollLeft);
+
+                } while (obj = obj.offsetParent);
+            }
+            return curleft;
         }
     },
 
@@ -799,8 +807,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
                 this.createMatchingPositionSizeTween(newTween);
             }
-
-
 
             this.application.ninja.currentDocument.model.needsSave = true;
         }
@@ -974,6 +980,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             newTween.tweenData.tweenID = 0;
                             newTween.tweenData.spanPosition = 0;
                             this.tweens.push(newTween);
+                            this.createMatchingPositionSizeTween(newTween);
                         }
                         else {
                             tempTiming = trackTiming.split("s");
@@ -995,6 +1002,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             	newTween.tweenData.easing = "none";
                             }
                             this.tweens.push(newTween);
+                            this.createMatchingPositionSizeTween(newTween);
                         }
                         this.nextKeyframe += 1;
                     }
@@ -1022,8 +1030,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function(ruleSet){
             for(var i in ruleSet){
                 var styleProp = ruleSet[i][0].style[0];
-                //console.log(styleProp);
-                //console.log(ruleSet[i]);
                 this.application.ninja.timeline.layerRepetition.childComponents[0].addStyle(styleProp, ruleSet[i]);
             }
         }
@@ -1055,6 +1061,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
             // build the new keyframe string
             var keyframeString = "@-webkit-keyframes " + this.animationName + " {";
+
+            console.log(this.animationName);
 
             for (var i = 0; i < this.tweens.length; i++) {
                 var keyMill = parseInt(this.tweens[i].tweenData.keyFrameMillisec);
@@ -1091,6 +1099,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     createPositionTracks:{
         value:function(){
             // create track objects for position and transform tracks and push into arrays
+            
+            // ... but only do it if we haven't already.
+            if (this.arrPositionTracks.length > 0) {
+            	return;
+            }
 
             // create 'left' track
             var newLeftTrack = {};

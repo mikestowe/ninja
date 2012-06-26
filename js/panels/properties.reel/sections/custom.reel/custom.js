@@ -18,7 +18,6 @@ var Hottext = require("js/components/hottextunit.reel").HotTextUnit;
 var HT = require("js/components/hottext.reel").HotText;
 var Dropdown = require("js/components/combobox.reel").Combobox;
 var TextField = require("js/components/textfield.reel").TextField;
-var FileInput = require("js/components/ui/file-input.reel").FileInput;
 var LabelCheckbox = require("js/components/ui/label-checkbox.reel").LabelCheckbox;
 var ColorChip = require("js/components/ui/color-chip.reel").ColorChip;
 var Button = require("montage/ui/button.reel").Button;
@@ -322,8 +321,9 @@ exports.CustomSection = Montage.create(Component, {
 
             //Bind object value to controls list so it can be manipulated
             Object.defineBinding(this.controls, aField.id, {
-              boundObject: obj,
-              boundObjectPropertyPath: "value"
+                boundObject: obj,
+                boundObjectPropertyPath: "value",
+                oneway: false
             });
 
             return obj;
