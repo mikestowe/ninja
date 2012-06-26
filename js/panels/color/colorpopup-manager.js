@@ -366,6 +366,8 @@ exports.ColorPopupManager = Montage.create(Component, {
 	    			this.showGradientChipPopup(e);
 	    			return;
     			}
+    			//Hidding other popup if opened
+    			if (this._popupBase && this._popupBase.opened) this.hideColorPopup();
     			//
     			this._popupChipBtn = this.application.ninja.colorController.colorView.currentChip;
     			//
