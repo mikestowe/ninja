@@ -682,6 +682,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             // TEMP - if the SHIFT key is down, add a new keyframe or split an existing span
             // This needs to move to a keyboard shortcut that is TBD
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
+
+            this.application.ninja.timeline.playheadmarker.style.left = ev.offsetX + "px";
+            var currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
+            var currentMillisec = currentMillisecPerPixel * ev.offsetX;
+            this.application.ninja.timeline.updateTimeText(currentMillisec);
+
             if (ev.shiftKey) {
                 if (this.tweens.length < 1) {
                     this.insertTween(0);
@@ -1050,6 +1056,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
             // build the new keyframe string
             var keyframeString = "@-webkit-keyframes " + this.animationName + " {";
+
+            console.log(this.animationName);
 
             for (var i = 0; i < this.tweens.length; i++) {
                 var keyMill = parseInt(this.tweens[i].tweenData.keyFrameMillisec);
