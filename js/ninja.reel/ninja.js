@@ -137,7 +137,7 @@ exports.Ninja = Montage.create(Component, {
         serializable: true
     },
 
-    codeEditorController: {
+    codeEditorWrapper: {
         value: null,
         serializable: true
     },

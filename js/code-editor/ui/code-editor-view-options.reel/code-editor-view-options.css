@@ -22,11 +22,6 @@
     vertical-align: middle;
 }
 
-.viewOptions .autoCodeComplete input{
-    width: 1em;
-    height: 1em;
-}
-
 .viewOptions .autoCodeComplete .disabled{
     color:#515151;
 }

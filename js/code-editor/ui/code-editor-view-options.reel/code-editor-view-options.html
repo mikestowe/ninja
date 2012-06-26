@@ -11,12 +11,13 @@
     <script type="text/montage-serialization">
     {
         "codeCompleteCheck":{
-            "prototype": "montage/ui/input-checkbox.reel",
+            "prototype": "montage/ui/native/input-checkbox.reel",
             "properties": {
                 "element": {"#": "codeComplete"}
             },
             "bindings": {
-                "disabled": {"<-": "@owner.autocomplete"}
+                "disabled": {"<-": "@owner.autocomplete"},
+                "checked": {"<->": "@owner.automaticCodeHint"}
             }
         },
 
@@ -29,6 +30,9 @@
                 "stepSize" :10,
                 "acceptableUnits" : ["%"],
                 "units" : "%"
+            },
+            "bindings": {
+                "value": {"<->": "@owner.zoomFactor"}
             }
         },
 
