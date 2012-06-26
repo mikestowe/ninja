@@ -282,11 +282,13 @@ exports.ColorPanelPopup = Montage.create(Component, {
     		if (tab !== this.gradients) {
     			this.gradients.style.display = 'none';
     			//
-    			if (this._components.wheel._value) {
+    			/*
+if (this._components.wheel._value) {
     				this._components.wheel.value = {h: this._components.wheel._value.h, s: this._components.wheel._value.s, v: this._components.wheel._value.v, wasSetByCode: false};
     			} else {
     				this._components.wheel.value = {h: 0, s: 1, v: 1, wasSetByCode: false};
     			}
+*/
     		} else {
     			this.gradients.style.display = 'block';
     			this.alpha.style.display = 'none';
