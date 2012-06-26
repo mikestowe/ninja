@@ -1090,10 +1090,36 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             var tempEv = {};
             tempEv.offsetX = this.playheadmarker.offsetLeft;
             tempEv.actionType = action;
-            if (typeof(this.trackRepetition.childComponents[this.currentLayersSelected[0]]) !== "undefined") {
-            	this.trackRepetition.childComponents[this.currentLayersSelected[0]].handleKeyboardShortcut(tempEv);
-            } else {
-            	// oops, we do not have a layer selected.  We should growl at the user.  For now, this will fail silently.
+
+            if (this.currentLayersSelected === false) {
+            	// oops, we do not have a layer selected. We should growl at the user. For now, this will fail silently.
+            	return;
+            }
+            
+            // Okay. We need to get the correct layer(s).  For each currentElementSelected,
+            // loop through trackRepetition.childComponents and compare to stageElement.
+            // If they match, that's one of the components that needs the event.
+            var i = 0, 
+            	j = 0, 
+            	currentElementsSelectedLength = this.currentElementsSelected.length,
+            	trackRepLength = this.trackRepetition.childComponents.length,
+            	arrTargetIndexes = [],
+            	arrTargetIndexesLength = 0;
+            	
+            
+            for (i = 0; i < trackRepLength; i++) {
+            	var currentElement = this.trackRepetition.childComponents[i].stageElement;
+            	for (j = 0; j < currentElementsSelectedLength; j++) {
+            		if (currentElement === this.currentElementsSelected[j]) {
+            			arrTargetIndexes.push(i);
+            		}
+            	}
+            }
+            arrTargetIndexesLength = arrTargetIndexes.length;
+
+			// Now we have an array of things that need to handle the event.
+            for (i = 0; i < arrTargetIndexesLength; i++) {
+            	this.trackRepetition.childComponents[arrTargetIndexes[i]].handleKeyboardShortcut(tempEv);
             }
         }
     },
