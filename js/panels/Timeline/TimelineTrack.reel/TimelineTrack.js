@@ -743,6 +743,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     handleNewTween:{
         value:function (ev) {
+        	
             if (ev.offsetX > this.tweens[this.tweens.length - 1].tweenData.keyFramePosition) {
                 var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
                 this.application.ninja.timeline.selectLayer(selectedIndex, false);
@@ -750,10 +751,13 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             } else {
             	// We will be splitting a tween.  Get the x-coordinate of the mouse click within the target element.
             	// You'd think you could use the event.x info for that, right? NO. We must use page values, calculating offsets and scrolling.
-				var targetElementOffset = this.findXOffset(ev.currentTarget),
-					position = event.pageX - targetElementOffset;
-
-                this.splitTweenAt(position-18);
+	            if (typeof(ev.currentTarget) === "undefined") {
+	            	this.splitTweenAt(ev.offsetX);
+	            } else {
+					var targetElementOffset = this.findXOffset(ev.currentTarget),
+						position = event.pageX - targetElementOffset;
+	                this.splitTweenAt(position-18);
+	            }
             }
         }
     },
@@ -762,6 +766,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function (obj) {
             // Here's an easy function that adds up offsets and scrolls and returns the page x value of an element
             var curleft = 0;
+            if (typeof(obj) === "undefined") {
+            	//debugger;
+            }
             if (obj.offsetParent) {
                 do {
                     curleft += (obj.offsetLeft - obj.scrollLeft);
