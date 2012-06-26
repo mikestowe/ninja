@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html lang="en">
+<head>
+    	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" href="binding-panel.css" type="text/css">
+        <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype": "js/panels/binding-panel.reel",
+                "properties": {
+                    "element": {"#": "binding"},
+                    "editView": {"@": "editBinding"}
+                }
+            },
+            "arrayController": {
+                "prototype": "montage/ui/controller/array-controller",
+                "bindings": {
+                    "content" : {"<-": "@owner.bindings" }
+                }
+            },
+            "repetition": {
+                "prototype": "montage/ui/repetition.reel",
+                "properties": {
+                    "element": {"#": "bindings-list"},
+                    "contentController": {"@": "arrayController"}
+                }
+            },
+            "bindingItem": {
+                "prototype": "js/panels/binding/binding-item.reel",
+                "properties": {
+                    "element": {"#": "binding-item"}
+                },
+                "bindings": {
+                    "bindingArgs": {"<-": "@repetition.objectAtCurrentIteration"},
+                    "sourceObjectPropertyPath": {"<-": "@repetition.objectAtCurrentIteration.sourceObjectPropertyPath"},
+                    "sourceObject": {"<-": "@repetition.objectAtCurrentIteration.sourceObject"},
+                    "boundObjectPropertyPath": {"<-": "@repetition.objectAtCurrentIteration.boundObjectPropertyPath"},
+                    "boundObject": {"<-": "@repetition.objectAtCurrentIteration.boundObject"},
+                    "oneway": {"<-": "@repetition.objectAtCurrentIteration.oneway"}
+                }
+            },
+            "editBinding": {
+                "prototype": "js/panels/binding/edit-binding-view.reel",
+                "properties": {
+                    "element": {"#": "edit-binding-view" }
+                }
+            },
+            "toolbar": {
+                "prototype": "js/components/toolbar.reel",
+                "properties": {
+                    "element": {"#": "binding-panel-toolbar"},
+                    "delegate": {"@": "owner" },
+                    "buttons": [
+                        {
+                            "title": "Add",
+                            "identifier": "add"
+                        }
+                    ]
+                }
+            }
+    	}
+		</script>
+	</head>
+<body>
+    <div data-montage-id="binding" class="binding-panel">
+        <ul data-montage-id="bindings-list" class="bindings-list">
+            <li data-montage-id="binding-item" class="binding-item"></li>
+        </ul>
+        <div data-montage-id="binding-panel-toolbar-container" class="binding-panel-toolbar-container">
+            <div data-montage-id="binding-panel-toolbar"></div>
+        </div>
+        <div data-montage-id="edit-binding-view"></div>
+    </div>
+</body>
+</html>

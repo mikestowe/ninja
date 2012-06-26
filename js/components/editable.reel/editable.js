@@ -93,12 +93,43 @@ exports.Editable = Montage.create(Component, {
             }
         }
     },
+
+    _value : { value: null },
     value : {
-        get: function() {
-            return this._element.textContent;
-        },
-        set: function(str) {
-            this._element.textContent = str;
+        get : function() { return this._value; },
+        set : function(value) {
+            if(value === this._value) { return; }
+
+            var node = this._getFirstTextNode();
+            node.textContent = value;
+
+            this._value = value;
+        }
+    },
+    _getFirstTextNode : {
+        value : function(el) {
+            ///// optional el argument specified container element
+            var e = el || this._element,
+                nodes = e.childNodes, node;
+
+            if(nodes.length) {
+                for(var i=0; i<nodes.length; i++) {
+                    if(nodes[i].nodeType === 3) {
+                        ///// found the first text node
+                        node = nodes[i];
+                        break;
+                    }
+                }
+            }
+
+            ///// Text node not found
+            if(!node) {
+                node = document.createTextNode('');
+                e.appendChild(node);
+            }
+
+
+            return node;
         }
     },
 
@@ -207,6 +238,8 @@ exports.Editable = Montage.create(Component, {
     ///// Text input has changed values
     handleInput : {
         value : function(e) {
+            this.value = this._getFirstTextNode().textContent;
+
             if(!this.isDirty) {
                  this.isDirty = true;
              }
@@ -230,6 +263,8 @@ exports.Editable = Montage.create(Component, {
         value: function(e) {
             e.preventDefault();
             document.execCommand('insertHTML', null, e._event.clipboardData.getData("Text"));
+            this.value = this._element.textContent;
+
             this._sendEvent('paste', e);
         }
     },

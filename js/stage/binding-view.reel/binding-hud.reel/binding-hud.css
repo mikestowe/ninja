@@ -1,0 +1,104 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.bindingHud {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.85);
+    /*padding: 0px;*/
+    color: #C4C4C4;
+    font-size: 11px;
+    box-shadow: inset 0px 0px 0px 0px #CCC;
+    border-radius: 6px;
+    padding: 3px 1px 1px;
+    border:1px solid #000;
+    text-shadow: 1px 1px 0px #000;
+}
+
+.bindingHud .bindingTitle {
+    font-weight:bold;
+    background: url('/images/panels/horizontal-resize.png') no-repeat;
+    padding-left: 10px;
+    line-height: 20px;
+    background-position: left center;
+    padding-top: 2px;
+    color: #EBE6E6;
+}
+
+.bindingHud .hudRepetition {
+    /*background: rgba(0, 0, 0, 0.3);*/
+    line-height:16px;
+    /*box-shadow: inset 0px 0px 4px #333, 1px 1px 0px #3A3A3A;*/
+    min-width: 80px;
+}
+
+.bindingHud .hudOption {
+    position:relative;
+    /*border-bottom:1px solid #505050;*/
+    line-height:16px;
+    padding:1px 25px 1px 8px;
+}
+
+.bindingHud .hudOption .connectorBubble:hover {
+    background-color: #1B52A7;
+    box-shadow: inset 0px 2px 2px 1px rgba(15, 15, 15, 0.78), 0 1px #474747;
+    cursor: pointer;
+}
+
+.bindingHud .hudOption.bound .connectorBubble {
+    background:  -webkit-linear-gradient(top, #d0e4f7 0%,#73b1e7 24%,#0a77d5 50%,#539fe1 79%,#87bcea 100%);
+    box-shadow: none;
+}
+
+.bindingHud .hudOption:last-child {
+    border-bottom: 0px;
+}
+
+.bindingHud .hudOption .connectorBubble {
+    position: absolute;
+    right: 5px;
+    top: 3px;
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    border-left: 0px;
+    display: block;
+    background-color: #313131;
+    box-shadow: inset 0px 2px 7px 1px #0F0F0F, 0 1px #424242;
+
+}
+
+.splitter.scrollArea {
+    background-color: transparent;
+    background-size: 12%;
+    background-position-y: 2px;
+    display: none;
+    height:11px;
+    text-align: center;
+}
+.splitter.scrollAreaTop {
+    border-top: 1px solid #353535;
+    box-shadow: 0 -1px 0 0 #141414;
+}
+.splitter.scrollAreaBottom {
+    -webkit-transform: rotate(180deg);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom: 1px solid #353535;
+    box-shadow: 0 1px 0 0 #141414;
+    margin-top: 4px;
+}
+
+.scrollArea.disabled {
+    opacity: 0.5;
+}
+.splitter.scrollArea:hover:not(.disabled) {
+    background-color: #252525;
+}
+
+
+.hudRepetition {
+    overflow: hidden;
+}

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="edit-binding-view.css" type="text/css">
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype": "js/panels/binding/edit-binding-view.reel",
+                "properties": {
+                    "element": {"#": "edit-binding"},
+                    "sourceObjectField" : {"@": "sourceObjectField" },
+                    "boundObjectField"  : {"@": "boundObjectField" },
+                    "sourceObjectPropertyPathField" : {"@": "sourceObjectPropertyPathField" },
+                    "boundObjectPropertyPathField"  : {"@": "boundObjectPropertyPathField" },
+                    "directionCheckbox"  : {"@": "directionCheckbox" },
+                    "saveButton":{ "@": "saveButton" },
+                    "cancelButton":{ "@": "cancelButton" },
+                    "deleteButton":{ "@": "deleteButton" },
+                    "sourceObjectIconElement": {"#": "source-object-icon"},
+                    "boundObjectIconElement": {"#": "bound-object-icon"}
+                }
+            },
+            "sourceObjectField": {
+                "prototype": "js/components/hintable.reel",
+                "properties": {
+                    "startOnEvent": "click",
+                    "element": {"#": "sourceObjectField"}
+                },
+                "bindings": {
+                    "value": {"<->": "@owner.sourceObjectIdentifier"}
+                },
+                "listeners" : [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+            "boundObjectField": {
+                "prototype": "js/components/hintable.reel",
+                "properties": {
+                    "startOnEvent": "click",
+                    "element": {"#": "boundObjectField"}
+                },
+                "bindings": {
+                    "value": {"<->": "@owner.boundObjectIdentifier"}
+                },
+                "listeners" : [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+            "sourceObjectPropertyPathField": {
+                "prototype": "js/components/hintable.reel",
+                "properties": {
+                    "startOnEvent": "click",
+                    "element": {"#": "so-pp"},
+                    "identifier": "sourceProperty"
+                },
+                "bindings": {
+                    "value": {"<->": "@owner.sourceObjectPropertyPath"}
+                },
+                "listeners" : [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+            "boundObjectPropertyPathField": {
+                "prototype": "js/components/hintable.reel",
+                "properties": {
+                    "startOnEvent": "click",
+                    "element": {"#": "bo-pp"},
+                    "identifier": "boundProperty"
+                },
+                "bindings": {
+                    "value": {"<->": "@owner.boundObjectPropertyPath"}
+                },
+                "listeners" : [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+            "directionCheckbox": {
+                "prototype": "montage/ui/native/input-checkbox.reel",
+                "properties": {
+                    "element": {"#": "direction-checkbox"},
+                    "identifier": "directionCheckbox"
+                },
+                "bindings": {
+                    "checked": {"<-": "@owner.oneway"}
+                },
+                "listeners" : [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+            "cancelButton" : {
+                "prototype": "montage/ui/native/button.reel",
+                "properties": {
+                    "element": {"#": "cancel-button" },
+                    "identifier": "cancelButton"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner" }
+                    }
+                ]
+            },
+            "deleteButton" : {
+                "prototype": "montage/ui/native/button.reel",
+                "properties": {
+                    "element": {"#": "delete-button" },
+                    "identifier": "deleteButton"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner" }
+                    }
+                ]
+            },
+            "saveButton" : {
+                "prototype": "montage/ui/native/button.reel",
+                "properties": {
+                    "element": {"#": "save-button" },
+                    "identifier": "saveButton"
+                },
+                "bindings" : {
+                    "enabled": {"<->": "@owner.dirty"}
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner" }
+                    }
+                ]
+            }
+
+        }
+    </script>
+</head>
+<body>
+<div data-montage-id="edit-binding" class="edit-binding-view">
+    <section class="edit-object-binding">
+        <div data-montage-id="source-object-container" class="object-container">
+            <div data-montage-id="source-object-icon-container" class="object-icon-container">
+                <div data-montage-id="source-object-icon" class="object-icon"></div>
+            </div>
+            <div class="object-fields-container">
+                <span data-montage-id="sourceObjectField" class="hintable-field"></span>
+                <span data-montage-id="so-pp" class="hintable-field so-pp"></span>
+            </div>
+        </div>
+
+        <div data-montage-id="bound-object-container" class="object-container">
+            <div data-montage-id="bound-object-icon-container" class="object-icon-container">
+                <div data-montage-id="bound-object-icon" class="object-icon"></div>
+            </div>
+            <div class="object-fields-container">
+                <span data-montage-id="boundObjectField" class="hintable-field"></span>
+                <span data-montage-id="bo-pp" class="hintable-field bo-pp"></span>
+            </div>
+        </div>
+    </section>
+
+    <div class="checkbox-container">
+        <input data-montage-id="direction-checkbox" type="checkbox" class="nj-skinned"><label>Oneway</label>
+    </div>
+
+    <div class="buttons-container">
+        <button data-montage-id="delete-button" class="nj-skinned btn-delete">Delete</button>
+        <button data-montage-id="save-button" class="nj-skinned btn-save">Save</button>
+        <button data-montage-id="cancel-button" class="nj-skinned btn-cancel">Cancel</button>
+    </div>
+</div>
+</body>
+</html>
