@@ -1039,16 +1039,19 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function (tweenEvent) {
             this.tweens[0].tweenData.tweenedProperties["top"] = this.animatedElement.offsetTop + "px";
             this.tweens[0].tweenData.tweenedProperties["left"] = this.animatedElement.offsetLeft + "px";
+            this.tweens[0].tweenData.tweenedProperties["width"] = this.animatedElement.offsetWidth + "px";
+            this.tweens[0].tweenData.tweenedProperties["height"] = this.animatedElement.offsetHeight + "px";
             var animationDuration = Math.round(this.trackDuration / 1000) + "s";
             this.animationName = this.animatedElement.classList[0] + "_PositionSize";
             this.animationNamesString = this.animationName;
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-name", this.animationName);
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
+            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-fill-mode", "forwards");
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-iteration-count", 1);
+
             var initRule = "@-webkit-keyframes " + this.animationName + " { 0% {top: " + this.animatedElement.offsetTop + "px; left: " + this.animatedElement.offsetLeft + "px;} 100% {top: " + this.animatedElement.offsetTop + "px; left: " + this.animatedElement.offsetLeft + "px;} }";
 
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(initRule);
-
             this.insertTween(tweenEvent.offsetX);
             this.isTrackAnimated = true;
         }
@@ -1062,7 +1065,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             // build the new keyframe string
             var keyframeString = "@-webkit-keyframes " + this.animationName + " {";
 
-            console.log(this.animationName);
+            //console.log(this.animationName);
 
             for (var i = 0; i < this.tweens.length; i++) {
                 var keyMill = parseInt(this.tweens[i].tweenData.keyFrameMillisec);
