@@ -73,12 +73,7 @@ exports.BindingHud = Montage.create(Component, {
                 this.title = icon.name;
                 this.x = iconOffsets.x;
                 this.y = iconOffsets.y - 80;
-            } else {
-                this.title = val.identifier;
-                this.x = val.element.offsetLeft;
-                this.y = val.element.offsetTop;
             }
-
             this.needsDraw = true;
 
         }
@@ -202,6 +197,12 @@ exports.BindingHud = Montage.create(Component, {
                 this.scrollUp.style.display = "block";
                 this.scrollDown.style.display = "block";
             }
+            var isOffStage = this.application.ninja.objectsController.isOffStageObject(this.userComponent);
+            if(!isOffStage) {
+                this.title = this.userComponent.identifier;
+                this.x = this.userComponent.element.offsetLeft;
+                this.y = this.userComponent.element.offsetTop;
+            }
         }
     },
 
@@ -286,6 +287,12 @@ exports.BindingHud = Montage.create(Component, {
             clearInterval(this.scrollInterval);
             this.scrollInterval = null;
             this.currentScrollDirection = null;
+        }
+    },
+
+    willDraw: {
+        value: function() {
+
         }
     },
 
