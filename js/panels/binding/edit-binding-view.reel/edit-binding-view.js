@@ -216,7 +216,6 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
                     boundObjectPropertyPath  : this.boundObjectPropertyPath,
                     oneway: this.oneway
             };
-            debugger;
 
             if(this.isNewBinding) {
                 controller.addBinding(newBindingArgs);
