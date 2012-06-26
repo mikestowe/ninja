@@ -325,6 +325,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	value: false
     },
     isActive: {
+        serializable:true,
     	get: function() {
     		return this._isActive;
     	},
