@@ -586,6 +586,7 @@ exports.ColorPopupManager = Montage.create(Component, {
 	        			hsv.type = 'change';
 	        			e._target.base._components.wheel.value = hsv;
 	        		} else {
+	        			e._target.base._components.hex.value = null;
 		        		e._target.base.colorManager.applyNoColor(false);
 	        		}
 		        }
