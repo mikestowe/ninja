@@ -206,7 +206,6 @@ var Tween = exports.Tween = Montage.create(Component, {
             if (event.detail.source && event.detail.source !== "tween") {
 
                 if(this.parentComponent.parentComponent.isSubproperty){
-                	console.log("setting style tween property")
                     this.setStyleTweenProperty(event.detail);
                 } else {
                     // check for correct element selection
