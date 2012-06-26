@@ -94,7 +94,11 @@ RDGE.RDGEStart = function (canvasOrID) {
 
     RDGE.globals.engine.registerCanvas(canvas);
 
-    canvas.task = new RDGE.RDGETask(canvas, true);
+	if (!canvas.task)
+	{
+		//canvas.task = new RDGE.RDGETask(canvas, true);
+		canvas.task = new RDGE.RDGETask(canvas, false);
+	}
 
     if (!RDGE.globals.shaderMan)
         RDGE.globals.shaderMan = new RDGE.ShaderManager();
