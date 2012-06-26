@@ -270,6 +270,9 @@ exports.LineTool = Montage.create(ShapeTool, {
                 // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
             }
 
+            // TODO - This needs to be moved into geom obj's init routine instead of here
+            this.setColor(this.options.stroke, null, canvas, "lineTool");
+
             if(canvas.elementModel.isShape)
             {
                 this.application.ninja.selectionController.selectElement(canvas);
