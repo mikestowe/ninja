@@ -600,7 +600,7 @@ button.panel-button { -webkit-appearance: none; font-size: 9px; color: white; ba
 
 .panels .panel { min-height: 25px; -webkit-box-flex: 0; display: -webkit-box; -webkit-box-orient: vertical; background: #282828; height: 200px; padding: 0px 2px; -webkit-box-sizing: border-box; }
 
-.panels .panel .panelBody { -webkit-box-flex: 1; -webkit-box-sizing: border-box; -webkit-box-orient: vertical; -webkit-box-align: stretch; position: relative; overflow: auto; height: 200px; }
+.panels .panel .panelBody { -webkit-box-flex: 1; -webkit-box-sizing: border-box; -webkit-box-orient: vertical; -webkit-box-align: stretch; position: relative; }
 
 .panel .panelBodyContent { -webkit-box-sizing: border-box; -webkit-box-align: stretch; position: absolute; height: 100%; width: 100%; }
 
