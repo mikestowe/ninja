@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -95,6 +95,9 @@
             "ZoomTool1": {
                 "prototype": "js/tools/ZoomTool"
             },
+            "BindingTool1": {
+                "prototype": "js/tools/BindingTool"
+            },
 
             "disable": {
                 "prototype": "montage/ui/condition.reel",
@@ -126,7 +129,11 @@
                     "EraserTool":             {"@": "EraserTool1"},
                     "RotateStageTool3D":      {"@": "RotateStageTool3D1"},
                     "PanTool":                {"@": "PanTool1"},
-                    "ZoomTool":               {"@": "ZoomTool1"}
+                    "ZoomTool":               {"@": "ZoomTool1"},
+                    "bindingTool":            {"@": "BindingTool1"},
+                    "components": [
+                        {"@": "repetition1"}
+                    ]
                 }
             }
     	}

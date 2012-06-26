@@ -19,6 +19,7 @@ exports.Stage = Montage.create(Component, {
     // TODO - Need to figure out how to remove this dependency
     // Needed by some tools that depend on selectionDrawn event to set up some logic
     drawNow: { value : false },
+    switchedFromCodeDoc: { value : false },
 
     // TO REVIEW
     zoomFactor: {value : 1 },
@@ -26,6 +27,9 @@ exports.Stage = Montage.create(Component, {
     _canvasSelectionPrefs:  { value: { "thickness" : 1.0, "color" : "#46a1ff" } },
     _canvasDrawingPrefs:    { value: { "thickness" : 1.0, "color" : "#000" } },
     drawingContextPreferences: { get: function() { return this._canvasDrawingPrefs; } },
+    bindingView: {
+        value: null
+    },
 
     _iframeContainer: {
         value: null,
@@ -256,6 +260,8 @@ exports.Stage = Montage.create(Component, {
 
                 //call configure false with the old document on the selected tool to tear down down any temp. stuff
                 this.application.ninja.toolsData.selectedToolInstance._configure(false);
+            } else if(this.currentDocument && (this.currentDocument.currentView === "code")) {
+                this.switchedFromCodeDoc = true;   // Switching from code document affects stage's size and scrollbar
             }
 
             this._currentDocument = value;
@@ -266,7 +272,8 @@ exports.Stage = Montage.create(Component, {
                 drawUtils._eltArray.length = 0;
                 drawUtils._planesArray.length = 0;
             } else if(this._currentDocument.currentView === "design") {
-                this.restoreAllPanels();
+                this.restoreAllPanels(this.switchedFromCodeDoc);
+                this.switchedFromCodeDoc = false;
                 this.hideCanvas(false);
                 this.showRulers();
 
@@ -316,9 +323,8 @@ exports.Stage = Montage.create(Component, {
         value: function() {
             if(this.resizeCanvases) {
                 // TODO GET THE SCROLL SIZE FROM THE CSS -- 11 px
-                this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this._gridCanvas.width = this.element.offsetWidth - 11 ;
-                this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this._gridCanvas.height = this.element.offsetHeight - 11;// - 26 - 26;
-
+                this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this._gridCanvas.width = this.bindingView.width = this.element.offsetWidth - 11;
+                this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this._gridCanvas.height =  this.bindingView.height = this.element.offsetHeight - 11;// - 26 - 26;
                 // Hack for now until a full component
                 this.layout.draw();
                 if(this.currentDocument && (this.currentDocument.currentView === "design")) {
@@ -353,8 +359,6 @@ exports.Stage = Montage.create(Component, {
 
             // Hide the canvas
             this.hideCanvas(true);
-
-            this.eventManager.addEventListener( "appMouseUp", this, false);
 
             this.eventManager.addEventListener( "enableStageMove", this, false);
             this.eventManager.addEventListener( "disableStageMove", this, false);
@@ -405,8 +409,8 @@ exports.Stage = Montage.create(Component, {
             }
 
             // Recalculate the canvas sizes because of splitter resizing
-            this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this._gridCanvas.width = this.element.offsetWidth - 11 ;
-            this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this._gridCanvas.height = this.element.offsetHeight - 11;
+            this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this._gridCanvas.width = this.bindingView.width = this.element.offsetWidth - 11 ;
+            this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this._gridCanvas.height = this.bindingView.height = this.element.offsetHeight - 11;
 
             designView.iframe.contentWindow.addEventListener("scroll", this, false);
 
@@ -475,6 +479,7 @@ exports.Stage = Montage.create(Component, {
 
     enableMouseInOut: {
         value: function() {
+            document.addEventListener("mouseup", this, true);
             this._drawingCanvas.addEventListener("mouseout", this, false);
             this._drawingCanvas.addEventListener("mouseover", this, false);
         }
@@ -484,6 +489,19 @@ exports.Stage = Montage.create(Component, {
         value: function() {
             this._drawingCanvas.removeEventListener("mouseout", this, false);
             this._drawingCanvas.removeEventListener("mouseover", this, false);
+        }
+    },
+
+    captureMouseup: {
+        value: function(event) {
+            var target = event._event.target.getAttribute("data-montage-id");
+
+            if(target && target === "drawingCanvas") {
+                return true;
+            } else {
+                this.handleAppMouseUp(event);
+                return true;
+            }
         }
     },
 
@@ -501,6 +519,11 @@ exports.Stage = Montage.create(Component, {
 
     handleMousedown: {
         value: function(event) {
+
+            // Increase the canvas to cover the scroll bars
+            this._drawingCanvas.height = this._drawingCanvas.height + 11;
+            this._drawingCanvas.width = this._drawingCanvas.width + 11;
+
             // Call the focus manager to set focus to blur any focus'd elements
             this.focusManager.setFocus();
 
@@ -530,13 +553,18 @@ exports.Stage = Montage.create(Component, {
 
     handleMouseup: {
         value: function(event) {
+            // Restore canvas to un-cover the scroll bars.
+            this._drawingCanvas.height = this._drawingCanvas.height - 11;
+            this._drawingCanvas.width = this._drawingCanvas.width - 11;
             // If the mouse up comes from dismissing the context menu return
+
             if(this.contextMenu) {
                 this.contextMenu = false;
                 return;
             }
 
-            //this.disableMouseInOut();
+            this.disableMouseInOut();
+            document.removeEventListener("mouseup", this, true);
 
             this.application.ninja.toolsData.selectedToolInstance.HandleLeftButtonUp(event);
 
@@ -584,12 +612,17 @@ exports.Stage = Montage.create(Component, {
     handleAppMouseUp: {
         value: function(event) {
             if(this.outFlag) {
+                this._drawingCanvas.height = this._drawingCanvas.height - 11;
+                this._drawingCanvas.width = this._drawingCanvas.width - 11;
+
                 if(this.application.ninja.toolsData.selectedToolInstance.isDrawing) {
                     this.application.ninja.toolsData.selectedToolInstance.HandleLeftButtonUp(event);
                 }
                 this.disableMouseInOut();
                 this.outFlag = false;
             }
+
+            document.removeEventListener("mouseup", this, true);
         }
     },
 
@@ -1271,11 +1304,11 @@ exports.Stage = Montage.create(Component, {
         }
     },
     restoreAllPanels:{
-        value:function(){
-            this.application.ninja.panelSplitter.restore();
-            this.application.ninja.timelineSplitter.restore();
-            this.application.ninja.toolsSplitter.restore();
-            this.application.ninja.optionsSplitter.restore();
+        value:function(onSwitchDocument){
+            this.application.ninja.panelSplitter.restore(onSwitchDocument);
+            this.application.ninja.timelineSplitter.restore(onSwitchDocument);
+            this.application.ninja.toolsSplitter.restore(onSwitchDocument);
+            this.application.ninja.optionsSplitter.restore(onSwitchDocument);
         }
     },
 

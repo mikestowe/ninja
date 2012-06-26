@@ -1,0 +1,38 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.bindingView {
+    position: absolute;
+    z-index: 2;
+}
+
+.bindingView.mousedOverHud {
+    z-index: 12;
+}
+
+.hudRepeater {
+    position: absolute;
+    width:100%;
+    z-index: 3;
+}
+
+.bindingViewCanvas {
+    width:100%;
+    height:100%;
+    position:absolute;
+    z-index: 1;
+}
+
+.objects-tray-container {
+    bottom:0;
+    position: absolute;
+    width: 100%;
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
+    z-index: 2;
+}

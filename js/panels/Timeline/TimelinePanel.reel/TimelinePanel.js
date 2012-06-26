@@ -1240,6 +1240,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             if (this.currentLayersSelected !== false) {
             	this.currentLayersSelected = false;
             }
+
+            // Deselect any tweens
+            this.deselectTweens();
             
             // If we are actually going to be selecting things, create an empty array to use
             if (arrSelectedIndexesLength > 0) {

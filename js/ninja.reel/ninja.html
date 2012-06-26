@@ -261,10 +261,6 @@
                 }
             },
 
-            "mouseMediator": {
-                "prototype": "js/mediators/mouse-mediator"
-            },
-
             "keyboardMediator": {
                 "prototype": "js/mediators/keyboard-mediator",
                 "properties":{
@@ -358,6 +354,14 @@
                 }
             },
 
+            "objectsController" : {
+                "prototype": "js/controllers/objects-controller",
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"},
+                    "objects": {"<-": "@documentList.selectedObjects.0.model.mObjects"}
+                }
+            },
+
             "clipboardController": {
                 "prototype": "js/controllers/clipboard-controller"
             },
@@ -391,6 +395,7 @@
                     "timeline":             {"@": "timeline"},
                     "mainMenuController":   {"@": "mainMenuController"},
                     "codeEditorController": {"@": "codeEditorController"},
+                    "objectsController":    {"@": "objectsController"},
                     "rightPanelContainer":  {"#": "rightPanelContainer" },
                     "panelSplitter":        {"@": "splitter3"},
                     "timelineSplitter":     {"@": "splitter4"},

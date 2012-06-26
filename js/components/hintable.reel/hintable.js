@@ -140,19 +140,6 @@ exports.Hintable = Montage.create(Editable, {
             }
         }
     },
-    value : {
-        get: function() {
-            return this._getFirstTextNode().textContent;
-        },
-        set: function(str) {
-            var node = this._getFirstTextNode();
-            if (node.textContent !== str) {
-            	node.textContent = str;
-            }
-            
-            //node.innerText = str;
-        }
-    },
 
     handleKeydown : {
         value : function handleKeydown(e) {
@@ -189,17 +176,18 @@ exports.Hintable = Montage.create(Editable, {
     handleInput : {
         value : function handleInput(e) {
             this._super(arguments);
-            
+
             var val = this.value,
                  matches, hint;
             //console.log('val = "' + val + '"');
             //// Handle auto-suggest if configured
-            if(this.hints instanceof Array) {
+            if(this.hints && this.hints.length) {
 
                 if(val.length > 0) { // content is not empty
                     
                     this._matchIndex = 0;                    
                     this.matches = this.hints.filter(function(h) {
+                        if(!h) { return false; }
                         return h.indexOf(val) === 0;
                     }).sort();
                     
@@ -275,32 +263,6 @@ exports.Hintable = Montage.create(Editable, {
             return Array.prototype.slice.call(arrayLikeObj);
         }
     },
-    _getFirstTextNode : {
-        value : function(el) {
-            ///// optional el argument specified container element
-            var e = el || this._element,
-                nodes = e.childNodes, node;
-            
-            if(nodes.length) {
-                for(var i=0; i<nodes.length; i++) {
-                    if(nodes[i].nodeType === 3) {
-                        ///// found the first text node
-                        node = nodes[i];
-                        break;
-                    }
-                }
-            }
-            
-            ///// Text node not found
-            if(!node) {
-                node = document.createTextNode('');
-                e.appendChild(node);
-            }
-        
-        
-            return node;
-        }
-    },
     _super : {
         value : function(args) {
             this.inheritsFrom[arguments.callee.caller.name].apply(this, args);
@@ -309,7 +271,8 @@ exports.Hintable = Montage.create(Editable, {
 
     /* --------- CONFIG ---------- */
     hints : {
-        value : ['Testing a hint.', 'Testing another hint.', 'Testing the last hint.']
+        value : ['Testing a hint.', 'Testing another hint.', 'Testing the last hint.'],
+        distinct: true
     },
     hintClass : {
         value : "hintable-hint"

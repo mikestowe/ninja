@@ -461,21 +461,25 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     initMontage: {
         value: function (scripttags) {
             var self = this;
-        	//
+
         	this.iframe.contentWindow.document.body.addEventListener('mjsTemplateReady', function () {
         		//Initializing template with user's seriliazation
         		var template = this.iframe.contentWindow.mjsTemplate.create();
+
         		template.initWithDocument(this.iframe.contentWindow.document);
         		template.instantiateWithOwnerAndDocument(null, this.iframe.contentWindow.document, function (){
         			//TODO: Verify this is properly done, seems like a hack
+
+                    var objArray = [];
         			for (var c in template._deserializer._objects) {
         				//Forcing draw on components
 	        			template._deserializer._objects[c].needsDraw = true;
+						objArray.push(template._deserializer._objects[c]);
         			}
 
                     // Now call the view callback
                     if(self._viewCallback) {
-                        self._viewCallback.viewCallback.call(self._viewCallback.context);
+                        self._viewCallback.viewCallback.call(self._viewCallback.context, objArray);
                     }
 
         		});
