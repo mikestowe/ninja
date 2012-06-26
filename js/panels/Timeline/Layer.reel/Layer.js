@@ -752,12 +752,20 @@ var Layer = exports.Layer = Montage.create(Component, {
 			//defaultEventManager.dispatchEvent(newEvent);
 			
 			// Dispatch the event to the TimelineTrack component associated with this Layer.
-			var myIndex = this.application.ninja.timeline.getActiveLayerIndex(),
+			var myIndex = false,
+				i = 0, 
+				arrLayersLength = this.parentComponent.parentComponent.arrLayers.length,
 				arrTracks = document.querySelectorAll('[data-montage-id="track"]');
-
+			
+			for (i = 0; i < arrLayersLength; i++) {
+				if (this.stageElement == this.parentComponent.parentComponent.arrLayers[i].layerData.stageElement) {
+					myIndex = i;
+				}
+			}
+			
 			if (myIndex !== false) {
 				arrTracks[myIndex].dispatchEvent(newEvent);
-			}
+			} 
 		}
 	},
 

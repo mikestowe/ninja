@@ -72,6 +72,19 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         	this.trackData.isVisible = value;
         }
     },
+    
+    _stageElement: {
+    	value: null
+    },
+    stageElement: {
+    	get: function() {
+    		return this._stageElement;
+    	},
+    	set: function(newVal) {
+    		this._stageElement = newVal;
+    		this.trackData.stageElement = newVal;
+    	}
+    },
 
     // Are the various collapsers collapsed or not
     _isMainCollapsed:{
@@ -484,6 +497,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.isStyleCollapsed = this.trackData.isStyleCollapsed;
             this.trackPosition = this.trackData.trackPosition;
             this.isVisible = this.trackData.isVisible;
+            this.stageElement = this.trackData.stageElement;
             this.trackEditorProperty = "master";
             this.needsDraw = true;
         }
