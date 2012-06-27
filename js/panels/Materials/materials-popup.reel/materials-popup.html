@@ -27,6 +27,21 @@
                     "label": "Cancel"
                 }
             },
+            "saveAsButton": {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "mp_saveAs_btn"},
+                    "label": "Save As..."
+                }
+            },
+            "resetButton": {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "mp_reset_btn"},
+                    "label": "Reset",
+                    "enabled": false
+                }
+            },
             "eventDelegator": {
                 "prototype": "montage/core/event/action-event-listener",
                 "properties": {
@@ -79,7 +94,10 @@
                     "element": {"#": "materials_popup"},
                     "okButton": {"@": "okButton"},
                     "cancelButton": {"@": "cancelButton"},
-                    "materialTitle": {"#": "mp_title"}
+                    "saveAsButton": {"@": "saveAsButton"},
+                    "resetButton": {"@": "resetButton"},
+                    "materialTitle": {"#": "mp_title"},
+                    "previewCanvas": {"#": "mp_preview_canvas"}
                 }
             }
         }
@@ -91,15 +109,19 @@
     	<div data-montage-id="materials_popup" class="materials_popup">
             <div data-montage-id="mp_title" class="mp_title">Material Name</div>
             <hr />
-    		<div data-montage-id="mp_preview" class="mp_preview">Preview Pane</div>
+    		<div data-montage-id="mp_preview" class="mp_preview">
+                <canvas data-montage-id="mp_preview_canvas" width="200" height="100"/>
+            </div>
             <hr />
             <div data-montage-id="mp_properties_list" class="mp_properties_list">
                 <div data-montage-id="mp_property" class="mp_property"></div>
             </div>
+            <button data-montage-id="mp_reset_btn" class="mp_reset_btn nj-skinned"></button>
             <hr />
             <div data-montage-id="mp_buttons" class="mp_buttons">
                 <button data-montage-id="mp_cancel_btn" class="mp_cancel_btn nj-skinned"></button>
                 <button data-montage-id="mp_ok_btn" class="mp_ok_btn nj-skinned"></button>
+                <button data-montage-id="mp_saveAs_btn" class="mp_saveAs_btn nj-skinned"></button>
             </div>
     	</div>
 	</body>
