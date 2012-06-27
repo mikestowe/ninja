@@ -409,6 +409,8 @@ exports.ColorPopupManager = Montage.create(Component, {
     			//
     			if (e._event.srcElement.colorMode === 'gradient'){
 		        	this._popupChipBase.colorManager.gradient = {value: e._event.srcElement.colorValue};
+	        	} else {
+		        	this._popupChipBase.colorManager.gradient = null;
 	        	}
     			//
     			this._popupChipBase.addEventListener('change', this, false);
@@ -601,6 +603,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     //
     handleChange: {
     	value: function (e) {
+    		//console.log(e);
     		if (this._popupChipBase && this._popupChipBase.opened && (!this._popupGradientChipBase || (this._popupGradientChipBase && !this._popupGradientChipBase.opened))) {
     			if (e._event.hsv) {
     				this._popupChipBase.colorManager.hsv = {h: e._event.hsv.h, s: e._event.hsv.s, v: e._event.hsv.v, type: e._event.type, wasSetByCode: e._event.wasSetByCode};
@@ -611,6 +614,9 @@ exports.ColorPopupManager = Montage.create(Component, {
 		    			this._popupChipBtn.color('gradient', e._event.gradient);
 		    			this._popupChipBase._components.hex.value = null;
 	    			} else if (!isNaN(e._target._xStart) && !e._event.wasSetByCode) {
+	    				if (!isNaN(e._target._numValue)) {
+		    				this._popupChipBase.colorManager.alpha = {value: e._target._numValue/100, type: 'change', wasSetByCode: false};	
+	    				}
 	    				this.colorChipChange(e);
 	    			}
     			}
@@ -624,10 +630,16 @@ exports.ColorPopupManager = Montage.create(Component, {
 			    		this._popupChipBtn.color('gradient', e._event.gradient);
 			    		this._popupChipBase._components.hex.value = null;
 			    	} else if (!isNaN(e._target._xStart) && !e._event.wasSetByCode) {
+    					if (!isNaN(e._target._numValue)) {
+		    				this._popupGradientChipBase.colorManager.alpha = {value: e._target._numValue/100, type: 'change', wasSetByCode: false};	
+	    				}
     					this.colorGradientChipChange(e);
     				}
     			} else {
     				if (!isNaN(e._target._xStart) && !e._event.wasSetByCode) {
+    					if (!isNaN(e._target._numValue)) {
+		    				this._popupGradientChipBase.colorManager.alpha = {value: e._target._numValue/100, type: 'change', wasSetByCode: false};	
+	    				}
     					this.colorGradientChipChange(e);
     				}
 			    }
@@ -645,7 +657,9 @@ exports.ColorPopupManager = Montage.create(Component, {
     				} else {
     					//this.colorChipChange(e);
     				}
-    			}
+    			} else if (!isNaN(e._target._xStart) && !isNaN(e._target._numValue) && !e._event.wasSetByCode) {
+	    			this.colorManager.alpha = {value: e._target._numValue/100, type: 'change', wasSetByCode: false};
+	    		}
     		}
     	}
     },
