@@ -150,9 +150,9 @@ var objectsController = exports.ObjectsController = Montage.create(Montage, {
             var properties = [];
 
             for(var key in object) {
-                if(object.hasOwnProperty(key)) {
+                //if(object.hasOwnProperty(key)) {
                         properties.push(key);
-                }
+                //}
             }
 
             if(excludeUnderscoreProperties) {

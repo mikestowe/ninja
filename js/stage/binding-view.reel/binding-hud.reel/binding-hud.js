@@ -45,7 +45,10 @@ exports.BindingHud = Montage.create(Component, {
     optionsRepeater: {
         value: null
     },
-
+    panelData : {
+        value: null,
+        serializable: true
+    },
     _userComponent: { value: null  },
     userComponent: {
         get: function() {
@@ -59,7 +62,7 @@ exports.BindingHud = Montage.create(Component, {
                 isOffStage, icon, iconOffsets;
 
             this._userComponent = val;
-            this.properties = controller.getPropertiesFromObject(val, true);
+            this.properties = this.getPropertyList(val); //controller.getPropertiesFromObject(val, true);
 
             controller.getObjectBindings(this.userComponent).forEach(function(obj) {
                 this.boundProperties.push(obj.sourceObjectPropertyPath);
@@ -81,6 +84,37 @@ exports.BindingHud = Montage.create(Component, {
 
             this.needsDraw = true;
 
+        }
+    },
+
+    getPropertyList : {
+        value: function(component) {
+            var props = this.application.ninja.objectsController.getPropertiesFromObject(component, true);
+
+            var objectName, promotedProperties;
+
+            if(this.userComponent._montage_metadata) {
+                objectName = this.userComponent._montage_metadata.objectName;
+
+                if(this.panelData && this.panelData[objectName + 'Pi']) {
+
+                    promotedProperties = this.panelData[objectName + 'Pi'][0].Section.map(function(item) {
+                        return item[0].prop;
+                    });
+
+                    //// Remove promoted properties from current position in array
+                    props = props.filter(function(prop) {
+                        return promotedProperties.indexOf(prop) === -1;
+                    });
+
+                    //// Add them at the top
+
+                    props = promotedProperties.concat(props);
+
+                }
+            }
+
+            return props;
         }
     },
 
@@ -248,11 +282,11 @@ exports.BindingHud = Montage.create(Component, {
                 if(direction === "down") {
                     this.scrollInterval = setInterval(function() {
                         this.optionsRepeater.element.scrollTop += 3;
-                    }.bind(this), 50);
+                    }.bind(this), 20);
                 } else {
                     this.scrollInterval = setInterval(function() {
                         this.optionsRepeater.element.scrollTop -= 3;
-                    }.bind(this), 50);
+                    }.bind(this), 20);
                 }
             }
         }
@@ -267,11 +301,11 @@ exports.BindingHud = Montage.create(Component, {
                         //e._event.target.parentElement.controller.currentScrollDirection = "down";
                         this.scrollInterval = setInterval(function() {
                             self.optionsRepeater.element.scrollTop += 3;
-                        }, 50);
+                        }, 20);
                     } else {
                         this.scrollInterval = setInterval(function() {
                             self.optionsRepeater.element.scrollTop -= 3;
-                        }, 50);
+                        }, 20);
                     }
                 }
             }
