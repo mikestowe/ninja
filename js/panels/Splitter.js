@@ -156,7 +156,7 @@ exports.Splitter = Montage.create(Component, {
         }
     },
     restore:{
-        value: function() {
+        value: function(onSwitchFromCodeDocument) {
             //Get splitter initial value from SettingManager
             var storedData = this.application.localStorage.getItem(this.element.getAttribute("data-montage-id")), temp = this.collapsed;
             if(storedData && this.element.getAttribute("data-montage-id") !== null) {
@@ -172,7 +172,11 @@ exports.Splitter = Montage.create(Component, {
                     this.panel.addEventListener("webkitTransitionEnd", this, false);
                 }
                 this.disabled = false;
-                this.needsDraw = true;
+                if(onSwitchFromCodeDocument) {
+                    this.draw();    // When switching from code document, draw immediately so stage size is correct
+                } else {
+                    this.needsDraw = true;
+                }
             }
         }
     }

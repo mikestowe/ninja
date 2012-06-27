@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="binding-hud.css">
+
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype": "js/stage/binding-view.reel/binding-hud.reel",
+                "properties": {
+                    "element": {"#": "bindingHud"},
+                    "titleElement": {"#": "title"},
+                    "scrollUp": {"#":"scrollUp"},
+                    "scrollDown": {"#":"scrollDown"},
+                    "optionsRepeater": {"@": "repeater"}
+                }
+            },
+            "repeater": {
+                "prototype": "montage/ui/repetition.reel",
+                "properties": {
+                    "element": {"#": "hudRepetition"}
+                },
+                "bindings": {
+                    "objects": {"<-": "@owner.properties"}
+                }
+            },
+            "hudOption": {
+                "prototype": "js/stage/binding-view.reel/binding-hud-option.reel",
+                "properties": {
+                    "element": {"#" : "hudOption"}
+                },
+                "bindings": {
+                    "title": {"<-": "@repeater.objectAtCurrentIteration"}
+                }
+            },
+            "resizer1": {
+                "prototype": "js/panels/resize-composer",
+                "properties": {
+                    "element": {"#": "title"},
+                    "component": {"@": "owner"}
+                },
+                "listeners": [
+                    {
+                        "type": "resizeStart",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeMove",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeEnd",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            }
+        }
+    </script>
+
+</head>
+<body>
+    <section data-montage-id="bindingHud" class="bindingHud">
+        <div data-montage-id="title" class="bindingTitle"></div>
+        <div data-montage-id="scrollUp" class=" splitter scrollArea scrollAreaTop"></div>
+        <div data-montage-id="hudRepetition" class="hudRepetition">
+            <div data-montage-id="hudOption"></div>
+        </div>
+        <div data-montage-id="scrollDown" class="splitter scrollArea scrollAreaBottom"></div>
+    </section>
+
+</body>
+</html>

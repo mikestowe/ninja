@@ -61,7 +61,7 @@ exports.Main = Montage.create(Component, {
                         var componentRequire = component[data.name];
                         var componentInstance = componentRequire.create();
 
-
+						componentInstance.identifier = data.identifier;
                         componentInstance.addEventListener("firstDraw", self, false);
 
                         componentInstance.element = element;
@@ -69,8 +69,6 @@ exports.Main = Montage.create(Component, {
                         componentInstance.ownerComponent = self;
 
                         self.componentToInsert = componentInstance;
-
-
                         callback(componentInstance, element);
                     })
                     .end();

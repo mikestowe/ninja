@@ -27,6 +27,7 @@ exports.TextField = Montage.create(Component, {
         },
         set: function(value) {
             this._value = value;
+            this._valueSyncedWithInputField = false;
             this.needsDraw = true;
         }
     },
@@ -41,7 +42,7 @@ exports.TextField = Montage.create(Component, {
 
     handleBlur: {
         value: function(event) {
-            this._value = this.element.value;
+            this.value = this.element.value;
             this._valueSyncedWithInputField = true;
 
             var e = document.createEvent("CustomEvent");
@@ -51,27 +52,10 @@ exports.TextField = Montage.create(Component, {
             this.dispatchEvent(e);
         }
     },
-    /*
-    handleChange:
-    {
-        value:function(event)
-		{
-            this._value = this.element.value;
-            this._valueSyncedWithInputField = true;
-
-            var e = document.createEvent("CustomEvent");
-            e.initEvent("change", true, true);
-            e.type = "change";
-            e.value = this._value;
-            this.dispatchEvent(e);
-		}
-    },
-    */
 
     draw: {
         value: function() {
-            if(!this._valueSyncedWithInputField)
-            {
+            if(!this._valueSyncedWithInputField) {
                 this.element.value = this._value;
                 this._valueSyncedWithInputField = true;
             }
@@ -80,7 +64,6 @@ exports.TextField = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
-            //this.element.addEventListener("change", this, false);
             this.element.addEventListener("blur", this, false);
             this.element.addEventListener("keyup", this, false);
         }

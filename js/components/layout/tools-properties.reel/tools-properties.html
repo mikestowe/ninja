@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -102,6 +102,12 @@
                     "element": {"#": "zoomProperties"}
                 }
             },
+            "bindingProperties": {
+                "prototype": "js/components/tools-properties/binding-properties.reel",
+                "properties": {
+                    "element": {"#": "bindingProperties"}
+                }
+            },
 
             "disable": {
                 "prototype": "montage/ui/condition.reel",
@@ -134,7 +140,8 @@
                     "eraserProperties":             {"@": "eraserProperties"},
                     "rotateStageProperties":        {"@": "rotateStageProperties"},
                     "panProperties":                {"@": "panProperties"},
-                    "zoomProperties":               {"@": "zoomProperties"}
+                    "zoomProperties":               {"@": "zoomProperties"},
+					"bindingProperties":            {"@": "bindingProperties"}
                 },
                 "bindings": {
                     "currentSelectedTool": {
@@ -164,6 +171,7 @@
             <div data-montage-id="rotateStageProperties"></div>
             <div data-montage-id="panProperties"></div>
             <div data-montage-id="zoomProperties"></div>
+            <div data-montage-id="bindingProperties"></div>
             <div data-montage-id="disabledCondition" class="panelDisabled"></div>
         </div>
     </body>

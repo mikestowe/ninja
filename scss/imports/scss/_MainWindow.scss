@@ -206,7 +206,7 @@
     background:$color-stage url('../images/temp/ruler-top.png');
     height:15px;
     margin-bottom: 0px;
-  border-right: 11px solid black;
+  //border-right: 11px solid black;
 }
 
 .rulerLeft {
@@ -214,7 +214,7 @@
     // TODO: temporary background please replace when component is implemented
     background:$color-stage url('../images/temp/ruler-left.png');
     width:16px;
-  border-bottom: 11px solid black;
+  //border-bottom: 11px solid black;
 }
 
 #stateBar {

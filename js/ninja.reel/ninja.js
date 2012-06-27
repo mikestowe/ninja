@@ -191,9 +191,33 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
+	_workspaceMode: {
+        value: null
+    },
+
+    workspaceMode: {
+        get: function() {
+            return this._workspaceMode;
+        },
+        set: function(val) {
+            if(this._workspaceMode !== val ) {
+                if(this._workspaceMode !== null) {
+                   document.body.classList.remove("ws-" + this._workspaceMode);
+                }
+                document.body.classList.add("ws-" + val);
+                this._workspaceMode = val;
+            }
+        }
+    },
+
+    _isResizing: {
+        value: null
+    },
+
     _resizedHeight : {
         value: 0
     },
+
     _height: {
         value: null
     },
@@ -307,6 +331,7 @@ exports.Ninja = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
+            this.workspaceMode = "default";
             console.log("Loading Ninja --> ", this.ninjaVersion);
 
             this.application.ninja = this;
