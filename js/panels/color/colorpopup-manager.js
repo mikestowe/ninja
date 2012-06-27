@@ -291,12 +291,14 @@ exports.ColorPopupManager = Montage.create(Component, {
     			} else {
 	    			this._popupChipBtn.color('rgb', {r: rgb.r, g: rgb.g, b: rgb.b, a: 1, css: 'rgba('+rgb.r+', '+rgb.g+', '+rgb.b+', 1)'});
     			}
-    		} else {
+    		} else if (!(e._event.mode && e._event.mode === 'nocolor')) {
     			if (alpha) {
 		    		this._popupChipBtn.color('rgb', {r: 255, g: 255, b: 255, a: alpha, css: 'rgba(255, 255, 255, '+alpha+')'});
 		    	} else {
 			    	this._popupChipBtn.color('rgb', {r: 255, g: 255, b: 255, a: 1, css: 'rgba(255, 255, 255, 1)'});
 		    	}
+    		} else {
+	    		this._popupChipBtn.color('nocolor', null);
     		}
     	}
     },
@@ -603,7 +605,6 @@ exports.ColorPopupManager = Montage.create(Component, {
     //
     handleChange: {
     	value: function (e) {
-    		//console.log(e);
     		if (this._popupChipBase && this._popupChipBase.opened && (!this._popupGradientChipBase || (this._popupGradientChipBase && !this._popupGradientChipBase.opened))) {
     			if (e._event.hsv) {
     				this._popupChipBase.colorManager.hsv = {h: e._event.hsv.h, s: e._event.hsv.s, v: e._event.hsv.v, type: e._event.type, wasSetByCode: e._event.wasSetByCode};
@@ -618,6 +619,8 @@ exports.ColorPopupManager = Montage.create(Component, {
 		    				this._popupChipBase.colorManager.alpha = {value: e._target._numValue/100, type: 'change', wasSetByCode: false};	
 	    				}
 	    				this.colorChipChange(e);
+	    			} else if (!e._event.wasSetByCode && (e._event.mode && e._event.mode === 'nocolor')) {
+		    			this.colorChipChange(e);
 	    			}
     			}
     			return;

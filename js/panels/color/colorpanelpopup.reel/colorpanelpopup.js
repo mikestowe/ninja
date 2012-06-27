@@ -32,17 +32,6 @@ exports.ColorPanelPopup = Montage.create(Component, {
         set: function(value) {if (value !== this._colorManager) this._colorManager = value;}
     },
     ////////////////////////////////////////////////////////////////////
-    //Storing color panel
-    _colorPanel: {
-        value: false
-    },
-    ////////////////////////////////////////////////////////////////////
-    //Color panel
-    colorPanel: {
-        get: function() {return this._colorPanel;},
-        set: function(value) {this._colorPanel = value;}
-    },
-    ////////////////////////////////////////////////////////////////////
     //
     _components: {
 	  	value: null  
@@ -52,6 +41,10 @@ exports.ColorPanelPopup = Montage.create(Component, {
     setNoColor: {
     	value: function (code) {
     		if (this.colorManager) this.colorManager.applyNoColor(code);
+    		//
+    		if (!code && !this.props.panel) {
+	    		this.dispatchEvent({type: 'change', wasSetByCode: code, mode: 'nocolor', value: null});
+    		}
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -161,7 +154,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
 	       	if (!this.props || (this.props && this.props.nocolor)) {
    				//
 	   			this.btnNocolor.addEventListener('click', function () {
-   					this.setNoColor();
+   					this.setNoColor(false);
    				}.bind(this), true);
     		} else {
     			this.btnNocolor.style.display = 'none';
