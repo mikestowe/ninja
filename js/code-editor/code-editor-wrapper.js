@@ -9,7 +9,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = 		require("montage/core/core").Montage,
     Component = 	require("montage/ui/component").Component;
 
-exports.CodeEditorController = Montage.create(Component, {
+exports.CodeEditorWrapper = Montage.create(Component, {
     hasTemplate: {
         value: false
     },
@@ -32,8 +32,9 @@ exports.CodeEditorController = Montage.create(Component, {
             if(!value) {
 
             } else if(this._currentDocument.currentView === "code") {
-                this.autocomplete = !this.codeCompletionSupport[this._currentDocument.model.file.extension];
+                this.autocomplete = this.codeCompletionSupport[this._currentDocument.model.file.extension];
                 this._currentDocument.model.views.code.editor.focus();
+
                 this.applySettings();
             }
         }
@@ -54,21 +55,6 @@ exports.CodeEditorController = Montage.create(Component, {
 
     autocomplete: {
         value: false
-    },
-
-    _automaticCodeComplete: {
-        value:false
-    },
-
-    automaticCodeComplete:{
-        get: function(){
-            return this._automaticCodeComplete;
-        },
-        set: function(value) {
-            if(this._automaticCodeComplete !== value) {
-                this._automaticCodeComplete = value;
-            }
-        }
     },
 
     _editorTheme: {
@@ -93,7 +79,10 @@ exports.CodeEditorController = Montage.create(Component, {
             return this._zoomFactor;
         },
         set: function(value) {
-            this.handleZoom(value);
+            if(value !== this._zoomFactor){
+                this._zoomFactor = value;
+                this.handleZoom(value);
+            }
         }
     },
 
@@ -111,6 +100,10 @@ exports.CodeEditorController = Montage.create(Component, {
     createEditor : {
         value:function(codeDocumentView, type, documentType, textDocument){
             var self = this, editorOptions = null;
+
+            if(!this.application.ninja.editorViewOptions.codeEditorWrapper){
+                this.application.ninja.editorViewOptions.codeEditorWrapper = this;
+            }
 
             editorOptions = {
                                lineNumbers: true,
@@ -132,6 +125,9 @@ exports.CodeEditorController = Montage.create(Component, {
                            };
 
             //configure auto code completion if it is supported for that document type
+
+            this.autocomplete = this.codeCompletionSupport[documentType];
+
             if(this.autocomplete) {
 
                 editorOptions.onKeyEvent = function(cm, keyEvent){
@@ -163,7 +159,7 @@ exports.CodeEditorController = Montage.create(Component, {
             }
 
             //===manually triggered code completion
-            if((this.automaticCodeComplete === false)){
+            if((this.currentDocument.model.views.code.editor.automaticCodeHint === false)){
                 if(keyEvent.ctrlKey && keyEvent.keyCode === 32){//Ctrl+Space
                     this.codeEditor.simpleHint(cm, this.codeEditor.javascriptHint);
                 }

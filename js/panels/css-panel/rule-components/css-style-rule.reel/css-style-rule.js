@@ -96,7 +96,10 @@ exports.CssStyleRule = Montage.create(Component, {
     handleStop : {
         value: function(e) {
             if(this.focusDelegate) {
-                e._event.detail.preventDefault();
+                if(e._event.detail.preventDefault) {
+                    e._event.detail.preventDefault();
+                }
+
                 this.focusDelegate.handleSelectorStop(this.rule, this.selectorField.value, this);
             }
         }
