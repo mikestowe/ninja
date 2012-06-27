@@ -1063,8 +1063,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.tweens[0].tweenData.tweenedProperties["height"] = this.animatedElement.offsetHeight + "px";
             var animationDuration = Math.round(this.trackDuration / 1000) + "s";
             this.animationName = this.animatedElement.classList[0] + "_PositionSize";
-            this.animationNamesString = this.animationName;
-            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-name", this.animationName);
+            if(this.animationNamesString.length == 0){
+                this.animationNamesString = this.animationName;
+            } else {
+                this.animationNamesString = this.animationName + ", " + this.animationNamesString;
+            }
+            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-name", this.animationNamesString);
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-fill-mode", "forwards");
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-iteration-count", 1);

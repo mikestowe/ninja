@@ -470,13 +470,18 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
             this.animationName = this.animatedElement.classList[0] + "_" + this.trackEditorProperty;
             var currentAnimationNameString = this.parentComponent.parentComponent.parentComponent.parentComponent.animationNamesString;
-            var newAnimationNames = currentAnimationNameString + "," + this.animationName;
+            var newAnimationNames = "";
+            if(currentAnimationNameString.length == 0){
+                newAnimationNames = this.animationName;
+            } else {
+                newAnimationNames = currentAnimationNameString + "," + this.animationName;
+            }
             var currentAnimationDuration = this.ninjaStylesContoller.getElementStyle(this.animatedElement, "-webkit-animation-duration");
             var newAnimationDuration = currentAnimationDuration + "," + currentAnimationDuration;
             var currentIterationCount = this.ninjaStylesContoller.getElementStyle(this.animatedElement, "-webkit-animation-iteration-count");
             var newIterationCount = currentIterationCount + ",1";
 
-            this.parentComponent.parentComponent.parentComponent.animationNamesString = newAnimationNames;
+            this.parentComponent.parentComponent.parentComponent.parentComponent.animationNamesString = newAnimationNames;
 
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-name", newAnimationNames);
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", newAnimationDuration);
