@@ -13,7 +13,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
     // Ninja override: don't show code hinting if the token is empty
     var tempToken = editor.getTokenAt(editor.getCursor());
-    if(tempToken && ((tempToken.string === "") || !(/[\S]/gi.test(tempToken.string)))) return;//check that token has only spaces
+    if(!(/[\S]/gi.test(tempToken.string))) return;
 
 
     var result = getHints(editor);
@@ -22,7 +22,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     function insert(str) {
       editor.replaceRange(str, result.from, result.to);
     }
-      
+
     //if (completions.length == 1) {insert(completions[0]); return true;}
 
     // Build the select widget

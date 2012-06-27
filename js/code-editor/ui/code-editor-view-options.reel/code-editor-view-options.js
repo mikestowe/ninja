@@ -31,6 +31,7 @@ exports.CodeEditorViewOptions = Montage.create(Component, {
             } else {
                 this.visible = true;
                 this.autocomplete = !this.codeCompletionSupport[this._currentDocument.model.file.extension];
+                this._currentDocument.model.views.code.editor.automaticCodeHint = this.codeCompleteCheck.checked;
             }
 
         }
