@@ -300,8 +300,11 @@ exports.ComponentsPanel = Montage.create(Component, {
 
     componentInstanceOnFirstDraw: {
         value: function(instance) {
+            var addDelegate = this.application.ninja.elementMediator.addDelegate;
+            this.application.ninja.elementMediator.addDelegate = null;
             this.application.ninja.elementMediator.addElements(instance.element);
             this.application.ninja.currentDocument.model.mObjects.push(instance);
+            this.application.ninja.elementMediator.addDelegate = addDelegate;
         }
     },
 
