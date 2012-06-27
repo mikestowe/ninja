@@ -221,7 +221,7 @@ var Tween = exports.Tween = Montage.create(Component, {
 
     setTweenProperties:{
         value:function (eventDetail) {
-        	if (eventDetail.source === "SelectionTool") {
+        	if (eventDetail.source === "SelectionTool" || eventDetail.source === "timeline") {
 	            if(this.parentComponent.parentComponent.animatedElement.offsetTop != this.tweenedProperties["top"]){
 	                this.tweenedProperties["top"] = this.parentComponent.parentComponent.animatedElement.offsetTop + "px";
 	            }
