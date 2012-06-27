@@ -648,8 +648,6 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 win = doc.defaultView;
 
             try {
-                debugger;
-
                 mappedRules = nj.toArray(win.getMatchedCSSRules(element)).map(function(rule) {
                     return this._getRuleWithCSSText(rule.cssText, doc);
                 }, this);
