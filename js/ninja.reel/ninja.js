@@ -519,10 +519,12 @@ exports.Ninja = Montage.create(Component, {
 //                background =  "#000000";
 //                overflow = "hidden";
                 transitionStopRule = "nj-css-garbage-selector";
+                this.stage.bindingView.hide = true;
             } else {
 //                background =  "#808080";
 //                overflow = "visible";
                 transitionStopRule = "*"
+                this.stage.bindingView.hide = false;
             }
 
             // TODO: Remove marker for old template: NINJA-STAGE-REWORK

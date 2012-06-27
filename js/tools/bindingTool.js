@@ -33,6 +33,7 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
             {
                 NJevent("enableStageMove");
                 this.application.ninja.workspaceMode = "binding";
+                this.application.ninja.stage.bindingView.hide = false;
                 if (this.application.ninja.selectedElements.length !== 0 ) {
                     if(typeof(this.application.ninja.selectedElements[0].controller) !== "undefined") {
                         this.selectedComponent = this.application.ninja.selectedElements[0].controller;
@@ -47,6 +48,7 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
                 NJevent("disableStageMove");
                 this.application.ninja.workspaceMode = "default";
                 this.selectedComponent = null;
+                this.application.ninja.stage.bindingView.hide = true;
             }
 
         }

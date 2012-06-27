@@ -198,7 +198,7 @@ exports.BindingView = Montage.create(Component, {
         }
     },
 
-    _hide : { value: null },
+    _hide : { value: true },
     hide : {
         get : function() { return this._hide; },
         set : function(value) {
@@ -243,12 +243,6 @@ exports.BindingView = Montage.create(Component, {
                     if(this.element.classList.contains("mousedOverHud")) { this.element.classList.remove("mousedOverHud"); }
                 }
             }
-
-        }
-    },
-
-    didDraw: {
-        value: function() {
 
         }
     },
