@@ -72,6 +72,19 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         	this.trackData.isVisible = value;
         }
     },
+    
+    _stageElement: {
+    	value: null
+    },
+    stageElement: {
+    	get: function() {
+    		return this._stageElement;
+    	},
+    	set: function(newVal) {
+    		this._stageElement = newVal;
+    		this.trackData.stageElement = newVal;
+    	}
+    },
 
     // Are the various collapsers collapsed or not
     _isMainCollapsed:{
@@ -484,6 +497,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.isStyleCollapsed = this.trackData.isStyleCollapsed;
             this.trackPosition = this.trackData.trackPosition;
             this.isVisible = this.trackData.isVisible;
+            this.stageElement = this.trackData.stageElement;
             this.trackEditorProperty = "master";
             this.needsDraw = true;
         }
@@ -682,7 +696,18 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             // TEMP - if the SHIFT key is down, add a new keyframe or split an existing span
             // This needs to move to a keyboard shortcut that is TBD
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
+
+            var targetElementOffset = this.findXOffset(ev.currentTarget),
+            	position = (event.pageX - targetElementOffset) - 18;
+
+            this.application.ninja.timeline.playheadmarker.style.left = position + "px";
+            var currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
+            var currentMillisec = currentMillisecPerPixel * position;
+            this.application.ninja.timeline.updateTimeText(currentMillisec);
+
             if (ev.shiftKey) {
+	            var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
+	            this.application.ninja.timeline.selectLayer(selectedIndex, true);
                 if (this.tweens.length < 1) {
                     this.insertTween(0);
                     this.addAnimationRuleToElement(ev);
@@ -720,6 +745,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     handleNewTween:{
         value:function (ev) {
+        	
             if (ev.offsetX > this.tweens[this.tweens.length - 1].tweenData.keyFramePosition) {
                 var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
                 this.application.ninja.timeline.selectLayer(selectedIndex, false);
@@ -727,31 +753,36 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             } else {
             	// We will be splitting a tween.  Get the x-coordinate of the mouse click within the target element.
             	// You'd think you could use the event.x info for that, right? NO. We must use page values, calculating offsets and scrolling.
-
-            	// Here's an easy function that adds up offsets and scrolls and returns the page x value of an element
-				var findXOffset = function(obj) {
-					var curleft = 0;
-					if (obj.offsetParent) {
-						do {
-								curleft += (obj.offsetLeft-obj.scrollLeft);
-					
-							} while (obj = obj.offsetParent);
-					}
-					return curleft;
-				}
-				var targetElementOffset = findXOffset(ev.currentTarget),
-					position = event.pageX - targetElementOffset;
-
-                this.splitTweenAt(position-18);
+	            if (typeof(ev.currentTarget) === "undefined") {
+	            	this.splitTweenAt(ev.offsetX);
+	            } else {
+					var targetElementOffset = this.findXOffset(ev.currentTarget),
+						position = event.pageX - targetElementOffset;
+	                this.splitTweenAt(position-18);
+	            }
             }
+        }
+    },
+
+    findXOffset:{
+        value:function (obj) {
+            // Here's an easy function that adds up offsets and scrolls and returns the page x value of an element
+            var curleft = 0;
+            if (typeof(obj) === "undefined") {
+            	//debugger;
+            }
+            if (obj.offsetParent) {
+                do {
+                    curleft += (obj.offsetLeft - obj.scrollLeft);
+
+                } while (obj = obj.offsetParent);
+            }
+            return curleft;
         }
     },
 
     insertTween:{
         value:function (clickPos) {
-            var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-            this.application.ninja.timeline.selectLayer(selectedIndex, true);
-
             var currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
             var currentMillisec = currentMillisecPerPixel * clickPos;
             this.trackDuration = currentMillisec;
@@ -969,6 +1000,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             newTween.tweenData.tweenID = 0;
                             newTween.tweenData.spanPosition = 0;
                             this.tweens.push(newTween);
+                            this.createMatchingPositionSizeTween(newTween);
                         }
                         else {
                             tempTiming = trackTiming.split("s");
@@ -1027,16 +1059,23 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function (tweenEvent) {
             this.tweens[0].tweenData.tweenedProperties["top"] = this.animatedElement.offsetTop + "px";
             this.tweens[0].tweenData.tweenedProperties["left"] = this.animatedElement.offsetLeft + "px";
+            this.tweens[0].tweenData.tweenedProperties["width"] = this.animatedElement.offsetWidth + "px";
+            this.tweens[0].tweenData.tweenedProperties["height"] = this.animatedElement.offsetHeight + "px";
             var animationDuration = Math.round(this.trackDuration / 1000) + "s";
             this.animationName = this.animatedElement.classList[0] + "_PositionSize";
-            this.animationNamesString = this.animationName;
-            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-name", this.animationName);
+            if(this.animationNamesString.length == 0){
+                this.animationNamesString = this.animationName;
+            } else {
+                this.animationNamesString = this.animationName + ", " + this.animationNamesString;
+            }
+            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-name", this.animationNamesString);
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
+            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-fill-mode", "forwards");
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-iteration-count", 1);
+
             var initRule = "@-webkit-keyframes " + this.animationName + " { 0% {top: " + this.animatedElement.offsetTop + "px; left: " + this.animatedElement.offsetLeft + "px;} 100% {top: " + this.animatedElement.offsetTop + "px; left: " + this.animatedElement.offsetLeft + "px;} }";
 
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(initRule);
-
             this.insertTween(tweenEvent.offsetX);
             this.isTrackAnimated = true;
         }
@@ -1049,6 +1088,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
             // build the new keyframe string
             var keyframeString = "@-webkit-keyframes " + this.animationName + " {";
+
+            //console.log(this.animationName);
 
             for (var i = 0; i < this.tweens.length; i++) {
                 var keyMill = parseInt(this.tweens[i].tweenData.keyFrameMillisec);
@@ -1085,6 +1126,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     createPositionTracks:{
         value:function(){
             // create track objects for position and transform tracks and push into arrays
+            
+            // ... but only do it if we haven't already.
+            if (this.arrPositionTracks.length > 0) {
+            	return;
+            }
 
             // create 'left' track
             var newLeftTrack = {};

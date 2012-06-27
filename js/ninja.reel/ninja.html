@@ -346,11 +346,10 @@
                 }
             },
 
-            "codeEditorController": {
-                "prototype": "js/controllers/code-editor-controller",
+            "codeEditorWrapper": {
+                "prototype": "js/code-editor/code-editor-wrapper",
                 "bindings": {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"},
-                    "automaticCodeComplete": {"<-": "@editorViewOptions.codeCompleteCheck.disabled"}
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
             },
 
@@ -394,7 +393,7 @@
                     "ioMediator":           {"@": "ioMediator"},
                     "timeline":             {"@": "timeline"},
                     "mainMenuController":   {"@": "mainMenuController"},
-                    "codeEditorController": {"@": "codeEditorController"},
+                    "codeEditorWrapper": {"@": "codeEditorWrapper"},
                     "objectsController":    {"@": "objectsController"},
                     "rightPanelContainer":  {"#": "rightPanelContainer" },
                     "panelSplitter":        {"@": "splitter3"},
