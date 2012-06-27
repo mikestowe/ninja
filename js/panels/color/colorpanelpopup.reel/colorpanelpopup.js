@@ -128,7 +128,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
    					this.popupSwitchInputTo(this.palettes);
    				}.bind(this), true);
     			//
-    			this.drawPalette(this.defaultPalette);
+    			this.drawPalette(this.defaultPalette, this.colorManager);
     		} else {
 	    		this.btnPalette.style.display = 'none';
     		}
@@ -297,7 +297,7 @@ if (this._components.wheel._value) {
     ////////////////////////////////////////////////////////////////////
     //
     drawPalette: {
-    	value: function (c) {
+    	value: function (c, m) {
     		var i, button;
     		//
     		this.palettes.style.display = 'block';
@@ -316,27 +316,31 @@ if (this._components.wheel._value) {
     					color = b._event.srcElement.colorValue;
 	    				color.wasSetByCode = false;
     					color.type = 'change';
-    					this.colorManager[b._event.srcElement.colorMode] = color;
+    					m[b._event.srcElement.colorMode] = color;
     				} else {
-    					if (this.colorManager.mode === 'hsl') {
-    						rgb = this.colorManager.hexToRgb(b._event.srcElement.colorValue);
+    					if (m.mode === 'hsl') {
+    						rgb = m.hexToRgb(b._event.srcElement.colorValue);
     						if (rgb) {
-			    				color = this.colorManager.rgbToHsl(rgb.r, rgb.g, rgb.b);
+			    				color = m.rgbToHsl(rgb.r, rgb.g, rgb.b);
     							color.wasSetByCode = false;
 			    				color.type = 'change';
-    							this.colorManager.hsl = color;
+    							m.hsl = color;
     						} else {
-			    				this.colorManager.applyNoColor(false);
+			    				m.applyNoColor(false);
     						}
 			    		} else {
-    						color = this.colorManager.hexToRgb(b._event.srcElement.colorValue);
+    						color = m.hexToRgb(b._event.srcElement.colorValue);
 			    			if (color) {
     							color.wasSetByCode = false;
     							color.type = 'change';
-			    				this.colorManager.rgb = color;
+			    				m.rgb = color;
     						} else {
-    							this.colorManager.applyNoColor(false);
+    							m.applyNoColor(false);
 			    			}
+			    			//TODO: Remove this is a hack
+			    			if (!this.props.panel) {
+					    		this.dispatchEvent({type: 'change', wasSetByCode: false, mode: 'hex', value: b._event.srcElement.colorValue});
+	    					}
     					}
     				}
     			}.bind(this), true);

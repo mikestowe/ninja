@@ -621,6 +621,8 @@ exports.ColorPopupManager = Montage.create(Component, {
 	    				this.colorChipChange(e);
 	    			} else if (!e._event.wasSetByCode && (e._event.mode && e._event.mode === 'nocolor')) {
 		    			this.colorChipChange(e);
+	    			} else if (!e._event.wasSetByCode && (e._event.mode && e._event.mode === 'hex')) {
+		    			this.colorChipChange(e);
 	    			}
     			}
     			return;
@@ -637,14 +639,18 @@ exports.ColorPopupManager = Montage.create(Component, {
 		    				this._popupGradientChipBase.colorManager.alpha = {value: e._target._numValue/100, type: 'change', wasSetByCode: false};	
 	    				}
     					this.colorGradientChipChange(e);
-    				}
+    				} else if (!e._event.wasSetByCode && (e._event.mode && e._event.mode === 'hex')) {
+		    			this.colorGradientChipChange(e);
+	    			}
     			} else {
     				if (!isNaN(e._target._xStart) && !e._event.wasSetByCode) {
     					if (!isNaN(e._target._numValue)) {
 		    				this._popupGradientChipBase.colorManager.alpha = {value: e._target._numValue/100, type: 'change', wasSetByCode: false};	
 	    				}
     					this.colorGradientChipChange(e);
-    				}
+    				} else if (!e._event.wasSetByCode && (e._event.mode && e._event.mode === 'hex')) {
+		    			this.colorGradientChipChange(e);
+	    			}
 			    }
     			return;
     		}
