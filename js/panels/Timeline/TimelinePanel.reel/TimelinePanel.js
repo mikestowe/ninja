@@ -910,6 +910,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.eventManager.addEventListener("updatedID", this.handleLayerIdUpdate.bind(this), false);
 			this.checkable_lock.addEventListener("click",this.handleLockLayerClick.bind(this),false);
             this.checkable_visible.addEventListener("click",this.handleLayerVisibleClick.bind(this),false);
+            this.play_button.addEventListener("click", this.handlePlayButtonClick.bind(this), false);
             
             this.addPropertyChangeListener("currentDocument.model.domContainer", this);
             
@@ -1082,6 +1083,21 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     handleDocumentChange:{
         value:function () {
 
+        }
+    },
+
+    handlePlayButtonClick:{
+        value:function(ev){
+            this.application.ninja.appModel.livePreview = !this.application.ninja.appModel.livePreview;
+
+            if (this.application.ninja.appModel.livePreview) {
+                this.play_button.classList.remove("playbutton");
+                this.play_button.classList.add("pausebutton");
+
+            } else {
+                this.play_button.classList.remove("pausebutton");
+                this.play_button.classList.add("playbutton");
+            }
         }
     },
 
