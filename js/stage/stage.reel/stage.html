@@ -40,7 +40,13 @@
             "focusManager": {
                 "object": "js/components/focus-manager.reel"
             },
-            
+
+            "bindingView": {
+                "prototype": "js/stage/binding-view.reel",
+                "properties" : {
+                    "element": {"#": "bindingView" }
+                }
+            },
             "owner": {
                 "prototype": "js/stage/stage.reel",
                 "properties": {
@@ -53,7 +59,8 @@
                     "stageDeps": {"@": "stageDeps"},
                     "layout":   {"@": "layout"},
                     "textTool": {"@": "textTool"},
-                    "focusManager": {"@": "focusManager"}
+                    "focusManager": {"@": "focusManager"},
+                    "bindingView": {"@": "bindingView"}
                 },
                 "bindings": {
                     "currentDocumentStageView": {
@@ -77,6 +84,7 @@
         <canvas data-montage-id="layoutCanvas" class="layoutCanvas"></canvas>
         <canvas data-montage-id="stageCanvas" class="stageCanvas"></canvas>
         <canvas data-montage-id="drawingCanvas" class="drawingCanvas"></canvas>
+        <section data-montage-id="bindingView"></section>
     </section>
 
 </body>

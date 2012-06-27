@@ -1,0 +1,27 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.binding-panel {
+    position: relative;
+    height: 100%;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+}
+
+.bindings-list {
+    -webkit-box-flex: 1;
+    padding: 0;
+    margin: 0;
+}
+.binding-panel-toolbar-container {
+    -webkit-box-flex: 0;
+}
+
+.binding-panel .edit-view-docked {
+    left: 0;
+    -webkit-transition-duration: 0;
+}

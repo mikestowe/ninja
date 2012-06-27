@@ -118,9 +118,9 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #sceneBar { height: 70px; background-color: #474747; }
 
-#mainContainer .rulerTop { display: none; background: gray url("../images/temp/ruler-top.png"); height: 15px; margin-bottom: 0px; border-right: 11px solid black; }
+#mainContainer .rulerTop { display: none; background: gray url("../images/temp/ruler-top.png"); height: 15px; margin-bottom: 0px; }
 
-.rulerLeft { display: none; background: gray url("../images/temp/ruler-left.png"); width: 16px; border-bottom: 11px solid black; }
+.rulerLeft { display: none; background: gray url("../images/temp/ruler-left.png"); width: 16px; }
 
 #stateBar { height: 20px; background-color: #282828; margin-bottom: 0px; }
 
@@ -600,7 +600,7 @@ button.panel-button { -webkit-appearance: none; font-size: 9px; color: white; ba
 
 .panels .panel { min-height: 25px; -webkit-box-flex: 0; display: -webkit-box; -webkit-box-orient: vertical; background: #282828; height: 200px; padding: 0px 2px; -webkit-box-sizing: border-box; }
 
-.panels .panel .panelBody { -webkit-box-flex: 1; -webkit-box-sizing: border-box; -webkit-box-orient: vertical; -webkit-box-align: stretch; position: relative; overflow: auto; height: 200px; }
+.panels .panel .panelBody { -webkit-box-flex: 1; -webkit-box-sizing: border-box; -webkit-box-orient: vertical; -webkit-box-align: stretch; position: relative; }
 
 .panel .panelBodyContent { -webkit-box-sizing: border-box; -webkit-box-align: stretch; position: absolute; height: 100%; width: 100%; }
 
@@ -871,6 +871,8 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .InkBottleTool { background-image: url("../images/tools/Tool-FillColor.png"); }
 
+.bindingTool { background-image: url("../images/tools/binding.png"); }
+
 .blueDiv { background: blue; opacity: 0.2; }
 
 ::-webkit-scrollbar { width: 11px; height: 11px; }
@@ -932,5 +934,13 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 .montage-popup-container { background: none; }
 
 .montage-invisible { display: none; }
+
+.panels .panel { display: none; }
+
+.panels .panel.ws-binding { display: none; -webkit-box-flex-group: 2; }
+
+body.ws-binding .panel.ws-binding { display: -webkit-box; }
+
+body.ws-default .panel.default { display: -webkit-box; -webkit-box-flex-group: 1; }
 
 /*77*/
