@@ -243,6 +243,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     	value: false
     },
     
+    _areTracksCollapsing: {
+    	value: false
+    },
+    
     _currentOpenSpanMenu: {
     	value: false
     },
@@ -687,6 +691,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			// We have shuffled layers, so we need to update this.selectedLayers.
     			this.selectLayers([])
     		}
+
+    		// Do we need to scroll the layers?
+    		if (this._areTracksCollapsing !== false) {
+    			//console.log("diddraw: user_layers, layout_tracks", this.user_layers.scrollTop, this.layout_tracks.scrollTop);
+	            //this.layout_tracks.scrollTop = this.user_layers.scrollTop;\
+	            this.layout_tracks.scrollTop = this._areTracksCollapsing;
+    			this._areTracksCollapsing = false;
+    		}
     	}
     },
 
@@ -898,6 +910,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.eventManager.addEventListener("updatedID", this.handleLayerIdUpdate.bind(this), false);
 			this.checkable_lock.addEventListener("click",this.handleLockLayerClick.bind(this),false);
             this.checkable_visible.addEventListener("click",this.handleLayerVisibleClick.bind(this),false);
+            this.play_button.addEventListener("click", this.handlePlayButtonClick.bind(this), false);
             
             this.addPropertyChangeListener("currentDocument.model.domContainer", this);
             
@@ -1073,15 +1086,56 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
+    handlePlayButtonClick:{
+        value:function(ev){
+            this.application.ninja.appModel.livePreview = !this.application.ninja.appModel.livePreview;
+
+            if (this.application.ninja.appModel.livePreview) {
+                this.play_button.classList.remove("playbutton");
+                this.play_button.classList.add("pausebutton");
+
+            } else {
+                this.play_button.classList.remove("pausebutton");
+                this.play_button.classList.add("playbutton");
+            }
+        }
+    },
+
     handleKeyframeShortcut:{
         value:function(action){
             var tempEv = {};
             tempEv.offsetX = this.playheadmarker.offsetLeft;
             tempEv.actionType = action;
-            if (typeof(this.trackRepetition.childComponents[this.currentLayersSelected[0]]) !== "undefined") {
-            	this.trackRepetition.childComponents[this.currentLayersSelected[0]].handleKeyboardShortcut(tempEv);
-            } else {
-            	// oops, we do not have a layer selected.  We should growl at the user.  For now, this will fail silently.
+
+            if (this.currentLayersSelected === false) {
+            	// oops, we do not have a layer selected. We should growl at the user. For now, this will fail silently.
+            	return;
+            }
+            
+            // Okay. We need to get the correct layer(s).  For each currentElementSelected,
+            // loop through trackRepetition.childComponents and compare to stageElement.
+            // If they match, that's one of the components that needs the event.
+            var i = 0, 
+            	j = 0, 
+            	currentElementsSelectedLength = this.currentElementsSelected.length,
+            	trackRepLength = this.trackRepetition.childComponents.length,
+            	arrTargetIndexes = [],
+            	arrTargetIndexesLength = 0;
+            	
+            
+            for (i = 0; i < trackRepLength; i++) {
+            	var currentElement = this.trackRepetition.childComponents[i].stageElement;
+            	for (j = 0; j < currentElementsSelectedLength; j++) {
+            		if (currentElement === this.currentElementsSelected[j]) {
+            			arrTargetIndexes.push(i);
+            		}
+            	}
+            }
+            arrTargetIndexesLength = arrTargetIndexes.length;
+
+			// Now we have an array of things that need to handle the event.
+            for (i = 0; i < arrTargetIndexesLength; i++) {
+            	this.trackRepetition.childComponents[arrTargetIndexes[i]].handleKeyboardShortcut(tempEv);
             }
         }
     },
@@ -1097,11 +1151,25 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.drawTimeMarkers();
         }
     },
+    
+    synchScrollbars: {
+    	value: function(intScrollBy) {
+    		//this.updateLayerScroll();
+    		//this.user_layers.scrollTop = 0;
+    		//this.layout_tracks.scrollTop = this.user_layers.scrollTop;
+    		//console.log("synch: user_layers, layout_tracks", this.user_layers.scrollTop, this.layout_tracks.scrollTop);
+    		this._areTracksCollapsing = this.layout_tracks.scrollTop - intScrollBy;
+    		this.needsDraw = true;
+
+    	}
+    },
 
     updateLayerScroll:{
         value:function () {
+        	//console.log("TimelinePanel.updateLayerScroll")
         	this._areTracksScrolling = true;
         	this.needsDraw = true;
+        	
         }
     },
 
@@ -1188,6 +1256,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             if (this.currentLayersSelected !== false) {
             	this.currentLayersSelected = false;
             }
+
+            // Deselect any tweens
+            this.deselectTweens();
             
             // If we are actually going to be selecting things, create an empty array to use
             if (arrSelectedIndexesLength > 0) {
