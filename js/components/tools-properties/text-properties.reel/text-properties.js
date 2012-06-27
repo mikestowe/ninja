@@ -72,7 +72,7 @@ exports.TextProperties = Montage.create(ToolProperties, {
 
     handleEditorSelect: {
         value: function(e) {
-            this.application.ninja.stage.textTool.updateStates();
+            //this.application.ninja.stage.textTool.updateStates();
 //            this.fontSelection.value = this.application.ninja.stage.textTool.states.fontname;
 //
 //            for( var i = 0; i < this.fontSize.items.length; i++) {
@@ -94,30 +94,6 @@ exports.TextProperties = Montage.create(ToolProperties, {
         value: function(event) {
            // this.selectedElement = event._event.target.id;
 
-        }
-    },
-
-    handleBtnBoldAction: {
-        value: function(e) {
-            this.application.ninja.stage.textTool.doAction("bold");
-        }
-    },
-
-    handleBtnItalicAction: {
-        value: function(e) {
-            this.application.ninja.stage.textTool.doAction("italic");
-        }
-    },
-
-    handleBtnUnderlineAction: {
-        value: function(e) {
-            this.application.ninja.stage.textTool.doAction("underline");
-        }
-    },
-
-    handleBtnStrikethroughAction: {
-        value: function(e) {
-            this.application.ninja.stage.textTool.doAction("strikethrough");
         }
     },
     
@@ -211,87 +187,83 @@ exports.TextProperties = Montage.create(ToolProperties, {
 
                 Object.defineBinding(this.btnBold, "pressed", {
                   boundObject: this.application.ninja.stage.textTool,
-                  boundObjectPropertyPath: "states.bold",
-                  boundValueMutator: this.validatePressed,
-                  oneway: true
+                  boundObjectPropertyPath: "bold",
+                  oneway: false
                 });
 
                 Object.defineBinding(this.btnItalic, "pressed", {
                   boundObject: this.application.ninja.stage.textTool,
-                  boundObjectPropertyPath: "states.italic",
-                  boundValueMutator: this.validatePressed,
-                  oneway: true
+                  boundObjectPropertyPath: "italic",
+                  oneway: false
                 });
 
                 Object.defineBinding(this.btnUnderline, "pressed", {
                   boundObject: this.application.ninja.stage.textTool,
-                  boundObjectPropertyPath: "states.underline",
-                  boundValueMutator: this.validatePressed,
-                  oneway: true
+                  boundObjectPropertyPath: "underline",
+                  oneway: false
                 });
 
                 Object.defineBinding(this.btnStrikethrough, "pressed", {
                   boundObject: this.application.ninja.stage.textTool,
-                  boundObjectPropertyPath: "states.strikethrough",
-                  boundValueMutator: this.validatePressed,
-                  oneway: true
+                  boundObjectPropertyPath: "strikeThrough",
+                  oneway: false
                 });
 
                 Object.defineBinding(this.alignLeft, "pressed", {
                   boundObject: this.application.ninja.stage.textTool,
-                  boundObjectPropertyPath: "states.justifyleft",
-                  boundValueMutator: this.validatePressed,
-                  oneway: true
+                  boundObjectPropertyPath: "justify",
+                  boundValueMutator: this.validateJustify,
+                  oneway: false
                 });
-
-                Object.defineBinding(this.alignCenter, "pressed", {
-                  boundObject: this.application.ninja.stage.textTool,
-                  boundObjectPropertyPath: "states.justifycenter",
-                  boundValueMutator: this.validatePressed,
-                  oneway: true
-                });
-
-                Object.defineBinding(this.alignRight, "pressed", {
-                  boundObject: this.application.ninja.stage.textTool,
-                  boundObjectPropertyPath: "states.justifyright",
-                  boundValueMutator: this.validatePressed,
-                  oneway: true
-                });
-
-                Object.defineBinding(this.alignJustify, "pressed", {
-                  boundObject: this.application.ninja.stage.textTool,
-                  boundObjectPropertyPath: "states.justifyfull",
-                  boundValueMutator: this.validatePressed,
-                  oneway: true
-                });
-
-                Object.defineBinding(this.numberedList, "pressed", {
-                  boundObject: this.application.ninja.stage.textTool,
-                  boundObjectPropertyPath: "states.insertorderedlist",
-                  boundValueMutator: this.validatePressed,
-                  oneway: true
-                });
-
-                Object.defineBinding(this.bulletedList, "pressed", {
-                  boundObject: this.application.ninja.stage.textTool,
-                  boundObjectPropertyPath: "states.insertunorderedlist",
-                  boundValueMutator: this.validatePressed,
-                  oneway: true
-                });
-
-                Object.defineBinding(this.fontSelection, "value", {
-                  boundObject: this.application.ninja.stage.textTool,
-                  boundObjectPropertyPath: "states.fontname",
-                  boundValueMutator: this.validateFont,
-                  oneway: true
-                });
-
-                Object.defineBinding(this.fontSize, "value", {
-                  boundObject: this.application.ninja.stage.textTool,
-                  boundObjectPropertyPath: "states.fontsize",
-                  boundValueMutator: this.validateFontSize.bind(this),
-                  oneway: true
-                });
+//
+//                Object.defineBinding(this.alignCenter, "pressed", {
+//                  boundObject: this.application.ninja.stage.textTool,
+//                  boundObjectPropertyPath: "justifycenter",
+//                  boundValueMutator: this.validatePressed,
+//                  oneway: true
+//                });
+//
+//                Object.defineBinding(this.alignRight, "pressed", {
+//                  boundObject: this.application.ninja.stage.textTool,
+//                  boundObjectPropertyPath: "justifyright",
+//                  boundValueMutator: this.validatePressed,
+//                  oneway: true
+//                });
+//
+//                Object.defineBinding(this.alignJustify, "pressed", {
+//                  boundObject: this.application.ninja.stage.textTool,
+//                  boundObjectPropertyPath: "justifyfull",
+//                  boundValueMutator: this.validatePressed,
+//                  oneway: true
+//                });
+//
+//                Object.defineBinding(this.numberedList, "pressed", {
+//                  boundObject: this.application.ninja.stage.textTool,
+//                  boundObjectPropertyPath: "insertorderedlist",
+//                  boundValueMutator: this.validatePressed,
+//                  oneway: true
+//                });
+//
+//                Object.defineBinding(this.bulletedList, "pressed", {
+//                  boundObject: this.application.ninja.stage.textTool,
+//                  boundObjectPropertyPath: "insertunorderedlist",
+//                  boundValueMutator: this.validatePressed,
+//                  oneway: true
+//                });
+//
+//                Object.defineBinding(this.fontSelection, "value", {
+//                  boundObject: this.application.ninja.stage.textTool,
+//                  boundObjectPropertyPath: "fontname",
+//                  boundValueMutator: this.validateFont,
+//                  oneway: true
+//                });
+//
+//                Object.defineBinding(this.fontSize, "value", {
+//                  boundObject: this.application.ninja.stage.textTool,
+//                  boundObjectPropertyPath: "states.fontsize",
+//                  boundValueMutator: this.validateFontSize.bind(this),
+//                  oneway: true
+//                });
 
                 this.initialized = true;
             }
@@ -324,15 +296,19 @@ exports.TextProperties = Montage.create(ToolProperties, {
 
     handleFontSelectionChange: {
         value: function(e) {
-            this.application.ninja.stage.textTool.doAction("fontname", this.fontSelection.value);
             this.application.ninja.stage.textTool.element.focus();
+            this.application.ninja.stage.textTool.doAction("fontname", this.fontSelection.value);
+
+            //Note: Set Font Color on selection to ColorChip Component;
+            //this.this.application.ninja.stage.textTool.foreColor
+
         }
     },
 
     handleFontColorChange: {
         value: function(e) {
-            this.application.ninja.stage.textTool.element.firstChild.style.color = e._event.color.css;
-            this.application.ninja.stage.textTool.element.firstChild.focus();
+            this.application.ninja.stage.textTool.foreColor = e._event.color.css;
+            this.application.ninja.stage.textTool.element.focus();
             //this.application.ninja.stage.textTool.doAction("forecolor",e._event.color.css);
 
         }
