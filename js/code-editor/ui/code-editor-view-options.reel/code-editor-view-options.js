@@ -31,8 +31,24 @@ exports.CodeEditorViewOptions = Montage.create(Component, {
             } else {
                 this.visible = true;
                 this.autocomplete = !this.codeCompletionSupport[this._currentDocument.model.file.extension];
+                this._currentDocument.model.views.code.editor.automaticCodeHint = this.codeCompleteCheck.checked;
             }
 
+        }
+    },
+
+    _codeEditorWrapper:{
+        value: null
+    },
+
+    codeEditorWrapper:{
+        get : function() {
+            return this._codeEditorWrapper;
+        },
+        set : function(value) {
+            if(this._codeEditorWrapper !== value){
+                this._codeEditorWrapper = value;
+            }
         }
     },
 
@@ -97,6 +113,35 @@ exports.CodeEditorViewOptions = Montage.create(Component, {
         serializable: true
     },
 
+    _zoomFactor:{
+        value: 100
+    },
+
+    zoomFactor:{
+        get: function(){
+            return this._zoomFactor;
+        },
+        set: function(value){
+            this._zoomFactor = value;
+            if(this.codeEditorWrapper){this.codeEditorWrapper.handleZoom(value)};
+        }
+    },
+
+    _automaticCodeHint:{
+        value: false
+    },
+
+    automaticCodeHint:{
+        get: function(){
+            return this._automaticCodeHint;
+        },
+        set: function(value){
+            this._automaticCodeHint = value;
+            //additing additional meta properties on the editor
+            this._currentDocument.model.views.code.editor.automaticCodeHint = value;
+        }
+    },
+
     themeSelect: {
         value: null,
         serializable: true
@@ -114,13 +159,6 @@ exports.CodeEditorViewOptions = Montage.create(Component, {
             this.uncomment.addEventListener("click", this.handleUncomment.bind(this), false);
             this.themeSelect.addEventListener("change", this.handleThemeSelection.bind(this), false);
             this.shortKeys.addEventListener("click", this.handleShortKeys.bind(this), false);
-
-            Object.defineBinding(this.zoomHottext , "value", {
-              boundObject: this.application.ninja.codeEditorController,
-              boundObjectPropertyPath: "zoomFactor",
-              oneway : false
-            });
-
         }
     },
 
@@ -155,20 +193,22 @@ exports.CodeEditorViewOptions = Montage.create(Component, {
 
     handleComment:{
         value: function(evt){
-            this.application.ninja.codeEditorController.commentSelection(true);
+            if(this.codeEditorWrapper){this.codeEditorWrapper.commentSelection(true)};
         }
     },
 
     handleUncomment:{
         value: function(evt){
-            this.application.ninja.codeEditorController.commentSelection(false);
+            if(this.codeEditorWrapper){this.codeEditorWrapper.commentSelection(false)};
         }
     },
 
     handleThemeSelection:{
         value: function(evt){
-            this.application.ninja.codeEditorController.editorTheme = this.themeSelect.options[this.themeSelect.selectedIndex].value;
-            this.application.ninja.codeEditorController.handleThemeSelection();
+            if(this.codeEditorWrapper){
+                this.codeEditorWrapper.editorTheme = this.themeSelect.options[this.themeSelect.selectedIndex].value;
+                this.codeEditorWrapper.handleThemeSelection();
+            }
         }
     },
 
