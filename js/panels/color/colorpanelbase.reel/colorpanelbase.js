@@ -1469,6 +1469,10 @@ exports.ColorPanelBase = Montage.create(Component, {
                     }
                 }
             } else {
+            	if (this.colorManager.input === 'chip') {
+            		this.application.ninja.colorController.colorPopupManager.hideColorPopup();
+            		return;
+            	}
                 //TODO: Change popup to use montage's built in popup
                 this.application.ninja.colorController.colorPopupManager.hideColorPopup();
                 //

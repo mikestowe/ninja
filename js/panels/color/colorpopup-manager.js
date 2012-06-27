@@ -192,6 +192,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     		if (this._popupBase && this._popupBase.opened) {
     			//Toogles if called and opened
     			this.hideColorPopup();
+    			return;
     		} else {
     			this._colorPopupDrawing = true;
     			////////////////////////////////////////////////////
@@ -373,7 +374,10 @@ exports.ColorPopupManager = Montage.create(Component, {
 	    			return;
     			}
     			//Hidding other popup if opened
-    			if (this._popupBase && this._popupBase.opened) this.hideColorPopup();
+    			if (this._popupBase && this._popupBase.opened) {
+    				this.hideColorPopup();
+    				return;
+    			}
     			//
     			this._popupChipBtn = this.application.ninja.colorController.colorView.currentChip;
     			//
@@ -620,7 +624,7 @@ exports.ColorPopupManager = Montage.create(Component, {
 	    				}
 	    				this.colorChipChange(e);
 	    			} else if (!e._event.wasSetByCode && (e._event.mode && e._event.mode === 'nocolor')) {
-		    			this.colorChipChange(e);
+		    			this.colorChipChange(e);	
 	    			} else if (!e._event.wasSetByCode && (e._event.mode && e._event.mode === 'hex')) {
 		    			this.colorChipChange(e);
 	    			}
