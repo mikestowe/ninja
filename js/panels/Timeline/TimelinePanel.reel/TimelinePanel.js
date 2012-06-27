@@ -1215,8 +1215,24 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         		boolContinue = false,
         		arrSelectedLayers = false,
         		arrCurrentElementsSelected = [];
+            var matchedValues = 0;
+
+            for(i=0;i<arrSelectedIndexesLength;i++){
+                for(j=0;j<currentLayersSelectedLength;j++){
+
+                    if(this.arrLayers[arrSelectedIndexes[i]] === this.arrLayers[this.currentLayerSelected[j]]){
+                        matchedValues+=1;
+                    }
+                }
+            }
+
+            if(matchedValues === arrSelectedIndexesLength){
+                return;
+            }
+
         	/*
         	 // TODO: this should probably check to see if it actually needs to run.
+
         	        		console.log(arrSelectedIndexes);
         		console.log(this.currentLayersSelected);
         	// Compare arrSelectedIndexes with this.currentLayersSelected
@@ -1258,7 +1274,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             }
 
             // Deselect any tweens
-            this.deselectTweens();
+                this.deselectTweens();
+
             
             // If we are actually going to be selecting things, create an empty array to use
             if (arrSelectedIndexesLength > 0) {
