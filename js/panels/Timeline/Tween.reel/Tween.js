@@ -203,6 +203,10 @@ var Tween = exports.Tween = Montage.create(Component, {
             // temp - testing var
         	var useAbsolute = true;
 
+            if(event.detail.type === "cssChange"){
+                event.detail.source="cssPanelChange"
+            }
+
             if (event.detail.source && event.detail.source !== "tween") {
 
                 if(this.parentComponent.parentComponent.isSubproperty){
@@ -222,7 +226,7 @@ var Tween = exports.Tween = Montage.create(Component, {
     setTweenProperties:{
         value:function (eventDetail) {
 
-        	if (eventDetail.source === "SelectionTool" || eventDetail.source === "timeline" || eventDetail.source === "pi") {
+        	if (eventDetail.source === "SelectionTool" || eventDetail.source === "timeline" || eventDetail.source === "pi" || eventDetail.source === "cssPanelChange") {
 	            if(this.parentComponent.parentComponent.animatedElement.offsetTop != this.tweenedProperties["top"]){
 	                this.tweenedProperties["top"] = this.parentComponent.parentComponent.animatedElement.offsetTop + "px";
 	            }
