@@ -604,51 +604,76 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     
     getRuleIndex : {
         value : function(rule) {
-            var rules = nj.toArray(rule.parentStyleSheet.rules),
-                i;
+            var rules = nj.toArray(rule.parentStyleSheet.rules);
 
             return rules.indexOf(rule);
         }
     },
-    
+
+    _getRuleWithCSSText : {
+        value: function(cssText, doc) {
+            var _doc = doc || this.currentDocument.model.views.design._document,
+                ruleIndex, rule;
+
+            for(var i = 0; i < _doc.styleSheets.length; i++) {
+                ruleIndex = nj.toArray(_doc.styleSheets[i].rules).map(function(rule) {
+                    return rule.cssText;
+                }).indexOf(cssText);
+
+                if(ruleIndex !== -1) {
+                    rule = _doc.styleSheets[i].rules[ruleIndex];
+                    break;
+                }
+            }
+
+            if(!rule) {
+                ///// This should never be hit if providing cssText from existing rule (like those
+                ///// returned from getMatchedCSSRules()
+                console.warn('StylesController::_getRuleWithCSSText - No rule found with given cssText.');
+            }
+
+            return rule;
+        }
+    },
+
     ///// Get All Matching Rules
     ///// Returns an array of css rules for an element
     ///// Optionally sorted by specificity, and can omit pseudo elements
     
-    getMatchingRules : {
+    getMatchingRules : {          //TODO: Remove omitPseudos from here and usages
         value: function(element, omitPseudos, useStageStyleSheet) {
-            var pseudos = [null],
-                rules = [],
-                win = element.ownerDocument.defaultView,
-                self = this;
-
-            if(!omitPseudos) {
-                pseudos.concat(['link', 'visited', 'active', 'hover', 'focus', 'first-letter', 
-                                'first-line', 'first-child', 'before', 'after', 'lang', 'target']);
-            }
+            var rules,
+                mappedRules,
+                doc = element.ownerDocument,
+                win = doc.defaultView;
 
             try {
-                pseudos.forEach(function(pseudo) {
-                    rules = rules.concat(nj.toArray(win.getMatchedCSSRules(element, pseudo)).filter(function(rule) {
-                        //// useStageStyleSheet flag indicates whether to only return rules from the stylesheet,
-                        //// or only use rules for other stylesheets
+                debugger;
 
-                        var sheetId = (rule.parentStyleSheet) ? rule.parentStyleSheet.ownerNode.id : null,
-                            isStageStyleSheet = sheetId === this.CONST.STAGE_SHEET_ID;
-
-                        ///// filter out (return false) depending on flag
-                        if(useStageStyleSheet && !isStageStyleSheet) { return false; }
-                        if(!useStageStyleSheet && isStageStyleSheet) { return false; }
-
-                        ///// Non-filter code - just assigning specificity to the rule
-                        if(!rule[this.CONST.SPECIFICITY_KEY]) {
-                            rule[this.CONST.SPECIFICITY_KEY] = this.getSpecificity(rule.selectorText);
-                        }
-
-                        return true;
-
-                    }, this));
+                mappedRules = nj.toArray(win.getMatchedCSSRules(element)).map(function(rule) {
+                    return this._getRuleWithCSSText(rule.cssText, doc);
                 }, this);
+
+                rules = mappedRules.filter(function(rule) {
+                    //// useStageStyleSheet flag indicates whether to only return rules from the stylesheet,
+                    //// or only use rules for other stylesheets
+
+                    var sheetId = (rule.parentStyleSheet) ? rule.parentStyleSheet.ownerNode.id : null,
+                        isStageStyleSheet = sheetId === this.CONST.STAGE_SHEET_ID;
+
+                    ///// filter out (return false) depending on flag
+                    if(useStageStyleSheet && !isStageStyleSheet) { return false; }
+                    if(!useStageStyleSheet && isStageStyleSheet) { return false; }
+
+                    ///// Non-filter code - just assigning specificity to the rule
+                    if(!rule[this.CONST.SPECIFICITY_KEY]) {
+                        rule[this.CONST.SPECIFICITY_KEY] = this.getSpecificity(rule.selectorText);
+                    }
+
+                    return true;
+
+                }, this);
+
             } catch(ERROR) {
                 console.warn('StylesController::getMatchingRules - Un-attached element queried.');
             }
