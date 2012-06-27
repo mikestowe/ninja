@@ -76,6 +76,9 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
 
     selectKeyframe:{
         value:function(){
+            if(this.isSelected){
+                return;
+            }
 
             if(this.parentComponent.parentComponent.parentComponent.trackType == "position"){
                 var tweenID = this.parentComponent.tweenID;
