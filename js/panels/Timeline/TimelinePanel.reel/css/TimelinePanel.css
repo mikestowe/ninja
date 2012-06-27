@@ -86,53 +86,53 @@
 .timemark { font-family: 'Droid Sans'; font-size: 12px; text-shadow: 1px 1px 1px #3a3a3a; width: 76px; color: gray; float: left; padding-top: 6px; padding-left: 4px; text-align: left; }
 
 /* line 255, ../scss/TimelinePanel.scss */
-.playhead { height: 14px; width: 6px; position: absolute; top: 6px; left: -3px; z-index: 92; background-color: #b50003; opacity: 0.5; }
+.playhead { height: 14px; width: 6px; position: absolute; top: 6px; left: -3px; z-index: 92; background-color: #b50003; opacity: 0.5; visibility: hidden; }
 
-/* line 265, ../scss/TimelinePanel.scss */
+/* line 266, ../scss/TimelinePanel.scss */
 .playheadmarker { height: 100%; width: 1px; background-color: white; top: 0; left: 0; position: absolute; z-index: 91; opacity: 0.7; }
 
-/* line 275, ../scss/TimelinePanel.scss */
+/* line 276, ../scss/TimelinePanel.scss */
 .timebar { height: 3px; width: 0; background-color: #ff0003; opacity: 0.3; top: 10px; position: absolute; border-top: #c7a19f thin solid; border-right: #ffffff thin solid; }
 
-/* line 285, ../scss/TimelinePanel.scss */
-.endhottext { float: right; font-family: 'Droid Sans'; font-size: 12px; text-shadow: 1px 1px 1px #3a3a3a; color: white; margin-top: 0%; }
+/* line 286, ../scss/TimelinePanel.scss */
+.timelinegutter .endhottext { float: right; font-family: 'Droid Sans'; font-size: 12px; text-shadow: 1px 1px 1px #3a3a3a; color: white; margin-top: 0%; }
 
-/* line 293, ../scss/TimelinePanel.scss */
+/* line 294, ../scss/TimelinePanel.scss */
 .timeline-disabled { position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; background-color: rgba(30, 30, 30, 0.796); z-index: 100; display: none; box-shadow: #111111 0px 0px 14px inset; }
 
-/* line 304, ../scss/TimelinePanel.scss */
+/* line 305, ../scss/TimelinePanel.scss */
 .timeline-dnd-helper { -webkit-transform: scale(0.9, 0.9); }
 
-/* line 307, ../scss/TimelinePanel.scss */
+/* line 308, ../scss/TimelinePanel.scss */
 .tl_slider { width: 65px; height: 5px; background: none; float: left; margin-left: 5%; visibility: hidden; }
 
 /* Configuration menu */
-/* line 317, ../scss/TimelinePanel.scss */
+/* line 318, ../scss/TimelinePanel.scss */
 .layer-master { position: relative; }
 
-/* line 320, ../scss/TimelinePanel.scss */
+/* line 321, ../scss/TimelinePanel.scss */
 .tl-configbutton { position: absolute; top: 0px; right: 2px; width: 20px; height: 20px; background-image: url(../images/icon-gear.png); background-repeat: no-repeat; cursor: pointer; z-index: 100; background-position: 100% 0px; }
 
-/* line 332, ../scss/TimelinePanel.scss */
+/* line 333, ../scss/TimelinePanel.scss */
 .tl-configbutton:hover { width: 180px; }
 
-/* line 336, ../scss/TimelinePanel.scss */
+/* line 337, ../scss/TimelinePanel.scss */
 .tl-configbutton .tl-dropdown { position: absolute; border: 1px solid black; top: 16px; right: 2px; width: 180px; padding-bottom: 7px; background-color: #474747; box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5); display: none; }
 
-/* line 347, ../scss/TimelinePanel.scss */
+/* line 348, ../scss/TimelinePanel.scss */
 .tl-configbutton.checked .tl-dropdown { display: block; }
 
-/* line 351, ../scss/TimelinePanel.scss */
+/* line 352, ../scss/TimelinePanel.scss */
 .tl-configbutton .checkable { padding-left: 20px; height: 20px; line-height: 20px; margin-top: 3px; }
 
-/* line 357, ../scss/TimelinePanel.scss */
+/* line 358, ../scss/TimelinePanel.scss */
 .tl-configbutton .checkable:hover { background-color: #b2b2b2; color: #242424; text-shadow: none; }
 
-/* line 362, ../scss/TimelinePanel.scss */
+/* line 363, ../scss/TimelinePanel.scss */
 .tl-configbutton .checkable.checked { background-image: url(../images/icon-checkmark.png); background-repeat: no-repeat; background-position: 6px 4px; }
 
-/* line 368, ../scss/TimelinePanel.scss */
+/* line 369, ../scss/TimelinePanel.scss */
 .tl-configbutton .nj-divider { margin-top: 7px; }
 
-/* line 372, ../scss/TimelinePanel.scss */
+/* line 373, ../scss/TimelinePanel.scss */
 .layer-hidden { display: none; }

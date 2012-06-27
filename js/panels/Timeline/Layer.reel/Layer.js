@@ -325,6 +325,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	value: false
     },
     isActive: {
+        serializable:true,
     	get: function() {
     		return this._isActive;
     	},
@@ -752,12 +753,20 @@ var Layer = exports.Layer = Montage.create(Component, {
 			//defaultEventManager.dispatchEvent(newEvent);
 			
 			// Dispatch the event to the TimelineTrack component associated with this Layer.
-			var myIndex = this.application.ninja.timeline.getActiveLayerIndex(),
+			var myIndex = false,
+				i = 0, 
+				arrLayersLength = this.parentComponent.parentComponent.arrLayers.length,
 				arrTracks = document.querySelectorAll('[data-montage-id="track"]');
-
+			
+			for (i = 0; i < arrLayersLength; i++) {
+				if (this.stageElement == this.parentComponent.parentComponent.arrLayers[i].layerData.stageElement) {
+					myIndex = i;
+				}
+			}
+			
 			if (myIndex !== false) {
 				arrTracks[myIndex].dispatchEvent(newEvent);
-			}
+			} 
 		}
 	},
 
@@ -945,12 +954,14 @@ var Layer = exports.Layer = Montage.create(Component, {
 				this.isMainCollapsed = false;
 			} else {
 				this.isMainCollapsed = true;
+				this.application.ninja.timeline.synchScrollbars(43);
 			}
 			this.triggerOutgoingBinding();
 		}
 	},
 	handlePositionCollapserClick : {
 		value: function(event) {
+			var myHeight = this.positionCollapser.element.offsetHeight;
 			this.positionCollapser.bypassAnimation = false;
 			this.bypassAnimation = false;
 			this.layerData.bypassAnimation = false;
@@ -958,12 +969,14 @@ var Layer = exports.Layer = Montage.create(Component, {
 				this.isPositionCollapsed = false;
 			} else {
 				this.isPositionCollapsed = true;
+				this.application.ninja.timeline.synchScrollbars(myHeight);
 			}
 			this.triggerOutgoingBinding();
 		}
 	},
 	handleStyleCollapserClick : {
 		value: function(event) {
+			var myHeight = this.styleCollapser.element.offsetHeight;
 			this.styleCollapser.bypassAnimation = false;
 			this.bypassAnimation = false;
 			this.layerData.bypassAnimation = false;
@@ -971,6 +984,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 				this.isStyleCollapsed = false;
 			} else {
 				this.isStyleCollapsed = true;
+				this.application.ninja.timeline.synchScrollbars(myHeight);
 			}
 			this.triggerOutgoingBinding();
 		}
