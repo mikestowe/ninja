@@ -23,7 +23,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
       editor.replaceRange(str, result.from, result.to);
     }
       
-    if (completions.length == 1) {insert(completions[0]); return true;}
+    //if (completions.length == 1) {insert(completions[0]); return true;}
 
     // Build the select widget
     var complete = document.createElement("div");
