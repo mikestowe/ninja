@@ -1421,6 +1421,10 @@ exports.ColorPanelBase = Montage.create(Component, {
     //
     selectInputType: {
         value: function (type) {
+        	if (this.colorManager.input === 'chip') {
+            	this.application.ninja.colorController.colorPopupManager.hideColorPopup();
+           		return;
+           	}
             //Checking for the type to be formatted as expected, otherwise we unselected all buttons
             try {
                 type._event.srcElement.inputType;
@@ -1452,10 +1456,6 @@ exports.ColorPanelBase = Montage.create(Component, {
             } else if (input === 'fill') {
                 other = 'stroke';
             }
-            if (this.colorManager.input === 'chip') {
-            	this.application.ninja.colorController.colorPopupManager.hideColorPopup();
-           		return;
-           	}
             //TODO: Change popup to use montage's built in popup
             if (this.colorManager.input === input) {
                 //

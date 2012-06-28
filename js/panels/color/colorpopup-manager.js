@@ -412,6 +412,7 @@ exports.ColorPopupManager = Montage.create(Component, {
 		        this._popupChipBase.props.source = e._event.srcElement;
 		        //
     			this._popupChipBase.colorManager = ColorModel.create();
+    			this._popupChipBase.colorManager.input = 'chip';
     			//
     			if (e._event.srcElement.colorMode === 'gradient'){
 		        	this._popupChipBase.colorManager.gradient = {value: e._event.srcElement.colorValue};
@@ -497,6 +498,7 @@ exports.ColorPopupManager = Montage.create(Component, {
 		        this._popupGradientChipBase.props.source = e._event.srcElement;
 		        //
     			this._popupGradientChipBase.colorManager = ColorModel.create();
+    			this._popupGradientChipBase.colorManager.input = 'chip';
     			//
     			this._popupGradientChipBase.addEventListener('change', this, false);
 		    	this._popupGradientChipBase.addEventListener('changing', this, false);
