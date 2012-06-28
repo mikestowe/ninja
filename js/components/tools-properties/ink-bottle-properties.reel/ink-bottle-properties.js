@@ -100,7 +100,7 @@ var InkBottleProperties = exports.InkBottleProperties = Montage.create(ToolPrope
 
             if (this.addedColorChips === false && this.application.ninja.colorController.colorPanelDrawn) {
                 // setup stroke color
-                this._strokeColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80 };
+                this._strokeColorCtrl.props = {side: 'top', align: 'left', wheel: true, palette: true, gradient: true, image: false, nocolor: true, offset: 8};
                 this.application.ninja.colorController.addButton("chip", this._strokeColorCtrl);
 
                 this._strokeColorCtrl.addEventListener("change", this.handleStrokeColorChange.bind(this), false);
