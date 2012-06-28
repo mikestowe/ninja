@@ -9,17 +9,17 @@ var Montage = require("montage/core/core").Montage,
 
 exports.StageMode = Montage.create(Component, {
 
-    _livePreview: {
+    _chromePreview: {
         value: null
     },
 
-    livePreview: {
+    chromePreview: {
         get: function() {
-            return this._livePreview;
+            return this._chromePreview;
         },
         set: function(value) {
-            if(value !== this._livePreview) {
-                this._livePreview = value;
+            if(value !== this._chromePreview) {
+                this._chromePreview = value;
                 this.needsDraw = true;
             }
         }
@@ -46,7 +46,7 @@ exports.StageMode = Montage.create(Component, {
 
     handleClick: {
         value: function(event) {
-            this.livePreview = !this.livePreview;
+            this.chromePreview = !this.chromePreview;
         }
     }
 });
