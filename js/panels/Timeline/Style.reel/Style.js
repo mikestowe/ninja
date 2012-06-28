@@ -400,8 +400,10 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
                     var currentValue = ElementsMediator.getColor(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement,this._isFill,this._borderSide)
                     this.application.ninja.timeline.selectedStyle = this.editorProperty;
                     this._fillColorCtrl.addEventListener("change", this.handleFillColorChange.bind(this), false);
-                    this._fillColorCtrl.color(currentValue.colorMode, currentValue.color);
-                    this.addedColorChips = true;
+                    if(currentValue){
+                        this._fillColorCtrl.color(currentValue.colorMode, currentValue.color);
+                        this.addedColorChips = true;
+                    }
                 }
 				// TODO: set up color chip here.
 			} else if (tweenable.tweener === "input"){

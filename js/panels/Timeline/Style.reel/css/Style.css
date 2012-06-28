@@ -6,31 +6,22 @@
 /* Layer.scss
  * Main SCSS file for Layer component, compiled by SASS into the file css/Layer.css.
  */
-/* line 18, ../scss/Style.scss */
 .hidden {
-  display: none;
-}
+  display: none; }
 
-/* line 21, ../scss/Style.scss */
 .row-editor {
   position: relative;
-  height: 14px;
-}
+  height: 14px; }
 
-/* line 25, ../scss/Style.scss */
 .style-padding {
   padding-left: 5px;
   padding-top: 3px;
-  padding-right: 5px;
-}
+  padding-right: 5px; }
 
-/* line 30, ../scss/Style.scss */
 .style-row {
   height: 20px;
-  border-bottom: 1px solid #505050;
-}
+  border-bottom: 1px solid #505050; }
 
-/* line 35, ../scss/Style.scss */
 div.content-style div.editable2 {
   height: 14px;
   background-color: #242424 !important;
@@ -41,18 +32,14 @@ div.content-style div.editable2 {
   -webkit-user-select: text;
   white-space: nowrap;
   text-overflow: clip;
-  width: 100%;
-}
+  width: 100%; }
 
-/* line 49, ../scss/Style.scss */
 .content-style.collapsible-content,
 .content-style.collapsible-content div,
 .content-style.collapsible-content span {
   overflow: visible;
-  text-overflow: visible;
-}
+  text-overflow: visible; }
 
-/* line 54, ../scss/Style.scss */
 div.content-style div.cell-property,
 div.content-style div.cell-value {
   width: 45%;
@@ -61,38 +48,31 @@ div.content-style div.cell-value {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  line-height: 18px;
-}
+  line-height: 18px; }
 
-/* line 63, ../scss/Style.scss */
 div.content-style div.cell-property div {
   min-width: 90%;
   height: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-}
+  white-space: nowrap; }
 
-/* line 71, ../scss/Style.scss */
 div.content-style input.nj-skinned {
   height: 10px;
   font-size: 12px;
-  top: -3px;
-}
+  top: -3px; }
 
-/* line 76, ../scss/Style.scss */
 div.style-row .container-propvals {
-  overflow: hidden;
-}
+  overflow: hidden; }
 
-/* line 80, ../scss/Style.scss */
 .content-style .style-row.selected {
   background-color: #474747;
-  color: white;
-}
+  color: white; }
 
-/* line 84, ../scss/Style.scss */
 .content-style .style-row.style-selected {
   background-color: #b2b2b2;
-  color: #242424;
-}
+  color: #242424; }
+
+.toolColorChipCtrl.color-chip-position {
+  margin-top: 0px;
+  height: 14px; }
