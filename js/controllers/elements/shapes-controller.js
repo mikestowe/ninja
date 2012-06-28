@@ -278,7 +278,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                     }
                     else
                     {
-                        return "FlatMaterial";
+                        return "Flat";
                     }
                 case "fillMaterial":
                     var fm = el.elementModel.shapeModel.GLGeomObj.getFillMaterial();
@@ -288,7 +288,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                     }
                     else
                     {
-                        return "FlatMaterial";
+                        return "Flat";
                     }
                 default:
                     return CanvasController.getProperty(el, p);
@@ -430,16 +430,16 @@ exports.ShapesController = Montage.create(CanvasController, {
 
             if(gradientMode === "radial")
             {
-                if( !m || (m.getName() !== "RadialGradientMaterial") )
+                if( !m || (m.getName() !== "Radial Gradient") )
                 {
-                    gradientM = Object.create(MaterialsModel.getMaterial("RadialGradientMaterial"));
+                    gradientM = Object.create(MaterialsModel.getMaterial("Radial Gradient"));
             }
             }
             else
             {
-                if( !m || (m.getName() !== "LinearGradientMaterial") )
+                if( !m || (m.getName() !== "Linear Gradient") )
                 {
-                    gradientM = Object.create(MaterialsModel.getMaterial("LinearGradientMaterial"));
+                    gradientM = Object.create(MaterialsModel.getMaterial("Linear Gradient"));
                 }
             }
 
@@ -471,9 +471,9 @@ exports.ShapesController = Montage.create(CanvasController, {
                 m = el.elementModel.shapeModel.GLGeomObj.getStrokeMaterial();
             }
 
-            if(!m || ((m.getName() === "LinearGradientMaterial") || m.getName() === "RadialGradientMaterial") )
+            if(!m || ((m.getName() === "Linear Gradient") || m.getName() === "Radial Gradient") )
                 {
-                flatM = Object.create(MaterialsModel.getMaterial("FlatMaterial"));
+                flatM = Object.create(MaterialsModel.getMaterial("Flat"));
                 if(flatM)
                     {
                     if(isFill)
@@ -764,18 +764,18 @@ exports.ShapesController = Montage.create(CanvasController, {
                                     // Set Linear/Radial Gradient Material for children geometry if color in canvas 2d has gradient
                                     if(child.strokeColor.gradientMode === "radial")
                                     {
-                                        child.strokeMat = "RadialGradientMaterial";
+                                        child.strokeMat = "Radial Gradient";
                                     }
                                     else
                                     {
-                                        child.strokeMat = "LinearGradientMaterial";
+                                        child.strokeMat = "Linear Gradient";
                                     }
                                 }
-                                else if( (child.strokeMat === "RadialGradientMaterial") ||
-                                         (child.strokeMat === "LinearGradientMaterial") )
+                                else if( (child.strokeMat === "Radial Gradient") ||
+                                         (child.strokeMat === "Linear Gradient") )
                                 {
                                     // Set Flat Material for children geometry if color has been changed to solid
-                                    child.strokeMat = "FlatMaterial";
+                                    child.strokeMat = "Flat";
                                 }
                             }
 
@@ -786,18 +786,18 @@ exports.ShapesController = Montage.create(CanvasController, {
                                     // Set Linear/Radial Gradient Material for children geometry if color in canvas 2d has gradient
                                     if(child.fillColor.gradientMode === "radial")
                                     {
-                                        child.fillMat = "RadialGradientMaterial";
+                                        child.fillMat = "Radial Gradient";
                                     }
                                     else
                                     {
-                                        child.fillMat = "LinearGradientMaterial";
+                                        child.fillMat = "Linear Gradient";
                                     }
                                 }
-                                else if( (child.fillMat === "RadialGradientMaterial") ||
-                                         (child.fillMat === "LinearGradientMaterial") )
+                                else if( (child.fillMat === "Radial Gradient") ||
+                                         (child.fillMat === "Linear Gradient") )
                                 {
                                     // Set Flat Material for children geometry if color has been changed to solid
-                                    child.fillMat = "FlatMaterial";
+                                    child.fillMat = "Flat";
                                 }
                             }
                         }
@@ -814,11 +814,11 @@ exports.ShapesController = Montage.create(CanvasController, {
         {
             var css,
                 colorObj;
-            if(m === "LinearGradientMaterial")
+            if(m === "Linear Gradient")
             {
                 css = "-webkit-gradient(linear, left top, right top, from(rgb(255, 0, 0)), color-stop(0.3, rgb(0, 255, 0)), color-stop(0.6, rgb(0, 0, 255)), to(rgb(0, 255, 255)))";
             }
-            else if(m === "RadialGradientMaterial")
+            else if(m === "Radial Gradient")
             {
                 css = "-webkit-radial-gradient(50% 50%, ellipse cover, rgb(255, 0, 0) 0%, rgb(0, 255, 0) 30%, rgb(0, 0, 255) 60%, rgb(0, 255, 255) 100%)";
             }

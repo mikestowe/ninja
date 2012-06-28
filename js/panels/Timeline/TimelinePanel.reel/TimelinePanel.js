@@ -1220,7 +1220,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             for(i=0;i<arrSelectedIndexesLength;i++){
                 for(j=0;j<currentLayersSelectedLength;j++){
 
-                    if(this.arrLayers[arrSelectedIndexes[i]] === this.arrLayers[this.currentLayerSelected[j]]){
+                    if(this.arrLayers[arrSelectedIndexes[i]] === this.arrLayers[this.currentLayersSelected[j]]){
                         matchedValues+=1;
                     }
                 }
@@ -1773,6 +1773,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 				currentLayersSelectedLength = this.currentLayersSelected.length,
 				arrLayersLength = this.arrLayers.length,
 				returnVal = arrLayersLength -1;
+			if (returnVal === -1) {
+				return false;
+			}
 			if (this.currentLayersSelected === false) {
 				return false;
 			}

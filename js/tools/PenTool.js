@@ -338,22 +338,28 @@ exports.PenTool = Montage.create(ShapeTool, {
                 }
                 this._selectedSubpath.setStrokeWidth(strokeSize);
 
-                var colorArray=[];
-                var color = this.options.stroke.color;
-                if (color){
-                    colorArray = [color.r/255, color.g/255, color.b/255, color.a];
-                }else {
-                    colorArray = [1,1,1,0];
-                }
-                this._selectedSubpath.setStrokeColor(colorArray);
-
-                color = this.options.fill.color;
-                if (color){
-                    colorArray = [color.r/255, color.g/255, color.b/255, color.a];
+                var colorObj;
+                var stroke = this.options.stroke;
+                var color = stroke.color;
+                if(stroke.colorMode === "gradient") {
+                    colorObj = {gradientMode:stroke.color.gradientMode, color:stroke.color.stops};
+                } else if (color) {
+                    colorObj = [color.r/255, color.g/255, color.b/255, color.a];
                 } else {
-                    colorArray = [1,1,1,0];
+                    colorObj = [1,1,1,0];
                 }
-                this._selectedSubpath.setFillColor(colorArray);
+                this._selectedSubpath.setStrokeColor(colorObj);
+
+                var fill = this.options.fill;
+                color = fill.color;
+                if(fill.colorMode === "gradient") {
+                    colorObj = {gradientMode:fill.color.gradientMode, color:fill.color.stops};
+                } else if (color) {
+                    colorObj = [color.r/255, color.g/255, color.b/255, color.a];
+                } else {
+                    colorObj = [1,1,1,0];
+                }
+                this._selectedSubpath.setFillColor(colorObj);
             } //if the selectedSubpath was null and needed to be constructed
 
             //build the current mouse position in stage world space in case we don't already have a canvas
