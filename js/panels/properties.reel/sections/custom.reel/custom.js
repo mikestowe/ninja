@@ -20,7 +20,7 @@ var Dropdown = require("js/components/combobox.reel").Combobox;
 var TextField = require("js/components/textfield.reel").TextField;
 var LabelCheckbox = require("js/components/ui/label-checkbox.reel").LabelCheckbox;
 var ColorChip = require("js/components/ui/color-chip.reel").ColorChip;
-var Button = require("montage/ui/button.reel").Button;
+var Button = require("montage/ui/native/button.reel").Button;
 
 exports.CustomSection = Montage.create(Component, {
 
