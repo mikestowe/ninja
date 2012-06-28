@@ -1220,7 +1220,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             for(i=0;i<arrSelectedIndexesLength;i++){
                 for(j=0;j<currentLayersSelectedLength;j++){
 
-                    if(this.arrLayers[arrSelectedIndexes[i]] === this.arrLayers[this.currentLayerSelected[j]]){
+                    if(this.arrLayers[arrSelectedIndexes[i]] === this.arrLayers[this.currentLayersSelected[j]]){
                         matchedValues+=1;
                     }
                 }
