@@ -386,7 +386,7 @@ exports.BindingView = Montage.create(Component, {
 //            var mouseUpPoint = new WebKitPoint(e.pageX, e.pageY);
 //            var nodeEl = new webkitConvertPointFromPageToNode(this.element, mouseUpPoint);
                 //debugger;
-            this.connectionElementEnd = nodeEl.parentElement.controller.parentComponent.parentComponent.userComponent;
+            this.connectionElementEnd = nodeEl.parentElement.controller.parentComponent.parentComponent.userElement.controller;
             this.connectionPropertyEnd = nodeEl.parentElement.controller.title;
                 this.application.ninja.objectsController.addBinding({
                     sourceObject: this.connectionElementStart,
@@ -409,7 +409,7 @@ exports.BindingView = Montage.create(Component, {
         value: function(e) {
             // We are looking for a mouse down on an option to start the connection visual
             if(e._event.target.classList.contains("connectorBubble")) {
-                this.connectionElementStart = e._event.target.parentElement.controller.parentComponent.parentComponent.userComponent;
+                this.connectionElementStart = e._event.target.parentElement.controller.parentComponent.parentComponent.userElement.controller;
                 this.connectionPropertyStart = e._event.target.parentElement.controller.title;
                 this._isDrawingConnection = true;
                 this._connectionPositionStart = webkitConvertPointFromPageToNode(this.element, new WebKitPoint(e.pageX, e.pageY));
