@@ -203,10 +203,13 @@ var Tween = exports.Tween = Montage.create(Component, {
             // temp - testing var
         	var useAbsolute = true;
 
+            if(event.detail.type === "cssChange"){
+                event.detail.source="cssPanelChange"
+            }
+
             if (event.detail.source && event.detail.source !== "tween") {
 
                 if(this.parentComponent.parentComponent.isSubproperty){
-                	console.log("setting style tween property")
                     this.setStyleTweenProperty(event.detail);
                 } else {
                     // check for correct element selection
@@ -222,7 +225,8 @@ var Tween = exports.Tween = Montage.create(Component, {
 
     setTweenProperties:{
         value:function (eventDetail) {
-        	if (eventDetail.source === "SelectionTool") {
+
+        	if (eventDetail.source === "SelectionTool" || eventDetail.source === "timeline" || eventDetail.source === "pi" || eventDetail.source === "cssPanelChange") {
 	            if(this.parentComponent.parentComponent.animatedElement.offsetTop != this.tweenedProperties["top"]){
 	                this.tweenedProperties["top"] = this.parentComponent.parentComponent.animatedElement.offsetTop + "px";
 	            }
@@ -316,7 +320,9 @@ var Tween = exports.Tween = Montage.create(Component, {
             if(this.parentComponent.parentComponent.isSubproperty){
                 // set property specific style on element
                 var currentValue = this.tweenedProperties[this.parentComponent.parentComponent.trackEditorProperty];
-                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], this.parentComponent.parentComponent.trackEditorProperty, [currentValue], "Change", "tween");
+                var el = this.parentComponent.parentComponent.animatedElement;
+                var prop = this.parentComponent.parentComponent.trackEditorProperty;
+                this.application.ninja.elementMediator.setProperty([el], prop, [currentValue], "Change", "tween");
             } else {
                 // move animated element to correct position on stage
                 var currentTop = this.tweenedProperties["top"];

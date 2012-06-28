@@ -39,11 +39,13 @@ exports.RuleListContainer = Montage.create(Component, {
         value: function(selection) {
             var list = this._getListForSelection(selection);
 
-            if(!list) {
+            if(list) {
+                this.displayedList = list;
+                this.update();
+            } else {
                 list = this.add(selection);
+                this.displayedList = list;
             }
-
-            this.displayedList = list;
         }
     },
 

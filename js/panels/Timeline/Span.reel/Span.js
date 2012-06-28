@@ -71,6 +71,8 @@ var Span = exports.Span = Montage.create(Component, {
     				newVal = "none";
     			}
     			this._easing = newVal;
+	    		this.parentComponent.easing = this.easing;
+	    		this.parentComponent.tweenData.easing = this.easing;
     			this.parentComponent.setKeyframeEase(newVal);
     			this.needsDraw = true;
     		}
@@ -180,7 +182,7 @@ var Span = exports.Span = Montage.create(Component, {
     handleEasingChoicesClick: {
     	value: function(event) {
     		event.stopPropagation();
-			
+
 			// Remove the pointer to ourselves
 			//this.application.ninja.timeline.currentOpenSpanMenu = false;
 			
@@ -190,6 +192,8 @@ var Span = exports.Span = Montage.create(Component, {
     		
     		// Set the easing 
     		this.easing = event.target.dataset.ninjaEase;
+    		this.parentComponent.easing = this.easing;
+    		this.parentComponent.tweenData.easing = this.easing;
     		
     		// Unbind the event handler
     		this.application.ninja.timeline.easingMenu.popup.contentEl.removeEventListener("click");

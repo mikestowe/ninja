@@ -114,7 +114,7 @@ exports.CodeDocumentView = Montage.create(BaseDocumentView, {
             //
             this.textViewContainer.style.display="block";
             //
-            this.editor = this.application.ninja.codeEditorController.createEditor(this, type, file.extension, textDocument);
+            this.editor = this.application.ninja.codeEditorWrapper.createEditor(this, type, file.extension, textDocument);
             this.editor.hline = this.editor.setLineClass(0, "activeline");
         }
     },
