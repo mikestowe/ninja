@@ -1773,6 +1773,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 				currentLayersSelectedLength = this.currentLayersSelected.length,
 				arrLayersLength = this.arrLayers.length,
 				returnVal = arrLayersLength -1;
+			if (returnVal === -1) {
+				return false;
+			}
 			if (this.currentLayersSelected === false) {
 				return false;
 			}
