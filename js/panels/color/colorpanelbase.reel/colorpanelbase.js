@@ -982,58 +982,45 @@ exports.ColorPanelBase = Montage.create(Component, {
     _updateValueFromSH: {
         value: function (e) {
             //
-            var update;
+            var update, type;
             //
             if (!e._event.wasSetByCode) {
+            	//
+            	if (!e.target.cInputType) {
+	            	type = 'hottext';  
+                } else {
+	               	type = 'slider'
+	            }
+	            //
                 if (e.target.changesColor) {
                     //
-                    //this.application.ninja.colorController.colorPopupManager.hideColorPopup();
-                    //
                     if (this.panelMode === 'rgb') {
-                        if (e.target.cInputType === 'slider') {
-                            //
-                            if (this.colorManager.rgb && Math.round(this._combo[0].slider.value) === this.colorManager.rgb.r && Math.round(this._combo[1].slider.value) === this.colorManager.rgb.g && Math.round(this._combo[2].slider.value) === this.colorManager.rgb.b) {
-                                return;
-                            }
-                            //
-                            update = { r: Math.round(this._combo[0].slider.value), g: Math.round(this._combo[1].slider.value), b: Math.round(this._combo[2].slider.value) };
-                        } else {
-                            //
-                            if (this.colorManager.rgb && Math.round(this._combo[0].hottext.value) === this.colorManager.rgb.r && Math.round(this._combo[1].hottext.value) === this.colorManager.rgb.g && Math.round(this._combo[2].hottext.value) === this.colorManager.rgb.b) {
-                                return;
-                            }
-                            //
-                            update = { r: Math.round(this._combo[0].hottext.value), g: Math.round(this._combo[1].hottext.value), b: Math.round(this._combo[2].hottext.value) };
+                        //
+                        if (this.colorManager.rgb && Math.round(this._combo[0][type].value) === this.colorManager.rgb.r && Math.round(this._combo[1][type].value) === this.colorManager.rgb.g && Math.round(this._combo[2][type].value) === this.colorManager.rgb.b) {
+                        	return;
                         }
+                        //
+                        update = { r: Math.round(this._combo[0][type].value), g: Math.round(this._combo[1][type].value), b: Math.round(this._combo[2][type].value) };
+                        //
                         update.wasSetByCode = false;
                         update.type = 'change';
                         this.colorManager.rgb = update;
                     } else if (this.panelMode === 'hsl') {
-                        if (e.target.cInputType === 'slider') {
-                            //
-                            if (this.colorManager.hsl && Math.round(this._combo[0].slider.value) === this.colorManager.hsl.h && Math.round(this._combo[1].slider.value) === this.colorManager.hsl.s && Math.round(this._combo[2].slider.value) === this.colorManager.hsl.l) {
-                                return;
-                            }
-                            //
-                            update = { h: Math.round(this._combo[0].slider.value), s: Math.round(this._combo[1].slider.value), l: Math.round(this._combo[2].slider.value) };
-                        } else {
-                            //
-                            if (this.colorManager.hsl && Math.round(this._combo[0].hottext.value) === this.colorManager.hsl.h && Math.round(this._combo[1].hottext.value) === this.colorManager.hsl.s && Math.round(this._combo[2].hottext.value) === this.colorManager.hsl.l) {
-                                return;
-                            }
-                            //
-                            update = { h: Math.round(this._combo[0].hottext.value), s: Math.round(this._combo[1].hottext.value), l: Math.round(this._combo[2].hottext.value) };
+                        //
+                        if (this.colorManager.hsl && Math.round(this._combo[0][type].value) === this.colorManager.hsl.h && Math.round(this._combo[1][type].value) === this.colorManager.hsl.s && Math.round(this._combo[2][type].value) === this.colorManager.hsl.l) {
+                        	return;
                         }
+                        //
+                        update = { h: Math.round(this._combo[0][type].value), s: Math.round(this._combo[1][type].value), l: Math.round(this._combo[2][type].value) };
+                        //
                         update.wasSetByCode = false;
                         update.type = 'change';
                         this.colorManager.hsl = update;
                     }
                 } else {
-                    if (e.target.cInputType === 'slider') {
-                        update = { value: this._combo[3].slider.value / 100, wasSetByCode: false, type: 'change' };
-                    } else {
-                        update = { value: this._combo[3].hottext.value / 100, wasSetByCode: false, type: 'change' };
-                    }
+                	//
+                	update = { value: this._combo[3][type].value / 100, wasSetByCode: false, type: 'change' };
+                	//
                     this.colorManager.alpha = update;
                 }
             }
