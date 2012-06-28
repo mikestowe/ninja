@@ -69,11 +69,11 @@ exports.MaterialsPopup = Montage.create(Component, {
 			switch(event._currentTarget.label)
 			{
 				case "Cancel":
-					console.log("Cancel material edit");
+//					console.log("Cancel material edit");
 					this.revertToOriginalValues();
 					break;
 				case "OK":
-					console.log("Committing material with the following values:");
+//					console.log("Committing material with the following values:");
                     for(var i=0, len=this.materialsProperties.childComponents.length; i< len; i++)
                     {
                         var childControl = this.materialsProperties.childComponents[i];
@@ -109,7 +109,7 @@ exports.MaterialsPopup = Montage.create(Component, {
     {
         value: function()
         {
-            console.log("Save As...");
+//            console.log("Save As...");
             var materialCopy = prompt("Save material as", this._materialName + "_Copy");
 
             if (materialCopy)
@@ -123,7 +123,7 @@ exports.MaterialsPopup = Montage.create(Component, {
     {
         value: function()
         {
-            console.log("Reset");
+//            console.log("Reset");
         }
     },
 
@@ -186,15 +186,15 @@ exports.MaterialsPopup = Montage.create(Component, {
     {
         value: function(event)
         {
-            if(typeof event.propertyValue === "object")
-            {
-                console.log(event.propertyLabel + " changing to ");
-                console.dir(event.propertyValue);
-            }
-            else
-            {
-                console.log(event.propertyLabel + " changing to " + event.propertyValue);
-            }
+//            if(typeof event.propertyValue === "object")
+//            {
+//                console.log(event.propertyLabel + " changing to ");
+//                console.dir(event.propertyValue);
+//            }
+//            else
+//            {
+//                console.log(event.propertyLabel + " changing to " + event.propertyValue);
+//            }
 
 			if (event.propertyLabel && event.propertyValue)
 				this.applyProperty( event.propertyLabel,  event.propertyValue );
@@ -206,15 +206,15 @@ exports.MaterialsPopup = Montage.create(Component, {
         value: function(theEvent)
         {
 			var event = theEvent._event;
-            if(typeof event.propertyValue === "object")
-            {
-                console.log(event.propertyLabel + " changed to ");
-                console.dir(event.propertyValue);
-            }
-            else
-            {
-                console.log(event.propertyLabel + " changed to " + event.propertyValue);
-            }
+//            if(typeof event.propertyValue === "object")
+//            {
+//                console.log(event.propertyLabel + " changed to ");
+//                console.dir(event.propertyValue);
+//            }
+//            else
+//            {
+//                console.log(event.propertyLabel + " changed to " + event.propertyValue);
+//            }
 
 			if (event.propertyLabel)
 				this.applyProperty( event.propertyLabel,  event.propertyValue );
@@ -253,7 +253,7 @@ exports.MaterialsPopup = Montage.create(Component, {
                 var obj, matArray, matTypeArray, nMats, iMat, world;
 				if (this._useSelection)
 				{
-					console.log( "apply to selection" );
+//					console.log( "apply to selection" );
 
 					var selection = this.application.ninja.selectedElements;
 					if (selection && (selection.length > 0))
@@ -385,7 +385,7 @@ exports.MaterialsPopup = Montage.create(Component, {
 
             this.previewShape.setFillMaterial(this._material);
             this.previewShape.buildBuffers();
-            world.render();
+            world.restartRenderLoop();
 		}
 	},
 
@@ -393,7 +393,8 @@ exports.MaterialsPopup = Montage.create(Component, {
 	destroy: {
 		enumerable: false,
 		value: function() {
-			// add cleanup routines here
+//			console.log("cleanup routines here");
+            this.previewShape.getWorld().stop();
 		}
 	},
 

@@ -40,6 +40,7 @@ exports.BaseDocumentView = Montage.create(Component, {
         	if (this.iframe) {
         		this.iframe.style.display = 'block';
                 this.iframe.style.opacity = 1;
+                this.toggleWebGlAnimation(true);
         	} else {
         		console.log('Error: View has no iframe to show!');
         	}
@@ -54,6 +55,8 @@ exports.BaseDocumentView = Montage.create(Component, {
         	if (this.iframe) {
         		this.iframe.style.display = 'none';
                 this.iframe.style.opacity = 0;
+                this.pauseVideos();
+                this.toggleWebGlAnimation(false);
         	} else {
         		console.log('Error: View has no iframe to hide!');
         	}

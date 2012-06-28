@@ -129,6 +129,8 @@ exports.MaterialsLibraryPanel = Montage.create(Component, {
     	enumerable: false,
     	value: function (event) {
             if(this._materialPopup){
+//                console.log("hiding material popup");
+                this._materialInfo.destroy();
                 this._materialPopup.hide();
             }
     	}
