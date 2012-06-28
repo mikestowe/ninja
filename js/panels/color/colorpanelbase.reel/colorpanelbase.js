@@ -260,7 +260,7 @@ exports.ColorPanelBase = Montage.create(Component, {
                 return;
             }
             //Checking for event mode to be color change (NOT PANEL MODE RELATED)
-            if (e._event.mode === 'hsv' || e._event.mode === 'hsl' || e._event.mode === 'rgb' || e._event.mode === 'hex' || e._event.mode === 'nocolor' || e._event.mode === 'gradient') {
+            if (e._event.mode === 'hsv' || e._event.mode === 'hsl' || e._event.mode === 'rgb' || e._event.mode === 'hex' || e._event.mode === 'nocolor' || e._event.mode === 'gradient' || e._event.mode === 'alpha') {
                 //Checking for panel color mode (RGB or HSL) to assign correct slider values
                 if (this.panelMode === 'rgb' && e._event.rgba) {
                     this._combo[0].slider.value = e._event.rgba.r;
@@ -1019,7 +1019,7 @@ exports.ColorPanelBase = Montage.create(Component, {
                     }
                 } else {
                 	//
-                	update = { value: this._combo[3][type].value / 100, wasSetByCode: false, type: 'change' };
+                	update = { value: this._combo[3][type].value/100, wasSetByCode: false, type: 'change' };
                 	//
                     this.colorManager.alpha = update;
                 }
