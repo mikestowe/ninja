@@ -38,6 +38,8 @@ var TaperMaterial = function TaperMaterial()
     this._hasVertexDeformation = true;
     this._vertexDeformationTolerance = 0.02; // should be a property
 
+	this.getVertexDeformationTolerance = function()	{  return  this._propValues[this._propNames[7]];  };
+
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
@@ -62,13 +64,30 @@ var TaperMaterial = function TaperMaterial()
         this.setShaderValues();
     };
 
+	this.resetToDefault = function()
+	{
+		this._propValues[this._propNames[0]] = 0.25;
+		this._propValues[this._propNames[1]] = 0.50;
+		this._propValues[this._propNames[2]] = 0.75;
+		this._propValues[this._propNames[3]] = -1;
+		this._propValues[this._propNames[4]] = 1;
+		this._propValues[this._propNames[5]] = 0.0;
+		this._propValues[this._propNames[6]] = 0.9;
+		this._propValues[this._propNames[7]] = this._vertexDeformationTolerance;
+		this._propValues[this._propNames[8]] = 1.0;
+	
+		var nProps = this._propNames.length;
+		for (var i=0; i<nProps;  i++)
+			this.setProperty( this._propNames[i],  this._propValues[this._propNames[i]]  );
+	};
+
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-    this._propNames = [ "u_limit1", "u_limit2", "u_limit3", "u_minVal", "u_maxVal", "u_center", "u_taperAmount",  "u_speed" ];
-    this._propLabels = [ "Minimum Parameter Value", "Center Paramater Value", "Maximum Parameter Value", "Minimum Data Bounds", "Maximum Data Bounds", "Center", "Taper Amount", "Speed" ];
-    this._propTypes = [ "float", "float", "float", "float", "float", "float", "float", "float" ];
+    this._propNames = [ "u_limit1", "u_limit2", "u_limit3", "u_minVal", "u_maxVal", "u_center", "u_taperAmount",  "facettol",  "u_speed" ];
+    this._propLabels = [ "Minimum Parameter Value", "Center Paramater Value", "Maximum Parameter Value", "Minimum Data Bounds", "Maximum Data Bounds", "Center", "Taper Amount",  "Faceting Tolerance", "Speed" ];
+    this._propTypes = [ "float", "float", "float", "float", "float", "float", "float", "float", "float" ];
     this._propValues = [];
 
     // initialize the property values
@@ -79,7 +98,8 @@ var TaperMaterial = function TaperMaterial()
     this._propValues[this._propNames[4]] = 1;
     this._propValues[this._propNames[5]] = 0.0;
     this._propValues[this._propNames[6]] = 0.9;
-    this._propValues[this._propNames[7]] = 1.0;
+    this._propValues[this._propNames[7]] = this._vertexDeformationTolerance;
+    this._propValues[this._propNames[8]] = 1.0;
 
     this.update = function (time) {
         var speed = this._propValues["u_speed"];
@@ -135,6 +155,7 @@ taperShaderDef = {
 				     'u_maxVal': { 'type': 'float' },
 				     'u_center': { 'type': 'float' },
 				     'u_taperAmount': { 'type': 'float' },
+					 'facettol': { 'type': 'float' },
 				     'u_speed': { 'type': 'float' }
 				 }
             }

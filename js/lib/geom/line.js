@@ -413,12 +413,48 @@ exports.Line = Object.create(GeomObj, {
                 indices.push( index );  index++;
             }
 
-            var prim = ShapePrimitive.create(strokeVertices, strokeNormals, strokeTextures, indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, indices.length);
-
             var strokeMaterial = this.makeStrokeMaterial();
+//            var prim = ShapePrimitive.create(strokeVertices, strokeNormals, strokeTextures, indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, indices.length);
+//            this._primArray.push( prim );
+//            this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
 
-            this._primArray.push( prim );
-            this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
+			// refine the mesh for vertex deformations
+			if (strokeMaterial)
+			{
+				var primArray;
+				if (strokeMaterial.hasVertexDeformation())
+				{
+					var paramRange = strokeMaterial.getVertexDeformationRange();
+					var tolerance = strokeMaterial.getVertexDeformationTolerance();
+					var nVertices = indices.length;
+					nVertices = ShapePrimitive.refineMesh( strokeVertices, strokeNormals, strokeTextures, indices, nVertices,  paramRange,  tolerance );
+					var subdividedParts = ShapePrimitive.subdivideOversizedMesh( strokeVertices, strokeNormals, strokeTextures, indices );
+
+					primArray = [];
+					if (subdividedParts)
+					{
+						for (var i=0;  i<subdividedParts.length;  i++)
+						{
+							var obj = subdividedParts[i];
+							primArray.push( ShapePrimitive.create(obj.vertices, obj.normals, obj.uvs, obj.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, obj.vertices.length/3) );
+						}
+					}
+					else
+						primArray = [ ShapePrimitive.create(vrts, nrms, uvs, indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices) ];
+				}
+				else
+				{
+					// create the RDGE primitive
+					primArray = [ ShapePrimitive.create(strokeVertices, strokeNormals, strokeTextures, indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, indices.length) ];
+				}
+
+				var nPrims = primArray.length;
+				for (var i=0;  i<nPrims;  i++)
+				{
+					this._primArray.push( primArray[i] );
+					this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
+				}
+			}
 
             world.updateObject(this);
         }

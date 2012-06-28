@@ -144,7 +144,7 @@ ShapePrimitive.refineMesh = function( verts, norms, uvs, indices, nVertices,  pa
 		{
 			// check thesize of the triangle in uv space.  If small enough, advance
 			// to the next triangle.  If not small enough, split the triangle into 3;
-			var du = uMax - uMin,  dv = vMax - vMin;
+			var du = Math.abs(uMax) - uMin,  dv = Math.abs(vMax - vMin);
 			if ((du < tolerance) && (dv < tolerance))
 			{
 				iTriangle++;
@@ -204,6 +204,185 @@ ShapePrimitive.refineMesh = function( verts, norms, uvs, indices, nVertices,  pa
 	console.log( "refine mesh vertex count " + oldVrtCount  + " => " + nVertices );
 	return nVertices;
 };
+
+ShapePrimitive.convertTriangleStripToTriangles = function( indices )
+{
+	if (!indices || (indices.length < 3))  return;
+
+	var indOut = [];
+	var nInd = indices.length;
+	for (var i=2;  i<nInd;  i++)
+	{
+		indOut.push( indices[i-2] );
+		indOut.push( indices[i-1] );
+		indOut.push( indices[i] );
+	}
+
+	return indOut;
+};
+
+ShapePrimitive.subdivideOversizedMesh = function( vertices, normals, uvs, indices )
+{
+	var rtnArray;
+	var nVrtBytes = vertices.length*4,
+		nIndBytes = indices.length*4;
+
+	// only subdivide the input mesh if it exceeds limits
+	if ((nVrtBytes >= 65000) || (nIndBytes >= 65000))
+	{
+		var nVerts = vertices.length / 3;
+		var nVerts0 = 0,  nVerts1 = 0;
+		var iSplitVrt = nVerts/2;	// any triangle referencing vertex iSplitVrt or greater goes to the second half
+		var nTriangles = indices.length/3;
+		var v0 = [],  v1 = [],  n0 = [],  n1 = [],  uv0 = [],  uv1 = [],  i0 = [],  i1 = [];
+		var map0 = [],  map1 = [];
+		var index = 0;
+		for (var iTri=0;  iTri<nTriangles;  iTri++)
+		{
+			// determine which side to move the triangle into
+			var vDst,  nDst, uvDst, iDst, mapDst, nOut;
+			var iVrts = [ indices[index], indices[index+1], indices[index+2] ];
+			if ( (iVrts[0] >= iSplitVrt) || (iVrts[1] >= iSplitVrt) || (iVrts[2] >= iSplitVrt) )
+			{
+				vDst  = v0;  nDst = n0;  uvDst = uv0;  iDst = i0;  mapDst = map0;  nOut = v0.length / 3;
+			}
+			else
+			{
+				vDst  = v1;  nDst = n1;  uvDst = uv1;  iDst = i1;  mapDst = map1;  nOut = v1.length / 3;
+			}
+
+			for (var i=0;  i<3;  i++)
+			{
+				var iVrt = iVrts[i];
+
+				// if this is the first time that the vertex has been encountered, copy it over to the output
+				var iOut = mapDst[iVrt];
+				if (!iOut)
+				{
+					mapDst[iVrt] = nOut;
+					vDst.push( vertices[3*iVrt] );  vDst.push(  vertices[3*iVrt + 1] );  vDst.push(  vertices[3*iVrt + 2] );
+					nDst.push( normals[3*iVrt] );   nDst.push(  normals[3*iVrt + 1] );   nDst.push(  normals[3*iVrt + 2] );
+					uvDst.push( uvs[2*iVrt] );      uvDst.push(  uvs[2*iVrt + 1] );
+					iDst.push( nOut );
+					nOut++;
+				}
+				else
+					iDst.push( iOut );
+			}
+
+			index += 3;
+		}
+
+		// create objects out of the 2 halves
+		var obj1 = 
+					{
+						vertices:	v0,
+						normals:	n0,
+						uvs:		uv0,
+						indices:	i0
+					},
+			obj2 = 
+			{
+				vertices:	v1,
+				normals:	n1,
+				uvs:		uv1,
+				indices:	i1
+			};
+
+		console.log( "mesh split into 2 parts: " + obj1.vertices.length/3 + ", " + obj2.vertices.length/3 );
+
+		// recurse on the 2 halves in case they need subdivision
+		var arr1 = ShapePrimitive.subdivideOversizedMesh( obj1.vertices, obj1.normals, obj1.uvs, obj1.indices );
+		var arr2 = ShapePrimitive.subdivideOversizedMesh( obj2.vertices, obj2.normals, obj2.uvs, obj2.indices );
+		rtnArray = arr1.concat( arr2 );
+	}
+	else
+	{
+		rtnArray = 
+		[
+			{
+				vertices:	vertices,
+				normals:	normals,
+				uvs:		uvs,
+				indices:	indices
+			}
+		];
+	}
+
+	return rtnArray;
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ShapePrimitive.convertTrianglesToLines = function( verts, norms, uvs, indices,   vertsOut, normsOut,  uvsOut, indicesOut )
+{
+	var iTriangle = 0;
+	var nTriangles = indices.length/3;
+	var index = 0;
+	var nVertices = 0;
+	while (iTriangle < nTriangles)
+	{
+		// get the indices of the 3 vertices
+		var i0 = indices[index],
+			i1 = indices[index+1],
+			i2 = indices[index+2];
+
+		// get the uv values
+		//var vrtIndex = 3*iTriangle;
+		var iuv0 = 2 * i0,
+			iuv1 = 2 * i1,
+			iuv2 = 2 * i2;
+		var u0 = uvs[iuv0],  v0 = uvs[iuv0+1],
+			u1 = uvs[iuv1],  v1 = uvs[iuv1+1],
+			u2 = uvs[iuv2],  v2 = uvs[iuv2+1];
+
+		//calculate the position of the new vertex
+		var iPt0 = 3 * i0,
+			iPt1 = 3 * i1,
+			iPt2 = 3 * i2;
+		var x0 = verts[iPt0],  y0 = verts[iPt0+1],  z0 = verts[iPt0+2],
+			x1 = verts[iPt1],  y1 = verts[iPt1+1],  z1 = verts[iPt1+2],
+			x2 = verts[iPt2],  y2 = verts[iPt2+1],  z2 = verts[iPt2+2];
+
+		// calculate the normals for the new points
+		var nx0 = norms[iPt0],  ny0 = norms[iPt0+1],  nz0 = norms[iPt0+2],
+			nx1 = norms[iPt1],  ny1 = norms[iPt1+1],  nz1 = norms[iPt1+2],
+			nx2 = norms[iPt2],  ny2 = norms[iPt2+1],  nz2 = norms[iPt2+2];
+
+		// push everything
+		vertsOut.push( x0 );		vertsOut.push( y0 );		vertsOut.push( z0 );
+		vertsOut.push( x1 );		vertsOut.push( y1 );		vertsOut.push( z1 );
+		vertsOut.push( x1 );		vertsOut.push( y1 );		vertsOut.push( z1 );
+		vertsOut.push( x2 );		vertsOut.push( y2 );		vertsOut.push( z2 );
+		vertsOut.push( x2 );		vertsOut.push( y2 );		vertsOut.push( z2 );
+		vertsOut.push( x0 );		vertsOut.push( y0 );		vertsOut.push( z0 );
+		indicesOut.push( index );		indicesOut.push( index + 1 );
+		indicesOut.push( index + 1 );	indicesOut.push( index + 2 );
+		indicesOut.push( index + 2 );	indicesOut.push( index );
+
+		normsOut.push( nx0 );		normsOut.push( ny0 );		normsOut.push( nz0 );
+		normsOut.push( nx1 );		normsOut.push( ny1 );		normsOut.push( nz1 );
+		normsOut.push( nx1 );		normsOut.push( ny1 );		normsOut.push( nz1 );
+		normsOut.push( nx2 );		normsOut.push( ny2 );		normsOut.push( nz2 );
+		normsOut.push( nx2 );		normsOut.push( ny2 );		normsOut.push( nz2 );
+		normsOut.push( nx0 );		normsOut.push( ny0 );		normsOut.push( nz0 );
+
+		uvsOut.push( u0 );		uvsOut.push( v0 );
+		uvsOut.push( u1 );		uvsOut.push( v1 );
+		uvsOut.push( u1 );		uvsOut.push( v1 );
+		uvsOut.push( u2 );		uvsOut.push( v2 );
+		uvsOut.push( u2 );		uvsOut.push( v2 );
+		uvsOut.push( u0 );		uvsOut.push( v0 );
+
+		iTriangle++;
+		index += 3;
+		nVertices += 6;
+	}
+
+	return nVertices;
+};
+
 
 
 if (typeof exports === "object") {

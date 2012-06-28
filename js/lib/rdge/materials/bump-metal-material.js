@@ -20,6 +20,7 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 	this._shaderName = "bumpMetal";
 
 
+	this._defaultLightDiff = [0.3, 0.3, 0.3, 1.0];
     this._defaultDiffuseTexture = "assets/images/metal.png";
     this._defaultSpecularTexture = "assets/images/silver.png";
 	this._defaultNormalTexture = "assets/images/normalMap.png";
@@ -43,7 +44,7 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 	this._propTypes			= ["color",				"file",				"file",			"file" ];
 	this._propValues		= [];
 
-	this._propValues[ this._propNames[0] ] = [0.3, 0.3, 0.3, 1.0];
+	this._propValues[ this._propNames[0] ] = this._defaultLightDiff;
 	this._propValues[ this._propNames[1] ] = this._defaultDiffuseTexture.slice(0);
 	this._propValues[ this._propNames[2] ] = this._defaultNormalTexture.slice(0);
 	this._propValues[ this._propNames[3] ] = this._defaultSpecularTexture.slice(0);
@@ -72,7 +73,18 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 		this.setShaderValues();
 		this.update(0);
 	};
+
+	this.resetToDefault = function()
+	{
+		this._propValues[ this._propNames[0] ] = this._defaultLightDiff;
+		this._propValues[ this._propNames[1] ] = this._defaultDiffuseTexture.slice(0);
+		this._propValues[ this._propNames[2] ] = this._defaultNormalTexture.slice(0);
+		this._propValues[ this._propNames[3] ] = this._defaultSpecularTexture.slice(0);
+		for (var i=0; i<4;  i++)
+			this.setProperty( this._propNames[i],  this._propValues[this._propNames[i]]  );
+	};
 };
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader

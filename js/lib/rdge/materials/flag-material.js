@@ -78,6 +78,18 @@ var FlagMaterial = function FlagMaterial() {
 		this.setShaderValues();
 		this.update( 0 );
 	}
+
+	this.resetToDefault = function()
+	{
+		this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
+		this._propValues[ this._propNames[1] ] = this._waveWidth;
+		this._propValues[ this._propNames[2] ] = this._waveHeight;
+		this._propValues[ this._propNames[3] ] = this._speed;
+	
+		var nProps = this._propNames.length;
+		for (var i=0; i<nProps;  i++)
+			this.setProperty( this._propNames[i],  this._propValues[this._propNames[i]]  );
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

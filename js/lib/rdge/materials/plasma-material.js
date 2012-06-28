@@ -80,6 +80,18 @@ var PlasmaMaterial = function PlasmaMaterial() {
 		this._shader['default'].u_time.set( [this._time] );
 		this._time += this._dTime;
 	};
+
+	this.resetToDefault = function()
+	{
+		this._propValues[ this._propNames[0] ] = this._wave;
+		this._propValues[ this._propNames[1] ] = this._wave1;
+		this._propValues[ this._propNames[2] ] = this._wave2;
+		this._propValues[ this._propNames[3] ] = this._speed;
+	
+		var nProps = this._propNames.length;
+		for (var i=0; i<nProps;  i++)
+			this.setProperty( this._propNames[i],  this._propValues[this._propNames[i]]  );
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

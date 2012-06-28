@@ -314,98 +314,105 @@ exports.Rectangle = Object.create(GeomObj, {
         }
     },
 
-    buildBuffers: {
-        value: function() {
-            // get the world
-            var world = this.getWorld();
-            if (!world)  throw( "null world in buildBuffers" );
-            //console.log( "GLRectangle.buildBuffers " + world._worldCount );
-            if (!world._useWebGL)  return;
+	buildBuffers: {
+		value: function() {
+			// get the world
+			var world = this.getWorld();
+			if (!world)  throw( "null world in buildBuffers" );
+			//console.log( "GLRectangle.buildBuffers " + world._worldCount );
+			if (!world._useWebGL)  return;
 
-            // make sure RDGE has the correct context
-            RDGE.globals.engine.setContext( world.getCanvas().rdgeid );
+			// make sure RDGE has the correct context
+			RDGE.globals.engine.setContext( world.getCanvas().rdgeid );
 
-            // create the gl buffer
-            var gl = world.getGLContext();
+			// create the gl buffer
+			var gl = world.getGLContext();
 
-            var tlRadius = this._tlRadius; //top-left radius
-            var trRadius = this._trRadius;
-            var blRadius = this._blRadius;
-            var brRadius = this._brRadius;
+			var tlRadius = this._tlRadius; //top-left radius
+			var trRadius = this._trRadius;
+			var blRadius = this._blRadius;
+			var brRadius = this._brRadius;
 
-            // declare the arrays to hold the parts
-            this._primArray = [];
-            this._materialArray = [];
-            this._materialTypeArray = [];
-            this._materialNodeArray = [];
+			// declare the arrays to hold the parts
+			this._primArray = [];
+			this._materialArray = [];
+			this._materialTypeArray = [];
+			this._materialNodeArray = [];
 
-            // get the normalized device coordinates (NDC) for
-            // all position and dimensions.
-            var vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-            var xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
-                xFillNDC = this._width/vpw,  yFillNDC = this._height/vph,
-                strokeSizeNDC = 2*this._strokeWidth/vpw,
-                tlRadiusNDC = 2*tlRadius/vpw,  yTLRadiusNDC = 2*tlRadius/vph,
-                trRadiusNDC = 2*trRadius/vpw,  yTRRadiusNDC = 2*trRadius/vph,
-                blRadiusNDC = 2*blRadius/vpw,  yBLRadiusNDC = 2*blRadius/vph,
-                brRadiusNDC = 2*brRadius/vpw,  yBRRadiusNDC = 2*brRadius/vph;
+			// get the normalized device coordinates (NDC) for
+			// all position and dimensions.
+			var vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
+			var xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
+				xFillNDC = this._width/vpw,  yFillNDC = this._height/vph,
+				strokeSizeNDC = 2*this._strokeWidth/vpw,
+				tlRadiusNDC = 2*tlRadius/vpw,  yTLRadiusNDC = 2*tlRadius/vph,
+				trRadiusNDC = 2*trRadius/vpw,  yTRRadiusNDC = 2*trRadius/vph,
+				blRadiusNDC = 2*blRadius/vpw,  yBLRadiusNDC = 2*blRadius/vph,
+				brRadiusNDC = 2*brRadius/vpw,  yBRRadiusNDC = 2*brRadius/vph;
 
-            var aspect = world.getAspect();
-            var zn = world.getZNear(),  zf = world.getZFar();
-            var t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
-                b = -t,
-                r = aspect*t,
-                l = -r;
+			var aspect = world.getAspect();
+			var zn = world.getZNear(),  zf = world.getZFar();
+			var t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
+				b = -t,
+				r = aspect*t,
+				l = -r;
 
-            // calculate the object coordinates from their NDC coordinates
-            var z = -world.getViewDistance();
+			// calculate the object coordinates from their NDC coordinates
+			var z = -world.getViewDistance();
 
-            // get the position of the origin
-            var x = -z*(r-l)/(2.0*zn)*xNDC,
-                y = -z*(t-b)/(2.0*zn)*yNDC;
+			// get the position of the origin
+			var x = -z*(r-l)/(2.0*zn)*xNDC,
+				y = -z*(t-b)/(2.0*zn)*yNDC;
 
-            // get the x and y fill
-            var xFill = -z*(r-l)/(2.0*zn)*xFillNDC,
-                yFill = -z*(t-b)/(2.0*zn)*yFillNDC;
+			// get the x and y fill
+			var xFill = -z*(r-l)/(2.0*zn)*xFillNDC,
+				yFill = -z*(t-b)/(2.0*zn)*yFillNDC;
 
-            // keep some variables giving the overall dimensions of the
-            // rectangle. These values are used to calculate consistent
-            // texture map coordinates across all pieces.
-            this._rectWidth = xFill;  this._rectHeight = yFill;
+			// keep some variables giving the overall dimensions of the
+			// rectangle. These values are used to calculate consistent
+			// texture map coordinates across all pieces.
+			this._rectWidth = xFill;  this._rectHeight = yFill;
 
-            // get the stroke size
-            var strokeSize = -z*(r-l)/(2.0*zn)*strokeSizeNDC;
+			// get the stroke size
+			var strokeSize = -z*(r-l)/(2.0*zn)*strokeSizeNDC;
 
-            // get the absolute corner radii
-            tlRadius = -z*(r-l)/(2.0*zn)*tlRadiusNDC,
-            trRadius = -z*(r-l)/(2.0*zn)*trRadiusNDC,
-            blRadius = -z*(r-l)/(2.0*zn)*blRadiusNDC,
-            brRadius = -z*(r-l)/(2.0*zn)*brRadiusNDC;
+			// get the absolute corner radii
+			tlRadius = -z*(r-l)/(2.0*zn)*tlRadiusNDC,
+			trRadius = -z*(r-l)/(2.0*zn)*trRadiusNDC,
+			blRadius = -z*(r-l)/(2.0*zn)*blRadiusNDC,
+			brRadius = -z*(r-l)/(2.0*zn)*brRadiusNDC;
 
-            // stroke
-            var strokeMaterial = this.makeStrokeMaterial();
-            var strokePrim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial);
-		strokeMaterial.fitToPrimitive( strokePrim );
-            this._primArray.push( strokePrim );
-            this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
+			// stroke
+			var i;
+			var strokeMaterial = this.makeStrokeMaterial();
+			var strokePrimArray = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial);
+			strokeMaterial.fitToPrimitiveArray( strokePrimArray );
+			for (i=0;  i<strokePrimArray.length;  i++)
+			{
+				this._primArray.push( strokePrimArray[i] );
+				this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
+			}
 
-            // fill
-            tlRadius -= strokeSize;  if (tlRadius < 0)  tlRadius = 0.0;
-            blRadius -= strokeSize;  if (blRadius < 0)  blRadius = 0.0;
-            brRadius -= strokeSize;  if (brRadius < 0)  brRadius = 0.0;
-            trRadius -= strokeSize;  if (trRadius < 0)  trRadius = 0.0;
-            xFill -= strokeSize;
-            yFill -= strokeSize;
-            var fillMaterial = this.makeFillMaterial();
-            //console.log( "fillMaterial: " + fillMaterial.getName() );
-            var fillPrim = this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial);
-		fillMaterial.fitToPrimitive( fillPrim );
-            this._primArray.push( fillPrim );
-            this._materialNodeArray.push( fillMaterial.getMaterialNode() );
+			// fill
+			tlRadius -= strokeSize;  if (tlRadius < 0)  tlRadius = 0.0;
+			blRadius -= strokeSize;  if (blRadius < 0)  blRadius = 0.0;
+			brRadius -= strokeSize;  if (brRadius < 0)  brRadius = 0.0;
+			trRadius -= strokeSize;  if (trRadius < 0)  trRadius = 0.0;
+			xFill -= strokeSize;
+			yFill -= strokeSize;
+			var fillMaterial = this.makeFillMaterial();
+			//console.log( "fillMaterial: " + fillMaterial.getName() );
+			var fillPrimArray = this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial);
+			fillMaterial.fitToPrimitiveArray( fillPrimArray );
+			for (i=0;  i<fillPrimArray.length;  i++)
+			{
+				this._primArray.push( fillPrimArray[i] );
+				this._materialNodeArray.push( fillMaterial.getMaterialNode() );
+			}
 
-            world.updateObject(this);
-        }
-    },
+			world.updateObject(this);
+		}
+	},
 
     renderQuadraticBezier: {
         value: function(bPts, ctx) {
@@ -621,15 +628,17 @@ exports.Rectangle = Object.create(GeomObj, {
         value: function(ctr,  width,  height,  tlRad, blRad, brRad, trRad, material) {
             // create the geometry
             // special the (common) case of no rounded corners
-            var prim;
+            var primArray;
 
             if ((tlRad <= 0) && (blRad <= 0) && (brRad <= 0) && (trRad <= 0)) {
-                prim = RectangleGeometry.create( ctr, width, height, material );
+                primArray = RectangleGeometry.create( ctr, width, height, material );
             } else {
-                prim = RectangleFill.create( ctr,  width, height,  tlRad, blRad,  brRad, trRad, material);
+                primArray = RectangleFill.create( ctr,  width, height,  tlRad, blRad,  brRad, trRad, material);
             }
 
-            return prim;
+			console.log( "rectangle produced " + primArray.length + " fill primitives" );
+
+            return primArray;
         }
     },
 
@@ -951,17 +960,44 @@ RectangleFill.create = function( rectCtr,  width, height, tlRad, blRad,  brRad, 
 		j++;
 	}
 
-	//refine the mesh for vertex deformations
-	if (material) {
-		if (material.hasVertexDeformation()) {
+	// refine the mesh for vertex deformations
+	var rtnArray;
+	if (material)
+	{
+		if (material.hasVertexDeformation())
+		{
 			var paramRange = material.getVertexDeformationRange();
 			var tolerance = material.getVertexDeformationTolerance();
 			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+
+			var subdividedParts = ShapePrimitive.subdivideOversizedMesh( this.vertices, this.normals, this.uvs, this.indices );
+
+			rtnArray = [];
+			if (subdividedParts)
+			{
+				for (var i=0;  i<subdividedParts.length;  i++)
+				{
+					var obj = subdividedParts[i];
+					rtnArray.push( ShapePrimitive.create(obj.vertices, obj.normals, obj.uvs, obj.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, obj.vertices.length/3) );
+				}
+			}
+			else
+				rtnArray = [ ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices) ];
+			
+//			var vertsOut = [],  normsOut = [], uvsOut = [],  indicesOut = [];
+//			ShapePrimitive.convertTrianglesToLines( this.vertices, this.normals, this.uvs, this.indices,   vertsOut, normsOut,  uvsOut, indicesOut );
+//			nVertices = vertsOut.length;
+//			return ShapePrimitive.create(vertsOut, normsOut, uvsOut, indicesOut, RDGE.globals.engine.getContext().renderer.LINES, nVertices);
+
+		}
+		else
+		{
+			// create the RDGE primitive
+			rtnArray = [ ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices) ];
 		}
 	}
 
-	// create the RDGE primitive
-	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices);
+	return rtnArray;
 };
 
 RectangleFill.pushVertex = function( x, y, z ) {
@@ -1183,7 +1219,8 @@ RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad,
 		k++;
 	}
 
-	//refine the mesh for vertex deformations
+	// refine the mesh for vertex deformations
+	var rtnArray;
 	if (material)
 	{
 		if (material.hasVertexDeformation())
@@ -1191,11 +1228,29 @@ RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad,
 			var paramRange = material.getVertexDeformationRange();
 			var tolerance = material.getVertexDeformationTolerance();
 			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+
+			var subdividedParts = ShapePrimitive.subdivideOversizedMesh( this.vertices, this.normals, this.uvs, this.indices );
+
+			rtnArray = [];
+			if (subdividedParts)
+			{
+				for (var i=0;  i<subdividedParts.length;  i++)
+				{
+					var obj = subdividedParts[i];
+					rtnArray.push( ShapePrimitive.create(obj.vertices, obj.normals, obj.uvs, obj.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, obj.vertices.length/3) );
+				}
+			}
+			else
+				rtnArray = [ ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices) ];
+		}
+		else
+		{
+			// create the RDGE primitive
+			rtnArray = [ ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices) ];
 		}
 	}
 
-	// create the RDGE primitive
-	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices);
+	return rtnArray;
 };
 
 RectangleStroke.getRoundedCorner = function( ctr, insidePt, outsidePt ) {
@@ -1269,7 +1324,8 @@ RectangleGeometry.create = function( ctr,  width, height, material ) {
 	RectangleGeometry.pushIndices( 2, 1, 0 );
 	RectangleGeometry.pushIndices( 0, 3, 2 );
 
-	//refine the mesh for vertex deformations
+	// refine the mesh for vertex deformations
+	var rtnArray;
 	if (material)
 	{
 		if (material.hasVertexDeformation())
@@ -1277,11 +1333,29 @@ RectangleGeometry.create = function( ctr,  width, height, material ) {
 			var paramRange = material.getVertexDeformationRange();
 			var tolerance = material.getVertexDeformationTolerance();
 			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+
+			var subdividedParts = ShapePrimitive.subdivideOversizedMesh( this.vertices, this.normals, this.uvs, this.indices );
+
+			rtnArray = [];
+			if (subdividedParts)
+			{
+				for (var i=0;  i<subdividedParts.length;  i++)
+				{
+					var obj = subdividedParts[i];
+					rtnArray.push( ShapePrimitive.create(obj.vertices, obj.normals, obj.uvs, obj.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, obj.vertices.length/3) );
+				}
+			}
+			else
+				rtnArray = [ ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices) ];
+		}
+		else
+		{
+			// create the RDGE primitive
+			rtnArray = [ ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices) ];
 		}
 	}
 
-	// create the RDGE primitive
-	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices);
+	return rtnArray;
 };
 
 RectangleGeometry.pushVertex	= RectangleFill.pushVertex;

@@ -32,16 +32,12 @@ var Material = function GLMaterial( world ) {
 	// vertex deformation variables
 	this._hasVertexDeformation = false;
 	this._vertexDeformationRange = [0, 0, 1, 1];	// (xMin, yMin, xMax, yMax)
-	this._vertexDeformationTolerance = 0.1;
+	this._vertexDeformationTolerance = 0.02;
 
 	// RDGE variables
 	this._shader = null;
 	this._materialNode = null;
 
-	// vertex deformation variables
-	this._hasVertexDeformation = false;
-	this._vertexDeformationRange = [0, 0, 1, 1];	// (xMin, yMin, xMax, yMax)
-	this._vertexDeformationTolerance = 0.02;
 
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
@@ -366,11 +362,19 @@ var Material = function GLMaterial( world ) {
 		throw new Error( "Material.init() must be overridden by subclass" );
 	};
 
+	this.resetToDefault = function()  {
+		// materials should override this functinon
+	};
+
 	this.update = function( time ) {
 		// animated materials should implement the update method
 	};
 
 	this.fitToPrimitive = function( prim )  {
+		// some materials need to preserve an aspect ratio - or someting else.
+	};
+
+	this.fitToPrimitiveArray = function( primArray )  {
 		// some materials need to preserve an aspect ratio - or someting else.
 	};
 

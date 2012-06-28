@@ -66,6 +66,16 @@ var TunnelMaterial = function TunnelMaterial() {
         this.setResolution([world.getViewportWidth(), world.getViewportHeight()]);
         this.update(0);
     };
+
+	this.resetToDefault = function()
+	{
+		this._propValues[this._propNames[u_tex0_index]] = this._defaultTexMap.slice(0);
+		this._propValues[this._propNames[u_speed_index]] = 1.0;
+	
+		var nProps = this._propNames.length;
+		for (var i=0; i<nProps;  i++)
+			this.setProperty( this._propNames[i],  this._propValues[this._propNames[i]]  );
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

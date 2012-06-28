@@ -79,6 +79,25 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
         this.setShaderValues();
 		this.update( 0 );
     };
+
+	this.resetToDefault = function()
+	{
+		this._propValues[this._propNames[0]] = this._color1.slice(0);
+		this._propValues[this._propNames[1]] = this._color2.slice(0);
+		this._propValues[this._propNames[2]] = this._color3.slice(0);
+		this._propValues[this._propNames[3]] = this._color4.slice(0);
+
+		this._propValues[this._propNames[4]] = this._colorStop1;
+		this._propValues[this._propNames[5]] = this._colorStop2;
+		this._propValues[this._propNames[6]] = this._colorStop3;
+		this._propValues[this._propNames[7]] = this._colorStop4;
+
+		this._propValues[this._propNames[8]] = [ Math.cos(this._angle), Math.sin(this._angle) ];
+	
+		var nProps = this._propNames.length;
+		for (var i=0; i<nProps;  i++)
+			this.setProperty( this._propNames[i],  this._propValues[this._propNames[i]]  );
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

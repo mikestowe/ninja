@@ -69,6 +69,16 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
         this.update(0);
     };
 
+	this.resetToDefault = function()
+	{
+		this._propValues[this._propNames[0]] = this._defaultTexMap.slice(0);
+		this._propValues[this._propNames[1]] = 1.0;
+	
+		var nProps = this._propNames.length;
+		for (var i=0; i<nProps;  i++)
+			this.setProperty( this._propNames[i],  this._propValues[this._propNames[i]]  );
+	};
+
 
     this.update = function () {
         var material = this._materialNode;

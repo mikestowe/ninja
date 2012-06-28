@@ -81,6 +81,20 @@ var TwistVertMaterial = function TwistVertMaterial()
         this.setShaderValues();
 	};
 
+	this.resetToDefault = function()
+	{
+		this._propValues[this._propNames[0]] = 0.0;
+		this._propValues[this._propNames[1]] = 1.0;
+		this._propValues[this._propNames[2]] = 2.0 * Math.PI;
+		this._propValues[this._propNames[3]] = this._speed;
+		this._propValues[this._propNames[4]] = this._tex0.slice();
+		this._propValues[this._propNames[5]] = this._tex1.slice();
+	
+		var nProps = this._propNames.length;
+		for (var i=0; i<nProps;  i++)
+			this.setProperty( this._propNames[i],  this._propValues[this._propNames[i]]  );
+	};
+
 	this.update = function (time)
 	{
 		if (this._shader && this._shader.twistMe)

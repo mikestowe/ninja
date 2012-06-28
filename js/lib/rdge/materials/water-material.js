@@ -78,6 +78,19 @@ var WaterMaterial = function WaterMaterial()
 		this.setResolution([world.getViewportWidth(), world.getViewportHeight()]);
 		this.update(0);
 	};
+
+	this.resetToDefault = function()
+	{
+		this._propValues[ this._propNames[u_tex_index		] ]	= this._defaultTexMap.slice(0);
+		this._propValues[ this._propNames[u_emboss_index	] ]	= 0.3;
+		this._propValues[ this._propNames[u_delta_index		] ]	= 20.0;
+		this._propValues[ this._propNames[u_intensity_index	] ]	= 3.0;
+		this._propValues[ this._propNames[u_speed_index		] ]	= 0.2;
+	
+		var nProps = this._propNames.length;
+		for (var i=0; i<nProps;  i++)
+			this.setProperty( this._propNames[i],  this._propValues[this._propNames[i]]  );
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

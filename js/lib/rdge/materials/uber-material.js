@@ -62,6 +62,23 @@ var UberMaterial = function UberMaterial() {
     this._propValues[this._propNames[7]] = this._environmentMapOb['texture'];
     this._propValues[this._propNames[8]] = this._environmentMapOb['envReflection'];
 
+	this.resetToDefault = function()
+	{
+		this._propValues[this._propNames[0]] = this._ambientColor.slice(0);
+		this._propValues[this._propNames[1]] = this._diffuseColor.slice(0);
+		this._propValues[this._propNames[2]] = this._specularColor.slice(0);
+		this._propValues[this._propNames[3]] = this._specularPower;
+		this._propValues[this._propNames[4]] = this._diffuseMapOb['texture'];
+		this._propValues[this._propNames[5]] = this._normalMapOb['texture'];
+		this._propValues[this._propNames[6]] = this._specularMapOb['texture'];
+		this._propValues[this._propNames[7]] = this._environmentMapOb['texture'];
+		this._propValues[this._propNames[8]] = this._environmentMapOb['envReflection'];
+	
+		var nProps = this._propNames.length;
+		for (var i=0; i<nProps;  i++)
+			this.setProperty( this._propNames[i],  this._propValues[this._propNames[i]]  );
+	};
+
     this.setProperty = function (prop, value) {
         if (prop == "color") prop = "ambientColor";
         var valid = this.validateProperty(prop, value);
