@@ -89,9 +89,17 @@ exports.BindingHud = Montage.create(Component, {
 
     getPropertyList : {
         value: function(component) {
-            var props = this.application.ninja.objectsController.getPropertiesFromObject(component, true);
+            var props = this.application.ninja.objectsController.getPropertiesFromObject(component, true),
+                promotedProperties = [],
+                objectName;
 
-            var objectName, promotedProperties;
+            ///// Mapper - property to property object
+            function propertyMapper(property) {
+                return {
+                    property: property,
+                    promoted: promotedProperties.indexOf(property) !== -1
+                }
+            }
 
             if(this.userComponent._montage_metadata) {
                 objectName = this.userComponent._montage_metadata.objectName;
@@ -114,7 +122,7 @@ exports.BindingHud = Montage.create(Component, {
                 }
             }
 
-            return props;
+            return props.map(propertyMapper);
         }
     },
 
