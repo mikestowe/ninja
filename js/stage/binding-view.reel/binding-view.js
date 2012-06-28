@@ -97,20 +97,20 @@ exports.BindingView = Montage.create(Component, {
         }
     },
 
-    _selectedComponent: { value: null },
-    selectedComponent: {
+    _selectedElement: { value: null },
+    selectedElement: {
         get: function() {
-            return this._selectedComponent;
+            return this._selectedElement;
         },
         set: function(val) {
             this.boundComponents = [];
-            if(this._selectedComponent !== val) {
+            if(this._selectedElement !== val) {
                 this.clearCanvas();
-            this._selectedComponent = val;
-            if(this._selectedComponent !== null) {
-                this.application.ninja.objectsController.currentObject = this.selectedComponent;
-                if (this.selectedComponent !== null) {
-                    this.boundComponents.push(this.selectedComponent);
+                this._selectedElement = val;
+            if(this._selectedElement !== null) {
+                this.application.ninja.objectsController.currentObject = this._selectedElement.controller;
+                if (this._selectedElement !== null) {
+                    this.boundComponents.push(this._selectedElement);
                 }
             }
                 this.needsDraw = true;
@@ -219,12 +219,12 @@ exports.BindingView = Montage.create(Component, {
                 this.element.style.removeProperty('display');
                 this.element.style.width = this.width + "px";
                 this.element.style.height = this.height + "px";
-                if(this.selectedComponent !== null && typeof(this.selectedComponent) !== "undefined") {
+                if(this._selectedElement !== null && typeof(this._selectedElement) !== "undefined") {
                     this.canvas.width  = this.application.ninja.stage.drawingCanvas.offsetWidth;
                     this.canvas.height = this.application.ninja.stage.drawingCanvas.offsetHeight;
                     this.clearCanvas();
                     for(var i= 0; i < this.hudRepeater.childComponents.length; i++) {
-                        this.drawLine(this.hudRepeater.objects[i].element.offsetLeft,this.hudRepeater.objects[i].element.offsetTop, this.hudRepeater.childComponents[i].element.offsetLeft +3, this.hudRepeater.childComponents[i].element.offsetTop +3, "#CCC", 2);
+                        this.drawLine(this.hudRepeater.objects[i].offsetLeft,this.hudRepeater.objects[i].offsetTop, this.hudRepeater.childComponents[i].element.offsetLeft +1, this.hudRepeater.childComponents[i].element.offsetTop +1, "#CCC", 2);
                     }
                     if(this._isDrawingConnection) {
                         if (this.hudRepeater.childComponents.length > 1) {
@@ -341,7 +341,7 @@ exports.BindingView = Montage.create(Component, {
             if(this._isDrawingConnection && !overHud) {
                 //NOTE : Continue This content. mouse over select
                 var obj = this.application.ninja.stage.getElement(event, true);
-                if (obj && obj.controller !== this.selectedComponent)
+                if (obj && obj !== this.selectedElement)
                 {
                     if (!obj.controller || obj === null)
                     {
@@ -363,7 +363,7 @@ exports.BindingView = Montage.create(Component, {
                             }
                             this._targetedElement = obj;
                             this._targetedElement.classList.add("active-element-outline");
-                            this.boundComponents.push(this._targetedElement.controller);
+                            this.boundComponents.push(this._targetedElement);
                         }
                     }
                 }
