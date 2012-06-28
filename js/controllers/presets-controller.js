@@ -53,6 +53,8 @@ exports.PresetsController = Montage.create(Component, {
             //// TODO: replace this hack when webkit supports transitionStart event (see above)
             window.clearTimeout(el.njTimeout);
 
+            this._dispatchChange();
+
             el.classList.remove(this.transitionClass);
             el.removeEventListener("webkitTransitionEnd", this, true);
         }
@@ -107,6 +109,10 @@ exports.PresetsController = Montage.create(Component, {
                 }
             }, this);
 
+            if(!useTransition) {
+                this._dispatchChange();
+            }
+
         }
     },
 
@@ -125,6 +131,20 @@ exports.PresetsController = Montage.create(Component, {
             });
 
             return keysString;
+        }
+    },
+
+    _dispatchChange : {
+        value: function(property, value) {
+            this.application.ninja.stage.updatedStage = true;
+            NJevent('elementChange', {
+                type : 'presetChange',
+                data: {
+                    "prop": property,
+                    "value": value
+                },
+                redraw: null
+            });
         }
     }
 });
