@@ -1555,7 +1555,6 @@ var stylesController = exports.StylesController = Montage.create(Component, {
         value: function(el, property, rule) {
             if(!el.elementModel) { return false; } /// return null if there is no element model
 
-            console.log("Setting cache for property: ", property);
             this._cacheHistory.push({
                 rule: rule,
                 element: el,
@@ -1618,7 +1617,6 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             if(!element) {
                 this._cacheHistory = null;
                 this._cacheHistory = [];
-                console.log("Removing cache: ", this._cacheHistory);
             }
 
         }
