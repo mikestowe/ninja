@@ -138,6 +138,10 @@ exports.ShapesController = Montage.create(CanvasController, {
                     this.application.ninja.elementMediator.replaceElement(canvas, el);
                     break;
                 case "strokeMaterial":
+                    // skip shape types that don't support WebGL
+                    if(!el.elementModel.shapeModel.useWebGl) {
+                        return;
+                    }
                     m = Object.create(MaterialsModel.getMaterial(value));
                     if(m)
                     {
@@ -152,6 +156,10 @@ exports.ShapesController = Montage.create(CanvasController, {
                     }
                     break;
                 case "fillMaterial":
+                    // skip shape types that don't support WebGL or fill color
+                    if(!el.elementModel.shapeModel.GLGeomObj.canFill || !el.elementModel.shapeModel.useWebGl) {
+                        return;
+                    }
                     m = Object.create(MaterialsModel.getMaterial(value));
                     if(m)
                     {
@@ -445,17 +453,17 @@ exports.ShapesController = Montage.create(CanvasController, {
 
             if(gradientM)
             {
-            if(isFill)
-            {
+                if(isFill)
+                {
                     el.elementModel.shapeModel.GLGeomObj.setFillMaterial(gradientM);
                 }
                 else
                 {
                     el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(gradientM);
                 }
-                        el.elementModel.shapeModel.GLGeomObj.buildBuffers();
-                    }
-                }
+                el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+            }
+        }
     },
 
     _setFlatMaterial: {
@@ -472,10 +480,13 @@ exports.ShapesController = Montage.create(CanvasController, {
             }
 
             if(!m || ((m.getName() === "Linear Gradient") || m.getName() === "Radial Gradient") )
-                {
+            {
+                // Uber Material also supports solid colors, so don't change from Uber to Flat Material
+                if(m && (m.getName() === "Uber")) { return; }
+
                 flatM = Object.create(MaterialsModel.getMaterial("Flat"));
                 if(flatM)
-                    {
+                {
                     if(isFill)
                     {
                         el.elementModel.shapeModel.GLGeomObj.setFillMaterial(flatM);
@@ -484,10 +495,10 @@ exports.ShapesController = Montage.create(CanvasController, {
                     {
                         el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(flatM);
                     }
-                        el.elementModel.shapeModel.GLGeomObj.buildBuffers();
-                    }
+                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                 }
             }
+        }
     },
 
     setColor: {
@@ -597,14 +608,31 @@ exports.ShapesController = Montage.create(CanvasController, {
 
     setStroke: {
         value: function(el, stroke, eventType, source) {
-            if(stroke.colorInfo) {
-                this.setColor(el, stroke.colorInfo, false);
-            }
             if(stroke.shapeInfo) {
                 this.setProperty(el, "strokeSize", stroke.shapeInfo.strokeSize + " " + stroke.shapeInfo.strokeUnits, eventType, source);
             }
+            var m;
             if(stroke.webGLInfo) {
-                this.setProperty(el, "strokeMaterial", stroke.webGLInfo.material);
+                m = stroke.webGLInfo.material;
+                this.setProperty(el, "strokeMaterial", m);
+                if((m === "Linear Gradient") || (m === "Radial Gradient")) {
+                    // Just use the default gradient material values
+                    return;
+                }
+            }
+            if(stroke.colorInfo) {
+                if(el.elementModel.shapeModel.useWebGl) {
+                    m = el.elementModel.shapeModel.GLGeomObj.getStrokeMaterial().getName();
+                    if( ((stroke.colorInfo.mode === "gradient") && (m !== "Linear Gradient") && (m !== "Radial Gradient")) ||
+                        ((stroke.colorInfo.mode !== "gradient") && ((m === "Linear Gradient") || (m === "Radial Gradient"))))
+                    {
+                        return;
+                    } else {
+                        this.setColor(el, stroke.colorInfo, false);
+                    }
+                } else {
+                    this.setColor(el, stroke.colorInfo, false);
+                }
             }
         }
     },
@@ -638,11 +666,28 @@ exports.ShapesController = Montage.create(CanvasController, {
 
     setFill: {
         value: function(el, fill) {
-            if(fill.colorInfo) {
-                this.setColor(el, fill.colorInfo, true);
-            }
+            var m;
             if(fill.webGLInfo) {
-                this.setProperty(el, "fillMaterial", fill.webGLInfo.material);
+                m = fill.webGLInfo.material;
+                this.setProperty(el, "fillMaterial", m);
+                if((m === "Linear Gradient") || (m === "Radial Gradient")) {
+                    // Just use the default gradient material values
+                    return;
+                }
+            }
+            if(fill.colorInfo) {
+                if(el.elementModel.shapeModel.useWebGl) {
+                    m = el.elementModel.shapeModel.GLGeomObj.getFillMaterial().getName();
+                    if( ((fill.colorInfo.mode === "gradient") && (m !== "Linear Gradient") && (m !== "Radial Gradient")) ||
+                        ((fill.colorInfo.mode !== "gradient") && ((m === "Linear Gradient") || (m === "Radial Gradient"))))
+                    {
+                        return;
+                    } else {
+                        this.setColor(el, fill.colorInfo, true);
+                    }
+                } else {
+                    this.setColor(el, fill.colorInfo, true);
+                }
             }
         }
     },

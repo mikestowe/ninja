@@ -211,26 +211,16 @@ exports.ShapeTool = Montage.create(DrawingTool, {
 		}
 	},
 
-    // We can draw on an existing canvas unless it has only a single shape object
     setColor: {
-        value: function(stroke, fill, canvas, toolId)
+        value: function(canvas, color, isFill, toolId)
         {
-            if(stroke && stroke.color)
+            if(color && color.color)
             {
-                this.application.ninja.elementMediator.setColor([canvas], {mode:stroke.colorMode, color:stroke.color}, false, "Change", toolId);
+                this.application.ninja.elementMediator.setColor([canvas], {mode:color.colorMode, color:color.color}, isFill, "Change", toolId);
             }
             else
             {
-                this.application.ninja.elementMediator.setColor([canvas], {mode:"nocolor", color:null}, false, "Change", toolId);
-            }
-
-            if(fill && fill.color)
-            {
-                this.application.ninja.elementMediator.setColor([canvas], {mode:fill.colorMode, color:fill.color}, true, "Change", toolId);
-            }
-            else
-            {
-                this.application.ninja.elementMediator.setColor([canvas], {mode:"nocolor", color:null}, true, "Change", toolId);
+                this.application.ninja.elementMediator.setColor([canvas], {mode:"nocolor", color:null}, isFill, "Change", toolId);
             }
         }
     }
