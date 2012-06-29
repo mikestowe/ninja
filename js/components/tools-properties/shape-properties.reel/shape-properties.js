@@ -125,11 +125,11 @@ var ShapeProperties = exports.ShapeProperties = Montage.create(ToolProperties, {
 
             if (this.addedColorChips === false && this.application.ninja.colorController.colorPanelDrawn) {
                 // setup fill color
-                this._fillColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80 };
+                this._fillColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: true, image: false, nocolor: true, offset: -80 };
                 this.application.ninja.colorController.addButton("chip", this._fillColorCtrl);
 
                 // setup stroke color
-                this._strokeColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80 };
+                this._strokeColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: true, image: false, nocolor: true, offset: -80 };
                 this.application.ninja.colorController.addButton("chip", this._strokeColorCtrl);
 
                 this._fillColorCtrl.addEventListener("change", this.handleFillColorChange.bind(this), false);

@@ -511,24 +511,16 @@ exports.Ninja = Montage.create(Component, {
 
     executeLivePreview: {
         value: function() {
-            var background, overflow, transitionStopRule;
-            this.stage.hideCanvas(this.appModel.livePreview);
+            var transitionStopRule;
+//            this.stage.hideCanvas(this.appModel.livePreview);
 
-            // TODO: Remove marker for old template: NINJA-STAGE-REWORK
             if(this.appModel.livePreview) {
-//                background =  "#000000";
-//                overflow = "hidden";
                 transitionStopRule = "nj-css-garbage-selector";
+                this.stage.bindingView.hide = true;
             } else {
-//                background =  "#808080";
-//                overflow = "visible";
                 transitionStopRule = "*"
+                this.stage.bindingView.hide = false;
             }
-
-            // TODO: Remove marker for old template: NINJA-STAGE-REWORK
-//            this.currentDocument.model.documentRoot.elementModel.controller.setProperty(this.currentDocument.model.documentRoot, "body-background", background);
-//            this.currentDocument.model.documentRoot.elementModel.controller.setProperty(this.currentDocument.model.documentRoot, "overflow", overflow);
-//            this.currentDocument.model.documentRoot.elementModel.controller.changeSelector(this.currentDocument.model.documentRoot, "transitionStopRule", transitionStopRule);
 
             this.application.ninja.stylesController._stageStylesheet.rules[0].selectorText = transitionStopRule;
 
