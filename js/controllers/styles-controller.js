@@ -649,6 +649,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
             if(!element.parentNode) {
                 console.warn('StylesController::getMatchingRules - Un-attached element queried');
+                return [];
             }
 
             try {
