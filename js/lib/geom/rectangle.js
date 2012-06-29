@@ -1030,7 +1030,7 @@ RectangleFill.getVertex = function( index ) {
 
 RectangleFill.getUV = function( x, y, xMin, w, yMin, h) {
 	var u = (x - xMin)/w,
-		v = (y - yMin)/h;
+		v = 1.0 - (y - yMin)/h;
 
 	var uv = [ u, v ];
 	return uv;

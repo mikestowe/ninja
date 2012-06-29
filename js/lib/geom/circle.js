@@ -401,16 +401,6 @@ exports.Circle = Object.create(GeomObj, {
 
 			this.recalcTexMapCoords( vrts, uvs );
 
-//			//refine the mesh for vertex deformations
-//			if (material) {
-//				if (material.hasVertexDeformation()) {
-//					var paramRange = material.getVertexDeformationRange();
-//					var tolerance = material.getVertexDeformationTolerance();
-//					ShapePrimitive.refineMesh( vrts, nrms, uvs, indices, vrts.length/3,  paramRange,  tolerance );
-//				}
-//			}
-
-//			return ShapePrimitive.create(vrts, nrms, uvs, indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, index);
 			// refine the mesh for vertex deformations
 			var rtnArray;
 			if (material)
@@ -919,7 +909,7 @@ exports.Circle = Object.create(GeomObj, {
 				if (uvs[iuv] > uMax)  uMax = uvs[iuv];
 
 				iuv++;  ivrt++;
-				uvs[iuv] = (vrts[ivrt]-yMin)/ovalHeight;
+				uvs[iuv] = 1.0 - (vrts[ivrt]-yMin)/ovalHeight;
 				if (uvs[iuv] < vMin)  vMin = uvs[iuv];
 				if (uvs[iuv] > vMax)  vMax = uvs[iuv];
 				iuv++;  ivrt += 2;
