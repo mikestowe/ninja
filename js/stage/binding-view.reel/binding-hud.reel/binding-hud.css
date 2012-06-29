@@ -6,14 +6,12 @@
 
 .bindingHud {
     position: absolute;
-    background: rgba(0, 0, 0, 0.85);
-    /*padding: 0px;*/
+    background: rgba(24, 24, 24, 0.85);
     color: #C4C4C4;
     font-size: 11px;
-    box-shadow: inset 0px 0px 0px 0px #CCC;
+    box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.61);
     border-radius: 6px;
-    padding: 3px 1px 1px;
-    border:1px solid #000;
+    padding: 3px;
     text-shadow: 1px 1px 0px #000;
 }
 
@@ -31,6 +29,8 @@
     /*background: rgba(0, 0, 0, 0.3);*/
     line-height:16px;
     /*box-shadow: inset 0px 0px 4px #333, 1px 1px 0px #3A3A3A;*/
+    padding-top: 4px;
+    margin: 0 5px;
     min-width: 80px;
 }
 
@@ -40,7 +40,10 @@
     line-height:16px;
     padding:1px 25px 1px 8px;
 }
-
+.bindingHud .hudOption.promoted {
+    color: #FFF;
+    font-weight: bold;
+}
 .bindingHud .hudOption .connectorBubble:hover {
     background-color: #1B52A7;
     box-shadow: inset 0px 2px 2px 1px rgba(15, 15, 15, 0.78), 0 1px #474747;
@@ -58,35 +61,35 @@
 
 .bindingHud .hudOption .connectorBubble {
     position: absolute;
-    right: 5px;
+    right: 2px;
     top: 3px;
     border-radius: 50%;
     width: 10px;
     height: 10px;
     border-left: 0px;
     display: block;
-    background-color: #313131;
-    box-shadow: inset 0px 2px 7px 1px #0F0F0F, 0 1px #424242;
+    background-color: #353535;
+    box-shadow: inset 0px 2px 3px 1px #222, 0 1px #666;
 
 }
 
 .splitter.scrollArea {
     background-color: transparent;
-    background-size: 12%;
+    background-size: 10%;
     background-position-y: 2px;
     display: none;
     height:11px;
     text-align: center;
 }
 .splitter.scrollAreaTop {
-    border-top: 1px solid #353535;
-    box-shadow: 0 -1px 0 0 #141414;
+    border-bottom: 1px solid #141414;
+    box-shadow: 0 1px 0 0 #525252;
 }
 .splitter.scrollAreaBottom {
     -webkit-transform: rotate(180deg);
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
-    border-bottom: 1px solid #353535;
+    border-bottom: 1px solid #525252;
     box-shadow: 0 1px 0 0 #141414;
     margin-top: 4px;
 }
@@ -95,9 +98,14 @@
     opacity: 0.5;
 }
 .splitter.scrollArea:hover:not(.disabled) {
-    background-color: #252525;
+    background-color: #303030;
+    border-bottom: 1px solid #252525;
+    box-shadow: 0 1px 0 0 #3F3F3F;
 }
-
+.splitter.scrollAreaBottom:hover:not(.disabled) {
+    border-bottom: 1px solid #3F3F3F;
+    box-shadow: 0 1px 0 0 #252525;
+}
 
 .hudRepetition {
     overflow: hidden;
