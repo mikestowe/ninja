@@ -28,19 +28,6 @@ exports.VideoController = Montage.create(ElementController, {
         value: function(el, p, value) {
             switch(p) {
                 case "src":
-                	
-                	//TODO: Move this to the location where the element is created
-                	el.addEventListener('canplay', function(e) {
-						//TODO: Figure out why the video must be seeked to the end before pausing
-  						var time = Math.ceil(this.duration);
-  						//Trying to display the last frame (doing minus 2 seconds if long video)
-  						if (time > 2) this.currentTime = time - 2;
-  						else if (time > 1) this.currentTime = time - 1;
-  						else this.currentTime = time || 0;
-  						//Pauing video
-  						this.pause();
-  					}, false);
-  					
                     el.setAttribute(p, value);
                     break;
                 case "poster":
