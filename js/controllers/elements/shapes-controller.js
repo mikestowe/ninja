@@ -138,6 +138,10 @@ exports.ShapesController = Montage.create(CanvasController, {
                     this.application.ninja.elementMediator.replaceElement(canvas, el);
                     break;
                 case "strokeMaterial":
+                    // skip shape types that don't support WebGL
+                    if(!el.elementModel.shapeModel.GLGeomObj.useWebGl) {
+                        return;
+                    }
                     m = Object.create(MaterialsModel.getMaterial(value));
                     if(m)
                     {
@@ -152,6 +156,10 @@ exports.ShapesController = Montage.create(CanvasController, {
                     }
                     break;
                 case "fillMaterial":
+                    // skip shape types that don't support WebGL or fill color
+                    if(!el.elementModel.shapeModel.GLGeomObj.canFill || !el.elementModel.shapeModel.GLGeomObj.useWebGl) {
+                        return;
+                    }
                     m = Object.create(MaterialsModel.getMaterial(value));
                     if(m)
                     {
