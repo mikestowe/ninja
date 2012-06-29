@@ -632,7 +632,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             if(!rule) {
                 ///// This should never be hit if providing cssText from existing rule (like those
                 ///// returned from getMatchedCSSRules()
-                console.warn('StylesController::_getRuleWithCSSText - No rule found with given cssText.');
+                //console.warn('StylesController::_getRuleWithCSSText - No rule found with given cssText.');
             }
 
             return rule;
@@ -646,16 +646,31 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     getMatchingRules : {          //TODO: Remove omitPseudos from here and usages
         value: function(element, omitPseudos, useStageStyleSheet) {
             var rules,
+                matchedRules,
                 mappedRules,
                 doc = element.ownerDocument,
                 win = doc.defaultView;
 
+            if(!element.parentNode) {
+                //console.warn('StylesController::getMatchingRules - Un-attached element queried');
+                return [];
+            }
+
             try {
-                mappedRules = nj.toArray(win.getMatchedCSSRules(element)).map(function(rule) {
+                matchedRules = win.getMatchedCSSRules(element);
+
+                if(!matchedRules) {
+                    //console.warn('StylesController::getMatchingRules - matched rules are null');
+                    return [];
+                }
+
+                mappedRules = nj.toArray(matchedRules).map(function(rule) {
                     return this._getRuleWithCSSText(rule.cssText, doc);
                 }, this);
 
                 rules = mappedRules.filter(function(rule) {
+                    if(!rule) { return false; }
+
                     //// useStageStyleSheet flag indicates whether to only return rules from the stylesheet,
                     //// or only use rules for other stylesheets
 
@@ -676,7 +691,8 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 }, this);
 
             } catch(ERROR) {
-                console.warn('StylesController::getMatchingRules - Un-attached element queried.');
+                //console.warn('StylesController::getMatchingRules - getMatchedCSSRules Exception.');
+                return [];
             }
             ///// Function for sorting by specificity values
             function sorter(ruleA, ruleB) {
