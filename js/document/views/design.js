@@ -313,20 +313,17 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 			if (videotags.length > 0) {
 				//Looping through all video tags
 				for (i = 0; i < videotags.length; i++) {
-					//Stopping all videos from playing
-					if (videotags[i].getAttribute && videotags[i].getAttribute('autoplay') !== null) {
-						//Stopping the video on open
-						videotags[i].addEventListener('canplay', function(e) {
-							//TODO: Figure out why the video must be seeked to the end before pausing
-  							var time = Math.ceil(this.duration);
-  							//Trying to display the last frame (doing minus 2 seconds if long video)
-  							if (time > 2) this.currentTime = time - 2;
-  							else if (time > 1) this.currentTime = time - 1;
-  							else this.currentTime = time || 0;
-  							//Pauing video
-  							this.pause();
-  						}, false);
-					}
+					//Stopping all videos from playing on open
+                    videotags[i].addEventListener('canplay', function(e) {
+                        //TODO: Figure out why the video must be seeked to the end before pausing
+                        var time = Math.ceil(this.duration);
+                        //Trying to display the last frame (doing minus 2 seconds if long video)
+                        if (time > 2) this.currentTime = time - 2;
+                        else if (time > 1) this.currentTime = time - 1;
+                        else this.currentTime = time || 0;
+                        //Pauing video
+                        this.pause();
+                    }, false);
 				}
 			}
             // Assign the modelGenerator reference from the template to our own modelGenerator
