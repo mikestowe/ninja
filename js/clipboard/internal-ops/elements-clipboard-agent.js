@@ -325,7 +325,7 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
 
     pastePositioned:{
         value: function(element, styles, fromCopy){// for now can wok for both in-place and centered paste
-            var modObject = [], x,y, newX, newY, counter;
+            var modObject = [], x,y, newX, newY, counter, self = this, addElementsFlag = true;
 
             if((typeof fromCopy === "undefined") || (fromCopy && fromCopy === true)){
                 counter = this.pasteCounter;
@@ -341,6 +341,14 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
             if(!styles || (styles && !styles.position)){
                 this.application.ninja.elementMediator.addElements(element, null, false);
             }else if(styles && (styles.position === "absolute")){
+                if((element.tagName === "IMG") || (element.getAttribute("type") === "image/svg+xml")){
+                    element.onload = function(){
+                        element.onload = null;
+                        //refresh selection
+                        self.application.ninja.stage.needsDraw = true;
+                    }
+                }
+
                 this.application.ninja.elementMediator.addElements(element, {"top" : newY, "left" : newX}, false);//displace
             }
         }
