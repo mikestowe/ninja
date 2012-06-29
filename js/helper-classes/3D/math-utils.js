@@ -815,7 +815,8 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
                 {
                     //var t = vec1.modulus() / vec0.modulus();
                     var t = VecUtils.vecMag(2, vec1)/VecUtils.vecMag(2, vec0);
-                    if ((this.fpSign(t) >= 0) && (this.fpCmp(t,1.0) <= 0))
+					var dot = VecUtils.vecDot(2, vec0, vec1);
+                    if ((this.fpSign(dot) >= 0) && (this.fpSign(t) >= 0) && (this.fpCmp(t,1.0) <= 0))
                         return this.ON;
                     else
                         return this.OUTSIDE;
