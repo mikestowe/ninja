@@ -118,14 +118,14 @@ exports.TagTool = Montage.create(DrawingTool, {
     handleCanplay: {
         value: function(event) {
             //TODO: Figure out why the video must be seeked to the end before pausing
-            var time = Math.ceil(this.duration);
+            var time = Math.ceil(event.target.duration);
             //Trying to display the last frame (doing minus 2 seconds if long video)
             if (time > 2) {
-                this.currentTime = time - 2;
+                event.target.currentTime = time - 2;
             } else if (time > 1) {
-                this.currentTime = time - 1;
+                event.target.currentTime = time - 1;
             } else {
-                this.currentTime = time || 0;
+                event.target.currentTime = time || 0;
             }
             //Pauing video
             event.target.pause();
