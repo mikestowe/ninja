@@ -54,6 +54,7 @@ var TagProperties = exports.TagProperties = Montage.create(ToolProperties, {
             this.divElement.addEventListener("click", this, false);
             this.imageElement.addEventListener("click", this, false);
             this.videoElement.addEventListener("click", this, false);
+            this.videoElement.addEventListener("canplay", this, false);
             this.canvasElement.addEventListener("click", this, false);
             this.customElement.addEventListener("click", this, false);
         }
@@ -98,6 +99,19 @@ var TagProperties = exports.TagProperties = Montage.create(ToolProperties, {
                 this.customLabel.style["display"] = "none";
             }
         }
+    },
+    
+    handleCanplay: {
+		value: function (e) {
+			//TODO: Figure out why the video must be seeked to the end before pausing
+  			var time = Math.ceil(this.duration);
+  			//Trying to display the last frame (doing minus 2 seconds if long video)
+  			if (time > 2) this.currentTime = time - 2;
+  			else if (time > 1) this.currentTime = time - 1;
+  			else this.currentTime = time || 0;
+  			//Pauing video
+  			this.pause();
+		}  
     },
 
     _selectedElement: {
