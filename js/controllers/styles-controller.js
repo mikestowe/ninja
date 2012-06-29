@@ -643,6 +643,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     getMatchingRules : {          //TODO: Remove omitPseudos from here and usages
         value: function(element, omitPseudos, useStageStyleSheet) {
             var rules,
+                matchedRules,
                 mappedRules,
                 doc = element.ownerDocument,
                 win = doc.defaultView;
@@ -653,7 +654,14 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             }
 
             try {
-                mappedRules = nj.toArray(win.getMatchedCSSRules(element)).map(function(rule) {
+                matchedRules = win.getMatchedCSSRules(element);
+
+                if(!matchedRules) {
+                    console.warn('StylesController::getMatchingRules - matched rules are null');
+                    return [];
+                }
+
+                mappedRules = nj.toArray(matchedRules).map(function(rule) {
                     return this._getRuleWithCSSText(rule.cssText, doc);
                 }, this);
 
