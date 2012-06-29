@@ -325,7 +325,7 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
 
     pastePositioned:{
         value: function(element, styles, fromCopy){// for now can wok for both in-place and centered paste
-            var modObject = [], x,y, newX, newY, counter, self = this, addElementsFlag = true;
+            var modObject = [], x,y, newX, newY, counter, self = this;
 
             if((typeof fromCopy === "undefined") || (fromCopy && fromCopy === true)){
                 counter = this.pasteCounter;
