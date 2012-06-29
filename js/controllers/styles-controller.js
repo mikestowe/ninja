@@ -629,7 +629,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             if(!rule) {
                 ///// This should never be hit if providing cssText from existing rule (like those
                 ///// returned from getMatchedCSSRules()
-                console.warn('StylesController::_getRuleWithCSSText - No rule found with given cssText.');
+                //console.warn('StylesController::_getRuleWithCSSText - No rule found with given cssText.');
             }
 
             return rule;
@@ -653,6 +653,8 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 }, this);
 
                 rules = mappedRules.filter(function(rule) {
+                    if(!rule) { return false; }
+
                     //// useStageStyleSheet flag indicates whether to only return rules from the stylesheet,
                     //// or only use rules for other stylesheets
 
