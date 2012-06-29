@@ -39,23 +39,24 @@ exports.OvalTool = Montage.create(ShapeTool, {
 
             var innerRadius = this.options.innerRadius.value / 100;
 
-            var strokeColor = this.options.stroke.webGlColor;
-            var fillColor = this.options.fill.webGlColor;
-
+            var strokeColor = this.options.stroke.webGlColor || [0,0,0,1];
+            var fillColor = this.options.fill.webGlColor || [1,1,1,1];
             // for default stroke and fill/no materials
             var strokeMaterial = null;
             var fillMaterial = null;
+            var fillM = null;
+            var strokeM = null;
 
             if(this.options.use3D)
             {
-                var strokeM = this.options.strokeMaterial;
+                strokeM = this.options.strokeMaterial;
                 if(strokeM)
                 {
                     strokeMaterial = Object.create(MaterialsModel.getMaterial(strokeM));
                 }
                 strokeColor = ShapesController.getMaterialColor(strokeM) || strokeColor;
 
-                var fillM = this.options.fillMaterial;
+                fillM = this.options.fillMaterial;
                 if(fillM)
                 {
                     fillMaterial = Object.create(MaterialsModel.getMaterial(fillM));
@@ -95,7 +96,12 @@ exports.OvalTool = Montage.create(ShapeTool, {
             }
 
             // TODO - This needs to be moved into geom obj's init routine instead of here
-            this.setColor(this.options.stroke, this.options.fill, canvas, "ovalTool");
+            if(!fillM) {
+                this.setColor(canvas, this.options.fill, true, "ovalTool");
+            }
+            if(!strokeM) {
+                this.setColor(canvas, this.options.stroke, false, "ovalTool");
+            }
 
             if(canvas.elementModel.isShape)
             {

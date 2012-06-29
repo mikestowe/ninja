@@ -1440,11 +1440,11 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
             ///// Dispatch modified event
             NJevent('styleSheetModified', eventData);
+            this.currentDocument.model.needsSave = true;
 
             ///// If the sheet doesn't already exist in the list of modified
             ///// sheets, dispatch dirty event and add the sheet to the list
             if(sheetSearch.length === 0) {
-                this.currentDocument.model.needsSave = true;
                 this.dirtyStyleSheets.push({
                     document : sheet.ownerNode.ownerDocument,
                     stylesheet : sheet
