@@ -314,11 +314,11 @@ input label {
     width:45px;
 }
 
-.propertiesPanel div.montage-button:disabled {
+.propertiesPanel div[type=button]:disabled {
     opacity: 0.4;
 }
 
-.propertiesPanel div.montage-button {
+.propertiesPanel div[type=button] {
     font-size: 9px;
     cursor: pointer;
     display: block;
@@ -336,10 +336,10 @@ input label {
     height: 14px;
 }
 
-.propertiesPanel div.montage-button:active {
+.propertiesPanel div[type=button]:active {
     background-image: -webkit-linear-gradient(top, #3c3c3c 0%, #505050 100%);
 }
 
-.propertiesPanel div.montage-button:hover {
+.propertiesPanel div[type=button]:hover {
     -webkit-box-shadow: 0px 0px 3px #b4b4b4;
 }

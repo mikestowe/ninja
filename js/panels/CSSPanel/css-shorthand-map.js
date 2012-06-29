@@ -68,7 +68,15 @@ exports.CSS_SHORTHAND_MAP = {
     'padding-left' : ['padding'],
     'padding-right' : ['padding'],
     'padding-top' : ['padding'],
-    
+
+    '-webkit-animation-name'            : ['-webkit-animation'],
+    '-webkit-animation-duration'        : ['-webkit-animation'],
+    '-webkit-animation-timing-function' : ['-webkit-animation'],
+    '-webkit-animation-delay'           : ['-webkit-animation'],
+    '-webkit-animation-iteration-count' : ['-webkit-animation'],
+    '-webkit-animation-direction'       : ['-webkit-animation'],
+    '-webkit-animation-fill-mode'       : ['-webkit-animation'],
+
     '-webkit-transition-property' : ['-webkit-transition'],
     '-webkit-transition-duration' : ['-webkit-transition'],
     '-webkit-transition-timing-function' : ['-webkit-transition'],
@@ -91,6 +99,7 @@ exports.CSS_SHORTHAND_TO_SUBPROP_MAP = {
     'list' : ["list-style-type", "list-style-image", "list-style-position"],
     'margin' : ["margin-top", "margin-right", "margin-bottom", "margin-left"],
     'padding' : ["padding-top", "padding-right", "padding-bottom", "padding-left"],
+    '-webkit-animation': ["webkit-animation-name", "webkit-animation-duration", "webkit-animation-timing-function", "webkit-animation-delay", "webkit-animation-iteration-count", "webkit-animation-direction", "webkit-animation-fill-mode"],
     '-webkit-transition' : ["-webkit-transition-property", "-webkit-transition-duration",
                             "-webkit-transition-timing-function", "-webkit-transition-delay"]
 };
