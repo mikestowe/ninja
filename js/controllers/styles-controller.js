@@ -629,7 +629,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             if(!rule) {
                 ///// This should never be hit if providing cssText from existing rule (like those
                 ///// returned from getMatchedCSSRules()
-                console.warn('StylesController::_getRuleWithCSSText - No rule found with given cssText.');
+                //console.warn('StylesController::_getRuleWithCSSText - No rule found with given cssText.');
             }
 
             return rule;
@@ -649,7 +649,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 win = doc.defaultView;
 
             if(!element.parentNode) {
-                console.warn('StylesController::getMatchingRules - Un-attached element queried');
+                //console.warn('StylesController::getMatchingRules - Un-attached element queried');
                 return [];
             }
 
@@ -657,7 +657,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 matchedRules = win.getMatchedCSSRules(element);
 
                 if(!matchedRules) {
-                    console.warn('StylesController::getMatchingRules - matched rules are null');
+                    //console.warn('StylesController::getMatchingRules - matched rules are null');
                     return [];
                 }
 
@@ -688,7 +688,8 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 }, this);
 
             } catch(ERROR) {
-                console.warn('StylesController::getMatchingRules - getMatchedCSSRules Exception.');
+                //console.warn('StylesController::getMatchingRules - getMatchedCSSRules Exception.');
+                return [];
             }
             ///// Function for sorting by specificity values
             function sorter(ruleA, ruleB) {
