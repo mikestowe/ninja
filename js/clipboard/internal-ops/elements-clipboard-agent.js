@@ -232,7 +232,8 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
             canvas.height = sourceCanvas.height;
             //end - clone copied canvas
 
-            if (!canvas.getAttribute( "data-RDGE-id" )) canvas.setAttribute( "data-RDGE-id", document.application.njUtils.generateRandom() );
+            //genenerate data-RDGE-id only for shapes
+            if (sourceCanvas.elementModel.shapeModel && !canvas.getAttribute( "data-RDGE-id" )) canvas.setAttribute( "data-RDGE-id", document.application.njUtils.generateRandom() );
 
             if(sourceCanvas.ownerDocument.defaultView.getComputedStyle(sourceCanvas).getPropertyValue("position") === "absolute"){
                 styles = canvas.elementModel.data || {};
@@ -275,7 +276,8 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
             canvas.width = styles.width;
             canvas.height = styles.height;
 
-            if (!canvas.getAttribute( "data-RDGE-id" )) canvas.setAttribute( "data-RDGE-id", document.application.njUtils.generateRandom() );
+            //genenerate data-RDGE-id only for shapes
+            if (worldJson && !canvas.getAttribute( "data-RDGE-id" )) canvas.setAttribute( "data-RDGE-id", document.application.njUtils.generateRandom() );
 
             this.pastePositioned(canvas, styles, false/*from copy*/);
 

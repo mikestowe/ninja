@@ -36,7 +36,8 @@
                     "element": {"#" : "hudOption"}
                 },
                 "bindings": {
-                    "title": {"<-": "@repeater.objectAtCurrentIteration"}
+                    "title": {"<-": "@repeater.objectAtCurrentIteration.property"},
+                    "promoted": {"<-": "@repeater.objectAtCurrentIteration.promoted"}
                 }
             },
             "resizer1": {

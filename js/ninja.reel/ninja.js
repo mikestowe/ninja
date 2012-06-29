@@ -516,8 +516,10 @@ exports.Ninja = Montage.create(Component, {
 
             if(this.appModel.livePreview) {
                 transitionStopRule = "nj-css-garbage-selector";
+                this.stage.bindingView.hide = true;
             } else {
                 transitionStopRule = "*"
+                this.stage.bindingView.hide = false;
             }
 
             this.application.ninja.stylesController._stageStylesheet.rules[0].selectorText = transitionStopRule;

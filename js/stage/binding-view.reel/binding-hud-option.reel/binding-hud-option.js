@@ -26,8 +26,28 @@ exports.BindingHudOption = Montage.create(Component, {
         }
     },
 
-    bound: {
-        value: false
+    _promoted : { value: null },
+    promoted : {
+        get : function() { return this._promoted; },
+        set : function(value) {
+            if(value === this._promoted) { return; }
+
+            this._promoted = value;
+
+            this.needsDraw = true;
+        }
+    },
+
+    _bound : { value: null },
+    bound : {
+        get : function() { return this._bound; },
+        set : function(value) {
+            if(value === this._bound) { return; }
+
+            this._bound = value;
+
+            this.needsDraw = true;
+        }
     },
 
     prepareForDraw: {
@@ -46,6 +66,12 @@ exports.BindingHudOption = Montage.create(Component, {
                 this.element.classList.add("bound");
             } else {
                 this.element.classList.remove("bound");
+            }
+
+            if(this.promoted || this.bound) {
+                this.element.classList.add("promoted");
+            } else {
+                this.element.classList.remove("promoted");
             }
 //            if(this.bindings.length > 0) {
 //                this.element.classList.add("bound");

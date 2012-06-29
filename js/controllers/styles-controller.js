@@ -213,6 +213,9 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             
             stylesheet.insertRule(ruleText, index);
 
+            ///// Invalidate cache because rule dominance is affected
+            this._clearCache();
+
             this.styleSheetModified(stylesheet);
             
             rule = stylesheet.rules[index];
@@ -775,7 +778,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             var a = this._getMostSpecificSelectorForElement(element, rule1[this.CONST.SPECIFICITY_KEY]),
                 b = this._getMostSpecificSelectorForElement(element, rule2[this.CONST.SPECIFICITY_KEY]),
                 win = element.ownerDocument.defaultView,
-                order;
+                order, sheetAIndex, sheetBIndex, ruleAIndex, ruleBIndex;
 
               order = this.compareSpecificity(a.specificity, b.specificity);
 
@@ -786,9 +789,9 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                  /// If tied again (same sheet), determine which is further down in the sheet
                 if(sheetAIndex === sheetBIndex) {
                      ruleAIndex = this.getRuleIndex(rule1); ruleBIndex = this.getRuleIndex(rule2);
-                   return ruleAIndex < ruleBIndex ? 1 : (ruleAIndex > ruleBIndex) ? -1 : 0;
+                   return ruleAIndex < ruleBIndex ? false : (ruleAIndex > ruleBIndex) ? true : false;
                  } else {
-                     return sheetAIndex < sheetBIndex ? 1 : (sheetAIndex > sheetBIndex) ? -1 : 0;
+                     return sheetAIndex < sheetBIndex ? false : (sheetAIndex > sheetBIndex) ? true : false;
                 }
              }
 
