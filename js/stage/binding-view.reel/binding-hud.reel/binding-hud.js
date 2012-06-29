@@ -10,6 +10,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 */
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
+var ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 exports.BindingHud = Montage.create(Component, {
     scrollUp: {
@@ -45,11 +46,14 @@ exports.BindingHud = Montage.create(Component, {
     optionsRepeater: {
         value: null
     },
-
-    _userComponent: { value: null  },
-    userComponent: {
+    panelData : {
+        value: null,
+        serializable: true
+    },
+    _userElement: { value: null  },
+    userElement: {
         get: function() {
-            return this._userComponent;
+            return this._userElement;
         },
         set: function(val) {
             if(!val) { return; }
@@ -58,14 +62,14 @@ exports.BindingHud = Montage.create(Component, {
                 bindingView = this.parentComponent.parentComponent,
                 isOffStage, icon, iconOffsets;
 
-            this._userComponent = val;
-            this.properties = controller.getPropertiesFromObject(val, true);
+            this._userElement = val;
+            this.properties = this.getPropertyList(val.controller); //controller.getPropertiesFromObject(val, true);
 
-            controller.getObjectBindings(this.userComponent).forEach(function(obj) {
+            controller.getObjectBindings(this._userElement.controller).forEach(function(obj) {
                 this.boundProperties.push(obj.sourceObjectPropertyPath);
             }, this);
 
-            isOffStage = controller.isOffStageObject(val);
+            isOffStage = controller.isOffStageObject(val.controller);
 
             if(isOffStage) {
                 icon = bindingView.getOffStageIcon(val);
@@ -74,13 +78,52 @@ exports.BindingHud = Montage.create(Component, {
                 this.x = iconOffsets.x;
                 this.y = iconOffsets.y - 80;
             } else {
-                this.title = val.identifier;
-                this.x = val.element.offsetLeft;
-                this.y = val.element.offsetTop;
+                this.title = this._userElement.controller.identifier;
+                this.x = this._userElement.offsetLeft;
+                this.y = this._userElement.offsetTop;
+//                this.x = parseInt(ElementsMediator.getProperty(val, "left"));
+//                this.y = parseInt(ElementsMediator.getProperty(val, "top"));
+            }
+            this.needsDraw = true;
+        }
+    },
+
+    getPropertyList : {
+        value: function(component) {
+            var props = this.application.ninja.objectsController.getPropertiesFromObject(component, true),
+                promotedProperties = [],
+                objectName;
+
+            ///// Mapper - property to property object
+            function propertyMapper(property) {
+                return {
+                    property: property,
+                    promoted: promotedProperties.indexOf(property) !== -1
+                }
             }
 
-            this.needsDraw = true;
+            if(this.userElement.controller._montage_metadata) {
+                objectName = this.userElement.controller._montage_metadata.objectName;
 
+                if(this.panelData && this.panelData[objectName + 'Pi']) {
+
+                    promotedProperties = this.panelData[objectName + 'Pi'][0].Section.map(function(item) {
+                        return item[0].prop;
+                    });
+
+                    //// Remove promoted properties from current position in array
+                    props = props.filter(function(prop) {
+                        return promotedProperties.indexOf(prop) === -1;
+                    });
+
+                    //// Add them at the top
+
+                    props = promotedProperties.concat(props);
+
+                }
+            }
+
+            return props.map(propertyMapper);
         }
     },
 
@@ -248,11 +291,11 @@ exports.BindingHud = Montage.create(Component, {
                 if(direction === "down") {
                     this.scrollInterval = setInterval(function() {
                         this.optionsRepeater.element.scrollTop += 3;
-                    }.bind(this), 50);
+                    }.bind(this), 20);
                 } else {
                     this.scrollInterval = setInterval(function() {
                         this.optionsRepeater.element.scrollTop -= 3;
-                    }.bind(this), 50);
+                    }.bind(this), 20);
                 }
             }
         }
@@ -260,22 +303,17 @@ exports.BindingHud = Montage.create(Component, {
 
     handleMouseover: {
         value: function(e) {
+
             if(this.scrollSpace < this.properties.length) {
                 if (this.scrollInterval === null) {
                     if (e._event.target.classList.contains("scrollAreaBottom")) {
-                        self = e._event.target.parentElement.controller;
-                        //e._event.target.parentElement.controller.currentScrollDirection = "down";
-                        this.scrollInterval = setInterval(function() {
-                            self.optionsRepeater.element.scrollTop += 3;
-                        }, 50);
+                        this.currentScrollDirection = "down";
                     } else {
-                        this.scrollInterval = setInterval(function() {
-                            self.optionsRepeater.element.scrollTop -= 3;
-                        }, 50);
+                        this.currentScrollDirection = "up";
                     }
                 }
             }
-            //this.needsDraw = true;
+            this.needsDraw = true;
         }
     },
 
@@ -291,17 +329,22 @@ exports.BindingHud = Montage.create(Component, {
 
     draw: {
         value: function() {
+
+            if(this.currentScrollDirection !== null) {
+                this.scrollInterval = setInterval(function() {
+                    if(this.currentScrollDirection === "down") {
+                        this.optionsRepeater.element.scrollTop += 3;
+                    } else {
+                        this.optionsRepeater.element.scrollTop -= 3;
+                    }
+                }.bind(this), 20);
+            } else {
+                clearInterval(this.scrollInterval);
+            }
+
             this.titleElement.innerHTML = this.title;
             this.element.style.top = (this.y + this._resizedY) + "px";
             this.element.style.left = (this.x + this._resizedX) + "px";
-
-//            if(this.currentScrollDirection !== null) {
-//                if(this.currentScrollDirection === "up") {
-//                    this.optionsRepeater.element.scrollTop -= 18;
-//                } else {
-//                    this.optionsRepeater.element.scrollTop += 18;
-//                }
-//            }
         }
     },
     didDraw: {
