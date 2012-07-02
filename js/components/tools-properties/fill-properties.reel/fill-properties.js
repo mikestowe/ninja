@@ -60,7 +60,7 @@ var FillProperties = exports.FillProperties = Montage.create(ToolProperties, {
             Object.getPrototypeOf(FillProperties).draw.call(this);
 
             if (this.addedColorChips === false && this.application.ninja.colorController.colorPanelDrawn) {
-                this._fillColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80 };
+                this._fillColorCtrl.props = {side: 'top', align: 'left', wheel: true, palette: true, gradient: true, image: false, nocolor: true, offset: 8};
                 this.application.ninja.colorController.addButton("chip", this._fillColorCtrl);
 
                 this._fillColorCtrl.addEventListener("change", this.handleFillColorChange.bind(this), false);

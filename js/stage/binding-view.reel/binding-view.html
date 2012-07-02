@@ -37,10 +37,11 @@
             "hud": {
                 "prototype": "js/stage/binding-view.reel/binding-hud.reel",
                 "properties": {
-                    "element": {"#" : "hud"}
+                    "element": {"#" : "hud"},
+                    "panelData": {"@": "panelData"}
                 },
                 "bindings": {
-                    "userComponent": {"<-": "@hudRepeater.objectAtCurrentIteration"}
+                    "userElement": {"<-": "@hudRepeater.objectAtCurrentIteration"}
                 },
                 "listeners": [
                     {
@@ -48,6 +49,9 @@
                         "listener": {"@": "owner"}
                     }
                 ]
+            },
+            "panelData": {
+                "object": "js/data/pi/pi-data[PiData]"
             }
         }
     </script>

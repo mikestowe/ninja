@@ -170,7 +170,7 @@ exports.ColorPanelBase = Montage.create(Component, {
             this.addButton('current', this.btnCurrent);
             this.addButton('previous', this.btnPrevious);
             //
-            this.addButton('hexinput', this.hextext);
+            this.addButton('hexinput', this.hextext, this.colorManager);
             this.addButton('reset', this.btnDefault);
             this.addButton('nocolor', this.btnNoColor);
             this.addButton('swap', this.btnSwap);
@@ -260,7 +260,7 @@ exports.ColorPanelBase = Montage.create(Component, {
                 return;
             }
             //Checking for event mode to be color change (NOT PANEL MODE RELATED)
-            if (e._event.mode === 'hsv' || e._event.mode === 'hsl' || e._event.mode === 'rgb' || e._event.mode === 'hex' || e._event.mode === 'nocolor' || e._event.mode === 'gradient') {
+            if (e._event.mode === 'hsv' || e._event.mode === 'hsl' || e._event.mode === 'rgb' || e._event.mode === 'hex' || e._event.mode === 'nocolor' || e._event.mode === 'gradient' || e._event.mode === 'alpha') {
                 //Checking for panel color mode (RGB or HSL) to assign correct slider values
                 if (this.panelMode === 'rgb' && e._event.rgba) {
                     this._combo[0].slider.value = e._event.rgba.r;
@@ -461,7 +461,7 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     addButton: {
-        value: function (type, button) {
+        value: function (type, button, manager) {
             //
             switch (type.toLocaleLowerCase()) {
                 case 'chip':
@@ -480,7 +480,13 @@ exports.ColorPanelBase = Montage.create(Component, {
                         }
                         if (c && c.css) {
                             this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
-                            this.style.backgroundColor = c.css;
+                            if (m === 'gradient') {
+                            	this.style.backgroundImage = c.css;
+                            	this.style.backgroundColor = 'transparent';
+                            } else {
+	                            this.style.backgroundColor = c.css;
+	                            this.style.backgroundImage = 'none';
+                            }
                         } else {
                             this.drawNoColor(this, this.cvs);
                         }
@@ -673,8 +679,8 @@ exports.ColorPanelBase = Montage.create(Component, {
                 case 'hexinput':
                     var hexinp = HotText.create();
                     hexinp.element = button;
-                    hexinp.labelFunction = this._updateHexValue.bind(this);
-                    hexinp.inputFunction = this._hottextHexInput.bind(this);
+                    hexinp.labelFunction = this._updateHexValue.bind(manager);
+                    hexinp.inputFunction = this._hottextHexInput.bind(manager);
                     hexinp.needsDraw = true;
                     this._buttons.hexinput.push(hexinp);
                     return hexinp;
@@ -976,58 +982,45 @@ exports.ColorPanelBase = Montage.create(Component, {
     _updateValueFromSH: {
         value: function (e) {
             //
-            var update;
+            var update, type;
             //
             if (!e._event.wasSetByCode) {
+            	//
+            	if (!e.target.cInputType) {
+	            	type = 'hottext';  
+                } else {
+	               	type = 'slider'
+	            }
+	            //
                 if (e.target.changesColor) {
                     //
-                    //this.application.ninja.colorController.colorPopupManager.hideColorPopup();
-                    //
                     if (this.panelMode === 'rgb') {
-                        if (e.target.cInputType === 'slider') {
-                            //
-                            if (this.colorManager.rgb && Math.round(this._combo[0].slider.value) === this.colorManager.rgb.r && Math.round(this._combo[1].slider.value) === this.colorManager.rgb.g && Math.round(this._combo[2].slider.value) === this.colorManager.rgb.b) {
-                                return;
-                            }
-                            //
-                            update = { r: Math.round(this._combo[0].slider.value), g: Math.round(this._combo[1].slider.value), b: Math.round(this._combo[2].slider.value) };
-                        } else {
-                            //
-                            if (this.colorManager.rgb && Math.round(this._combo[0].hottext.value) === this.colorManager.rgb.r && Math.round(this._combo[1].hottext.value) === this.colorManager.rgb.g && Math.round(this._combo[2].hottext.value) === this.colorManager.rgb.b) {
-                                return;
-                            }
-                            //
-                            update = { r: Math.round(this._combo[0].hottext.value), g: Math.round(this._combo[1].hottext.value), b: Math.round(this._combo[2].hottext.value) };
+                        //
+                        if (this.colorManager.rgb && Math.round(this._combo[0][type].value) === this.colorManager.rgb.r && Math.round(this._combo[1][type].value) === this.colorManager.rgb.g && Math.round(this._combo[2][type].value) === this.colorManager.rgb.b) {
+                        	return;
                         }
+                        //
+                        update = { r: Math.round(this._combo[0][type].value), g: Math.round(this._combo[1][type].value), b: Math.round(this._combo[2][type].value) };
+                        //
                         update.wasSetByCode = false;
                         update.type = 'change';
                         this.colorManager.rgb = update;
                     } else if (this.panelMode === 'hsl') {
-                        if (e.target.cInputType === 'slider') {
-                            //
-                            if (this.colorManager.hsl && Math.round(this._combo[0].slider.value) === this.colorManager.hsl.h && Math.round(this._combo[1].slider.value) === this.colorManager.hsl.s && Math.round(this._combo[2].slider.value) === this.colorManager.hsl.l) {
-                                return;
-                            }
-                            //
-                            update = { h: Math.round(this._combo[0].slider.value), s: Math.round(this._combo[1].slider.value), l: Math.round(this._combo[2].slider.value) };
-                        } else {
-                            //
-                            if (this.colorManager.hsl && Math.round(this._combo[0].hottext.value) === this.colorManager.hsl.h && Math.round(this._combo[1].hottext.value) === this.colorManager.hsl.s && Math.round(this._combo[2].hottext.value) === this.colorManager.hsl.l) {
-                                return;
-                            }
-                            //
-                            update = { h: Math.round(this._combo[0].hottext.value), s: Math.round(this._combo[1].hottext.value), l: Math.round(this._combo[2].hottext.value) };
+                        //
+                        if (this.colorManager.hsl && Math.round(this._combo[0][type].value) === this.colorManager.hsl.h && Math.round(this._combo[1][type].value) === this.colorManager.hsl.s && Math.round(this._combo[2][type].value) === this.colorManager.hsl.l) {
+                        	return;
                         }
+                        //
+                        update = { h: Math.round(this._combo[0][type].value), s: Math.round(this._combo[1][type].value), l: Math.round(this._combo[2][type].value) };
+                        //
                         update.wasSetByCode = false;
                         update.type = 'change';
                         this.colorManager.hsl = update;
                     }
                 } else {
-                    if (e.target.cInputType === 'slider') {
-                        update = { value: this._combo[3].slider.value / 100, wasSetByCode: false, type: 'change' };
-                    } else {
-                        update = { value: this._combo[3].hottext.value / 100, wasSetByCode: false, type: 'change' };
-                    }
+                	//
+                	update = { value: this._combo[3][type].value/100, wasSetByCode: false, type: 'change' };
+                	//
                     this.colorManager.alpha = update;
                 }
             }
@@ -1244,23 +1237,23 @@ exports.ColorPanelBase = Montage.create(Component, {
             }
             //Checking for panel mode and converting the color to the panel mode
             if (this._panelMode === 'hsl') {
-                rgb = this.colorManager.hexToRgb(color);
+                rgb = this.hexToRgb(color);
                 if (rgb) {
-                    update = this.colorManager.rgbToHsl(rgb.r, rgb.g, rgb.b);
+                    update = this.rgbToHsl(rgb.r, rgb.g, rgb.b);
                     update.wasSetByCode = false;
                     update.type = 'change';
-                    this.colorManager.hsl = update;
+                    this.hsl = update;
                 } else {
-                    this.colorManager.applyNoColor(false);
+                    this.applyNoColor(false);
                 }
             } else {
-                update = this.colorManager.hexToRgb(color);
+                update = this.hexToRgb(color);
                 if (update) {
                     update.wasSetByCode = false;
                     update.type = 'change';
-                    this.colorManager.rgb = update;
+                    this.rgb = update;
                 } else {
-                    this.colorManager.applyNoColor(false);
+                    this.applyNoColor(false);
                 }
             }
         }
@@ -1269,7 +1262,7 @@ exports.ColorPanelBase = Montage.create(Component, {
     //
     _updateHexValue: {
         value: function (v) {
-            return this.colorManager.hex;
+            return this.hex;
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -1415,6 +1408,10 @@ exports.ColorPanelBase = Montage.create(Component, {
     //
     selectInputType: {
         value: function (type) {
+        	if (this.colorManager.input === 'chip') {
+            	this.application.ninja.colorController.colorPopupManager.hideColorPopup();
+           		return;
+           	}
             //Checking for the type to be formatted as expected, otherwise we unselected all buttons
             try {
                 type._event.srcElement.inputType;

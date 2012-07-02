@@ -220,14 +220,6 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
     			linktags = template.file.content.document.getElementsByTagName('link'),
     			njtemplatetags = template.file.content.document.querySelectorAll('[data-ninja-template]');
     		
-    		//////////////////////////////////////////////////
-    		//TODO: Remove, temp hack, this is to be fixed by Montage
-    		var basetags = template.file.content.document.getElementsByTagName('base');
-    		for (var g in basetags) {
-    			if (basetags[g].getAttribute && basetags[g].href && basetags[g].href.indexOf('chrome-extension://') !== -1) toremovetags.push(basetags[g]);
-    		}
-    		//////////////////////////////////////////////////
-    		
     		//Adding to tags to be removed form template
     		for (var f in njtemplatetags) {
     			if (njtemplatetags[f].getAttribute) toremovetags.push(njtemplatetags[f]);
@@ -271,8 +263,6 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     }
                 }
             }
-            
-            
             
             
             

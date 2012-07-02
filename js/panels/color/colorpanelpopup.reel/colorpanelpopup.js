@@ -32,17 +32,6 @@ exports.ColorPanelPopup = Montage.create(Component, {
         set: function(value) {if (value !== this._colorManager) this._colorManager = value;}
     },
     ////////////////////////////////////////////////////////////////////
-    //Storing color panel
-    _colorPanel: {
-        value: false
-    },
-    ////////////////////////////////////////////////////////////////////
-    //Color panel
-    colorPanel: {
-        get: function() {return this._colorPanel;},
-        set: function(value) {this._colorPanel = value;}
-    },
-    ////////////////////////////////////////////////////////////////////
     //
     _components: {
 	  	value: null  
@@ -52,6 +41,10 @@ exports.ColorPanelPopup = Montage.create(Component, {
     setNoColor: {
     	value: function (code) {
     		if (this.colorManager) this.colorManager.applyNoColor(code);
+    		//
+    		if (!code && !this.props.panel) {
+	    		this.dispatchEvent({type: 'change', wasSetByCode: code, mode: 'nocolor', value: null});
+    		}
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -60,7 +53,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     	value: function () {
     		//
     		this._components = null;
-    		this._components = {wheel: null, combo: null};
+    		this._components = {wheel: null, combo: null, gradient: null, hex: null};
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -85,7 +78,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
                 }
    			});
    			//
-   			if (this.application.ninja.colorController.colorView) {
+   			if (this.application.ninja.colorController.colorView && this.props.panel) {
 	    		Object.defineBinding(this._components.combo.slider, "value", {
     				boundObject: this.application.ninja.colorController.colorView._combo[3].slider,
        			    boundObjectPropertyPath: "value",
@@ -129,44 +122,73 @@ exports.ColorPanelPopup = Montage.create(Component, {
     draw: {
     	value: function() {
     		//
-    		this.drawPalette(this.defaultPalette);
-    		//
-    		if (!this.colorManager.gradient) {
-    			this.drawGradient(this.defaultGradient);
+    		if (!this.props || (this.props && this.props.palette)) {
+    			//
+    			this.btnPalette.addEventListener('click', function () {
+   					this.popupSwitchInputTo(this.palettes);
+   				}.bind(this), true);
+    			//
+    			this.drawPalette(this.defaultPalette, this.colorManager);
+    		} else {
+	    		this.btnPalette.style.display = 'none';
     		}
     		//
-	    	this.application.ninja.colorController.colorView.addButton('hexinput', this.element.getElementsByClassName('cp_pu_hottext_hex')[0]);
+    		if (!this.props || (this.props && this.props.gradient)) {
+    			//
+    			this.btnGradient.addEventListener('click', function () {
+   					this.popupSwitchInputTo(this.gradients);
+   				}.bind(this), true);
+    			//
+    			if (!this.colorManager.gradient) {
+    				this.drawGradient(this.defaultGradient);
+    			}
+    		} else {
+	    		this.btnGradient.style.display = 'none';
+    		}
+    		//
+	    	this._components.hex = this.application.ninja.colorController.colorView.addButton('hexinput', this.inputHex, this.colorManager);
 	       	//
 	       	this._components.combo.slider.needsDraw = true;
 	       	this._components.combo.hottext.needsDraw = true;
-   			//
-   			this.element.getElementsByClassName('cp_pu_nocolor')[0].addEventListener('click', function () {
-   				this.setNoColor();
-    		}.bind(this), true);
+	       	//
+	       	if (!this.props || (this.props && this.props.nocolor)) {
+   				//
+	   			this.btnNocolor.addEventListener('click', function () {
+   					this.setNoColor(false);
+   				}.bind(this), true);
+    		} else {
+    			this.btnNocolor.style.display = 'none';
+    		}
     		//
-    		this.element.getElementsByClassName('cp_pu_palettes')[0].addEventListener('click', function () {
-   				this.popupSwitchInputTo(this.palettes);
-    		}.bind(this), true);
+    		if (!this.props || (this.props && this.props.wheel)) {
+    			//
+	    		this.btnWheel.addEventListener('click', function () {
+   					this.popupSwitchInputTo(this.wheel);
+   				}.bind(this), true);
+   				//
+   				this._components.wheel.addEventListener('firstDraw', this, false);
+   				this._components.wheel.needsDraw = true;
+    		} else {
+	    		this.btnWheel.style.display = 'none';
+    		}
     		//
-    		this.element.getElementsByClassName('cp_pu_wheel')[0].addEventListener('click', function () {
-   				this.popupSwitchInputTo(this.wheel);
-    		}.bind(this), true);
+    		if (!this.props || (this.props && this.props.image)) {
+    			//
+    			this.btnImage.style.opacity = .2;//TODO: Remove, visual feedback for disable button
+    			this.btnImage.addEventListener('click', function () {
+   					//this.popupSwitchInputTo(this.images);
+   				}.bind(this), true);
+    		} else {
+    			this.btnImage.style.display = 'none';
+    		}
     		//
-    		this.element.getElementsByClassName('cp_pu_gradients')[0].addEventListener('click', function () {
-   				this.popupSwitchInputTo(this.gradients);
-    		}.bind(this), true);
-    		//
-    		this.element.getElementsByClassName('cp_pu_images')[0].style.opacity = .2;//TODO: Remove, visual feedback for disable button
-    		this.element.getElementsByClassName('cp_pu_images')[0].addEventListener('click', function () {
-   				//this.popupSwitchInputTo(this.images);
-    		}.bind(this), true);
-    		//
-    		this.application.ninja.colorController.colorView.addButton('current', this.element.getElementsByClassName('cp_pu_color_current')[0]);
-    		this.application.ninja.colorController.colorView.addButton('previous', this.element.getElementsByClassName('cp_pu_color_previous')[0]);
-    		//
-    		this._components.wheel.addEventListener('firstDraw', this, false);
-    		//
-    		this._components.wheel.needsDraw = true;
+    		if (!this.props || (this.props && this.props.history)) {
+    			this.application.ninja.colorController.colorView.addButton('current', this.btnCurrent);
+    			this.application.ninja.colorController.colorView.addButton('previous', this.btnPrevious);
+    		} else {
+	    		this.btnCurrent.style.display = 'none';
+	    		this.btnPrevious.style.display = 'none';
+    		}
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -202,7 +224,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     				break
     		}
     		//Checking for a gradient to be current color
-    		if (this.colorManager.gradient) {
+    		if (this.colorManager.gradient && (!this.props || (this.props && this.props.gradient))) {
     			if (this.colorManager.colorHistory[this.colorManager.input] && this.colorManager.colorHistory[this.colorManager.input][this.colorManager.colorHistory[this.colorManager.input].length-1].m !== 'gradient') {
     				//If no gradient set, using default
     				this.drawGradient(this.defaultGradient);
@@ -253,11 +275,13 @@ exports.ColorPanelPopup = Montage.create(Component, {
     		if (tab !== this.gradients) {
     			this.gradients.style.display = 'none';
     			//
-    			if (this._components.wheel._value) {
+    			/*
+if (this._components.wheel._value) {
     				this._components.wheel.value = {h: this._components.wheel._value.h, s: this._components.wheel._value.s, v: this._components.wheel._value.v, wasSetByCode: false};
     			} else {
     				this._components.wheel.value = {h: 0, s: 1, v: 1, wasSetByCode: false};
     			}
+*/
     		} else {
     			this.gradients.style.display = 'block';
     			this.alpha.style.display = 'none';
@@ -265,13 +289,15 @@ exports.ColorPanelPopup = Montage.create(Component, {
     			this.application.ninja.colorController.popupTab = 'gradient';
     		}
     		//
-    		this.application.ninja.colorController.colorPopupManager.hideColorChipPopup();
+    		if (!this.isPopupChip) this.application.ninja.colorController.colorPopupManager.hideColorChipPopup();
+    		//
+    		this.application.ninja.colorController.colorPopupManager.hideGradientChipPopup();
     	}
     },
     ////////////////////////////////////////////////////////////////////
     //
     drawPalette: {
-    	value: function (c) {
+    	value: function (c, m) {
     		var i, button;
     		//
     		this.palettes.style.display = 'block';
@@ -290,27 +316,31 @@ exports.ColorPanelPopup = Montage.create(Component, {
     					color = b._event.srcElement.colorValue;
 	    				color.wasSetByCode = false;
     					color.type = 'change';
-    					this.colorManager[b._event.srcElement.colorMode] = color;
+    					m[b._event.srcElement.colorMode] = color;
     				} else {
-    					if (this.colorManager.mode === 'hsl') {
-    						rgb = this.colorManager.hexToRgb(b._event.srcElement.colorValue);
+    					if (m.mode === 'hsl') {
+    						rgb = m.hexToRgb(b._event.srcElement.colorValue);
     						if (rgb) {
-			    				color = this.colorManager.rgbToHsl(rgb.r, rgb.g, rgb.b);
+			    				color = m.rgbToHsl(rgb.r, rgb.g, rgb.b);
     							color.wasSetByCode = false;
 			    				color.type = 'change';
-    							this.colorManager.hsl = color;
+    							m.hsl = color;
     						} else {
-			    				this.colorManager.applyNoColor(false);
+			    				m.applyNoColor(false);
     						}
 			    		} else {
-    						color = this.colorManager.hexToRgb(b._event.srcElement.colorValue);
+    						color = m.hexToRgb(b._event.srcElement.colorValue);
 			    			if (color) {
     							color.wasSetByCode = false;
     							color.type = 'change';
-			    				this.colorManager.rgb = color;
+			    				m.rgb = color;
     						} else {
-    							this.colorManager.applyNoColor(false);
+    							m.applyNoColor(false);
 			    			}
+			    			//TODO: Remove this is a hack
+			    			if (!this.props.panel) {
+					    		this.dispatchEvent({type: 'change', wasSetByCode: false, mode: 'hex', value: b._event.srcElement.colorValue});
+	    					}
     					}
     				}
     			}.bind(this), true);
@@ -340,27 +370,30 @@ exports.ColorPanelPopup = Montage.create(Component, {
     drawGradient: {
     	value: function (g) {
     		//TODO: Remove container, insert in reel
-    		var container = document.createElement('div'), gradient = GradientPicker.create();
+    		var container = document.createElement('div');
+    		//
+    		this._components.gradient = GradientPicker.create();
+    		//
     		this.gradients.appendChild(container);
     		//Creating gradient picker from components
-    		gradient.element = container;
-    		gradient.hack = this.hack; // TODO: Remove
+    		this._components.gradient.element = container;
+    		this._components.gradient.hack = this.hack; // TODO: Remove
     		//
     		if (g && g.value && g.value.stops) {
     			if (g.value.gradientMode) {
-    				gradient._mode = g.value.gradientMode;
-    				gradient.value = g.value.stops;
+    				this._components.gradient._mode = g.value.gradientMode;
+    				this._components.gradient.value = g.value.stops;
     			} else {
-    				gradient._mode = 'linear';
-    				gradient.value = g.value.stops;
+    				this._components.gradient._mode = 'linear';
+    				this._components.gradient.value = g.value.stops;
     			}
     		} else {
-    			gradient._mode = this.defaultGradient.gradientMode;
-    			gradient.value = this.defaultGradient.stops;
+    			this._components.gradient._mode = this.defaultGradient.gradientMode;
+    			this._components.gradient.value = this.defaultGradient.stops;
     		}
     		//
-    		gradient.needsDraw = true;
-    		gradient.addEventListener('change', function (e){
+    		this._components.gradient.needsDraw = true;
+    		this._components.gradient.addEventListener('change', function (e){
     			//
     			if (!e._event.wasSetByCode) {
     				this.colorManager.gradient = {value: e._event.gradient, type: 'change', wasSetByCode: false};
@@ -413,9 +446,9 @@ exports.ColorPanelPopup = Montage.create(Component, {
     destroy: {
     	value: function() {
     		//
-    		this.application.ninja.colorController.colorView.removeButton('hexinput', this.element.getElementsByClassName('cp_pu_hottext_hex')[0]);
+    		this.application.ninja.colorController.colorView.removeButton('hexinput', this.inputHex);
     		Object.deleteBinding(this._components.combo.hottext, "value");
-    		Object.deleteBinding(this._components.combo.slider, "value");
+    		if (this.props.panel) Object.deleteBinding(this._components.combo.slider, "value");
     		Object.deleteBinding(this._components.wheel, "value");
     		this._components.wheel = null;
     	}

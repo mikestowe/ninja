@@ -20,7 +20,7 @@ var Dropdown = require("js/components/combobox.reel").Combobox;
 var TextField = require("js/components/textfield.reel").TextField;
 var LabelCheckbox = require("js/components/ui/label-checkbox.reel").LabelCheckbox;
 var ColorChip = require("js/components/ui/color-chip.reel").ColorChip;
-var Button = require("montage/ui/button.reel").Button;
+var Button = require("montage/ui/native/button.reel").Button;
 
 exports.CustomSection = Montage.create(Component, {
 
@@ -115,11 +115,25 @@ exports.CustomSection = Montage.create(Component, {
         value: function(event) {
             // Change the stage color for now
             //console.log(this, event);
-            if (event._event.color && event._event.color.css) {
+            
+            if (event._event.colorMode !== 'gradient' && event._event.color) {
+	            ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], 'background-color', [event._event.color.css], "Change", "pi", '');
+	            ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], 'background-image', ['none'], "Change", "pi", '');
+            } else if (event._event.color) {
+	            ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], 'background-image', [event._event.color.css], "Change", "pi", '');
+	            ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], 'background-color', ['none'], "Change", "pi", '');
+            } else {
+	            ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], 'background-image', ['none'], "Change", "pi", '');
+	            ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], 'background-color', ['none'], "Change", "pi", '');
+            }
+            
+            /*
+if (event._event.color && event._event.color.css) {
             	ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], this.id, [event._event.color.css], "Change", "pi", '');
             } else {
 	            ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], this.id, ['none'], "Change", "pi", '');
             }
+*/
             /*
             var propEvent = document.createEvent("CustomEvent");
             propEvent.initEvent("propertyChange", true, true);

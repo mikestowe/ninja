@@ -81,27 +81,56 @@ exports.TagTool = Montage.create(DrawingTool, {
     // TODO: Add position support
     insertElement: {
         value: function(drawData) {
-            var element, styles;
+            var element, styles, color;
 
             // Create the element
             if(this.options.selectedElement === "custom") {
                 element = document.application.njUtils.make(this.options.customName.value, null, this.application.ninja.currentDocument);
-
             } else {
                 element = document.application.njUtils.make(this.options.selectedElement, null, this.application.ninja.currentDocument);
+            }
+
+            // Adding a canplay event to videos to pause them and prevent autoplay on stage
+            if(this.options.selectedElement === "video") {
+                element.addEventListener("canplay", this, false);
             }
 
             // Create the styles
             styles = document.application.njUtils.stylesFromDraw(element, ~~drawData.width, ~~drawData.height, drawData);
 
             // Add color
-            if(this.options.getProperty("fill.colorMode") !== "nocolor") {
-                styles['background-color'] = this.options.getProperty("fill.color.css");
+            color = this.options.fill;
+            switch(color.colorMode) {
+                case "nocolor":
+                    break;
+                case "gradient":
+                    styles['background-image'] = color.color.css;
+                    break;
+                default:
+                    styles['background-color'] = color.color.css;
             }
 
             // Add the element and styles
             this.application.ninja.elementMediator.addElements(element, styles);
         }
+    },
+
+    handleCanplay: {
+        value: function(event) {
+            //TODO: Figure out why the video must be seeked to the end before pausing
+            var time = Math.ceil(event.target.duration);
+            //Trying to display the last frame (doing minus 2 seconds if long video)
+            if (time > 2) {
+                event.target.currentTime = time - 2;
+            } else if (time > 1) {
+                event.target.currentTime = time - 1;
+            } else {
+                event.target.currentTime = time || 0;
+            }
+            //Pauing video
+            event.target.pause();
+        }
     }
+
 });
 

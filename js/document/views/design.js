@@ -285,7 +285,8 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
                 userStyles,
                 stags = this.document.getElementsByTagName('style'),
             	ltags = this.document.getElementsByTagName('link'), i, orgNodes,
-            	scripttags = this.document.getElementsByTagName('script');
+            	scripttags = this.document.getElementsByTagName('script'),
+            	videotags = this.document.getElementsByTagName('video');
            	//Temporarily checking for disabled special case (we must enabled for Ninja to access styles)
            	this.ninjaDisableAttribute(stags);
            	this.ninjaDisableAttribute(ltags);
@@ -308,10 +309,25 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 					}
 				}
 			}
-
+			//Checking for video tags
+			if (videotags.length > 0) {
+				//Looping through all video tags
+				for (i = 0; i < videotags.length; i++) {
+					//Stopping all videos from playing on open
+                    videotags[i].addEventListener('canplay', function(e) {
+                        //TODO: Figure out why the video must be seeked to the end before pausing
+                        var time = Math.ceil(this.duration);
+                        //Trying to display the last frame (doing minus 2 seconds if long video)
+                        if (time > 2) this.currentTime = time - 2;
+                        else if (time > 1) this.currentTime = time - 1;
+                        else this.currentTime = time || 0;
+                        //Pauing video
+                        this.pause();
+                    }, false);
+				}
+			}
             // Assign the modelGenerator reference from the template to our own modelGenerator
             this.document.modelGenerator = ElementModel.modelGenerator;
-
            	//Checking for script tags then parsing check for montage and webgl
             if (scripttags.length > 0) {
             	//Checking and initializing webGL
