@@ -171,7 +171,8 @@ exports.StylesViewDelegate = Montage.create(Component, {
     },
     handlePropertyChange : {
         value: function(rule, property, value, oldProperty, style) {
-            var browserValue;
+            var declaration = style.parentComponent.parentComponent,
+                browserValue;
 
             if(style.editingNewStyle) {
                 if(property === '') {
@@ -187,13 +188,16 @@ exports.StylesViewDelegate = Montage.create(Component, {
 
             if(property === '') {
                 style.deleting = true;
-                style.parentComponent.parentComponent.removeStyle(style.source);
-                this._dispatchChange(oldProperty, browserValue);
+                declaration.removeStyle(style.source);
+                this._dispatchChange(oldProperty);
                 return false;
             }
 
             // now add new property
             browserValue = this.stylesController.setStyle(rule, property, value);
+
+            //// Update the css text so it knows when to update
+            declaration.cssText = rule.style.cssText;
 
             ///// Mark style as invalid if the browser doesn't accept it
             style.invalid = (browserValue === null);
@@ -203,13 +207,18 @@ exports.StylesViewDelegate = Montage.create(Component, {
     },
     handleValueChange : {
         value: function(rule, property, value, style) {
-            var browserValue, units;
+            var declaration = style.parentComponent.parentComponent,
+                browserValue, units;
 
             if(value === '') {
                 ///// Remove old property
                 style.deleting = true;
                 this.stylesController.deleteStyle(rule, property);
-                style.parentComponent.parentComponent.removeStyle(style.source);
+                declaration.removeStyle(style.source);
+
+                //// Update the css text so it knows when to update
+                declaration.cssText = rule.style.cssText;
+
                 this._dispatchChange(property, browserValue);
                 return false;
             }
@@ -217,6 +226,9 @@ exports.StylesViewDelegate = Montage.create(Component, {
             ///// update value
             browserValue = this.stylesController.setStyle(rule, property, value);
             style.browserValue = browserValue;
+
+            //// Update the css text so it knows when to update
+            declaration.cssText = rule.style.cssText;
 
             ///// Mark style as invalid if the browser doesn't accept it
             style.invalid = (browserValue === null);

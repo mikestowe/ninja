@@ -296,9 +296,20 @@ exports.Properties = Montage.create(Component, {
 
                 // Root element color chip
                 if(isRoot) {
-                    var backgroundChip = this.customSections[0].content.controls["background"];
-                    var rootBackgroundColor = ElementsMediator.getProperty(el, "background");
-
+                	//
+                    var rootBackgroundColor, backgroundChip = this.customSections[0].content.controls["background"];
+                    //
+                    if (ElementsMediator.getProperty(el, "background-image")) {
+	                    rootBackgroundColor = ElementsMediator.getProperty(el, "background-image");
+	                    if (!rootBackgroundColor.mode) rootBackgroundColor = null;
+                    } else if (ElementsMediator.getProperty(el, "background-color")){
+	                    rootBackgroundColor = ElementsMediator.getProperty(el, "background-color");
+	                    if (!rootBackgroundColor.mode) rootBackgroundColor = null;
+                    } else if (ElementsMediator.getProperty(el, "background")){
+	                    rootBackgroundColor = ElementsMediator.getProperty(el, "background");
+	                    if (!rootBackgroundColor.mode) rootBackgroundColor = null;
+                    }
+                    //
                     if(rootBackgroundColor) {
                         backgroundChip.color = rootBackgroundColor;
                     } else {
@@ -373,7 +384,7 @@ exports.Properties = Montage.create(Component, {
                         }
                     }
                 }
-
+                if (previousInput === 'chip') return;
                 this.application.ninja.colorController.colorModel.input =  previousInput;
                 var color = this.application.ninja.colorController.colorModel.colorHistory[previousInput][this.application.ninja.colorController.colorModel.colorHistory[previousInput].length-1];
     			color.c.wasSetByCode = true;

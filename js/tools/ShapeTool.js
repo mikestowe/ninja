@@ -209,7 +209,21 @@ exports.ShapeTool = Montage.create(DrawingTool, {
 
 			return target;
 		}
-	}
+	},
+
+    setColor: {
+        value: function(canvas, color, isFill, toolId)
+        {
+            if(color && color.color)
+            {
+                this.application.ninja.elementMediator.setColor([canvas], {mode:color.colorMode, color:color.color}, isFill, "Change", toolId);
+            }
+            else
+            {
+                this.application.ninja.elementMediator.setColor([canvas], {mode:"nocolor", color:null}, isFill, "Change", toolId);
+            }
+        }
+    }
 
 });
 

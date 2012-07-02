@@ -44,10 +44,16 @@ exports.LineTool = Montage.create(ShapeTool, {
             }
 
             this._strokeSize = ShapesController.GetValueInPixels(this.options.strokeSize.value, this.options.strokeSize.units, null);
-            if (this.options.stroke.color)
-                this._strokeColor = this.options.stroke.color.css;
-			else
-				this._strokeColor = [0,0,0,1];
+            if (this.options.stroke.color) {
+                if( (this.options.stroke.colorMode === "gradient") || (this.options.stroke.colorMode === "nocolor") ) {
+                    this._strokeColor = [0,0,0,1];
+                } else {
+                    this._strokeColor = this.options.stroke.color.css;
+                }
+            } else {
+                this._strokeColor = [0,0,0,1];
+            }
+
             this.startDraw(event);
         }
     },
@@ -229,10 +235,11 @@ exports.LineTool = Montage.create(ShapeTool, {
             var strokeColor = this.options.stroke.webGlColor;
             // for default stroke and fill/no materials
             var strokeMaterial = null;
+            var strokeM = null;
 
             if(this.options.use3D)
             {
-                var strokeM = this.options.strokeMaterial;
+                strokeM = this.options.strokeMaterial;
                 if(strokeM)
                 {
                     strokeMaterial = Object.create(MaterialsModel.getMaterial(strokeM));
@@ -268,6 +275,11 @@ exports.LineTool = Montage.create(ShapeTool, {
             else
             {
                 // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
+            }
+
+            // TODO - This needs to be moved into geom obj's init routine instead of here
+            if(!strokeM) {
+                this.setColor(canvas, this.options.stroke, false, "lineTool");
             }
 
             if(canvas.elementModel.isShape)

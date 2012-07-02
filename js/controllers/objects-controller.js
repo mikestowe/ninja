@@ -27,7 +27,7 @@ var objectsController = exports.ObjectsController = Montage.create(Montage, {
             setTimeout(function() {
                 this.bindToModelObjects();
             }.bind(this), 1000);
-
+            this.currentObjectBindings = [];
             this._currentDocument = doc;
         },
         enumerable : false
