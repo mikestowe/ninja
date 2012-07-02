@@ -12,7 +12,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = require("montage/core/core").Montage,
     ModifierToolBase = require("js/tools/modifier-tool-base").ModifierToolBase,
-    ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
+    ElementsMediator = require("js/mediators/element-mediator").ElementMediator,
+    ShapesController = require("js/controllers/elements/shapes-controller").ShapesController;
 
 exports.FillTool = Montage.create(ModifierToolBase, {
 	_canSnap: { value: false },
@@ -28,7 +29,7 @@ exports.FillTool = Montage.create(ModifierToolBase, {
             if (obj)
             {
                 var name = obj.nodeName;
-                if ((name !== 'CANVAS') && (name !== 'DIV'))
+                if ( ((name !== 'CANVAS') && (name !== 'DIV')) || (ShapesController.isElementAShape(obj) && !obj.elementModel.shapeModel.GLGeomObj.canFill))
                 {
                     cursor = "url('images/cursors/nofill.png') 14 14, default";
                     canColor = false;

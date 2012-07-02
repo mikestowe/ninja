@@ -39,6 +39,8 @@ exports.BodyController = Montage.create(ElementController, {
         value: function(el, p) {
             switch(p) {
                 case "background" :
+                case "background-image":
+                    return this.application.ninja.colorController.getColorObjFromCss(this.application.ninja.stylesController.getElementStyle(el, "background-image"));
                 case "background-color":
                     if(this.application.ninja.currentDocument.model.views.design._template) {
                         return this.application.ninja.colorController.getColorObjFromCss(this.application.ninja.stylesController.getElementStyle(el.parentNode, "background-color"));
@@ -62,6 +64,9 @@ exports.BodyController = Montage.create(ElementController, {
         value: function(el, p, value) {
             switch(p) {
                 case "background":
+                case "background-image":
+                    this.application.ninja.stylesController.setElementStyle(el, "background-image", value);
+                    break;
                 case "background-color":
                     if(this.application.ninja.currentDocument.model.views.design._template) {
                         this.application.ninja.stylesController.setElementStyle(el.parentNode, "background-color", value);

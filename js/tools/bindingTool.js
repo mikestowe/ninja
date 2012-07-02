@@ -12,17 +12,17 @@ SelectionTool = require("js/tools/SelectionTool").SelectionTool;
 
 exports.BindingTool = Montage.create(ModifierToolBase, {
     drawingFeedback: { value: { mode: "Draw2D", type: "" } },
-    _selectedComponent: {
+    _selectedElement: {
         value: null
     },
 
-    selectedComponent: {
+    selectedElement: {
         get:function() {
-            return this._selectedComponent;
+            return this._selectedElement;
         },
         set: function(val) {
-            this._selectedComponent = val;
-            this.application.ninja.stage.bindingView.selectedComponent = val;
+            this._selectedElement = val;
+            this.application.ninja.stage.bindingView.selectedElement = val;
         }
     },
 
@@ -36,7 +36,7 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
                 this.application.ninja.stage.bindingView.hide = false;
                 if (this.application.ninja.selectedElements.length !== 0 ) {
                     if(typeof(this.application.ninja.selectedElements[0].controller) !== "undefined") {
-                        this.selectedComponent = this.application.ninja.selectedElements[0].controller;
+                        this.selectedElement = this.application.ninja.selectedElements[0];
                     } else {
                         this.selectedComponent = null;
                     }
@@ -87,12 +87,12 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
                     this.doSelection(event);
                     if (this.application.ninja.selectedElements.length !== 0 ) {
                         if(this.application.ninja.selectedElements[0].controller) {
-                            this.selectedComponent = this.application.ninja.selectedElements[0].controller;
+                            this.selectedElement = this.application.ninja.selectedElements[0];
                         } else {
-                            this.selectedComponent = null;
+                            this.selectedElement = null;
                         }
                     } else {
-                        this.selectedComponent = null;
+                        this.selectedElement = null;
                     }
                     this._isDrawing = false;
                 }

@@ -99,6 +99,18 @@ var UberMaterial = function UberMaterial() {
             }
         }
     };
+
+    this.hasProperty = function( prop )
+    {
+        if(prop === "color") return true;
+
+        var propNames = [],  dummy = [];
+        this.getAllProperties( propNames, dummy, dummy, dummy )
+        for (var i=0;  i<propNames.length;  i++)
+        {
+            if (prop === propNames[i])  return true;
+        }
+    };
     ///////////////////////////////////////////////////////////////////////
 
     // define the 4 lights

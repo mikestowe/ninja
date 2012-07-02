@@ -1217,8 +1217,21 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         		arrCurrentElementsSelected = [];
             var matchedValues = 0;
 
-            for(i=0;i<arrSelectedIndexesLength;i++){
-                for(j=0;j<currentLayersSelectedLength;j++){
+        	/*
+            if (arrSelectedIndexesLength !== 0) {
+	            for(i=0;i<arrSelectedIndexesLength;i++){
+	                for(j=0;j<currentLayersSelectedLength;j++){
+	
+	                    if(this.arrLayers[arrSelectedIndexes[i]] === this.arrLayers[this.currentLayerSelected[j]]){
+	                        matchedValues+=1;
+	                    }
+	                }
+	            }
+	
+	            if(matchedValues === arrSelectedIndexesLength){
+	                return;
+	            }
+            } 
 
                     if(this.arrLayers[arrSelectedIndexes[i]] === this.arrLayers[this.currentLayersSelected[j]]){
                         matchedValues+=1;
@@ -1226,11 +1239,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 }
             }
 
-            if(matchedValues === arrSelectedIndexesLength){
-                return;
-            }
 
-        	/*
         	 // TODO: this should probably check to see if it actually needs to run.
 
         	        		console.log(arrSelectedIndexes);
@@ -1266,6 +1275,21 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             		if (arrSelectedIndexes.indexOf(i) < 0) {
 						this.arrLayers[i].layerData.isSelected = false;
 	            		this.triggerLayerBinding(i);
+	            		
+	            		// Check to see if this layer, that we're deselecting, has
+	            		// any selected keyframes associated with it.  If it does, deselect them.
+	            		for (var j = 0; j < this.selectedTweens.length; j++) {
+	            			var currentStageElement;
+	            			if (typeof(this.selectedTweens[j].parentComponent.parentComponent.trackType) === "undefined") {
+	            				currentStageElement = this.selectedTweens[j].parentComponent.parentComponent.stageElement; 
+	            			} else {
+	            				currentStageElement = this.selectedTweens[j].parentComponent.parentComponent.parentComponent.parentComponent.parentComponent.parentComponent.stageElement;
+	            			}
+	            			if (this.arrLayers[i].layerData.stageElement === currentStageElement) {
+	            				this.selectedTweens[j].deselectTween();
+	            				this.selectedTweens.splice(j, 1);
+	            			}
+	            		}
             		}
             	}
             }
@@ -1273,8 +1297,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             	this.currentLayersSelected = false;
             }
 
-            // Deselect any tweens
-                this.deselectTweens();
+            // Deselect tweens
+            //this.deselectTweens();
 
             
             // If we are actually going to be selecting things, create an empty array to use

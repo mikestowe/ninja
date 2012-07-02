@@ -131,14 +131,17 @@ exports.BrushTool = Montage.create(ShapeTool, {
              //start a new brush stroke
              if (this._selectedBrushStroke === null){
                  this._selectedBrushStroke = new BrushStroke();
-                 var colorArray=[0,0,0,0];
-                 var color = this.options.fill.color;
-                 if (color){
-                     colorArray = [color.r/255, color.g/255, color.b/255, color.a];
+                 var colorObj;
+                 var fill = this.options.fill;
+                 var color = fill.color;
+                 if(fill.colorMode === "gradient") {
+                     colorObj = {gradientMode:fill.color.gradientMode, color:fill.color.stops};
+                 } else if (color) {
+                     colorObj = [color.r/255, color.g/255, color.b/255, color.a];
                  } else {
-                     colorArray = [1,1,1,0];
+                     colorObj = [1,1,1,0];
                  }
-                 this._selectedBrushStroke.setFillColor(colorArray);
+                 this._selectedBrushStroke.setFillColor(colorObj);
 
                  //add this point to the brush stroke in case the user does a mouse up before doing a mouse move
                  var currMousePos = hitRec.calculateStageWorldPoint();

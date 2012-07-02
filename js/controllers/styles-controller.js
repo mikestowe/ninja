@@ -213,6 +213,9 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             
             stylesheet.insertRule(ruleText, index);
 
+            ///// Invalidate cache because rule dominance is affected
+            this._clearCache();
+
             this.styleSheetModified(stylesheet);
             
             rule = stylesheet.rules[index];
@@ -629,7 +632,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             if(!rule) {
                 ///// This should never be hit if providing cssText from existing rule (like those
                 ///// returned from getMatchedCSSRules()
-                console.warn('StylesController::_getRuleWithCSSText - No rule found with given cssText.');
+                //console.warn('StylesController::_getRuleWithCSSText - No rule found with given cssText.');
             }
 
             return rule;
@@ -643,16 +646,31 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     getMatchingRules : {          //TODO: Remove omitPseudos from here and usages
         value: function(element, omitPseudos, useStageStyleSheet) {
             var rules,
+                matchedRules,
                 mappedRules,
                 doc = element.ownerDocument,
                 win = doc.defaultView;
 
+            if(!element.parentNode) {
+                //console.warn('StylesController::getMatchingRules - Un-attached element queried');
+                return [];
+            }
+
             try {
-                mappedRules = nj.toArray(win.getMatchedCSSRules(element)).map(function(rule) {
+                matchedRules = win.getMatchedCSSRules(element);
+
+                if(!matchedRules) {
+                    //console.warn('StylesController::getMatchingRules - matched rules are null');
+                    return [];
+                }
+
+                mappedRules = nj.toArray(matchedRules).map(function(rule) {
                     return this._getRuleWithCSSText(rule.cssText, doc);
                 }, this);
 
                 rules = mappedRules.filter(function(rule) {
+                    if(!rule) { return false; }
+
                     //// useStageStyleSheet flag indicates whether to only return rules from the stylesheet,
                     //// or only use rules for other stylesheets
 
@@ -673,7 +691,8 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 }, this);
 
             } catch(ERROR) {
-                console.warn('StylesController::getMatchingRules - Un-attached element queried.');
+                //console.warn('StylesController::getMatchingRules - getMatchedCSSRules Exception.');
+                return [];
             }
             ///// Function for sorting by specificity values
             function sorter(ruleA, ruleB) {
@@ -775,7 +794,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             var a = this._getMostSpecificSelectorForElement(element, rule1[this.CONST.SPECIFICITY_KEY]),
                 b = this._getMostSpecificSelectorForElement(element, rule2[this.CONST.SPECIFICITY_KEY]),
                 win = element.ownerDocument.defaultView,
-                order;
+                order, sheetAIndex, sheetBIndex, ruleAIndex, ruleBIndex;
 
               order = this.compareSpecificity(a.specificity, b.specificity);
 
@@ -786,9 +805,9 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                  /// If tied again (same sheet), determine which is further down in the sheet
                 if(sheetAIndex === sheetBIndex) {
                      ruleAIndex = this.getRuleIndex(rule1); ruleBIndex = this.getRuleIndex(rule2);
-                   return ruleAIndex < ruleBIndex ? 1 : (ruleAIndex > ruleBIndex) ? -1 : 0;
+                   return ruleAIndex < ruleBIndex ? false : (ruleAIndex > ruleBIndex) ? true : false;
                  } else {
-                     return sheetAIndex < sheetBIndex ? 1 : (sheetAIndex > sheetBIndex) ? -1 : 0;
+                     return sheetAIndex < sheetBIndex ? false : (sheetAIndex > sheetBIndex) ? true : false;
                 }
              }
 
@@ -1437,11 +1456,11 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
             ///// Dispatch modified event
             NJevent('styleSheetModified', eventData);
+            this.currentDocument.model.needsSave = true;
 
             ///// If the sheet doesn't already exist in the list of modified
             ///// sheets, dispatch dirty event and add the sheet to the list
             if(sheetSearch.length === 0) {
-                this.currentDocument.model.needsSave = true;
                 this.dirtyStyleSheets.push({
                     document : sheet.ownerNode.ownerDocument,
                     stylesheet : sheet
