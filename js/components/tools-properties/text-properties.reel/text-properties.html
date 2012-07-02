@@ -11,79 +11,87 @@
 
         <script type="text/montage-serialization">
         {
-
             "owner": {
                 "prototype": "js/components/tools-properties/text-properties.reel",
                 "properties": {
                     "element": {"#": "textProperties"},
-                    "className": {"@": "className"},
-                    "tagType": {"@": "tagType"},
-                    "fontSelection": {"@": "fontSelection"},
-                    "fontSettings": {"@": "fontSettings"},
-                    "fontSize": {"@": "fontSize"},
+
+                    "fontName": {"@": "fontname"},
+                    "fontSize": {"@": "fontsize"},
                     "fontColor": {"#": "fontColorCtrl"},
+
                     "btnBold": {"@": "btnBold"},
                     "btnItalic": {"@": "btnItalic"},
                     "btnUnderline": {"@": "btnUnderline"},
                     "btnStrikethrough": {"@": "btnStrikethrough"},
+
                     "alignLeft": {"@": "alignLeft"},
                     "alignCenter": {"@": "alignCenter"},
                     "alignRight": {"@": "alignRight"},
                     "alignJustify": {"@": "alignJustify"},
+
                     "indent": {"@": "indent"},
                     "outdent": {"@": "outdent"},
+
                     "numberedList": {"@": "numberedList"},
                     "bulletedList": {"@": "bulletedList"}
                 }
             },
-            "className": {
-                "prototype": "js/components/textfield.reel[TextField]",
-                "properties": {
-                    "element": {"#": "className"}
-                }
-            },
-            "tagType": {
-                "prototype": "js/components/combobox.reel",
-                "properties": {
-                    "element": {"#": "tagType"}
-                }
-            },
-            "fontSelection": {
-                "prototype": "js/components/combobox.reel",
-                "properties": {
-                    "element": {"#": "fontSelection"},
-                    "identifier": "fontSelection"
-                },
-                "listeners": [
-                    {
-                        "type": "change",
-                        "listener": {"@": "owner"}
-                    }
-                ]
 
-            },
-            "fontSettings": {
-                "prototype": "montage/ui/button.reel",
+            "fontname": {
+                "prototype": "montage/ui/native/select.reel",
                 "properties": {
-                    "element": {"#": "fontSettings"}
+                    "element": {"#": "fontname"},
+                    "preventFocus": true,
+                    "contentController": {"@": "fontnameController"}
                 }
             },
 
-            "fontSize": {
-                "prototype": "js/components/combobox.reel",
+            "fontnameController": {
+                "prototype": "montage/ui/controller/array-controller",
+                "properties": {
+                    "selectObjectsOnAddition": false,
+                    "content": [
+                        {"text" : "Arial", "value": "Arial"},
+                        {"text" : "Arial Black", "value": "Arial Black"},
+                        {"text" : "Courier New", "value": "Courier New"},
+                        {"text" : "Garamond", "value": "Garamond"},
+                        {"text" : "Georgia", "value": "Georgia"},
+                        {"text" : "Open Sans", "value": "Open Sans"},
+                        {"text" : "Tahoma", "value": "Tahoma"},
+                        {"text" : "Times New Roman", "value": "Times New Roman"},
+                        {"text" : "Times", "value": "Times"},
+                        {"text" : "Trebuchet", "value": "Trebuchet MS"},
+                        {"text" : "Verdana", "value": "Verdana"}
+                    ]
+                }
+            },
+
+            "fontsize": {
+                "prototype": "montage/ui/native/select.reel",
                 "properties": {
                     "element": {"#": "fontSize"},
-                    "identifier": "fontSize"
-                },
-                "listeners": [
-                    {
-                        "type": "change",
-                        "listener": {"@": "owner"}
-                    }
-                ]
-
+                    "preventFocus" : true,
+                    "contentController" : {"@": "fontsizeController"}
+                }
             },
-        
+
+            "fontsizeController": {
+                "prototype": "montage/ui/controller/array-controller",
+                "properties": {
+                    "selectObjectsOnAddition": false,
+                    "content": [
+                        {"text" : "8pt", "value": "1"},
+                        {"text" : "10pt", "value": "2"},
+                        {"text" : "12pt", "value": "3"},
+                        {"text" : "14pt", "value": "4"},
+                        {"text" : "18pt", "value": "5"},
+                        {"text" : "24pt", "value": "6"},
+                        {"text" : "36pt", "value": "7"}
+                    ]
+                }
+            },
+
             "btnBold": {
                 "prototype": "montage/ui/toggle-button.reel",
                 "properties": {
@@ -103,13 +111,7 @@
                     "identifier": "btnItalic",
                     "pressedLabel": "I",
                     "unpressedLabel": "I"
-                },
-                "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
-                ]
+                }
             },
             "btnUnderline": {
                 "prototype": "montage/ui/toggle-button.reel",
@@ -119,13 +121,7 @@
                     "identifier": "btnUnderline",
                     "pressedLabel": "U",
                     "unpressedLabel": "U"
-                },
-                "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
-                ]
+                }
             },
             "btnStrikethrough": {
                 "prototype": "montage/ui/toggle-button.reel",
@@ -135,13 +131,7 @@
                     "identifier": "btnStrikethrough",
                     "pressedLabel": "S",
                     "unpressedLabel": "S"
-                },
-                "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
-                ]
+                }
             },
             
             "alignLeft": {
@@ -276,12 +266,8 @@
 
     <body>
         <div data-montage-id="textProperties" class="subToolHolderPanel optionsTextTool toolOptionsFloatChildren">
-            <label class="label" style="display: none">Class:</label>
-            <input data-montage-id="className" style="display: none" />
-            <label class="label" style="display: none">Tag:</label>
-            <select data-montage-id="tagType" style="display: none"></select>
             <label class="label overrideMargin">Font:</label>
-            <select data-montage-id="fontSelection" class="nj-skinned fontSelection"></select>
+            <select data-montage-id="fontname" class="nj-skinned fontSelection"></select>
             <button data-montage-id="fontSettings" style="display: none"></button>
             <label class="label">Size:</label>
             <select data-montage-id="fontSize" class="nj-skinned"></select>
