@@ -9,10 +9,12 @@
     font-size: 10pt;
     padding: 3px 12px 3px 8px;
     text-shadow : 1px 1px 1px #000000;
+    cursor:pointer;
 }
 
 .menuItem:hover {
     background-color: #7f7f7f;
+    cursor:pointer;
 }
 
 .menubg .subEntries {
