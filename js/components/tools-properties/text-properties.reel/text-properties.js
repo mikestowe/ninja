@@ -8,32 +8,70 @@ var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
 var ArrayController = require("montage/ui/controller/array-controller").ArrayController;
 var ToolProperties = require("js/components/tools-properties/tool-properties").ToolProperties;
-var Converter = require("montage/core/converter/converter").Converter;
 
 exports.TextProperties = Montage.create(ToolProperties, {
 
     fontName: {value: null, serializable: true},
     fontSize: {value: null, serializable: true},
-
-    fontSettings: {value: null, serializable: true}, // Note: Isn't used currently will need fontSettings Popup
-
     fontColor: {value: null, serializable: true},
+
     btnBold: {value: null, serializable: true},
     btnItalic: {value: null, serializable: true},
     btnUnderline: {value: null, serializable: true},
     btnStrikethrough: {value: null, serializable: true},
-    txtLink: {value: null, serializable: true},
-    linkTarget: {value: null, serializable: true},
+
     alignLeft: {value: null, serializable: true},
     alignCenter: {value: null, serializable: true},
     alignRight: {value: null, serializable: true},
     alignJustify: {value: null, serializable: true},
+
     indent: {value: null, serializable: true},
     outdent: {value: null, serializable: true},
+
     numberedList: {value: null, serializable: true},
     bulletedList: {value: null, serializable: true},
-    fontTypes: {value: null, serializable: true},
-    fontSizes: {value: null, serializable: true},
+
+    // Events
+    handleEditorSelect: {
+        value: function(e) {
+            this.alignLeft.pressed = false;
+            this.alignCenter.pressed = false;
+            this.alignRight.pressed = false;
+            this.alignJustify.pressed = false;
+            this.bulletedList.pressed = false;
+            this.numberedList.pressed = false;
+
+
+            switch(this.application.ninja.stage.textTool.justify) {
+                case "left":
+                    this.alignLeft.pressed = true;
+                    break;
+                case "center":
+                    this.alignCenter.pressed = true;
+                    break;
+                case "right":
+                    this.alignRight.pressed = true;
+                    break;
+                case "full":
+                    this.alignJustify.pressed = true;
+            }
+
+            switch(this.application.ninja.stage.textTool.listStyle) {
+                case "ordered":
+                    this.numberedList.pressed = true;
+                    break;
+                case "unordered":
+                    this.bulletedList.pressed = true;
+            }
+        }
+    },
+
+    handleEditorBlur: {
+        value: function(e) {
+
+        }
+    },
+
 
     // Draw Cycle
     prepareForDraw: {
@@ -45,6 +83,7 @@ exports.TextProperties = Montage.create(ToolProperties, {
             this.fontColor.addEventListener("change",this.handleFontColorChange.bind(this),false);
 
             this.application.ninja.stage.textTool.addEventListener("editorSelect", this.handleEditorSelect.bind(this), false);
+
 
             //Bind to Rich Text editor that lives on the stage component
             Object.defineBinding(this.application.ninja.stage.textTool, "fontName", {
@@ -85,83 +124,82 @@ exports.TextProperties = Montage.create(ToolProperties, {
         }
     },
 
-    // Events
-    handleEditorSelect: {
+    // Actions
+    handleJustifyLeftAction: {
         value: function(e) {
-
-        }
-    },
-    
-    handleAlignLeftAction: {
-        value: function(e) {
-            //this.alignLeft.value = false;
-            this.alignCenter.value = false;
-            this.alignRight.value = false;
-            this.alignJustify.value = false;
-            this.application.ninja.stage.textTool.doAction("justifyleft");
+            this.alignCenter.pressed = false;
+            this.alignRight.pressed = false;
+            this.alignJustify.pressed = false;
+            this.application.ninja.stage.textTool.justify = "left";
         }
     },
 
-    handleAlignCenterAction: {
+    handleJustifyCenterAction: {
         value: function(e) {
-            this.alignLeft.value = false;
-            //this.alignCenter.value = false;
-            this.alignRight.value = false;
-            this.alignJustify.value = false;
-            this.application.ninja.stage.textTool.doAction("justifycenter");
+            this.alignLeft.pressed = false;
+            this.alignRight.pressed = false;
+            this.alignJustify.pressed = false;
+            this.application.ninja.stage.textTool.justify = "center"
         }
     },
 
-    handleAlignRightAction: {
+    handleJustifyRightAction: {
         value: function(e) {
-            this.alignLeft.value = false;
-            this.alignCenter.value = false;
-            //this.alignRight.value = false;
-            this.alignJustify.value = false;
-            this.application.ninja.stage.textTool.doAction("justifyright");
+            this.alignLeft.pressed = false;
+            this.alignCenter.pressed = false;
+            this.alignJustify.pressed = false;
+            this.application.ninja.stage.textTool.justify = "right";
         }
     },
 
-    handleAlignJustifyAction: {
+    handleJustifyAction: {
         value: function(e) {
-            this.alignLeft.value = false;
-            this.alignCenter.value = false;
-            this.alignRight.value = false;
-            //this.alignJustify.value = false;
-            this.application.ninja.stage.textTool.doAction("justifyfull");
+            this.alignLeft.pressed = false;
+            this.alignCenter.pressed = false;
+            this.alignRight.pressed = false;
+            this.application.ninja.stage.textTool.justify = "full";
         }
     },
 
     handleIndentAction: {
         value: function(e) {
-            this.application.ninja.stage.textTool.doAction("indent");
+            this.application.ninja.stage.textTool.indent();
         }
     },
 
     handleOutdentAction: {
         value: function(e) {
-            this.application.ninja.stage.textTool.doAction("outdent");
+            this.application.ninja.stage.textTool.outdent();
         }
     },
 
     handleBulletedListAction: {
         value: function(e) {
-            this.application.ninja.stage.textTool.doAction("insertunorderedlist");
+            this.numberedList.pressed = false;
+            if(e._currentTarget.pressed) {
+                this.application.ninja.stage.textTool.listStyle = "unordered";
+            } else {
+                this.application.ninja.stage.textTool.listStyle = "none";
+            }
         }
     },
 
     handleNumberedListAction: {
         value: function(e) {
-            this.application.ninja.stage.textTool.doAction("insertorderedlist");
+            this.bulletedList.pressed = false;
+            if(e._currentTarget.pressed) {
+                this.application.ninja.stage.textTool.listStyle = "ordered";
+            } else {
+                this.application.ninja.stage.textTool.listStyle = "none";
+            }
         }
     },
 
 
     handleFontColorChange: {
         value: function(e) {
-            this.application.ninja.stage.textTool.foreColor = e._event.color.css;
+            this.application.ninja.stage.textTool.element.style.color = e._event.color.css;
         }
     }
 
 });
-

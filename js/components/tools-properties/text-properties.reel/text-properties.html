@@ -139,31 +139,28 @@
                 "properties": {
                     "element": {"#": "alignLeft"},
                     "pressedClass": "active",
-                    "identifier": "alignLeft",
+                    "identifier": "justifyLeft",
                     "pressedLabel": "",
-                    "unpressedLabel": ""
+                    "unpressedLabel": "",
+                    "pressed": false
                 },
                 "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
+                    { "type": "action", "listener": {"@": "owner"} }
                 ]
             },
+
             "alignCenter": {
                 "prototype": "montage/ui/toggle-button.reel",
                 "properties": {
                     "element": {"#": "alignCenter"},
                     "pressedClass": "active",
-                    "identifier": "alignCenter",
+                    "identifier": "justifyCenter",
                     "pressedLabel": "",
-                    "unpressedLabel": ""
+                    "unpressedLabel": "",
+                    "pressed": false
                 },
                 "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
+                    { "type": "action", "listener": {"@": "owner"} }
                 ]
             },
             "alignRight": {
@@ -171,15 +168,13 @@
                 "properties": {
                     "element": {"#": "alignRight"},
                     "pressedClass": "active",
-                    "identifier": "alignRight",
+                    "identifier": "justifyRight",
                     "pressedLabel": "",
-                    "unpressedLabel": ""
+                    "unpressedLabel": "",
+                    "pressed": false
                 },
                 "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
+                    { "type": "action", "listener": {"@": "owner"} }
                 ]
             },
             "alignJustify": {
@@ -187,43 +182,33 @@
                 "properties": {
                     "element": {"#": "alignJustify"},
                     "pressedClass": "active",
-                    "identifier": "alignJustify",
+                    "identifier": "justify",
                     "pressedLabel": "",
-                    "unpressedLabel": ""
+                    "unpressedLabel": "",
+                    "pressed": false
                 },
                 "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
+                    { "type": "action", "listener": {"@": "owner"} }
                 ]
             },
             "indent": {
                 "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "indent"},
-                    "identifier": "indent",
-                    "value": ">>"
+                    "identifier": "indent"
                 },
                 "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
+                    { "type": "action", "listener": {"@": "owner"} }
                 ]
             },
             "outdent": {
                 "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "outdent"},
-                    "identifier": "outdent",
-                    "value": "<<"
+                    "identifier": "outdent"
                 },
                 "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
+                    { "type": "action", "listener": {"@": "owner"} }
                 ]
             },
             "bulletedList": {
@@ -236,10 +221,7 @@
                     "unpressedLabel": "• • •"
                 },
                 "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
+                    { "type": "action", "listener": {"@": "owner"} }
                 ]
             },
             "numberedList": {
@@ -251,12 +233,7 @@
                     "pressedLabel": "1 2 3",
                     "unpressedLabel": "1 2 3"
                 },
-                "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
-                ]
+                "listeners": [ { "type": "action", "listener": {"@": "owner"} } ]
             }
 
     	}
@@ -285,8 +262,8 @@
                 <button data-montage-id="alignJustify" class="nj-skinned imageButton"><img src="../../../../images/optionsbar/text/AlignJustified.png"  class="unselectable"/></button>
             </div>
             <div class="btnGroup toolOptionsFloatChildren">
-                <button data-montage-id="indent" class="nj-skinned textButton"></button>
-                <button data-montage-id="outdent" class="nj-skinned textButton"></button>
+                <button data-montage-id="indent" class="nj-skinned textButton"><img src="../../../../images/optionsbar/text/IndentMore.png" class="unselectable" style="height:16px" /></button>
+                <button data-montage-id="outdent" class="nj-skinned textButton"><img src="../../../../images/optionsbar/text/IndentLess.png" class="unselectable" style="height:16px" /></button>
             </div>
             <div class="btnGroup toolOptionsFloatChildren">
                 <button data-montage-id="bulletedList" class="nj-skinned imageButton"><img src="../../../../images/optionsbar/text/BulletedList.png" /></button>
