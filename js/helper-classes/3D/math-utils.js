@@ -41,7 +41,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
 //    VecUtils: { value: null, writable: true },
-    
+
     EPSILON: { value: 1.e-5, writable: true },
 
     // these are used in containment tests
@@ -616,7 +616,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
             // test 1.  Overall bounding box test
             if ((xMaxElt < xMin) || (xMinElt > xMax) || (yMaxElt < yMin) || (yMinElt > yMax))
                 return false;
-            
+
             // test 2.  See if any of the corners of the element are contained in the rectangle
             var rect = Object.create(Rectangle, {});
             rect.set( pt[0], pt[1], width, height );
@@ -939,7 +939,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
     },
 
      ///////////////////////////////////////////////////////////////////////
-     // Utility method to calculate angle between two 3D vectors 
+     // Utility method to calculate angle between two 3D vectors
      ///////////////////////////////////////////////////////////////////////
     getAxisAngleBetween3DVectors: {
         value: function (vec1, vec2, axis) {

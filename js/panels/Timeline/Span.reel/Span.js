@@ -51,7 +51,7 @@ var Span = exports.Span = Montage.create(Component, {
             this.needsDraw = true;
         }
     },
-    
+
     _isHighlighted: {
         value: false
     },
@@ -66,7 +66,7 @@ var Span = exports.Span = Montage.create(Component, {
             }
         }
     },
-    
+
     _areChoicesVisible: {
         value: false
     },
@@ -81,7 +81,7 @@ var Span = exports.Span = Montage.create(Component, {
             }
         }
     },
-    
+
     _easing: {
         value: "none"
     },
@@ -102,14 +102,14 @@ var Span = exports.Span = Montage.create(Component, {
             }
         }
     },
-    
+
     // BEGIN: draw cycle
     prepareForDraw: {
         value: function() {
             this.init();
         }
     },
-    
+
     draw:{
         value: function(){
             this.element.style.width = this.spanWidth + "px";
@@ -132,14 +132,14 @@ var Span = exports.Span = Montage.create(Component, {
                 this.container_easing.setAttribute("style", "");
                 this.easing_choice.setAttribute("style", "");
             }
-            
+
             // Highlight the span?
             if (this.isHighlighted === true) {
                 this.element.classList.add("spanHighlight");
             } else {
                 this.element.classList.remove("spanHighlight");
             }
-            
+
             /*
             // Hide or show the choices menu?
             if (this.areChoicesVisible === true) {
@@ -148,12 +148,12 @@ var Span = exports.Span = Montage.create(Component, {
                 this.easing_choices.style.display = "none";
             }
             */
-            
+
             // Change easing?
             if (this.easing_choice.innerText !== this.easing) {
                 this.easing_choice.innerText = this.easing;
             }
-            
+
         }
     },
 
@@ -165,7 +165,7 @@ var Span = exports.Span = Montage.create(Component, {
 
         }
     },
-    
+
     highlightSpan:{
         value: function(){
             // Class add/remove should only be done in draw cycle.
@@ -173,7 +173,7 @@ var Span = exports.Span = Montage.create(Component, {
             this.isHighlighted = true;
         }
     },
-    
+
     handleEasingChoiceClick: {
         value: function(event) {
             event.stopPropagation();
@@ -191,7 +191,7 @@ var Span = exports.Span = Montage.create(Component, {
                     do {
                         objReturn.left += obj.offsetLeft;
                         objReturn.top += obj.offsetTop;
-    
+
                     } while (obj = obj.offsetParent);
                 }
                 return objReturn;
@@ -209,21 +209,21 @@ var Span = exports.Span = Montage.create(Component, {
 
             // Remove the pointer to ourselves
             //this.application.ninja.timeline.currentOpenSpanMenu = false;
-            
+
             // Un-highlight the old choice and highlight the new choice
             this.application.ninja.timeline.easingMenu.popup.contentEl.querySelector(".easing-selected").classList.remove("easing-selected");
             event.target.classList.add("easing-selected");
-            
-            // Set the easing 
+
+            // Set the easing
             this.easing = event.target.dataset.ninjaEase;
             this.parentComponent.easing = this.easing;
             this.parentComponent.tweenData.easing = this.easing;
-            
+
             // Unbind the event handler
             this.application.ninja.timeline.easingMenu.popup.contentEl.removeEventListener("click");
-            
+
             // Hide the menu.
-            this.hideEasingMenu();  
+            this.hideEasingMenu();
         }
     },
     hideEasingMenu: {

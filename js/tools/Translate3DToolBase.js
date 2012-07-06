@@ -170,7 +170,7 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
                 matInv = glmat4.inverse(this._startMat, []),
                 nMat = glmat4.multiply(transMat, this._startMat, [] );
 //              qMat = glmat4.multiply(matInv, nMat, []);
-           
+
             if(this._mode === 1) {
                 if (len > 1)  curMat = target.elementModel.getProperty("mat").slice();
                 var curInv = glmat4.inverse( curMat, [] );
@@ -313,7 +313,7 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
                         eltCtr[2] = 0;
                         eltCtr = vecUtils.vecAdd(3, eltCtr, ctrOffset);
                     }
-                    
+
                     this._origin = viewUtils.localToGlobal(eltCtr, this.target);
 //                  console.log( "Rotate3DToolBase.captureSelectionDrawn _origin: " + this._origin );
                     this._updateTargets();
@@ -340,8 +340,8 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
             }
         }
     },
-    
-    calculateMultiSelOrigin: 
+
+    calculateMultiSelOrigin:
     {
         value: function()
         {
@@ -472,5 +472,5 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
             viewUtils.popViewportObj();
         }
     }
-    
+
 });

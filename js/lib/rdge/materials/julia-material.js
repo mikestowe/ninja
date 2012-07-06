@@ -90,16 +90,16 @@ var JuliaMaterial = function JuliaMaterial() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var JuliaMaterialDef =
-{'shaders': 
+{'shaders':
     {
         'defaultVShader':"assets/shaders/Basic.vert.glsl",
         'defaultFShader':"assets/shaders/Julia.frag.glsl"
     },
     'techniques':
-    { 
+    {
         'default':
         [
             {
@@ -113,7 +113,7 @@ var JuliaMaterialDef =
                     'texcoord'  :   { 'type' : 'vec2' }
                 },
                 // parameters
-                'params' : 
+                'params' :
                 {
                     'u_time' : { 'type' : 'float' },
                     'u_speed' : { 'type' : 'float' },
@@ -121,7 +121,7 @@ var JuliaMaterialDef =
                 },
 
                 // render states
-                'states' : 
+                'states' :
                 {
                     'depthEnable' : true,
                     'offset':[1.0, 0.1]

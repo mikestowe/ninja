@@ -249,8 +249,8 @@ var VecUtils = exports.VecUtils = Object.create(Object.prototype,
                 mat[index] = 1.0;
                 index += dimen + 1;
             }
-    
-            return mat; 
+
+            return mat;
         }
     },
 

@@ -107,15 +107,15 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var linearGradientMaterialDef =
-{'shaders': 
+{'shaders':
     {
             // shader file
             'defaultVShader':"assets/shaders/linearGradient.vert.glsl",
             'defaultFShader':"assets/shaders/linearGradient.frag.glsl",
-                        
+
             // this shader is inline
             'dirLightVShader': "\
                 uniform mat4 u_mvMatrix;\
@@ -130,7 +130,7 @@ var linearGradientMaterialDef =
                     vNormal.xyz = (u_normalMatrix*vec4(a_nrm, 0.0)).xyz;\
                     gl_Position = u_projMatrix * u_mvMatrix * vec4(a_pos,1.0);\
                     vPos = (u_worldMatrix * vec4(a_pos,1.0)).xyz;\
-                }",             
+                }",
             'dirLightFShader': "\
                 precision highp float;\
                 uniform vec4 u_light1Diff;\
@@ -150,7 +150,7 @@ var linearGradientMaterialDef =
                 }"
         },
         'techniques':
-        { 
+        {
             'default':
             [
                 {
@@ -164,16 +164,16 @@ var linearGradientMaterialDef =
                         'texcoord'  :   { 'type' : 'vec2' }
                     },
                     // parameters
-                    'params' : 
+                    'params' :
                     {
-                        'u_color1' :        { 'type' : 'vec4' },                                    
-                        'u_color2' :        { 'type' : 'vec4' },                                    
-                        'u_color3' :        { 'type' : 'vec4' },                                    
+                        'u_color1' :        { 'type' : 'vec4' },
+                        'u_color2' :        { 'type' : 'vec4' },
+                        'u_color3' :        { 'type' : 'vec4' },
                         'u_color4' :        { 'type' : 'vec4' },
-                        'u_colorStop1':     { 'type' : 'float' },                                   
-                        'u_colorStop2':     { 'type' : 'float' },                                   
-                        'u_colorStop3':     { 'type' : 'float' },                                   
-                        'u_colorStop4':     { 'type' : 'float' },                                   
+                        'u_colorStop1':     { 'type' : 'float' },
+                        'u_colorStop2':     { 'type' : 'float' },
+                        'u_colorStop3':     { 'type' : 'float' },
+                        'u_colorStop4':     { 'type' : 'float' },
                         'u_cos_sin_angle':  { 'type' : 'vec2' },
                         'u_texTransform':   { 'type' : 'mat3' }
                         //'u_colorCount':       {'type' : 'int' }
@@ -181,7 +181,7 @@ var linearGradientMaterialDef =
                     },
 
                     // render states
-                    'states' : 
+                    'states' :
                     {
                         'depthEnable' : true,
                         'offset':[1.0, 0.1]
@@ -197,12 +197,12 @@ var linearGradientMaterialDef =
                         'a_nrm' :   { 'type' : 'vec3' }
                     },
                     // parameters
-                    'params' : 
+                    'params' :
                     {
                     },
 
                     // render states
-                    'states' : 
+                    'states' :
                     {
                         'depthEnable' : true,
                         "blendEnable" : true,

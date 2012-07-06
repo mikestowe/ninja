@@ -270,7 +270,7 @@ exports.ColorWheel = Montage.create(Component, {
             //
             this._isMouseDown = true;
             //
-            if ((e.offsetY < this._math.swatchPosition || e.offsetY > this._math.swatchLength+this._math.swatchPosition) || (e.offsetX < this._math.swatchPosition || e.offsetX > this._math.swatchLength+this._math.swatchPosition)) { 
+            if ((e.offsetY < this._math.swatchPosition || e.offsetY > this._math.swatchLength+this._math.swatchPosition) || (e.offsetX < this._math.swatchPosition || e.offsetX > this._math.swatchLength+this._math.swatchPosition)) {
                 this._scanningMode = 'wheel';
             } else {
                 this._scanningMode = 'swatch';
@@ -283,7 +283,7 @@ exports.ColorWheel = Montage.create(Component, {
         value: function(e) {
             var math = this._math;
             //
-            if ((e.offsetY < math.swatchPosition || e.offsetY > math.swatchLength+math.swatchPosition) || (e.offsetX < math.swatchPosition || e.offsetX > math.swatchLength+math.swatchPosition)) { 
+            if ((e.offsetY < math.swatchPosition || e.offsetY > math.swatchLength+math.swatchPosition) || (e.offsetX < math.swatchPosition || e.offsetX > math.swatchLength+math.swatchPosition)) {
                 if (this._scanningMode === 'wheel') {
                     this.mouseSetWheelAngle(e);
                 }

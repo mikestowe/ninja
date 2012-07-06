@@ -102,16 +102,16 @@ var DeformMaterial = function DeformMaterial() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var deformMaterialDef =
-{'shaders': 
+{'shaders':
     {
         'defaultVShader':"assets/shaders/Basic.vert.glsl",
         'defaultFShader':"assets/shaders/Deform.frag.glsl"
     },
     'techniques':
-    { 
+    {
         'default':
         [
             {
@@ -125,7 +125,7 @@ var deformMaterialDef =
                     'texcoord'  :   { 'type' : 'vec2' }
                 },
                 // parameters
-                'params' : 
+                'params' :
                 {
                     'u_tex0': { 'type' : 'tex2d' },
                     'u_time' : { 'type' : 'float' },
@@ -134,7 +134,7 @@ var deformMaterialDef =
                 },
 
                 // render states
-                'states' : 
+                'states' :
                 {
                     'depthEnable' : true,
                     'offset':[1.0, 0.1]

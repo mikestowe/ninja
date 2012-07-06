@@ -34,7 +34,7 @@ var Montage =       require("montage/core/core").Montage,
     Component =     require("montage/ui/component").Component,
     NinjaPrompt =   require("js/components/prompt.reel").NinjaPrompt;
 ////////////////////////////////////////////////////////////////////////
-//  
+//
 exports.BaseDocumentModel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
@@ -337,7 +337,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
                 //Making callback
                 if (callback) callback();
             }
-            
+
         }
     },
     ////////////////////////////////////////////////////////////////////

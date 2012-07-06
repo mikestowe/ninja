@@ -33,9 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 * RDGE.quat = {}
 * This library contains utility functions for operating on quaternions.
 * --
-* TODO: 
-*   -need to add more helper functions for generating quaternions from 
-*    other representations (i.e. - eulers, angle-axis). 
+* TODO:
+*   -need to add more helper functions for generating quaternions from
+*    other representations (i.e. - eulers, angle-axis).
 */
 var RDGE = RDGE || {};
 RDGE.quat = {};

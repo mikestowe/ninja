@@ -30,8 +30,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /**
 * RDGE.vec4 = {}
-* This library contains functions for operating on 4D vectors. Any JS array 
-* containing at least 4 numeric components can represent a 4D vector. 
+* This library contains functions for operating on 4D vectors. Any JS array
+* containing at least 4 numeric components can represent a 4D vector.
 *
 * For example, all of these are valid RDGE.vec4 declarations:
 *       var a = [0, 0, 0, 1];

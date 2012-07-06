@@ -71,7 +71,7 @@ exports.Resizer = Montage.create(Component, {
     _isInversed: {
         value: false
     },
- 
+
     isInversed: {
         get: function() {
             return this._isInversed;
@@ -81,11 +81,11 @@ exports.Resizer = Montage.create(Component, {
         },
         serializable: true
     },
- 
+
     _isVertical: {
         value: null
     },
- 
+
     isVertical: {
         get: function() {
             return this._isVertical;
@@ -112,7 +112,7 @@ exports.Resizer = Montage.create(Component, {
     _panel : {
         value: null
     },
- 
+
     panel : {
         get: function() {
             return this._panel;
@@ -127,10 +127,10 @@ exports.Resizer = Montage.create(Component, {
     height: {
         value: null
     },
- 
+
     handleClick: {
         value: function() {
- 
+
         }
     },
 
@@ -147,14 +147,14 @@ exports.Resizer = Montage.create(Component, {
                 this._startPosition = e.x;
                 this._initDimension = this.panel.offsetWidth;
             }
- 
+
             this.panel.classList.add("disableTransition");
             window.addEventListener("mousemove", this, false);
             window.addEventListener("mouseup", this, false);
             NJevent("panelResizedStart", this)
         }
     },
- 
+
     handleDblclick: {
         value : function() {
             this.panel.addEventListener("webkitTransitionEnd", this, false);
@@ -179,7 +179,7 @@ exports.Resizer = Montage.create(Component, {
 
         }
     },
- 
+
     prepareForDraw: {
         value: function() {
             if(this.willSave) {
@@ -202,13 +202,13 @@ exports.Resizer = Montage.create(Component, {
             this.element.addEventListener("dblclick", this, false);
         }
     },
- 
+
     draw: {
         value: function() {
- 
+
         }
     },
- 
+
     handleMouseup: {
         value:  function(e) {
             e.preventDefault();
@@ -231,7 +231,7 @@ exports.Resizer = Montage.create(Component, {
             NJevent("panelResizedEnd", this)
         }
     },
- 
+
     handleMousemove: {
         value: function(e) {
             if(this.isVertical) {
@@ -246,11 +246,11 @@ exports.Resizer = Montage.create(Component, {
                 }
                 this.panel.style.width = this.value + "px";
             }
- 
+
             if(this.redrawStage) {
                 this.application.ninja.stage.resizeCanvases = true;
             }
- 
+
             NJevent("panelResizing", this);
         }
     }

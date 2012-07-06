@@ -69,7 +69,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     positionPropertyTrack:{
         value:null
     },
-    
+
     _isFirstDraw: {
         value: true
     },
@@ -96,7 +96,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.trackData.isVisible = value;
         }
     },
-    
+
     _stageElement: {
         value: null
     },
@@ -174,7 +174,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             }
         }
     },
-    
+
     _arrStyleTracks : {
         value: []
     },
@@ -200,7 +200,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this._styleTracksRepetition = newVal;
         }
     },
-    
+
     /* Position Property Tracks */
     _arrPositionTracks : {
         value: []
@@ -213,7 +213,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         set: function(newVal) {
             this._arrPositionTracks = newVal;
             this.trackData.arrPositionTracks = newVal;
-            
+
         }
     },
     _positionTracksRepetition: {
@@ -495,7 +495,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             }
         }
     },
-    
+
     _setDataTimestamp : {
         value: false
     },
@@ -533,7 +533,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             tempData.bypassAnimation = this.bypassAnimation;
             tempData.trackID = this.layerID;
             tempData.tweens = this.tweens;
-            tempData.animatedElement = this.animatedElement; 
+            tempData.animatedElement = this.animatedElement;
             tempData.arrStyleTracks = this.arrStyleTracks;
             tempData.arrPositionTracks = this.arrPositionTracks;
             tempData.isTrackAnimated = this.isTrackAnimated;
@@ -549,7 +549,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.trackData = tempData;
         }
     },
-    
+
     // Data binding observation point and trigger method
     _bindingPoint : {
         value : {}
@@ -565,7 +565,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             }
         }
     },
-    
+
     triggerOutgoingBinding : {
         value: function() {
             this.trackData.triggerBinding = !this.trackData.triggerBinding;
@@ -578,8 +578,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.ninjaStylesContoller = this.application.ninja.stylesController;
             this.element.addEventListener("click", this, false);
             this.eventManager.addEventListener("tlZoomSlider", this, false);
-            
-            // Drag and Drop event handlers 
+
+            // Drag and Drop event handlers
             //this.element.addEventListener("dragover", this.handleKeyframeDragover.bind(this), false);
             this.element.addEventListener("dragstart", this.handleKeyframeDragstart.bind(this), false);
             this.element.addEventListener("dragend", this.handleKeyframeDragend.bind(this), false);
@@ -647,9 +647,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     }
                 }
             }
-            
+
             if (this._isFirstDraw === true) {
-                
+
                 if (this.isMainCollapsed === false) {
                     this._mainCollapser.myContent.style.height = "auto";
                     this._mainCollapser.myContent.classList.remove(this._mainCollapser.collapsedClass);
@@ -672,19 +672,19 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 }
                 this._isFirstDraw = false;
             }
-            
+
         }
     },
 
     handleTlZoomSlider: {
         value: function(event) {
-            
+
             var currentMilliSecPerPixel , currentMilliSec , clickPos,thingToPush;
             var i = 0,
                 tweensLength = this.tweens.length;
 
             for (i = 0; i < tweensLength; i++) {
-                
+
                 if (i === 0) {
                     // Exception: 0th item does not depend on anything
                     // TODO: If 0th tween is draggable, this will need to be fixed.
@@ -692,7 +692,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     this.tweens[i].tweenData.spanPosition=0;
                     this.tweens[i].tweenData.keyFramePosition=0;
                     this.tweens[i].tweenData.keyFrameMillisec=0;
-    
+
                 } else {
                     var prevKeyFramePosition = this.tweens[i - 1].tweenData.keyFramePosition,
                         myObj = {},
@@ -769,7 +769,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     handleNewTween:{
         value:function (ev) {
-            
+
             if (ev.offsetX > this.tweens[this.tweens.length - 1].tweenData.keyFramePosition) {
                 var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
                 this.application.ninja.timeline.selectLayer(selectedIndex, false);
@@ -906,8 +906,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function (position) {
             var i, j, nextComponentIndex,
                 tweensLength = this.tweens.length-1,
-                prevTween, 
-                nextTween, 
+                prevTween,
+                nextTween,
                 splitTweenIndex;
 
             // Search through the tweens and find the pair whose keyframes bracket position.
@@ -915,7 +915,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 prevTween = this.tweens[i].tweenData.keyFramePosition;
                 nextTween = this.tweens[i+1].tweenData.keyFramePosition;
                 if(position > prevTween && position < nextTween) {
-                    
+
                     // We will insert a new tween at this index
                     splitTweenIndex = i+1;
 
@@ -924,7 +924,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     this.tweens[i+1].spanPosition = position;
                     this.tweens[i+1].tweenData.spanWidth = this.tweens[i+1].tweenData.keyFramePosition - position;
                     this.tweens[i+1].spanWidth = this.tweens[i+1].keyFramePosition - position;
-                    
+
                     // You'd think that would be enough to make the component associated with that part of the array redraw, wouldn't you?
                     // Turns out we have to manually poke the desired childComponent in the repetition to register its new changes.
                     // So we have to get the index of the actual componentin the repetition, which may not match our iteration index.
@@ -949,15 +949,15 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     newTweenToInsert.tweenData.tweenedProperties["width"] = this.animatedElement.offsetWidth + "px";
                     newTweenToInsert.tweenData.tweenedProperties["height"] = this.animatedElement.offsetHeight + "px";
                     this.tweens.splice(splitTweenIndex, 0, newTweenToInsert);
-                    
+
                     // We are done, so end the loop.
                     i = tweensLength;
                 }
             }
-            
+
             // We've made a change, so set the needsSave flag
             this.application.ninja.currentDocument.model.needsSave = true;
-            
+
             // Our tween IDs are now all messed up.  Fix them.
             for (i = 0; i <= tweensLength+1; i++) {
                 this.tweens[i].tweenID = i;
@@ -1150,7 +1150,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     createPositionTracks:{
         value:function(){
             // create track objects for position and transform tracks and push into arrays
-            
+
             // ... but only do it if we haven't already.
             if (this.arrPositionTracks.length > 0) {
                 return;
@@ -1241,20 +1241,20 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             return returnVal;
         }
     },
-    
+
     // Drag and drop event handlers
     handleKeyframeDragstart : {
         value: function(event) {
-            var dragIcon = document.createElement("img"), 
+            var dragIcon = document.createElement("img"),
                 minPosition = 0,
                 maxPosition = 100000000000;
-                
+
             event.dataTransfer.effectAllowed = 'move';
             event.dataTransfer.setData('Text', this.identifier);
             dragIcon.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAA1JREFUGFdj+P//PwMACPwC/ohfBuAAAAAASUVORK5CYII="
             dragIcon.width = 1;
             event.dataTransfer.setDragImage(dragIcon, 0, 0);
-            
+
             // Clone the element we're dragging
             this._dragAndDropHelper = event.target.cloneNode(true);
             this._dragAndDropHelper.style.opacity = 0.8;
@@ -1263,10 +1263,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this._dragAndDropHelper.style.left = "0px";
             this._dragAndDropHelper.style.zIndex = 700;
             this._dragAndDropHelper.classList.add("keyframeSelected");
-            
+
             //this._dragAndDropHelper.style.width = window.getComputedStyle(this.container_layers, null).getPropertyValue("width");
             this._dragAndDropHelper.classList.add("track-dnd-helper");
- 
+
             if (this.draggingIndex < (this.tweens.length -1)) {
                 maxPosition = this.tweenRepetition.childComponents[this.draggingIndex+1].keyFramePosition;
             }
@@ -1277,7 +1277,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this._keyframeMaxPosition = maxPosition-9;
             this._appendHelper = true;
             this._deleteHelper = false;
-            
+
             // Get my index in the track array
             var i = 0,
                 arrLayersLength = this.parentComponent.parentComponent.arrLayers.length,
@@ -1299,11 +1299,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             }
             this._deleteHelper = true;
             this.needsDraw = true;
-           
+
         }
     },
-    
-    
+
+
     /* Begin: Logging routines */
     _boolDebug: {
         enumerable: false,

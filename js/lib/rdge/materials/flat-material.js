@@ -70,7 +70,7 @@ var FlatMaterial = function FlatMaterial()
             // set up the material node
             this._materialNode = RDGE.createMaterialNode("flatMaterial_" + world.generateUniqueNodeID());
             this._materialNode.setShader(this._shader);
-        
+
             this.setShaderValues();
         }
         else
@@ -91,9 +91,9 @@ var FlatMaterial = function FlatMaterial()
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
-flatShaderDef  = 
+flatShaderDef  =
 {
     'shaders':  { // shader files
         'defaultVShader':"assets/shaders/Basic.vert.glsl",
@@ -104,7 +104,7 @@ flatShaderDef  =
             {
                 'vshader' : 'defaultVShader',
                 'fshader' : 'defaultFShader',
-           
+
                 // attributes
                 'attributes' :
                  {

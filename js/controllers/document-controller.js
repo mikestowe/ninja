@@ -246,7 +246,7 @@ exports.DocumentController = Montage.create(Component, {
         }
     },
     ////////////////////////////////////////////////////////////////////
-    
+
     /**
      * Public method
      * doc contains:
@@ -361,7 +361,7 @@ exports.DocumentController = Montage.create(Component, {
         }
     },
     ////////////////////////////////////////////////////////////////////
-    
+
     openProjectWithURI: {
         value: function(uri) {
             console.log("URI is: ", uri);

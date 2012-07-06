@@ -200,9 +200,9 @@ exports.RuleListContainer = Montage.create(Component, {
             }, this);
             this.ruleListsToDraw.length = 0;
         }
-        
+
     },
-    
+
     didDraw: {
         value: function() {
             if(this.ruleListDrawn === true) {

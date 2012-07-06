@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 var Montage =   require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 ////////////////////////////////////////////////////////////////////////
-//  
+//
 exports.NinjaPrompt = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //TODO: This should have an UI template eventually

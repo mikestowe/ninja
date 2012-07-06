@@ -861,7 +861,7 @@ exports.Circle = Object.create(GeomObj, {
             var ivrt = 0,  iuv = 0;
             var uMin = 1.e8,  uMax = -1.e8,
                 vMin = 1.e8,  vMax = -1.e8;
-            
+
             var i, index = 3;
             var xMin = vrts[0], xMax = vrts[0],
                 yMin = vrts[1], yMax = vrts[1];

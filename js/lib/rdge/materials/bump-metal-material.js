@@ -100,7 +100,7 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var bumpMetalMaterialDef = bumpMetalShaderDef =
 {
@@ -109,7 +109,7 @@ var bumpMetalMaterialDef = bumpMetalShaderDef =
         // this shader is being referenced by file
         'defaultVShader':"assets/shaders/test_vshader.glsl",
         'defaultFShader':"assets/shaders/test_fshader.glsl",
-                        
+
         // this shader is inline
         'dirLightVShader': "\
             uniform mat4 u_mvMatrix;\
@@ -124,7 +124,7 @@ var bumpMetalMaterialDef = bumpMetalShaderDef =
                 vNormal.xyz = (u_normalMatrix*vec4(a_nrm, 0.0)).xyz;\
                 gl_Position = u_projMatrix * u_mvMatrix * vec4(a_pos,1.0);\
                 vPos = (u_worldMatrix * vec4(a_pos,1.0)).xyz;\
-            }",             
+            }",
         'dirLightFShader': "\
             precision highp float;\
             uniform vec4 u_light1Diff;\
@@ -144,7 +144,7 @@ var bumpMetalMaterialDef = bumpMetalShaderDef =
             }"
     },
     'techniques':
-    { 
+    {
         'default':
         [
             {
@@ -158,7 +158,7 @@ var bumpMetalMaterialDef = bumpMetalShaderDef =
                     'texcoord'  :   { 'type' : 'vec2' }
                 },
                 // parameters
-                'params' : 
+                'params' :
                 {
                     'u_light0Diff' : { 'type' : 'vec4' },
                     'u_colMap': { 'type' : 'tex2d' },
@@ -167,7 +167,7 @@ var bumpMetalMaterialDef = bumpMetalShaderDef =
                 },
 
                 // render states
-                'states' : 
+                'states' :
                     {
                     'depthEnable' : true,
                     'offset':[1.0, 0.1]
@@ -183,12 +183,12 @@ var bumpMetalMaterialDef = bumpMetalShaderDef =
                     'a_nrm' :   { 'type' : 'vec3' }
                     },
                 // parameters
-                'params' : 
+                'params' :
                     {
                     },
 
                 // render states
-                'states' : 
+                'states' :
                     {
                     'depthEnable' : true,
                     "blendEnable" : true,

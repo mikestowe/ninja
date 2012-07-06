@@ -71,7 +71,7 @@ var Branch = exports.Branch = Montage.create(TreeNode, {
         value: function() {
             this.collapser.removeAttribute('id');
             this.label._element.addEventListener('click', this, false);
-            
+
             if(this.hideLabel) {
                 this.label.element.style.display = "none";
             }
@@ -81,17 +81,17 @@ var Branch = exports.Branch = Montage.create(TreeNode, {
     },
     handleWebkitTransitionEnd : {
         value: function(e) {
-            e.stopPropagation(); 
-            
+            e.stopPropagation();
+
             ///// Remove Transition
             this._removeTransition = true;
             this.collapser.removeEventListener('webkitTransitionEnd', this, false);
-            
+
             //// If it's an expand transition, restore height to auto
             if(this.isExpanded) {
                 this._switchToAuto = true;
             }
-            
+
             this.needsDraw = true;
 
         }
@@ -114,9 +114,9 @@ var Branch = exports.Branch = Montage.create(TreeNode, {
             if (this.sourceObject[this.labelKey]) {
                 this._labelText = this.sourceObject[this.labelKey];
             }
-            
+
             if(this._doCollapse) {
-                if (this._step === 0) {                    
+                if (this._step === 0) {
                     this.collapser.style.height = this.branchHeight;
                     this.collapser.style.position = "relative";
                     this.collapser.style.overflow = 'hidden';
@@ -135,15 +135,15 @@ var Branch = exports.Branch = Montage.create(TreeNode, {
                 }
             } else if(this._doExpand) {
                 this.collapser.style.height = this.branchHeight;
-                
+
                 this._doExpand = false;
             }
             if(this._switchToAuto) {
                 this.collapser.childNodes[1].style.position = 'static';
-                this.collapser.style.height = 'auto';                    
+                this.collapser.style.height = 'auto';
                 this._switchToAuto = false;
             }
-            
+
             if(this._removeTransition) {
                 this.collapser.classList.remove(this.collapseClass);
                 this._removeTransition = false;
@@ -167,7 +167,7 @@ var Branch = exports.Branch = Montage.create(TreeNode, {
     },
     collapse : {
         value: function() {
-            this.needsDraw = this._doCollapse = true;            
+            this.needsDraw = this._doCollapse = true;
         }
     },
     branchHeight: {

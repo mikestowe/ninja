@@ -116,13 +116,13 @@ RDGE.ConnectionPool = funciton(base, startAddr, endAddr, messageHandlerFunc)
     this.end = endAddr;
     this.port = 38951;
     this.messageHandler = messageHandlerFunc;
-    
+
     this.listenSockets      = [];
     this.connectedSockets   = [];
-    
+
     this.openHandler = null;
     this.closeHandler = null;
-    
+
     this.interval = null;
 
     this.Init = function (openHandler, closeHandler) {
@@ -176,6 +176,6 @@ RDGE.ConnectionPool = funciton(base, startAddr, endAddr, messageHandlerFunc)
                 this.listenSockets[i] = CreateSocket(url, this.listenSockets, this.connectedSockets, this.messageHandler, i, this.openHandler, this.closeHandler);
             }
         }
-    };  
+    };
 };
 

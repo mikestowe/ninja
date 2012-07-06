@@ -36,9 +36,9 @@ exports.ElementController = Montage.create(Component, {
 
     addElement: {
         value: function(el, styles) {
-        
+
             if (el.getAttribute) el.setAttribute('data-ninja-node', 'true');
-            
+
             // Updated to use new methods in TimelinePanel. JR.
             var insertionIndex = this.application.ninja.timeline.getInsertionIndex();
             if (insertionIndex === false) {
@@ -51,7 +51,7 @@ exports.ElementController = Montage.create(Component, {
                     element.parentNode.insertBefore(el, element.nextSibling);
                 }
             }
-            
+
             if(styles) {
                 this.application.ninja.stylesController.setElementStyles(el, styles);
             }
@@ -67,7 +67,7 @@ exports.ElementController = Montage.create(Component, {
             el.parentNode.removeChild(el);
         }
     },
-    
+
     getProperty: {
         value: function(el, prop, fallbackOnComputed, isStageElement) {
             if(el.nodeType !== 3){

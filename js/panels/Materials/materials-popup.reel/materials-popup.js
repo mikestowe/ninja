@@ -202,7 +202,7 @@ exports.MaterialsPopup = Montage.create(Component, {
                 var ch = propLabel[ propLabel.length - 1];
                 if (ch == ':')
                     propLabel = propLabel.substr(0, propLabel.length - 1);
-                
+
                 var index;
                 var nProps = this._propLabels.length;
                 for (var i=0;  i<nProps;  i++)
@@ -390,7 +390,7 @@ exports.MaterialsPopup = Montage.create(Component, {
                     material = MaterialsModel.getMaterial( materialID );
                 }
             }
-                
+
             if (material)
             {
                 this._material = material;
@@ -510,7 +510,7 @@ exports.MaterialsPopup = Montage.create(Component, {
             return obj;
         }
     },
-    
+
     createCheckboxData:
     {
         value: function( label, value )
@@ -554,7 +554,7 @@ exports.MaterialsPopup = Montage.create(Component, {
     {
         value: function( dimen, label, value )
         {
-            var obj = 
+            var obj =
             {
                 "label":         label,
                 "description":   "a vector",
@@ -798,12 +798,12 @@ exports.MaterialsPopup = Montage.create(Component, {
         serializable: true,
         value: null
     },
-    
+
     _materialsData: {
         enumerable: true,
         serializable: true,
         value: []
-    
+
     },
 
     materialsData: {

@@ -36,7 +36,7 @@ exports.Toolbar = Montage.create(Component, {
         value: null,
         serializable: true
     },
-    
+
     _needsButtonProperties : {
         value: null
     },

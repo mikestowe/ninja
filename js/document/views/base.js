@@ -34,7 +34,7 @@ var Montage =   require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component,
     UrlParser = require("js/document/helpers/url-parser").UrlParser;
 ////////////////////////////////////////////////////////////////////////
-//  
+//
 exports.BaseDocumentView = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //

@@ -50,7 +50,7 @@ exports.DrawingToolBase = Montage.create(Component, {
 
     /**
      * Used on the initial MouseDown for Drawing Tools
-     * 
+     *
      * Returns: An array containing:
      *          0 - HitRec point
      *          1 - X value converted to screen point
@@ -292,7 +292,7 @@ exports.DrawingToolBase = Montage.create(Component, {
 //                return ({"width":w, "height":h, "planeMat":planeMat, "midPt":midPt});
                 var s0Offset = s0.slice(0);
                 var s1Offset = s1.slice(0);
- 
+
                 s0Offset[0] += snapManager.getStageWidth() / 2.0;
                 s0Offset[1] += snapManager.getStageHeight() / 2.0;
                 s1Offset[0] += snapManager.getStageWidth() / 2.0;
@@ -515,7 +515,7 @@ exports.DrawingToolBase = Montage.create(Component, {
         value: function( s0In, s1In, planeMat, planeMatInv,  fixedS1 ) {
             var s0 = s0In.slice(0);
             var s2 = s1In.slice(0);
-        
+
 
             // calculate the mid point of the rectangle
             var midPt = vecUtils.vecAdd(3, s0, s2);
@@ -549,7 +549,7 @@ exports.DrawingToolBase = Montage.create(Component, {
                     z = pt[2]*p/(p + pt[2]);
                     var x = pt[0]*(p - z)/p,
                         y = pt[1]*(p - z)/p;
-                    
+
 
                     pt[0] = x;  pt[1] = y;  pt[2] = z;
                 }
@@ -683,6 +683,6 @@ exports.DrawingToolBase = Montage.create(Component, {
             }
         }
     }
-    
+
 });
 

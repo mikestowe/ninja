@@ -34,7 +34,7 @@ var Montage =           require("montage/core/core").Montage,
     BaseDocumentView =  require("js/document/views/base").BaseDocumentView,
     ElementModel =      require("js/models/element-model");
 ////////////////////////////////////////////////////////////////////////
-//  
+//
 exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     ////////////////////////////////////////////////////////////////////
     //
@@ -451,7 +451,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
                     } else {
                         tag.setAttribute(linktag.attributes[n].name, linktag.attributes[n].value);
                     }
-                }                   
+                }
             }
             //Setting content from loaded data
             if (cssData.content) tag.innerHTML = cssData.content;

@@ -567,7 +567,7 @@ exports.Stage = Montage.create(Component, {
             this._clickPoint.y = point.y; // event.layerY;
 
             this.enableMouseInOut();
-            
+
             this.application.ninja.toolsData.selectedToolInstance.downPoint.x = point.x;
             this.application.ninja.toolsData.selectedToolInstance.downPoint.y = point.y;
             this.application.ninja.toolsData.selectedToolInstance.HandleLeftButtonDown(event);

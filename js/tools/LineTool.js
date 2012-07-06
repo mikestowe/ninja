@@ -173,7 +173,7 @@ exports.LineTool = Montage.create(ShapeTool, {
                 slope,
                 dx,
                 dy;
-            
+
             if (hitRec0 && hitRec1) {
                 var p0 = hitRec0.getLocalPoint(),
                     p1 = hitRec1.getLocalPoint();

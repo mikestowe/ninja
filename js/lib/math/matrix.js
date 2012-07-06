@@ -57,8 +57,8 @@ Matrix.I = function(dimen) {
         mat[index] = 1.0;
         index += dimen + 1;
     }
-    
-    return mat; 
+
+    return mat;
 };
 
 Matrix.Translation = function (vec) {

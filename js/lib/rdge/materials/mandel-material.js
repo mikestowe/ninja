@@ -93,16 +93,16 @@ var MandelMaterial = function MandelMaterial() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var MandelMaterialDef =
-{'shaders': 
+{'shaders':
     {
         'defaultVShader':"assets/shaders/Basic.vert.glsl",
         'defaultFShader':"assets/shaders/Mandel.frag.glsl"
     },
     'techniques':
-    { 
+    {
         'default':
         [
             {
@@ -116,7 +116,7 @@ var MandelMaterialDef =
                     'texcoord'  :   { 'type' : 'vec2' }
                 },
                 // parameters
-                'params' : 
+                'params' :
                 {
                     'u_time' : { 'type' : 'float' },
                     'u_speed' : { 'type' : 'float' },
@@ -124,7 +124,7 @@ var MandelMaterialDef =
                 },
 
                 // render states
-                'states' : 
+                'states' :
                 {
                     'depthEnable' : true,
                     'offset':[1.0, 0.1]

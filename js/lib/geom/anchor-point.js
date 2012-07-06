@@ -30,14 +30,14 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /////////////////////////////////////////////
 // Class GLAnchorPoint
-//      GL representation of a point clicked 
+//      GL representation of a point clicked
 //          and dragged during pen tool
-//      
-//    
+//
+//
 /////////////////////////////////////////////
 var GLAnchorPoint = function GLAnchorPoint() {
     /////////////////////////////////////////
-    // Instance variables 
+    // Instance variables
     /////////////////////////////////////////
     this._x = 0.0;
     this._y = 0.0;
@@ -99,7 +99,7 @@ GLAnchorPoint.prototype.translateNextFromPrev = function (tx, ty, tz) {
     if (totalTransSq < 0.0000001) {
         return;
     }
-    
+
     // *** compute the rotation of the prev vector ***
     var oldP = [this._prevX + tx - this._x, this._prevY + ty - this._y, this._prevZ + tz - this._z];
     var newP = [this._prevX - this._x, this._prevY - this._y, this._prevZ - this._z];
@@ -133,7 +133,7 @@ GLAnchorPoint.prototype.translatePrevFromNext = function (tx, ty, tz) {
     if (totalTransSq < 0.0000001) {
         return;
     }
-        
+
     // *** compute the rotation of the next vector ***
     var oldN = [this._nextX + tx - this._x, this._nextY + ty - this._y, this._nextZ + tz - this._z];
     var newN = [this._nextX - this._x, this._nextY - this._y, this._nextZ - this._z];

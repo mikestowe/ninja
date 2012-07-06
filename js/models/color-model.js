@@ -154,7 +154,7 @@ exports.ColorModel = Montage.create(Component, {
             this._alpha = value;
             //
             if (this.rgb || this.hsl) {
-                this._dispatchChangeEvent('alpha', value);      
+                this._dispatchChangeEvent('alpha', value);
             }
         }
     },
@@ -445,7 +445,7 @@ exports.ColorModel = Montage.create(Component, {
             }
             if (this.hex)
                 colorEvent.hex = this.hex;
-            //Standard values that apply to any event              
+            //Standard values that apply to any event
             colorEvent.value = value;
             colorEvent.mode = mode;
             if (value && value.wasSetByCode) {

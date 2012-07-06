@@ -635,7 +635,7 @@ RDGE.rdgeDefaultShaderDefintion = {
 //                       'cullFace': "BACK"
 //                   }
 //      }]
-// 
+//
 //     }
 // };
 
@@ -669,7 +669,7 @@ RDGE.rdgeDefaultShaderDefintion = {
 //                       'cullFace': "BACK"
 //                   }
 //      }]
-// 
+//
 //     }
 // };
 
@@ -717,7 +717,7 @@ RDGE.rdgeDefaultShaderDefintion = {
 //         'screenQuad': [{
 //             'vshader': 'screenQuadVShader',
 //             'fshader': 'screenQuadFShader',
-// 
+//
 //             // attributes
 //             'attributes': {
 //                 'a_pos': { 'type': 'vec3' },
@@ -764,7 +764,7 @@ RDGE.rdgeDefaultShaderDefintion = {
 //              'params':
 //               {
 //               },
-// 
+//
 //              // render states
 //              'states':
 //               {
@@ -778,7 +778,7 @@ RDGE.rdgeDefaultShaderDefintion = {
 //     }
 // };
 
-/* 
+/*
 * Gaussian blur shader
 */
 // currently not used in Ninja
@@ -816,7 +816,7 @@ RDGE.rdgeDefaultShaderDefintion = {
 //     }
 // };
 
-/* 
+/*
 * Screen space ambient occlusion shader
 */
 // currently not used in Ninja
@@ -939,13 +939,13 @@ RDGE.rdgePrimitiveDefinition = function () {
     /*
     *   The type of primitive
     *   supported types are
-    *   renderer.POINTS      
-    *  renderer.LINES          
-    *   renderer.LINE_LOOP      
-    *   renderer.LINE_STRIP     
-    *   renderer.TRIANGLES      
-    *   renderer.TRIANGLE_STRIP 
-    *   renderer.TRIANGLE_FAN   
+    *   renderer.POINTS
+    *  renderer.LINES
+    *   renderer.LINE_LOOP
+    *   renderer.LINE_STRIP
+    *   renderer.TRIANGLES
+    *   renderer.TRIANGLE_STRIP
+    *   renderer.TRIANGLE_FAN
     */
     this.type = RDGE.rdgeConstants.TRIANGLE_STRIP;
 

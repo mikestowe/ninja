@@ -108,16 +108,16 @@ var PlasmaMaterial = function PlasmaMaterial() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var plasmaShaderDef =
-{'shaders': 
+{'shaders':
     {
         'defaultVShader':"assets/shaders/plasma.vert.glsl",
         'defaultFShader':"assets/shaders/plasma.frag.glsl"
     },
     'techniques':
-    { 
+    {
         'default':
         [
             {
@@ -131,7 +131,7 @@ var plasmaShaderDef =
                     'texcoord'  :   { 'type' : 'vec2' }
                 },
                 // parameters
-                'params' : 
+                'params' :
                 {
                     'u_time' : { 'type' : 'float' },
                     'u_speed': { 'type' : 'float' },
@@ -141,7 +141,7 @@ var plasmaShaderDef =
                 },
 
                 // render states
-                'states' : 
+                'states' :
                 {
                     'depthEnable' : true,
                     'offset':[1.0, 0.1]

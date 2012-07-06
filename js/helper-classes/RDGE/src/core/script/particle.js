@@ -77,7 +77,7 @@ RDGE.particle = function (def, id) {
             // calculate the initial position in world space.
             this.pos = RDGE.mat4.transformPoint(spawnMatrix, this.pos);
         }
-        // all other values are assumed to be defined in local or world space depending on 
+        // all other values are assumed to be defined in local or world space depending on
         // the particles worldSpace designation.
         var toRadians = Math.PI / 180.0;
         if (this.def.initialsize) {
@@ -334,10 +334,10 @@ RDGE.particleBuffer = function (pdef, emitter, size) {
             var x, y, z, w;
             var p = this.particles[i];
             var age = (p.age / p.lifespan); // normalized age
-            // combine frame number and age and store in w. 
-            // to decode : 
-            //      frame = floor( w ); 
-            //      age = fract( w ); 
+            // combine frame number and age and store in w.
+            // to decode :
+            //      frame = floor( w );
+            //      age = fract( w );
             var pw = Math.min(age, 0.999) + Math.floor(p.frame);
             if (age < 1.0) { // || (pdef.persist != undefined && pdef.persist == true)) {
                 var px = p.pos[0];
@@ -747,7 +747,7 @@ RDGE.particleSys = function (addr) {
             var emin = emitter.pbuffer.bounds.min;
             var emax = emitter.pbuffer.bounds.max;
 
-            // calculate a bounds that fits all particles.  
+            // calculate a bounds that fits all particles.
             if (emin[0] < bmin[0]) { bmin[0] = emin[0]; }
             if (emin[1] < bmin[1]) { bmin[1] = emin[1]; }
             if (emin[2] < bmin[2]) { bmin[2] = emin[2]; }

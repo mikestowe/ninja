@@ -74,7 +74,7 @@ exports.ToolsData = Montage.create(Montage, {
         value: 13
     },
 
-    // NOTE: additions or removal of any tools, or any changes in the order of these entries requires updating the constant index properties above. 
+    // NOTE: additions or removal of any tools, or any changes in the order of these entries requires updating the constant index properties above.
     //       Code in the keyboard mediator and ninja.js accesses the array below through the index constants above
     defaultToolsData: {
         value: [
@@ -301,5 +301,5 @@ exports.ToolsData = Montage.create(Montage, {
     selectedToolInstance : {
         value: null
     }
-    
+
 });

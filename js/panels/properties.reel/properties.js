@@ -163,12 +163,12 @@ exports.Properties = Montage.create(Component, {
             NJevent("updatedID",this.application.ninja.selectedElements[0]);
         }
     },
-    
+
     handleKeyup: {
         value: function(event) {
             if(event.keyCode === 13) {
                 event.target.blur();
-            }      
+            }
         }
     },
 

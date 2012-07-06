@@ -58,7 +58,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     _components: {
-        value: null  
+        value: null
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -220,7 +220,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     didDraw: {
         value: function() {
             //
-            
+
         }
     },
     ////////////////////////////////////////////////////////////////////

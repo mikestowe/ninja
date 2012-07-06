@@ -74,8 +74,8 @@ RDGE.SceneGraph = function (scene) {
     this.bckTypes = RDGE.rdgeConstants.categoryEnumeration;
 
     this.renderList = new Array(this.bckTypes.MAX_CAT);
-    this.renderList[this.bckTypes.BACKGROUND] = []; //BACKGROUND    
-    this.renderList[this.bckTypes.OPAQUE] = []; //OPAQUE        
+    this.renderList[this.bckTypes.BACKGROUND] = []; //BACKGROUND
+    this.renderList[this.bckTypes.OPAQUE] = []; //OPAQUE
     this.renderList[this.bckTypes.TRANSPARENT] = []; //TRANSPARENT
     this.renderList[this.bckTypes.ADDITIVE] = []; //ADDITIVE
     this.renderList[this.bckTypes.TRANSLUCENT] = []; //TRANSLUCENT
@@ -170,7 +170,7 @@ RDGE.SceneGraph = function (scene) {
         //              'technique': "depthMap",
         //              'outputs':[{ 'name':"u_depthMap", 'type':"target", 'width':1024, 'height':1024, 'mips':false }],
         //              'geometrySet':"ALL",
-        //              'children' : 
+        //              'children' :
         //              [
         //                  // get the normals in view space
         //                  {
@@ -178,10 +178,10 @@ RDGE.SceneGraph = function (scene) {
         //                      'shader': RDGE.rdgeViewSpaceNormalsShader,
         //                      'outputs':[{ 'name':"u_normalsRT", 'type':"target", 'width':1024, 'height':1024, 'mips':false }],
         //                      'geometrySet':"ALL",
-        //                      'children' : 
+        //                      'children' :
         //                      [
         //                          // techniques requiring depth and normals in view space go here
-        //                          
+        //
         //                          // SSAO map
         //                          {
         //                              'name':"SSAO",
@@ -198,7 +198,7 @@ RDGE.SceneGraph = function (scene) {
         //                  }
         //              ]
         //          },
-        //          
+        //
         //          // final pass must always be last in the list
         //          {
         //              // this final pass has no output, its shader, however, will render its input (the previous pass's output)
@@ -374,7 +374,7 @@ RDGE.SceneGraph = function (scene) {
         // get the distance from object to cameras' 'z' plane
         item.depth = RDGE.vec3.dot(look, toObject);
 
-        // walk down the list of object moving the current item into place until the comparison fails       
+        // walk down the list of object moving the current item into place until the comparison fails
         var i = len - 1;
         var temp = null;
         for (; i > 0; --i) {
@@ -648,7 +648,7 @@ RDGE.SceneGraph.prototype.BuildBVHHelper = function (node) {
                     curNode.world = RDGE.mat4.mul(curNode.local, parentXfrm);
 
                     if (bbox) {
-                        // update bounding box position         
+                        // update bounding box position
                         curNode.bbox_world = bbox.transform(curNode.world);
                     }
 
@@ -805,8 +805,8 @@ RDGE.SceneGraph.prototype.GetBBoxForNode = function (tr) {
 
 RDGE.SceneGraph.prototype._RenderDFHelper = function (renderer, renderProc, node, forceThisProc) {
     renderList = [];
-    renderList[this.bckTypes.BACKGROUND] = []; //BACKGROUND 
-    renderList[this.bckTypes.OPAQUE] = []; //OPAQUE     
+    renderList[this.bckTypes.BACKGROUND] = []; //BACKGROUND
+    renderList[this.bckTypes.OPAQUE] = []; //OPAQUE
     renderList[this.bckTypes.TRANSPARENT] = []; //TRANSPARENT
     renderList[this.bckTypes.ADDITIVE] = []; //ADDITIVE
     renderList[this.bckTypes.TRANSLUCENT] = []; //TRANSLUCENT
@@ -959,7 +959,7 @@ RDGE.SceneGraph.prototype.exportJSON = function () {
         //              return 'replaced';
         //          }
         //      }
-        //    
+        //
         //      if(value && value.baseURI === undefined && typeof value === "object" && !value.lookUpName)
         //          objMap.push(value);
 

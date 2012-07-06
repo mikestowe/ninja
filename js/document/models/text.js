@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 var Montage =   require("montage/core/core").Montage,
     BaseDocumentModel = require("js/document/models/base").BaseDocumentModel;
 ////////////////////////////////////////////////////////////////////////
-//  
+//
 exports.TextDocumentModel = Montage.create(BaseDocumentModel, {
     ////////////////////////////////////////////////////////////////////
     //

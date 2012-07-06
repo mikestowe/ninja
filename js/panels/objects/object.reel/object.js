@@ -85,7 +85,7 @@ exports.Object = Montage.create(Component, {
 
             this.needsDraw = true;
         }
-        
+
     },
 
     _montageMetaData : {

@@ -309,7 +309,7 @@ exports.Layout = Montage.create(Component, {
             {
                 return;
             }
-            
+
             try {
                 if(element.nodeType == 1 && this.application.ninja.currentDocument.inExclusion(element) === -1 ) {
 
@@ -393,5 +393,5 @@ exports.Layout = Montage.create(Component, {
         }
     }
 
-    
+
 });

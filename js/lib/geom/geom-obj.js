@@ -332,7 +332,7 @@ exports.GeomObj = Object.create(Object.prototype, {
 
             this._materialArray.push(fillMaterial);
             this._materialTypeArray.push("fill");
-            
+
             // don't set the value here.  The material editor may set a color directly
             // to the material without setting this value in the obj.  The following
             // lines of code will clobber the value in the material

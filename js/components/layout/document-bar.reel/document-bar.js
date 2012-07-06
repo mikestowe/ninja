@@ -157,7 +157,7 @@ exports.DocumentBar = Montage.create(Component, {
                     this.codeView.classList.add("selected");
                     if(this.designView.classList.contains("selected")) this.designView.classList.toggle("selected");
                 }
-                
+
             } else if(this.type) {
                 this.designView.classList.remove("active");
             }

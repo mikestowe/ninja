@@ -39,7 +39,7 @@ var Montage = require("montage/core/core").Montage,
 exports.NJUtils = Montage.create(Component, {
 
     /* =============== DOM Access ================ */
-    
+
     ///// Quick "getElementById"
     $ : {
         value: function(id, doc) {
@@ -47,7 +47,7 @@ exports.NJUtils = Montage.create(Component, {
             return doc.getElementById(id);
         }
     },
-    
+
     ///// Quick "getElementsByClassName" which also returns as an Array
     ///// Can return as NodeList by passing true as second argument
     $$ : {
@@ -57,7 +57,7 @@ exports.NJUtils = Montage.create(Component, {
             return (asNodeList) ? list : this.toArray(list);
         }
     },
-    
+
     ///// Get child nodes of element
     ///// Omit filter to only return element nodes
     ///// Pass in filter function to minimize collection, or
@@ -70,9 +70,9 @@ exports.NJUtils = Montage.create(Component, {
             return this.toArray(el.childNodes).filter(f);
         }
     },
-    
+
      /* ============= DOM Manipulation ============= */
-    
+
     ///// Creates and returns text node from string
     textNode : {
         value: function(text) {
@@ -95,7 +95,7 @@ exports.NJUtils = Montage.create(Component, {
             return el;
         }
     },
-    
+
     decor: {
         value: function(el, attr) {
             if (typeof attr === 'object') {
@@ -183,7 +183,7 @@ exports.NJUtils = Montage.create(Component, {
             return node;
         }
     },
-    
+
     queryParentSelector : {
         value: function(el, strSelector) {
             // queryParentSelector:
@@ -191,7 +191,7 @@ exports.NJUtils = Montage.create(Component, {
             // and find the first parent that matches selector strSelector (required).
             // Returns: The element that matches, or false if there is no match
             // or if insufficient parameters are supplied.
-            
+
             if ((typeof(el) === "undefined") || (typeof(strSelector) === "undefined")) {
                 // Parameters are required, m'kay?
                 return false;
@@ -199,26 +199,26 @@ exports.NJUtils = Montage.create(Component, {
                 // You also have to use the right parameters.
                 return false;
             }
-            
+
             // First, get an empty clone of the parent.
             var myParent = el.parentNode;
             var clone = myParent.cloneNode(false);
             if (clone === null) {
                 return false;
             }
-            
+
             // If we're at the top of the DOM, our clone will be an htmlDocument.
             // htmlDocument has no tagName.
             if (typeof(clone.tagName) !== "undefined") {
                 // create a bogus div to use as a base for querySelector
                 var temp = document.createElement("div");
-                
+
                 // Append the clone to the bogus div
                 temp.appendChild(clone);
-                
+
                 // Now we can use querySelector!  Sweet.
                 var selectorTest = temp.querySelector(strSelector);
-                
+
                 // What has querySelector returned?
                 if (selectorTest === null) {
                     // No match, so recurse.
@@ -232,7 +232,7 @@ exports.NJUtils = Montage.create(Component, {
                 return false;
             }
         }
-        
+
     },
 
     // Returns the numerical value and unit string from a string.
@@ -257,14 +257,14 @@ exports.NJUtils = Montage.create(Component, {
     },
 
     /* ================= Style methods ================= */
-    
+
     ///// Get computed height of element
     height : {
         value: function(node, pseudo) {
             return node.ownerDocument.defaultView.getComputedStyle(node, pseudo).getPropertyValue('height');
         }
     },
-    
+
     /* ================= Array methods ================= */
 
     ///// Return an array from an array-like object
@@ -273,9 +273,9 @@ exports.NJUtils = Montage.create(Component, {
             return Array.prototype.slice.call(arrayLikeObj);
         }
     },
-    
+
     /* ================= String methods ================= */
-    
+
     ///// Return the last part of a path (e.g. filename)
     getFileNameFromPath : {
         value: function(path) {
@@ -310,9 +310,9 @@ exports.NJUtils = Montage.create(Component, {
         value: function(len) {
             var length;
             len ? length = len : length = 8;
-            
+
             return Uuid.generate().substring(0,length);
         }
     }
-    
+
 });

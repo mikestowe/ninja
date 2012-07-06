@@ -29,8 +29,8 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
 /**
-* This library contains functions for operating on 4x4 matrices. Any JS array 
-* containing at least 16 numeric components can represent a 4x4 matrix. 
+* This library contains functions for operating on 4x4 matrices. Any JS array
+* containing at least 16 numeric components can represent a 4x4 matrix.
 *
 * For example, all of these are valid matrix construction methods:
 *       ...
@@ -39,15 +39,15 @@ POSSIBILITY OF SUCH DAMAGE.
 *       var c = mat4.lookAt( [0, 0, 0], [1, 0, 0], [ 0, 1, 0 ] );
 *       var d = mat4.basis( [1, 0, 0], [0, 1, 0], [ 0, 0, 1 ] );
 *
-* This library is implemented assuming components are arranged 
-* contiguously in memory as such: 
+* This library is implemented assuming components are arranged
+* contiguously in memory as such:
 *       M = [ x0, x1, x2, x3,
 *             y0, y1, y2, y3,
 *             z0, z1, z2, z3,
 *             w0, w1, w2, w3 ];
-* The translation components of a transformation matrix would be stored in 
-* w0, w1, w2, or at indices 12, 13, and 14 of the array, as is consistent 
-* with OpenGL.            
+* The translation components of a transformation matrix would be stored in
+* w0, w1, w2, or at indices 12, 13, and 14 of the array, as is consistent
+* with OpenGL.
 */
 // RDGE namespaces
 var RDGE = RDGE || {};
@@ -81,7 +81,7 @@ RDGE.mat4.toCSSString = function (m, conversionConstant) {
 
 /**
 * RDGE.mat4.verify
-* This function is provided for debugging purposes only. It is not recommended 
+* This function is provided for debugging purposes only. It is not recommended
 * to be used in performance critical areas of the code.
 */
 RDGE.mat4.verify = function (m) {
@@ -231,10 +231,10 @@ RDGE.mat4.angleAxis = function (angle, axis) {
 RDGE.mat4.lookAt = function (eye, at, up) {
     /*
     var w_axis = new RDGE.vec3(posVec.x, posVec.y, posVec.z);
-  
+
     var z_axis = subVec3(targetVec, w_axis);
     z_axis.normalize();
-  
+
     var x_axis = crossVec3(upVec, z_axis);
     x_axis.normalize();
 
@@ -522,7 +522,7 @@ RDGE.mat4._adjoint = function (m) {
 */
 RDGE.mat4.inverse = function (m) {
     // Calculate the 4x4 determinant
-    // If the determinant is zero, 
+    // If the determinant is zero,
     // then the inverse matrix is not unique.
     var det = RDGE.mat4._det4x4(m);
 
@@ -580,7 +580,7 @@ RDGE.mat4.transformPoint = function (m, v) {
             m[1] * x + m[5] * y + m[9] * z + m[13] * w,
             m[2] * x + m[6] * y + m[10] * z + m[14] * w,
             m[3] * x + m[7] * y + m[11] * z + m[15] * w];
-    // 12 adds, 16 multiplies, 16 lookups. 
+    // 12 adds, 16 multiplies, 16 lookups.
 };
 
 /**
@@ -589,7 +589,7 @@ RDGE.mat4.transformPoint = function (m, v) {
 RDGE.mat4.transformVector = function (m, v) {
     m = RDGE.mat4.inverse(m);
     var x = v[0], y = v[1], z = v[2], w = v.length >= 4 ? v[3] : 0.0;
-    // 12 adds, 16 multiplies, 16 lookups. 
+    // 12 adds, 16 multiplies, 16 lookups.
     // transpose multiply
     return [m[0] * x + m[1] * y + m[2] * z + m[3] * w,
                 m[4] * x + m[5] * y + m[6] * z + m[7] * w,

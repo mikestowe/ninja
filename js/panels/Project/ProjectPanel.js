@@ -33,7 +33,7 @@ var Montage = require("montage/core/core").Montage,
     ProjectPanelBase =  require("js/panels/Project/ProjectPanelBase.reel").ProjectPanelBase;
 
 exports.ProjectPanel = Montage.create(PanelBase, {
-   
+
     id: {value: "projectPanel", writable: true, enumerable: true, configurable: true},
     panelName: {value: "Project/Assets", writable: true, enumerable: true, configurable: true},
     panelHeaderID: {value: "projectPanelHeader", writable: true, enumerable: true, configurable: true},

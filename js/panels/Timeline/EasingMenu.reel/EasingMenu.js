@@ -39,7 +39,7 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
     },
 
     /* Begin: Models */
-    
+
     // popup: the initialized component.
     _popup: {
         value: null
@@ -52,7 +52,7 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
             this._popup = newVal
         }
     },
-    
+
     // callingComponent: pointer to the span that called for the menu
     _callingComponent: {
         value: null
@@ -65,7 +65,7 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
             this._callingComponent = newVal;
         }
     },
-    
+
     // anchor: pointer to the anchoring element
     _anchor: {
         value: null
@@ -78,8 +78,8 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
             this._anchor = newVal;
         }
     },
-    
-    
+
+
     _top: {
         value: null
     },
@@ -102,7 +102,7 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
             this._left = newVal;
         }
     },
-    
+
     // currentChoice: The data attribute of the current choice
     _currentChoice: {
         value: "none"
@@ -115,13 +115,13 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
             this._currentChoice = newVal;
         }
     },
-    
+
     _isShown: {
         value: false
     },
-    
+
     /* End: Models */
-    
+
     /* Begin: Draw Cycle */
     willDraw: {
         value: function() {
@@ -129,7 +129,7 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
             document.addEventListener("scroll", this.handleDocumentScroll.bind(this), false);
         }
     },
-    
+
     draw: {
         value: function() {
             // Update the selection classes.
@@ -148,7 +148,7 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
         }
     },
     /* End Draw Cycle */
-    
+
     /* Begin: Controllers */
     show: {
         value: function() {
@@ -158,7 +158,7 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
                 this.popup.modal = false;
                 this.popup.content = EasingMenu.create();
             }
-            
+
             // Show the popup
             this.popup.anchor = this.anchor;
             var position = {};
@@ -182,10 +182,10 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
                 easingSelected.classList.remove("easing-selected");
             }
             event.target.classList.add("easing-selected");
-            
+
             // Set the easing in the span that called us
             this.callingComponent.easing = event.target.dataset.ninjaEase;
-            
+
             // Hide the menu.
             this.popup.hide();
             this._isShow = false;
@@ -198,7 +198,7 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
             }
         }
     }
-    
+
     /* End: Controllers */
-    
+
 });

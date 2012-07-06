@@ -44,7 +44,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
     this._texture;
 
    // the canvas generating the texture map (if there is one)
-    this._srcCanvas;    
+    this._srcCanvas;
     this._srcWorld;
 
     // texture attributes
@@ -52,7 +52,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
         this._texMapName = texMapName.slice();
     else
         this._srcCanvas = texMapName;
-        
+
 
     // set default values for wrap and mips
     if (wrap === undefined)
@@ -64,7 +64,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 
     // cache whether or not the source is animated
     this._isAnimated = false;
-    
+
     // the destination world that will use the texture map
     this._dstWorld = dstWorld;
 
@@ -121,7 +121,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
         }
         else
         {
-            this.loadFromFile();  
+            this.loadFromFile();
         }
     }
 
@@ -218,7 +218,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
     this.loadFromCanvas = function()
     {
         var NJUtils = require("js/lib/NJUtils").NJUtils;
-        
+
         var srcCanvas = this._srcCanvas;
         var wrap = this._wrap;
         var mips = this._mips;
@@ -308,12 +308,12 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 
         return tex;
     }
- 
+
     this.isPowerOfTwo = function(x)
     {
         return (x & (x - 1)) == 0;
     }
- 
+
     this.nextHighestPowerOfTwo = function(x)
     {
         --x;
@@ -322,7 +322,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
         }
         return x + 1;
     }
- 
+
     this.nextLowerPowerOfTwo = function(x)
     {
         return this.nextHighestPowerOfTwo(x) >> 1;
@@ -332,7 +332,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
     {
         if (elt.id && elt.id === id)
             return elt;
- 
+
         if (elt.children)
         {
             var nKids = elt.children.length;

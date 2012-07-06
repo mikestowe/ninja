@@ -381,8 +381,8 @@ exports.Ninja = Montage.create(Component, {
             this.addPropertyChangeListener("appModel.debug", this.toggleDebug, false);
         }
     },
-    
-    
+
+
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
     //TODO: Expand method to allow other browsers for preview
@@ -409,7 +409,7 @@ exports.Ninja = Montage.create(Component, {
         }
     },
     ////////////////////////////////////////////////////////////////////
-    
+
     //TODO: Make into proper component
     _saveOperationPopup: {
         value: null
@@ -418,11 +418,11 @@ exports.Ninja = Montage.create(Component, {
     saveOperationScreen: {
         value: null
     },
-    
+
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
-    
-    
+
+
     handleResize: {
         value: function() {
             this.stage.resizeCanvases = true;
@@ -444,7 +444,7 @@ exports.Ninja = Montage.create(Component, {
     _didDraw: {
         value: false
     },
-    
+
     didDraw: {
         value: function() {
 

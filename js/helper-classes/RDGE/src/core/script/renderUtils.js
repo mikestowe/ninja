@@ -109,10 +109,10 @@ RDGE.renderUtils.createBox = function () {
     return prim;
 };
 
-// 
+//
 // makeSphere
 //
-// Create a sphere with the passed number of latitude and longitude bands and the passed radius. 
+// Create a sphere with the passed number of latitude and longitude bands and the passed radius.
 // Sphere has vertices, normals and texCoords. Create VBOs for each as well as the index array.
 // Return an object with the following properties:
 //
@@ -121,7 +121,7 @@ RDGE.renderUtils.createBox = function () {
 //  vertexObject        WebGLBuffer object for vertices
 //  indexObject         WebGLBuffer object for indices
 //  numIndices          The number of indices in the indexObject
-// 
+//
 RDGE.renderUtils.makeSphere = function (ctx, radius, lats, longs) {
     var geometryData = [];
     var normalData = [];

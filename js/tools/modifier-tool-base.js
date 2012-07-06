@@ -81,7 +81,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             }
         }
     },
-    
+
     _getObjectBeingTracked :
     {
         value: function(hitRec)
@@ -103,7 +103,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             // override in subclasses
         }
     },
-    
+
     initializeSnapping:
     {
         value: function(event)
@@ -222,7 +222,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             }
         }
     },
-    
+
     /*
      *  The parameterization is based on the position of the
      *  snap point in pre-transformed element screen space
@@ -313,7 +313,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 var localPt = [x,y,z];
 
                 globalPt = viewUtils.localToGlobal( localPt,  elt );
- 
+
                 // add in the delta
                 var hitPt = this.GetObjectHitPoint();
                 var scrPt = viewUtils.localToGlobal( hitPt, this._clickedObject );
@@ -375,7 +375,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             viewUtils.pushViewportObj( elt );
             var viewPt = viewUtils.screenToView( scrPt[0], scrPt[1], scrPt[2] );
             viewUtils.popViewportObj();
-            
+
             if(useViewPoint)
             {
                 return viewPt;
@@ -405,7 +405,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             viewUtils.pushViewportObj( elt );
             var viewPt = viewUtils.screenToView( scrPt[0], scrPt[1], scrPt[2] );
             viewUtils.popViewportObj();
-            
+
             if(useViewPoint)
             {
                 return viewPt;
@@ -593,7 +593,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             }
         }
     },
-        
+
     doDraw: {
         value: function(event)
         {
@@ -627,12 +627,12 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             this._mode = 0;
         }
     },
-    
+
     cleanupSnap: {
         value: function() {
             this.mouseDownHitRec = null;
             this.mouseUpHitRec = null;
-            
+
             this._dragPlane = null;
             this._useQuadPt = false;
 
@@ -742,7 +742,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
         }
     },
     //-------------------------------------------------------------------------
-    
+
     //-------------------------------------------------------------------------
     // Routines to run when tool is selected/deselected
     Configure: {
@@ -867,7 +867,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 
             if (!this._isDrawing || (this.application.ninja.selectedElements.length == 1))
             this.DrawHandles(this._delta);
-            
+
             if(this._canSnap)
             {
                 snapManager.drawLastHit();

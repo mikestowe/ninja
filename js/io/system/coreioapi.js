@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 NOTES:
 
     Core API reference in NINJA: this.application.ninja.coreIoApi
-    
+
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// */
 var Montage =       require("montage/core/core").Montage,
@@ -101,7 +101,7 @@ exports.CoreIoApi = Montage.create(Component, {
             this.ninjaLibrary.addEventListener('sync', this, false);
             //Sending library to be synced to chrome
             this.ninjaLibrary.synchronize(e._event.ninjaChromeLibrary, this.chromeFileSystem);
-            
+
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -389,7 +389,7 @@ exports.CoreIoApi = Montage.create(Component, {
                 try {
                     var serviceURL = this._prepareServiceURL(this.fileServiceURL, file.uri),
                         xhr = new XMLHttpRequest();
-                    //  
+                    //
                     xhr.open("GET", serviceURL, false);
                     xhr.setRequestHeader("check-existence-only", "true");
                     xhr.send();
@@ -434,12 +434,12 @@ exports.CoreIoApi = Montage.create(Component, {
                         xhr = new XMLHttpRequest();
                     //
                     xhr.open("POST", serviceURL, false);
-                    //xhr.responseType = "arraybuffer"; 
+                    //xhr.responseType = "arraybuffer";
                     if(file.contentType && file.contentType.length)
                         xhr.setRequestHeader("Content-Type", file.contentType);
                     else
                         xhr.setRequestHeader("Content-Type", "text/plain");
-                    
+
                     if (file.contents)
                         xhr.send(file.contents);
                     else
@@ -700,7 +700,7 @@ exports.CoreIoApi = Montage.create(Component, {
     //      status: int indicating the request HTTP status code
     //              200 - the file was read and its contents were returned
     //              404 - the file does not exist
-    //              500 - unknown server error occurred    
+    //              500 - unknown server error occurred
     readExternalFile: {
         enumerable: false,
         value: function(file) {
@@ -893,7 +893,7 @@ exports.CoreIoApi = Montage.create(Component, {
             var retValue = { success:null, content:null, status:null };
             if(dir && dir.uri && dir.uri.length) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this.directoryServiceURL, dir.uri),    
+                    var serviceURL = this._prepareServiceURL(this.directoryServiceURL, dir.uri),
                         xhr = new XMLHttpRequest();
                     //
                     xhr.open("GET", serviceURL, false);

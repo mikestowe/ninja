@@ -158,7 +158,7 @@ exports.ViewUtils = Montage.create(Component, {
             var stageMat = this.getMatrixFromElement(stage);
 
             var mat = glmat4.multiply( stageMat, objMat, [] );
-            
+
             var viewDir;
             if (localMode)
             {
@@ -183,7 +183,7 @@ exports.ViewUtils = Montage.create(Component, {
                     else
                         plane = vecUtils.vecCross( 3, yVec, xVec );
                     break;
-                    
+
                 case 1:
                     xDot = Math.abs(vecUtils.vecDot(3, yVec, viewDir));
                     zDot = Math.abs(vecUtils.vecDot(3, zVec, viewDir));
@@ -571,7 +571,7 @@ exports.ViewUtils = Montage.create(Component, {
             return localPlane;
         }
     },
-    
+
     parentToChild: {
         value: function( parentPt, child,  passthrough ) {
             var pt = parentPt.slice(0);
@@ -620,7 +620,7 @@ exports.ViewUtils = Montage.create(Component, {
             return childPt;
         }
     },
-    
+
     parentToChildWorld: {
         value: function( parentPt, child ) {
             var pt = parentPt.slice(0);
@@ -694,7 +694,7 @@ exports.ViewUtils = Montage.create(Component, {
             return vec;
         }
     },
-    
+
     getElementBounds: {
         value: function( elt, localSpace ) {
             // optional argument localSpace, if true, puts the top left at (0,0).
@@ -876,7 +876,7 @@ exports.ViewUtils = Montage.create(Component, {
         }
     },
 
-    
+
     unproject: {
         value: function( pt ) {
             if(!this._perspectiveDist)
@@ -968,7 +968,7 @@ exports.ViewUtils = Montage.create(Component, {
             return viewPt;
         }
     },
-    
+
     globalScreenToLocalWorld: {
         value: function( globalPt,  elt ) {
             var objPt = this.globalToLocal( globalPt, elt );
@@ -1341,7 +1341,7 @@ exports.ViewUtils = Montage.create(Component, {
 //      drawLayoutModule
 //
 //  STAGE ACCESSORS:
-//  activeDocument:                 this.application.ninja.currentDocument              
+//  activeDocument:                 this.application.ninja.currentDocument
 //  userContent (stage):            this.application.ninja.currentDocument.model.documentRoot
 //  stageManager:                   this.application.ninja.stage                                // MainApp\js\stage\stage.reel\stage.js
 //  stageManager._canvas:           this.application.ninja.stage.canvas
@@ -1490,6 +1490,6 @@ exports.ViewUtils = Montage.create(Component, {
     }
 
 ///////////////////////////////////////////////////////////////////////////////////
-    
+
 });
 

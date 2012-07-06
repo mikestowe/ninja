@@ -69,7 +69,7 @@ exports.TranslateObject3DTool = Montage.create(Translate3DToolBase, {
             this._dragPlane = null;
             this._clickedOnStage = false;
             var do3DSnap = true;
-            
+
             if(this._handleMode === null)
             {
                 snapManager.enableElementSnap   ( true  );
@@ -158,7 +158,7 @@ exports.TranslateObject3DTool = Montage.create(Translate3DToolBase, {
                     }
 
                     // only do quadrant snapping if the 4 corners of the element are in the drag plane
-                    
+
                     var sign = MathUtils.fpSign( vecUtils.vecDot(3,this._dragPlane,[0,0,1]) + this._dragPlane[3] - 1.0);
                      this._shouldUseQuadPt = (sign == 0);
 

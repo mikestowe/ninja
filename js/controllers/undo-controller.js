@@ -133,7 +133,7 @@ exports.UndoController = Montage.create( Component, {
             return !!this.redoQueue.length;
         }
     },
-    
+
 
     deserializedFromTemplate: {
         value: function(){

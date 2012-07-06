@@ -87,7 +87,7 @@ exports.TextProperties = Montage.create(ToolProperties, {
 //                { value: 7, text: "36pt" }
 //            ];
 //            this.fontSize.contentController = this.fontSizes;
-            
+
             this.fontSelection.items = ["Arial", "Arial Black", "Courier New", "Garamond", "Georgia",  "Open Sans", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"];
             this.fontSize.items = ["8pt","10pt","12pt","14pt","18pt","24pt","36pt"];
             this.tagType.items = ["div", "span", "p", "section", "article", "h1", "h2", "h3", "h4", "h5", "h6"];
@@ -120,7 +120,7 @@ exports.TextProperties = Montage.create(ToolProperties, {
 
         }
     },
-    
+
     handleAlignLeftAction: {
         value: function(e) {
             //this.alignLeft.value = false;

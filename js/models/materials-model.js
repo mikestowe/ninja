@@ -110,7 +110,7 @@ exports.MaterialsModel = Montage.create(Component, {
             return this._materials;
         }
     },
-    
+
     addMaterial: {
         value: function (material) {
             this._materials.push(material);
@@ -152,8 +152,8 @@ exports.MaterialsModel = Montage.create(Component, {
             }
         }
     },
-    
-    getMaterialByShader: 
+
+    getMaterialByShader:
     {
         value: function( shaderName )
         {
@@ -161,7 +161,7 @@ exports.MaterialsModel = Montage.create(Component, {
             if (index >= 0)
                 return this._materials[index];
         }
-    },      
+    },
 
     getIndexOfMaterialByShader: {
         value: function (shaderName) {
@@ -220,13 +220,13 @@ exports.MaterialsModel = Montage.create(Component, {
                 matArray.push( matObj );
             }
 
-            var jObj = 
+            var jObj =
             {
                 'materialLibrary':  1.0,
                 'materials':        matArray
             };
 
-            // prepend an identifiable string to aid parsing when the 
+            // prepend an identifiable string to aid parsing when the
             // material model is loaded.
             var jStr = "materialLibrary;" + JSON.stringify( jObj );
 
@@ -285,7 +285,7 @@ exports.MaterialsModel = Montage.create(Component, {
             // make sure we have some materials to import before doing anything
             var matArray = jObj.materials;
             if (!matArray)  return;
-            
+
             // we replace allmaterials, so remove anything
             // that is currently there.
             this.clearAllMaterials();

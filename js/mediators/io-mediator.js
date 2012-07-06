@@ -159,9 +159,9 @@ exports.IoMediator = Montage.create(Component, {
             204: File exists (Success)
             404: File does not exists (Failure)
             500: Unknown (Probably cloud API not running)
-            
+
             (Below only present if succesfull 204)
-            
+
             Object.content
             Object.extension
             Object.name

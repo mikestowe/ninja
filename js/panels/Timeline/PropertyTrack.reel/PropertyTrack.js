@@ -238,7 +238,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
             }
         }
     },
-    
+
     getCurrentSelectedStyleIndex: {
         value: function(layerIndex) {
             var returnVal = false,

@@ -75,7 +75,7 @@ exports.StyleSheetsView = Montage.create(Component, {
         },
         set: function(label) {
             if(label === this._documentName) { return false; }
-            
+
             this._documentName = label;
             this.needsDraw = true;
         }
@@ -147,7 +147,7 @@ exports.StyleSheetsView = Montage.create(Component, {
 
     /// App event handlers
     /// --------------------------------
-    
+
     handleStyleSheetsReady : {
         value: function(e) {
             this.documentName = this.stylesController.currentDocument.name;
@@ -183,7 +183,7 @@ exports.StyleSheetsView = Montage.create(Component, {
 
     /// Draw cycle
     /// --------------------------------
-    
+
     templateDidLoad : {
         value: function() {
             this.stylesController = this.application.ninja.stylesController;
@@ -206,7 +206,7 @@ exports.StyleSheetsView = Montage.create(Component, {
             if(this.height) {
                 this.styleSheetList.element.style.height = (this.height + this._resizedHeight) + "px";
             }
-            
+
             if(this.documentName && this.documentNameLabel) {
                 this.documentNameLabel.innerHTML = this.documentName;
                 this.documentNameLabel.classList.remove(this.noDocumentLabelClass);

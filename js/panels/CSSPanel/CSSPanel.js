@@ -74,4 +74,4 @@ exports.CSSPanel = Montage.create(PanelBase, {
         value: null,
         writable:true
     }
-}); 
+});

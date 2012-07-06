@@ -324,7 +324,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                             "projectDirectory="+projectDirectory+"\n"+
                             "projectWidth="+projectWidth+"\n"+
                             "projectHeight="+projectHeight;
-            ////////////////////////////////////////////////////////////////////           
+            ////////////////////////////////////////////////////////////////////
             //Template data must be passed during file creation (lots of confusion data here, should be cleaned up…)
             templateData = {id: templateID, name: this.newFileModel.projectTypeData[selectedProjectTypeID].name, type: this.newFileModel.projectTypeData[selectedProjectTypeID].type};
             ////////////////////////////////////////////////////////////////////

@@ -139,7 +139,7 @@ exports.CustomSection = Montage.create(Component, {
         value: function(event) {
             // Change the stage color for now
             //console.log(this, event);
-            
+
             if (event._event.colorMode !== 'gradient' && event._event.color) {
                 ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], 'background-color', [event._event.color.css], "Change", "pi", '');
                 ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], 'background-image', ['none'], "Change", "pi", '');
@@ -150,7 +150,7 @@ exports.CustomSection = Montage.create(Component, {
                 ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], 'background-image', ['none'], "Change", "pi", '');
                 ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], 'background-color', ['none'], "Change", "pi", '');
             }
-            
+
             /*
 if (event._event.color && event._event.color.css) {
                 ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], this.id, [event._event.color.css], "Change", "pi", '');

@@ -31,8 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /**
  * RDGE.vec3 = {}
- * This library contains functions for operating on 3D vectors. Any JS array 
- * containing at least 3 numeric components can represent a 3D vector. 
+ * This library contains functions for operating on 3D vectors. Any JS array
+ * containing at least 3 numeric components can represent a 3D vector.
  *
  * For example, all of these are valid RDGE.vec3 declarations:
  *      var a = [0, 0, 1];
@@ -52,7 +52,7 @@ RDGE.vec3.string = function (v) {
 
 /**
  * RDGE.vec3.verify
- * This function is provided for debugging purposes only. It is not recommended 
+ * This function is provided for debugging purposes only. It is not recommended
  * to be used in performance critical areas of the code.
  */
 RDGE.vec3.verify = function (v) {
@@ -94,7 +94,7 @@ RDGE.vec3.translation = function (m) {
 };
 
 /**
-* RDGE.vec3.basisX = function( m ) 
+* RDGE.vec3.basisX = function( m )
 * description : returns a vector containing the translation vector of m.
 */
 RDGE.vec3.basisX = function (m) {
@@ -102,7 +102,7 @@ RDGE.vec3.basisX = function (m) {
 };
 
 /**
-* RDGE.vec3.basisY = function( m ) 
+* RDGE.vec3.basisY = function( m )
 * description : returns a vector containing the translation vector of m.
 */
 RDGE.vec3.basisY = function (m) {
@@ -110,7 +110,7 @@ RDGE.vec3.basisY = function (m) {
 };
 
 /**
-* RDGE.vec3.basisZ = function( m ) 
+* RDGE.vec3.basisZ = function( m )
 * description : returns a vector containing the translation vector of m.
 */
 RDGE.vec3.basisZ = function (m) {
@@ -155,14 +155,14 @@ RDGE.vec3.random = function (min, max) {
 };
 
 /**
-* RDGE.vec3.xy 
+* RDGE.vec3.xy
 */
 RDGE.vec3.xy = function (v) {
     return [v[0], v[1]];
 };
 
 /**
-* RDGE.vec3.xz 
+* RDGE.vec3.xz
 */
 RDGE.vec3.xz = function (v) {
     return [v[0], v[2]];
@@ -222,7 +222,7 @@ RDGE.vec3.plusEqualMul = function (a, b, s) {
 };
 
 /**
-* RDGE.vec3.scale 
+* RDGE.vec3.scale
 */
 RDGE.vec3.scale = function (v, s) {
     if (s.length !== undefined && s.length >= 3) {
@@ -264,7 +264,7 @@ RDGE.vec3.normalize = function (v) {
 };
 
 /**
-* RDGE.vec3.cross 
+* RDGE.vec3.cross
 */
 RDGE.vec3.cross = function (a, b) {
     return [a[1] * b[2] - b[1] * a[2],
@@ -273,7 +273,7 @@ RDGE.vec3.cross = function (a, b) {
 };
 
 /**
-* RDGE.vec3.dot 
+* RDGE.vec3.dot
 */
 RDGE.vec3.dot = function (a, b) {
     return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];

@@ -52,7 +52,7 @@ exports.OvalTool = Montage.create(ShapeTool, {
             {
                 return;
             }
-            
+
             var left = Math.round(midPt[0] - 0.5*w);
             var top = Math.round(midPt[1] - 0.5*h);
 

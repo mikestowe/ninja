@@ -60,7 +60,7 @@ var HitRecord = exports.HitRecord = Object.create(Object.prototype,
     SNAP_TYPE_ELEMENT_CENTER: { value: 11, writable: true },
     SNAP_TYPE_CONTAINED_ELEMENT: { value: 12, writable: true },
     SNAP_TYPE_UNDEFINED: { value: null, writable: -1 },
-    
+
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////

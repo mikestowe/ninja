@@ -34,7 +34,7 @@ var ToolProperties = require("js/components/tools-properties/tool-properties").T
 
 exports.PanProperties = Montage.create(ToolProperties, {
 
-    
+
     _subPrepare: {
         value: function() {
             //this.divElement.addEventListener("click", this, false);

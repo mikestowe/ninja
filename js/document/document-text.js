@@ -35,7 +35,7 @@ var Montage =           require("montage/core/core").Montage,
     TextDocumentModel = require("js/document/models/text").TextDocumentModel,
     CodeDocumentView =  require("js/document/views/code").CodeDocumentView;
 ////////////////////////////////////////////////////////////////////////
-//  
+//
 exports.TextDocument = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //

@@ -27,13 +27,13 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
- 
+
 /*
 Panel Container - A container for other panels
 */
 var Montage         = require("montage/core/core").Montage,
     Component       = require("montage/ui/component").Component;
- 
+
 exports.PanelContainer = Montage.create(Component, {
 
     panelSplitter: {
@@ -167,19 +167,19 @@ exports.PanelContainer = Montage.create(Component, {
             this.application.localStorage.setItem("panels", this.currentPanelState);
         }
     },
- 
+
     prepareForDraw: {
         value: function() {
             window.addEventListener("resize", this, false);
         }
     },
- 
+
     handlePanelResizing: {
         value: function(e) {
             this._setPanelsSizes(e.target);
         }
     },
-     
+
     handleResize: {
          value: function(e) {
             this._redrawPanels(null, true);
@@ -220,7 +220,7 @@ exports.PanelContainer = Montage.create(Component, {
 
         }
     },
- 
+
     _setPanelsSizes: {
         value: function(panelActivated) {
             var availablePanels = this.panelsAvailable();
@@ -283,7 +283,7 @@ exports.PanelContainer = Montage.create(Component, {
             }
         }
     },
- 
+
     handleAction: {
         value: function(e) {
             var unlockPanels = true;
@@ -315,5 +315,5 @@ exports.PanelContainer = Montage.create(Component, {
             }
         }
     }
- 
+
 });

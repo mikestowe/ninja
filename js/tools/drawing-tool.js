@@ -118,7 +118,7 @@ exports.DrawingTool = Montage.create(ToolBase, {
         value: function (event) {
             var point;
             point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
-            
+
             if (this.drawingFeedback.mode === "Draw3D") {
                 var do3DSnap;
                 this.application.ninja.stage.clearDrawingCanvas();
@@ -154,12 +154,12 @@ exports.DrawingTool = Montage.create(ToolBase, {
                     this.downPoint.y += this._currentDY;
                     this.currentX += this._currentDX;
                     this.currentY += this._currentDY;
-                    
+
                     DrawingToolBase.draw2DRectangle(this.downPoint.x,this.downPoint.y,this.currentX - this.downPoint.x,this.currentY - this.downPoint.y);
                 } else {
                     this._currentX = point.x;
                     this._currentY = point.y;
-               
+
                     DrawingToolBase.draw2DRectangle(this.downPoint.x,this.downPoint.y,point.x - this.downPoint.x,point.y - this.downPoint.y);
                 }
 
@@ -233,7 +233,7 @@ exports.DrawingTool = Montage.create(ToolBase, {
             return DrawingToolBase.getHitRecPos(this.mouseUpHitRec);
         }
     },
-    
+
     getDrawingData: {
         value: function (event) {
             return DrawingToolBase.getCompletePoints(this.mouseDownHitRec, this.mouseUpHitRec);

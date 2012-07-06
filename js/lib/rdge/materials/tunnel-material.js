@@ -94,16 +94,16 @@ var TunnelMaterial = function TunnelMaterial() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var tunnelMaterialDef =
-{'shaders': 
+{'shaders':
     {
         'defaultVShader':"assets/shaders/Basic.vert.glsl",
         'defaultFShader':"assets/shaders/Tunnel.frag.glsl"
     },
     'techniques':
-    { 
+    {
         'default':
         [
             {
@@ -117,7 +117,7 @@ var tunnelMaterialDef =
                     'texcoord'  :   { 'type' : 'vec2' }
                 },
                 // parameters
-                'params' : 
+                'params' :
                 {
                     'u_tex0': { 'type' : 'tex2d' },
                     'u_time' : { 'type' : 'float' },
@@ -126,7 +126,7 @@ var tunnelMaterialDef =
                 },
 
                 // render states
-                'states' : 
+                'states' :
                 {
                     'depthEnable' : true,
                     'offset':[1.0, 0.1]

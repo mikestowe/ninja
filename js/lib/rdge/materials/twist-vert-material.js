@@ -61,7 +61,7 @@ var TwistVertMaterial = function TwistVertMaterial()
     this.isAnimated = function () { return true; };
     this.getShaderDef   = function()    {  return twistVertShaderDef;   };
     this.getTechniqueName   = function() { return 'twistMe' };
-    
+
     this.hasVertexDeformation = function () { return this._hasVertexDeformation; };
     this._hasVertexDeformation = true;
     this._vertexDeformationTolerance = 0.02; // should be a property
@@ -110,7 +110,7 @@ var TwistVertMaterial = function TwistVertMaterial()
         if (this._shader && this._shader.twistMe)
         {
             var technique = this._shader.twistMe;
-           
+
             var angle = this._angle;
             angle += this._deltaTime * this._propValues["speed"];
             if (angle > this._propValues["u_twistAmount"])

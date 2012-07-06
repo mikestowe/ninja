@@ -180,7 +180,7 @@ exports.KeyboardMediator = Montage.create(Component, {
                     this.application.ninja.handleSelectTool({ "detail": this.application.ninja.toolsData.defaultToolsData[this.application.ninja.toolsData.brushToolIndex] });
                     return;
                 }
-                
+
                 // Shortcut for Rectangle Tool is R
                 // unless the user is pressing the command key.
                 // If the user is pressing the command key, they want to refresh the browser.

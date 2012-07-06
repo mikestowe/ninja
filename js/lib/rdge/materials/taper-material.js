@@ -76,7 +76,7 @@ var TaperMaterial = function TaperMaterial()
         // set up the material node
         this._materialNode = RDGE.createMaterialNode("taperMaterial" + "_" + world.generateUniqueNodeID());
         this._materialNode.setShader(this._shader);
- 
+
         this._time = 0;
         if (this._shader && this._shader['default']) {
             this._shader['default'].u_time.set([this._time]);

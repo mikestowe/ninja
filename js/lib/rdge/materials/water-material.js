@@ -181,7 +181,7 @@ var ParisMaterial = function ParisMaterial()
         this._materialNode.setShader(this._shader);
 
         this._time = 0;
-        if (this._shader && this._shader['default']) 
+        if (this._shader && this._shader['default'])
             this._shader['default'].u_time.set([this._time]);
 
         // set the shader values in the shader

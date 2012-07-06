@@ -281,7 +281,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
             if (this.options.useCalligraphic){
                 useCalligraphic = this.options.useCalligraphic;
             }
-            
+
             var ctx = this.application.ninja.stage.drawingContext;//stageManagerModule.stageManager.drawingContext;
             if (ctx === null)
                 throw ("null drawing context in Brushtool::ShowCurrentBrushStrokeOnStage");

@@ -202,7 +202,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             }
         }
     },
-    
+
     pickerModel:{
         enumerable:false,
         writable:true,
@@ -388,7 +388,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                 addressBarEl.value = folderUri;
 
                 //update left drive selection
-                
+
             }
         }
     },

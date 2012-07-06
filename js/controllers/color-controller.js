@@ -27,7 +27,7 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
- 
+
 ////////////////////////////////////////////////////////////////////////
 //
 var Montage =               require("montage/core/core").Montage,
@@ -163,7 +163,7 @@ exports.ColorController = Montage.create(Component, {
     //
     getBorder: {
         value: function (element) {
-            
+
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -262,14 +262,14 @@ exports.ColorController = Montage.create(Component, {
                             c = this.parseCssToColor('rgb('+temp[0]+')');
                             gradient.stops.push({css: c.css, value: c.value, mode: c.mode, position: parseInt(temp[1].replace(/\%/i, ""))});
                         } else if (css.indexOf('rgba') >= 0) {
-                            
+
                             temp = arr[j].split('rgba');
                             temp = temp[1].replace(/\(/i, "");
                             temp = temp.split(')');
                             c = this.parseCssToColor('rgba('+temp[0]+')');
                             gradient.stops.push({css: c.css, value: c.value, mode: c.mode, position: parseInt(temp[1].replace(/\%/i, ""))});
                         }
-                    }   
+                    }
                 } else if (css.indexOf('-webkit-gradient') >= 0) {
                     //Linear gradient
                     gradient.stops = [];

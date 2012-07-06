@@ -220,7 +220,7 @@ var Rectangle = exports.Rectangle = Object.create(Object.prototype, {
             this.setTop( yMin );    this.setHeight( yMax - yMin );
         }
     },
-    
+
 
     translate: {
         value: function( dx, dy )

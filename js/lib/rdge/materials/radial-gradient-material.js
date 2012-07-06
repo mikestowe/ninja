@@ -54,7 +54,7 @@ var RadialGradientMaterial = function RadialGradientMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
-    
+
 
     this.isAnimated     = function ()   {  return false;                        };
     this.getShaderDef   = function()    {  return radialGradientMaterialDef;    };
@@ -126,9 +126,9 @@ var RadialGradientMaterial = function RadialGradientMaterial() {
                                                         0.0,             yScale,  0.0,
                                             xCtr*(1-xScale),  yCtr*(1 - yScale),  1.0
                                     ];
-            
+
             if (this._shader && this._shader['default'])
-                this._shader['default'].u_texTransform.set( this._textureTransform );   
+                this._shader['default'].u_texTransform.set( this._textureTransform );
 
         }
     };

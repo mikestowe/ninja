@@ -103,7 +103,7 @@ var Material = function GLMaterial( world ) {
         return this._materialNode;
     };
 
-    // a material can be animated or not. default is not.  
+    // a material can be animated or not. default is not.
     // Any material needing continuous rendering should override this method
     this.isAnimated = function() {
         return false;
@@ -187,7 +187,7 @@ var Material = function GLMaterial( world ) {
         // get the current values;
         var propNames = [], propValues = [], propTypes = [], propLabels = [];
         this.getAllProperties(propNames, propValues, propTypes, propLabels);
-        
+
         // allocate a new material
         var MaterialLibrary = require("js/models/materials-model").MaterialsModel;
         var newMat = MaterialLibrary.createMaterialByShaderName( this.getShaderName() );
@@ -221,7 +221,7 @@ var Material = function GLMaterial( world ) {
                         case "vector2d":
                             rtnVal = ((valType == "object") && (value.length >= 2));
                             break;
-                            
+
                         case "vector3d":
                             rtnVal = ((valType == "object") && (value.length >= 3));
                             break;
@@ -243,7 +243,7 @@ var Material = function GLMaterial( world ) {
         catch(e)  {
             console.log( "setting invalid material property: " + prop + ", value: " + value );
         }
-        
+
 //      if (!rtnVal && (prop != 'color')) {
 //          console.log( "invalid material property: " + prop + " : " + value );
 //        }
@@ -360,7 +360,7 @@ var Material = function GLMaterial( world ) {
 
         return jObj;
     };
-    
+
     this.importJSON = function (jObj) {
         if (this.getShaderName() != jObj.material) throw new Error("ill-formed material");
         this.setName(jObj.name);
@@ -382,7 +382,7 @@ var Material = function GLMaterial( world ) {
     };
 
     ///////////////////////////////////////////////////////////////////////
-    
+
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////

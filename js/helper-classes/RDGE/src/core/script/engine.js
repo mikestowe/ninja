@@ -36,21 +36,21 @@ var RDGE = RDGE || {};
 RDGE.stateManager = function () {
     // a stack of states
     this.stateStack = [];
-    
+
     // number of states on the stack
     this.stateTop       = undefined;
-    
+
     // the states of the context
     this.RDGEInitState  = null;
     this.RDGERunState   = null;
-    
+
     this.currentState = function () {
         if(this.stateTop != undefined)
             return this.stateStack[this.stateTop];
-            
+
         return null;
     };
-    
+
     /*
      *  Push new IRuntime state - engine executes the new state
      */
@@ -58,10 +58,10 @@ RDGE.stateManager = function () {
         if (state != null && typeof state.Init == 'function') {
             if(this.stateTop != undefined)
                 this.stateStack[this.stateTop].LeaveState();
-            
+
             if(flags == undefined || flags != "noInit")
                 state.Init();
-                
+
             this.stateTop = this.stateStack.push(state) - 1;
         }
     };
@@ -74,9 +74,9 @@ RDGE.stateManager = function () {
         if (state != null) {
             state.Shutdown();
         }
-        
+
         this.stateTop = this.stateTop > 0 ? this.stateTop - 1 : 0;
-        
+
         if (this.stateStack[this.stateTop]) {
             this.stateStack[this.stateTop].ReInit();
         }
@@ -90,7 +90,7 @@ RDGE.stateManager = function () {
             this.PopState();
         }
     };
-    
+
     this.tick = function (dt) {
         if (this.stateStack[this.stateTop] != null) {
             this.stateStack[this.stateTop].Update(dt);
@@ -256,7 +256,7 @@ RDGE.Engine.prototype.init = function (userInitState, userRunState, canvasObject
     globalParamFuncSet = function (param) {
         this.data = param.data;
         this.type =param.type;
-        
+
         this.set = function (v) {
             var len = this.data ? this.data.length : 0;
             for(var i=0;i<len;++i)
@@ -271,10 +271,10 @@ RDGE.Engine.prototype.init = function (userInitState, userRunState, canvasObject
             }
         }
     };
-    
+
     // light manager init before global parameters structure is reconfigured
     this.lightManager = new RDGE.LightManager(RDGE.rdgeGlobalParameters.rdge_lights);
-        
+
     // added getter and setter to global uniforms
     for (var p in RDGE.rdgeGlobalParameters) {
         if (p != "rdge_lights") {
@@ -287,7 +287,7 @@ RDGE.Engine.prototype.init = function (userInitState, userRunState, canvasObject
             }
         }
     }
-    
+
     // initial window
     this.lastWindowWidth = window.innerWidth;
     this.lastWindowHeight = window.innerHeight;
@@ -302,10 +302,10 @@ RDGE.Engine.prototype.init = function (userInitState, userRunState, canvasObject
         { 'name': "u_matShininess", 'value': [128.0] },
         { 'name': "u_matEmission", 'value': [0.0, 0.0, 0.0, 1.0] }
     ];
-    
+
     // startup the contexts
     contextManager.start();
-        
+
     this.initializeComplete = true;
 };
 
@@ -318,12 +318,12 @@ RDGE.Engine.prototype.Shutdown = function () {
 RDGE.Engine.prototype.GlInit = function (canvasObject) {
     // Initialize
     var canvases = document.getElementsByTagName("canvas");
-    
+
     // transverse the canvases and create the contexts
     var numCv = canvases.length;
     for (var cvIdx = 0; cvIdx < numCv; ++cvIdx) {
         var canvas;
-        
+
         // if this canvas has a rdge attribute initialize the render context
         var rdgeAttr = canvases[cvIdx].getAttribute("rdge");
         if (rdgeAttr == "true") {
@@ -338,17 +338,17 @@ RDGE.Engine.prototype.GlInit = function (canvasObject) {
     canvas.addEventListener("webglcontextrestored", contextRestoredHandler, false);
 */
 };
-   
+
 RDGE.Engine.prototype.loadScene = function (name) {
     var url = "assets_web/mesh/" + name + ".json"
-    
+
     // if we are not in the load state than push it on again
     if (contextManager.currentCtx.stateMan.currentState().name == "RunState") {
         contextManager.currentCtx.stateMan.PushState(contextManager.currentCtx.stateMan.RDGEInitState);
         contextManager.currentCtx.loadScene(url, name);
     }
 };
-    
+
 RDGE.Engine.prototype.getScene = function (name) {
     return contextManager.currentCtx.sceneGraphMap[name];
 };
@@ -361,7 +361,7 @@ RDGE.Engine.prototype.AddScene = function (name, sceneGraph) {
 RDGE.Engine.prototype.registerCanvas = function (canvas, runState) {
     if (canvas && this.getContext(canvas.rdgeid))
         return;
- 
+
     canvas.renderer = new RDGE._renderer(canvas);   // create the renderer for the context
     this.canvasToRendererMap[canvas.rdgeid] = canvas; // store the canvas in the context map
     canvas.renderer.id = canvas.rdgeid;

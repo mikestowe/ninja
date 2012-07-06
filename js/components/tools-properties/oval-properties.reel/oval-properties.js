@@ -41,7 +41,7 @@ exports.OvalProperties = Montage.create(ToolProperties, {
         value: null,
         serializable: true
     },
-    
+
     _subPrepare: {
         value: function() {
             //this.divElement.addEventListener("click", this, false);
@@ -66,11 +66,11 @@ exports.OvalProperties = Montage.create(ToolProperties, {
     use3D: {
         get: function() { return this.base._use3D; }
     },
-    
+
     strokeSize: {
         get: function() { return this.base._strokeSize; }
     },
-    
+
     strokeStyle : {
         get: function() {
 //            return this.base._strokeStyle.options[this.base._strokeStyle.value].text;

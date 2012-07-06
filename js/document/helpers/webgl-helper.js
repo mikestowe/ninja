@@ -36,7 +36,7 @@ var Montage =           require("montage/core/core").Montage,
     NJUtils =           require("js/lib/NJUtils").NJUtils,
     GLWorld =           require("js/lib/drawing/world").World;
 ////////////////////////////////////////////////////////////////////////
-//  
+//
 exports.webGlDocumentHelper = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
@@ -68,7 +68,7 @@ exports.webGlDocumentHelper = Montage.create(Component, {
             } else {
                 this._glData = null
             }
-            //  
+            //
             return this._glData;
         },
         //

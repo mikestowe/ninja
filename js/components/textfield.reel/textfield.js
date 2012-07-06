@@ -37,7 +37,7 @@ exports.TextField = Montage.create(Component, {
         enumerable: false,
         value: false
     },
-    
+
     _value: {
         enumerable: false,
         value: ""

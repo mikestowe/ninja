@@ -34,7 +34,7 @@ var Montage =               require("montage/core/core").Montage,
     BaseDocumentModel =     require("js/document/models/base").BaseDocumentModel,
     webGlDocumentHelper =   require("js/document/helpers/webgl-helper").webGlDocumentHelper;
 ////////////////////////////////////////////////////////////////////////
-//  
+//
 exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
     ////////////////////////////////////////////////////////////////////
     //
@@ -49,7 +49,7 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
             this.webGlHelper = webGlDocumentHelper.create();
             //
             this.libs = {montage: false, canvas: false, montageId: null, canvasId: null};
-        }           
+        }
     },
     ////////////////////////////////////////////////////////////////////
     //

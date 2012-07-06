@@ -210,7 +210,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
     },
 
     snap : {
-        value: function (xScreen, yScreen, snap3D,  quadPt) 
+        value: function (xScreen, yScreen, snap3D,  quadPt)
         {
             // force a 3D snap if a 2D snap is requested but the 2D cache has not been initialized
             if (!snap3D && !this._elementCache)  snap3D = true;
@@ -282,7 +282,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
             this.deactivateDragPlane();
 
             this.setLastHit( rtnHit );
-            
+
             //rtnHit.test();        // DEBUG CODE.  REMOVE THIS
             return rtnHit;
         }
@@ -305,7 +305,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
             var stageWorldPt0 = viewUtils.localToStageWorld( localPt0, stage ),
                 stageWorldPt1 = viewUtils.localToStageWorld( localPt1, stage );
             var vec = vecUtils.vecSubtract( 3,  stageWorldPt1, stageWorldPt0 );
-            
+
             var ptOnWorkingPlane = MathUtils.vecIntersectPlane(stageWorldPt0, vec, workingPlane);
 
             var wpMat = drawUtils.getPlaneToWorldMatrix(workingPlane, MathUtils.getPointOnPlane(workingPlane)),
@@ -1023,7 +1023,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
         }
     },
 
-    hSnapToElements : 
+    hSnapToElements :
     {
         value: function( elt, hitRecs, depth, globalScrPt )
         {
@@ -1081,9 +1081,9 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
         }
     },
 
-    snapToElement : 
+    snapToElement :
     {
-        value: function( elt, globalScrPt ) 
+        value: function( elt, globalScrPt )
         {
             if (this.isAvoidedElement(elt) )  return null;
 
@@ -1096,7 +1096,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
             var eltMat = viewUtils.getLocalToGlobalMatrix( elt );
             for (var i=0;  i<4;  i++)
                 bounds3D[i] = viewUtils.localToGlobal2(bounds[i], eltMat);
-            
+
             var hitRec = this.snapToScreenBounds( elt, globalScrPt, bounds, bounds3D );
 
             // see if we can snap to a contained geometry object
@@ -1117,9 +1117,9 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
         }
     },
 
-    snapToScreenBounds : 
+    snapToScreenBounds :
     {
-        value: function( elt, scrPt,  bounds, bounds3D ) 
+        value: function( elt, scrPt,  bounds, bounds3D )
         {
             // push the element as the current viewport element
             viewUtils.pushViewportObj( elt );
@@ -1328,9 +1328,9 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
         }
     },
 
-    hSnapToContainedElements : 
+    hSnapToContainedElements :
     {
-        value: function( eyePt,  dir,  glObj,  hitRec, targetScrPt ) 
+        value: function( eyePt,  dir,  glObj,  hitRec, targetScrPt )
         {
             if (!glObj)  return false;
 
@@ -1345,7 +1345,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
     doSnapToContainedElement:
     {
-        value: function( eyePt,  dir,  glObj,  hitRec, targetScrPt ) 
+        value: function( eyePt,  dir,  glObj,  hitRec, targetScrPt )
         {
             var rtnVal = false;
 
@@ -1443,9 +1443,9 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
         }
     },
 
-    snapToContainedElement : 
+    snapToContainedElement :
     {
-        value: function( eyePt,  dir,  glObj,  hitRec, targetScrPt ) 
+        value: function( eyePt,  dir,  glObj,  hitRec, targetScrPt )
         {
             var rtnVal = false;
             var elt = hitRec.getElement();
@@ -1466,10 +1466,10 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
                 case glObj.GEOM_TYPE_PATH:
                     // Snapping not implemented for these type, but don't throw an error...
                     break;
-                
+
                 case glObj.GEOM_TYPE_BRUSH_STROKE:
                     break; //don't throw error because snapping not yet implemented
-                
+
                 case glObj.GEOM_TYPE_CUBIC_BEZIER:
                     rtnVal = this.doSnapToContainedElement( eyePt,  dir,  glObj,  hitRec, targetScrPt );
                     break;
@@ -1519,7 +1519,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
                     // add the projection matrix
                     var projMat = world.makePerspectiveMatrix();
                     //var projInv = projMat.inverse();
-                    var projInv = glmat4.inverse(projMat, []); 
+                    var projInv = glmat4.inverse(projMat, []);
                     var camInv = world.getCameraMatInverse();
                     //var glToNDC = projMat.multiply( camInv );
                     var glToNDC = glmat4.multiply( projMat, camInv, [] );
@@ -1569,9 +1569,9 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
         }
     },
 
-    GLToView : 
+    GLToView :
     {
-        value: function( glPt, world ) 
+        value: function( glPt, world )
         {
             var projMat = world.makePerspectiveMatrix();
             //var mat = projMat.multiply( world.getCameraMatInverse() );
@@ -2134,7 +2134,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
     drawHit :
     {
-        value: function( hitRec ) 
+        value: function( hitRec )
         {
             if (hitRec)
             {

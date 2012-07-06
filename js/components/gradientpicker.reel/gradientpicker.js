@@ -94,7 +94,7 @@ exports.GradientPicker = Montage.create(Component, {
             this._trackData.width = parseInt(getComputedStyle(this.trackChips).getPropertyCSSValue('width').cssText);
             //TODO: Fix events and remove this hack
             this.trackCover.addEventListener('mouseover', function () {
-                if (!this._updating) {          
+                if (!this._updating) {
                     this.trackCover.style.display = 'none';
                 }
             }.bind(this), true);
@@ -105,7 +105,7 @@ exports.GradientPicker = Montage.create(Component, {
             //
             this.radioRadial.addEventListener('change', function (e){
                 this.mode = 'radial';
-            }.bind(this), true);    
+            }.bind(this), true);
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -139,7 +139,7 @@ exports.GradientPicker = Montage.create(Component, {
             var point = webkitConvertPointFromNodeToPage(this.trackMain, new WebKitPoint(0, 0));
             //Setting position of track to calculate movement
             this._trackData.x = point.x;
-            this._trackData.y = point.y;    
+            this._trackData.y = point.y;
         }
     },
     ////////////////////////////////////////////////////////////////////

@@ -188,7 +188,7 @@ exports.Radio = Montage.create(Component, {
             this.checked = !this.radioField.checked;
         }
     },
-    
+
     draw: {
         value: function() {
             if(!this._valueSyncedWithInputField)

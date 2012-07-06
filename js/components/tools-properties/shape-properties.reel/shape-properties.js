@@ -206,7 +206,7 @@ var ShapeProperties = exports.ShapeProperties = Montage.create(ToolProperties, {
                     this._fillColorCtrlContainer.style["display"] = "none";
                     this._fillColorCtrlContainer.visible = false;
                     this._fillColorCtrlIcon.style["display"] = "none";
-                    this._fillColorCtrlIcon.visible = false;                    
+                    this._fillColorCtrlIcon.visible = false;
                     this.endDivider.style["display"] = "none";
                 } else {
                     this._fillColorCtrlContainer.style["display"] = "";

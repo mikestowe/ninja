@@ -42,7 +42,7 @@ var PulseMaterial = function PulseMaterial()
    // initialize the inherited members
     this.inheritedFrom = Material;
     this.inheritedFrom();
-   
+
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
@@ -160,16 +160,16 @@ var PulseMaterial = function PulseMaterial()
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var pulseMaterialDef =
-{'shaders': 
+{'shaders':
     {
         'defaultVShader':"assets/shaders/Basic.vert.glsl",
         'defaultFShader':"assets/shaders/Pulse.frag.glsl"
     },
     'techniques':
-    { 
+    {
         'default':
         [
             {
@@ -183,7 +183,7 @@ var pulseMaterialDef =
                     'texcoord'  :   { 'type' : 'vec2' }
                 },
                 // parameters
-                'params' : 
+                'params' :
                 {
                     'u_tex0'   : { 'type' : 'tex2d' },
                     'u_time'   : { 'type' : 'float' },
@@ -194,7 +194,7 @@ var pulseMaterialDef =
                 },
 
                 // render states
-                'states' : 
+                'states' :
                 {
                     'depthEnable' : true,
                     'offset':[1.0, 0.1]

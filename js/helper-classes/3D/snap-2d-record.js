@@ -39,14 +39,14 @@ var Snap2DRecord = exports.Snap2DRecord = Object.create(Object.prototype,
     ///////////////////////////////////////////////////////////////////////
     // Constant definitions
     ///////////////////////////////////////////////////////////////////////
-    
+
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
     _elt : { value: null , writable: true},             // the four boundary points for the element in global screen space
     _screenPtArray : { value: null , writable: true},   // snap point in global screen space
     _alignPtArray : { value: null , writable: true},        // points for snap-align.  Kept in working plane space
-    
+
     _localToGlobalMat : { value: null, writable: true },
     _globalToLocalMat : { value: null, writable: true },
 

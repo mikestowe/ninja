@@ -869,7 +869,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                 tmpPt,
                 ssMat,
                 elt;
-            
+
             if (len === 0)  return;
             var context = this._drawingContext;
             if (!context)  return;
@@ -910,7 +910,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
                 this._selectionCtr = MathUtils.getCenterFromBounds(3, bounds3D);
 //              console.log("selection center, single elt case - ", this._selectionCtr);
-                
+
                 this.viewUtils.popViewportObj();
             }
             else
@@ -1328,7 +1328,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             var arrowSize = 50 / zoomFactor;
             var xAxis = [arrowSize,0,0,1];
             //var rO = resMat.multiply(origin);
-            var rO = glmat4.multiplyVec3( resMat, origin, []);  
+            var rO = glmat4.multiplyVec3( resMat, origin, []);
             //var xO = resMat.multiply(xAxis);
             var xO = glmat4.multiplyVec3( resMat, xAxis, []);
 

@@ -332,7 +332,7 @@ var editBindingView = exports.EditBindingView = Montage.create(Component, {
 
         }
     },
-    
+
     draw : {
         value: function() {
             var defaultIconClass = 'object-icon',

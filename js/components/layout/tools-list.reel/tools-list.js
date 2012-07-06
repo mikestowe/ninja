@@ -181,7 +181,7 @@ exports.ToolsList = Montage.create(Component, {
             this.RectTool.options = this.application.ninja.toolsProperties.shapeProperties.rectProperties;
             this.LineTool.options = this.application.ninja.toolsProperties.shapeProperties.lineProperties;
             this.BrushTool.options = this.application.ninja.toolsProperties.brushProperties;
-            
+
             this.EraserTool.options = this.application.ninja.toolsProperties.eraserProperties;
             this.RotateStageTool3D.options = this.application.ninja.toolsProperties.rotateStageProperties;
             this.PanTool.options = this.application.ninja.toolsProperties.panProperties;

@@ -32,11 +32,11 @@ POSSIBILITY OF SUCH DAMAGE.
 var RDGE = RDGE || {};
 RDGE.animation = RDGE.animation || {};
 
-/** 
- * channelController 
- * The channel controller is really the workhorse of the RDGE animation system. It handles timing, 
- * interpolation, and sampling of attributes over the lifetime of an animation. Each channel controller 
- * is responsible for animating a single attribute. The current implementation supports animating vector, 
+/**
+ * channelController
+ * The channel controller is really the workhorse of the RDGE animation system. It handles timing,
+ * interpolation, and sampling of attributes over the lifetime of an animation. Each channel controller
+ * is responsible for animating a single attribute. The current implementation supports animating vector,
  * boolean, or quaternion attributes. This class is used internally by the animation system.
  *
  * @param _animation - the animation resource
@@ -44,16 +44,16 @@ RDGE.animation = RDGE.animation || {};
  *
  */
 RDGE.animation.channelController = function (_animation, _channel) {
-    /** 
-    * this.interpolate - Enable/Disable interpolation between animation frames.  
-    * Typically this should be enabled for smoother looking animation. However, 
-    * there may be applications where interpolation is undesireable. 
+    /**
+    * this.interpolate - Enable/Disable interpolation between animation frames.
+    * Typically this should be enabled for smoother looking animation. However,
+    * there may be applications where interpolation is undesireable.
     */
     this.interpolate = false;
 
-    /** 
-    * this.animation - the animation resource. 
-    * This is where the keyframes for the channel are stored. 
+    /**
+    * this.animation - the animation resource.
+    * This is where the keyframes for the channel are stored.
     */
     this.animation = _animation;
 
@@ -77,20 +77,20 @@ RDGE.animation.channelController = function (_animation, _channel) {
     */
     this.endTime = this.animation.clipEnd / this.animation.framesPerSec;
 
-    /** 
+    /**
     * this.cachedFrame - cached frame index, this optimizes best case scenario computeFrame calls.
     */
     this.cachedFrame = -1;
 
-    /** 
+    /**
     * oneFrameInSecs - stores the interval of a single frame in seconds. This is used for internal calculations.
     */
     oneFrameInSecs = 1.0 / _animation.framesPerSec;
 
-    /** 
-    * this.channel.timeline - stores the animation timeline. 
-    * Currently this is calculated based on the framePerSec settings of the animation. 
-    * Eventually the timeline should be exported with the animation. Individual channels 
+    /**
+    * this.channel.timeline - stores the animation timeline.
+    * Currently this is calculated based on the framePerSec settings of the animation.
+    * Eventually the timeline should be exported with the animation. Individual channels
     * may have different timelines depending on which frames are keyed.
     */
     this.channel.timeline = new Array(this.channel.numKeys + 1);
@@ -98,11 +98,11 @@ RDGE.animation.channelController = function (_animation, _channel) {
         this.channel.timeline[i] = i / this.animation.framesPerSec;
     }
 
-    /** this.computeFrame 
-    * Calculates the current frame index of the animation at the current time. 
-    * In the worst case, this function will perform a binary search for the frame 
-    * whose time is closest to and less than the current time. In the best case, 
-    * the current frame is near the most recently cached frame, or it remains unchanged. 
+    /** this.computeFrame
+    * Calculates the current frame index of the animation at the current time.
+    * In the worst case, this function will perform a binary search for the frame
+    * whose time is closest to and less than the current time. In the best case,
+    * the current frame is near the most recently cached frame, or it remains unchanged.
     */
     this.computeFrame = function () {
         var absTime = this.localTime + this.startTime;
@@ -146,7 +146,7 @@ RDGE.animation.channelController = function (_animation, _channel) {
             }
         }
 
-        // binary search...                 
+        // binary search...
         while (start + 1 < end) {
             var mid = Math.floor((start + end) / 2);
             if (absTime > this.channel.timeline[mid]) {
@@ -262,9 +262,9 @@ RDGE.animation.channelController = function (_animation, _channel) {
     };
 };
 
-/** 
- * track 
- * Each track advances and samples from a list of channel controllers, and is assigned to a scene graph node. 
+/**
+ * track
+ * Each track advances and samples from a list of channel controllers, and is assigned to a scene graph node.
  *
  * @param _animation - the animation resource
  * @param _track - the track id

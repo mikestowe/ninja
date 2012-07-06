@@ -140,7 +140,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
                         } else if (contents[i].isFile){
                             //
                             tracking.total++;
-                            //Copying file 
+                            //Copying file
                             this.chromeApi.fileContent(contents[i].fullPath, function (result) {
                                 //Using binary when copying files to allow images and such to work
                                 var file = this.coreApi.createFile({uri: (fileRoot+result.file.fullPath).replace(/\/\//gi, '/'), contents: result.content});
@@ -197,7 +197,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
                             }
                         }
                     }
-                    
+
                 } else {
                     //No library is present, must copy all
                     for (var j in libs.libraries) {
@@ -223,7 +223,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
                             //Getting file contents
                             xhr = new XMLHttpRequest();
                             xhr.open("GET", tocopylibs[i].path, false);
-                            xhr.responseType = "arraybuffer"; 
+                            xhr.responseType = "arraybuffer";
                             xhr.send();
                             //Checking for status
                             if (xhr.readyState === 4) {
@@ -265,7 +265,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
                                             for (i=0; this.files[i]; i++) {
                                                 xhr = new XMLHttpRequest();
                                                 xhr.open("GET", this.root+this.files[i], false);
-                                                xhr.responseType = "arraybuffer"; 
+                                                xhr.responseType = "arraybuffer";
                                                 xhr.send();
                                                 //Checking for status
                                                 if (xhr.readyState === 4) {
@@ -277,7 +277,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
                                                             this.main.libraryCopied();
                                                         }
                                                     }.bind(this));
-                                                }   
+                                                }
                                             }
                                         }
                                     }.bind(libjson));
@@ -362,7 +362,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
         }
     }
     ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////   
+    ////////////////////////////////////////////////////////////////////
 });
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////

@@ -70,7 +70,7 @@ var FlagMaterial = function FlagMaterial() {
     this._propValues[ this._propNames[3] ] = this._speed;
 
 
-    // a material can be animated or not. default is not.  
+    // a material can be animated or not. default is not.
     // Any material needing continuous rendering should override this method
     this.isAnimated = function()            {  return true;  };
     this.getShaderDef       = function()    {  return flagMaterialDef;  }
@@ -106,16 +106,16 @@ var FlagMaterial = function FlagMaterial() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var flagMaterialDef =
-{'shaders': 
+{'shaders':
     {
         'defaultVShader':"assets/shaders/Flag.vert.glsl",
         'defaultFShader':"assets/shaders/Flag.frag.glsl"
     },
     'techniques':
-    { 
+    {
         'default':
         [
             {
@@ -129,7 +129,7 @@ var flagMaterialDef =
                     'texcoord'  :   { 'type' : 'vec2' }
                 },
                 // parameters
-                'params' : 
+                'params' :
                 {
                     'u_tex0': { 'type' : 'tex2d' },
                     'u_time' : { 'type' : 'float' },
@@ -139,7 +139,7 @@ var flagMaterialDef =
                 },
 
                 // render states
-                'states' : 
+                'states' :
                 {
                     'depthEnable' : true,
                     'offset':[1.0, 0.1]

@@ -37,7 +37,7 @@ exports.DragDropMediator = Montage.create(Component, {
         value: null,
         writable: true
     },
-    
+
     dropDelegate: {
         value: null
     },

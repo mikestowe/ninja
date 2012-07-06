@@ -300,7 +300,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                         return null;
                     }
                     break;
-                
+
 
                 case "strokeMaterial":
                     var sm = el.elementModel.shapeModel.GLGeomObj.getStrokeMaterial();
