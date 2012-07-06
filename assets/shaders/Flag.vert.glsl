@@ -70,6 +70,6 @@ void main()
     v.z *= u_waveHeight;
     v.z -=  2.0*u_waveHeight;
     v.z *= x * 0.09;
-    
+
     gl_Position = u_projMatrix * u_mvMatrix * vec4(v,1.0) ;
 }

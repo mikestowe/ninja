@@ -66,7 +66,7 @@ void main()
 
 //  pass along the geo
     gl_Position = u_projMatrix * vec4(vECPos.xyz, 1.0);
-    
+
     mat4 shadowMat  = u_shadowBiasMatrix*u_projMatrix*u_vShadowLight*u_worldMatrix;
      vShadowCoord    = shadowMat * vec4(vert, 1.0);
 }
@@ -86,10 +86,10 @@ void main()
 
 //  pass along the geo
     gl_Position = u_projMatrix * vec4(vECPos.xyz, 1.0);
-    
+
     //mat4 shadowMat  = u_shadowBiasMatrix*u_projMatrix*u_vShadowLight*u_worldMatrix;
     //vShadowCoord    = shadowMat * vec4(vert, 1.0);
-     
+
     // normal mapping
     vec3 normal = normalize(vNormal.xyz);
 
@@ -97,10 +97,10 @@ void main()
     vec3 r = reflect( vec3(vECPos.xyz - u_eye.xyz), normal);
     float m = 2.0 * length(r);
     vEnvTexCoord = vec2(r.x/m + 0.5, r.y/m + 0.5);
-    
+
     vec3 lightDirection = normalize(u_lightPos - vECPos.xyz);
     vDiffuseIntensity = max(0.0, dot(normal, lightDirection));
-    
+
 }
 
 #endif

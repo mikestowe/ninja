@@ -76,7 +76,7 @@ $sprite_stdbtn_spacing: 4;
 
 .cp_history button
 {
-    
+
     width: 22px;
     height: 22px;
     overflow: hidden;
@@ -106,7 +106,7 @@ $sprite_stdbtn_spacing: 4;
 
 .cp_expanded .cp_inputs button, .cpe_fill, .cpe_stroke, .cpe_fill_icon, .cpe_stroke_icon
 {
-    
+
     width: 22px;
     height: 22px;
     overflow: hidden;
@@ -125,22 +125,22 @@ $sprite_stdbtn_spacing: 4;
 }
 
 .cpe_fill_icon, .cpe_fill_icon
-{   
+{
     @include sprite_background (($sprite_stdbtn_width+$sprite_stdbtn_spacing)*10, 0);
 }
 
 .cpe_fill_icon:hover, .cpe_fill_icon.selected, .cpe_fill_icon:hover, .cpe_fill_icon.selected
-{   
+{
     @include sprite_background (($sprite_stdbtn_width+$sprite_stdbtn_spacing)*11, 0);
 }
 
 .cpe_stroke_icon, .cpe_stroke_icon
-{   
+{
     @include sprite_background (($sprite_stdbtn_width+$sprite_stdbtn_spacing)*8, ($sprite_stdbtn_height+$sprite_stdbtn_spacing)*1);
 }
 
 .cpe_stroke_icon:hover, .cpe_stroke_icon.selected, .cpe_stroke_icon:hover, .cpe_stroke_icon.selected
-{   
+{
     @include sprite_background (($sprite_stdbtn_width+$sprite_stdbtn_spacing)*9, ($sprite_stdbtn_height+$sprite_stdbtn_spacing)*1);
 }
 
@@ -203,7 +203,7 @@ $sprite_stdbtn_spacing: 4;
 {
     float: left;
     margin: 56px 0px 0px -48px;
-    
+
 }
 
 .cp_options button

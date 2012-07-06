@@ -70,6 +70,6 @@ void main()
     pos.z = z;
 
     gl_Position = u_projMatrix * u_mvMatrix * pos;
-        
+
     v_texCoord0 = texcoord;
 }

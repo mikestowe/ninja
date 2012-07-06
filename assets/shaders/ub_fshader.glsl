@@ -51,9 +51,9 @@ uniform mat4 u_viewMatrix;
         uniform vec3    u_light0Atten;
         uniform vec2    u_light0Spot;
         uniform vec4    u_light0Color;
-        uniform vec4    u_light0Specular;       
+        uniform vec4    u_light0Specular;
         varying vec3    v_light0Dir;
-        varying vec3    v_light0SpotDir;        
+        varying vec3    v_light0SpotDir;
     #endif
 
     #if defined( LIGHT_1 )
@@ -63,9 +63,9 @@ uniform mat4 u_viewMatrix;
         uniform vec3    u_light1Atten;
         uniform vec2    u_light1Spot;
         uniform vec4    u_light1Color;
-        uniform vec4    u_light1Specular;       
+        uniform vec4    u_light1Specular;
         varying vec3    v_light1Dir;
-        varying vec3    v_light1SpotDir;        
+        varying vec3    v_light1SpotDir;
     #endif
 
     #if defined( LIGHT_2 )
@@ -75,9 +75,9 @@ uniform mat4 u_viewMatrix;
         uniform vec3    u_light2Atten;
         uniform vec2    u_light2Spot;
         uniform vec4    u_light2Color;
-        uniform vec4    u_light2Specular;       
+        uniform vec4    u_light2Specular;
         varying vec3    v_light2Dir;
-        varying vec3    v_light2SpotDir;        
+        varying vec3    v_light2SpotDir;
     #endif
 
     #if defined( LIGHT_3 )
@@ -87,9 +87,9 @@ uniform mat4 u_viewMatrix;
         uniform vec3    u_light3Atten;
         uniform vec2    u_light3Spot;
         uniform vec4    u_light3Color;
-        uniform vec4    u_light3Specular;       
+        uniform vec4    u_light3Specular;
         varying vec3    v_light3Dir;
-        varying vec3    v_light3SpotDir;        
+        varying vec3    v_light3SpotDir;
     #endif
 #endif
 
@@ -114,7 +114,7 @@ void main() {
     vec4 d = vec4(0.0,0.0,0.0,0.0); // diffuse contribution
     vec4 s = vec4(0.0,0.0,0.0,0.0); // specular contribution
     vec4 l = vec4(0.0,0.0,0.0,0.0); // lighting contribution
-    
+
 #if defined( MATERIAL )
     a += u_ambientColor;
     d += u_diffuseColor;
@@ -124,10 +124,10 @@ void main() {
     d *= texture2D(s_diffuseMap, v_texcoord);
 #endif
 
-#if ( defined( LIGHTING ) || defined( ENVIRONMENT_MAPPING ) )  
+#if ( defined( LIGHTING ) || defined( ENVIRONMENT_MAPPING ) )
     vec3 normal = normalize( v_normal );
 #endif
-    
+
 #if defined( LIGHTING )
     #if defined( NORMAL_MAP )
         vec4 normalMap = texture2D(s_normalMap, v_texcoord);
@@ -136,25 +136,25 @@ void main() {
     #endif // NORMAL_MAP
 
     #if defined( LIGHT_0 )
-        {       
+        {
             // diffuse lighting
             float ldist = length( v_light0Dir.xyz );
             vec3 ldir = v_light0Dir.xyz / ldist;
-                                
+
             float atten = 1.0;
-            
+
             #if ( LIGHT_0 > 0 )
                 atten = 1.0 / ( u_light0Atten.x + u_light0Atten.y * ldist + u_light0Atten.z * ( ldist * ldist ) );
                 #if (LIGHT_0 == 2)
                     float spotAngle = dot( ldir, normalize( v_light0SpotDir ) );
                     float spotAtten = 0.0;
                     if ( spotAngle > u_light0Spot.y ) {
-                        spotAtten = min(1.0, max( 0.0, ( spotAngle - u_light0Spot.y ) / ( u_light0Spot.x - u_light0Spot.y ) ) );   
-                    }           
-                    atten *= spotAtten;     
+                        spotAtten = min(1.0, max( 0.0, ( spotAngle - u_light0Spot.y ) / ( u_light0Spot.x - u_light0Spot.y ) ) );
+                    }
+                    atten *= spotAtten;
                 #endif
             #endif
-                
+
             float ndotl = max( 0.0, dot( normal, ldir ) );
             l += ndotl * atten * u_light0Color;
 
@@ -166,27 +166,27 @@ void main() {
             #endif
         }
     #endif // LIGHT_0
-    
+
     #if defined( LIGHT_1 )
-        {       
+        {
             // diffuse lighting
             float ldist = length( v_light1Dir.xyz );
             vec3 ldir = v_light1Dir.xyz / ldist;
-                                
+
             float atten = 1.0;
-            
+
             #if ( LIGHT_1 > 0 )
                 atten = 1.0 / ( u_light1Atten.x + u_light1Atten.y * ldist + u_light1Atten.z * ( ldist * ldist ) );
                 #if (LIGHT_1 == 2)
                     float spotAngle = dot( ldir, normalize( v_light1SpotDir ) );
                     float spotAtten = 0.0;
                     if ( spotAngle > u_light1Spot.y ) {
-                        spotAtten = min(1.0, max( 0.0, ( spotAngle - u_light1Spot.y ) / ( u_light1Spot.x - u_light1Spot.y ) ) );   
-                    }           
-                    atten *= spotAtten;     
+                        spotAtten = min(1.0, max( 0.0, ( spotAngle - u_light1Spot.y ) / ( u_light1Spot.x - u_light1Spot.y ) ) );
+                    }
+                    atten *= spotAtten;
                 #endif
             #endif
-                
+
             float ndotl = max( 0.0, dot( normal, ldir ) );
             l += ndotl * atten * u_light1Color;
 
@@ -198,27 +198,27 @@ void main() {
             #endif
         }
     #endif // LIGHT_1
-            
+
     #if defined( LIGHT_2 )
-        {       
+        {
             // diffuse lighting
             float ldist = length( v_light2Dir.xyz );
             vec3 ldir = v_light2Dir.xyz / ldist;
-                                
+
             float atten = 1.0;
-            
+
             #if ( LIGHT_2 > 0 )
                 atten = 1.0 / ( u_light2Atten.x + u_light2Atten.y * ldist + u_light2Atten.z * ( ldist * ldist ) );
                 #if (LIGHT_2 == 2)
                     float spotAngle = dot( ldir, normalize( v_light2SpotDir ) );
                     float spotAtten = 0.0;
                     if ( spotAngle > u_light2Spot.y ) {
-                        spotAtten = min(1.0, max( 0.0, ( spotAngle - u_light2Spot.y ) / ( u_light2Spot.x - u_light2Spot.y ) ) );   
-                    }           
-                    atten *= spotAtten;     
+                        spotAtten = min(1.0, max( 0.0, ( spotAngle - u_light2Spot.y ) / ( u_light2Spot.x - u_light2Spot.y ) ) );
+                    }
+                    atten *= spotAtten;
                 #endif
             #endif
-                
+
             float ndotl = max( 0.0, dot( normal, ldir ) );
             l += ndotl * atten * u_light2Color;
 
@@ -228,29 +228,29 @@ void main() {
                 float ndoth = max( 0.0, dot( normal, halfAngleVec ) );
                 s += atten * pow( ndoth, u_specularPower ) * (u_specularColor * u_light2Specular);
             #endif
-        }       
-    #endif // LIGHT_2   
-    
+        }
+    #endif // LIGHT_2
+
     #if defined( LIGHT_3 )
-        {       
+        {
             // diffuse lighting
             float ldist = length( v_light3Dir.xyz );
             vec3 ldir = v_light3Dir.xyz / ldist;
-                                
+
             float atten = 1.0;
-            
+
             #if ( LIGHT_3 > 0 )
                 atten = 1.0 / ( u_light3Atten.x + u_light3Atten.y * ldist + u_light3Atten.z * ( ldist * ldist ) );
                 #if (LIGHT_3 == 2)
                     float spotAngle = dot( ldir, normalize( v_light3SpotDir ) );
                     float spotAtten = 0.0;
                     if ( spotAngle > u_light3Spot.y ) {
-                        spotAtten = min(1.0, max( 0.0, ( spotAngle - u_light3Spot.y ) / ( u_light3Spot.x - u_light3Spot.y ) ) );   
-                    }           
-                    atten *= spotAtten;     
+                        spotAtten = min(1.0, max( 0.0, ( spotAngle - u_light3Spot.y ) / ( u_light3Spot.x - u_light3Spot.y ) ) );
+                    }
+                    atten *= spotAtten;
                 #endif
             #endif
-                
+
             float ndotl = max( 0.0, dot( normal, ldir ) );
             l += ndotl * atten * u_light3Color;
 
@@ -260,8 +260,8 @@ void main() {
                 float ndoth = max( 0.0, dot( normal, halfAngleVec ) );
                 s += atten * pow( ndoth, u_specularPower ) * (u_specularColor * u_light3Specular);
             #endif
-        }       
-    #endif // LIGHT_3       
+        }
+    #endif // LIGHT_3
 #endif // LIGHTING
 
 #if defined( SPECULAR ) && defined( SPECULAR_MAP )
@@ -271,15 +271,15 @@ void main() {
 
 #if defined( ENVIRONMENT_MAP )
     vec3 r = reflect( normalize( vec3(0.0,0.0,1.0) ), normal );
-    float m = 2.0 * length(r);  
+    float m = 2.0 * length(r);
     vec4 envMapColor = texture2D(s_envMap, vec2(r.x/m + 0.5, r.y/m + 0.5)) * u_envReflection;
-    
+
     #if defined( GLOSS_MAP )
-        // this is an option to modulate the alpha channel of the specular map with the environment 
-        // map (i.e. - gloss mapping). 
+        // this is an option to modulate the alpha channel of the specular map with the environment
+        // map (i.e. - gloss mapping).
         envMapColor *= specMapColor.a;
     #endif
-    
+
     s += envMapColor;
 #endif
 

@@ -50,7 +50,7 @@ POSSIBILITY OF SUCH DAMAGE.
     border: none;
     margin: 4px;
 }
- 
+
 
 
 
@@ -68,14 +68,14 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 #pasteBoard {
-    // position: relative; 
+    // position: relative;
     top: 0px;
     left: 0px;
     margin: 0px;
     padding: 0px;
     border: none;
 
-    // overflow: scroll; 
+    // overflow: scroll;
 }
 
 
@@ -113,18 +113,18 @@ POSSIBILITY OF SUCH DAMAGE.
      //  we aren't entirely sure why this works but putting a slight opacity on this div
      // seems to keep the users content from breaking through the overlay canvas and eating mouse events
      // John Mayhew
-      
+
     z-index: 2;
     opacity: 0.99;
-    // height: 1000px; 
-    // width: 2000px; 
+    // height: 1000px;
+    // width: 2000px;
     position: absolute;
     margin: 0px;
     border: none;
     padding: 0px;
     top: 0px;
     left: 0px;
-    // background-color: red; 
+    // background-color: red;
 }
 
 .global3DSettings {
@@ -154,7 +154,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 #iframeContainer iframe {
-   
+
 }
 
 .drawingCanvas {

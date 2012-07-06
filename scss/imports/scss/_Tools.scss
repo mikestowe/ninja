@@ -28,13 +28,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright>
 
-// 
+//
 // Tools.scss
 // For individual tool styles in the toolbar, see toolbar.scss.
-// Note that colors and font definitions go in 
+// Note that colors and font definitions go in
 // _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
-// 
-  
+//
+
 .subToolHolderPanel {
     margin-left: 42px;
     padding: 6px;
@@ -71,8 +71,8 @@ POSSIBILITY OF SUCH DAMAGE.
     width: 18px;
     height: 18px;
     margin-top: 1px;
-    margin-left: 3px;    
-    margin-right: 8px;    
+    margin-left: 3px;
+    margin-right: 8px;
     border: 1px #777 solid;
 }
 
@@ -113,12 +113,12 @@ POSSIBILITY OF SUCH DAMAGE.
     -webkit-transform: scale(1);
 }
 
-//  Added new styling Sub Tool Shape Options 
+//  Added new styling Sub Tool Shape Options
 .textBox {
 
    padding-top:3px;
    min-width:10em;
-   // height:14px; 
+   // height:14px;
    margin-left:5px;
    position:relative;
    margin-top:0px;
@@ -131,7 +131,7 @@ POSSIBILITY OF SUCH DAMAGE.
    float:left;
    display:block;
    background-color: $color-tool-select-bg;
-   // -webkit-border-radius: 0; 
+   // -webkit-border-radius: 0;
    border: 1px solid $color-tool-select-border;
    color:$color-tool-text;
    outline:none;
@@ -147,8 +147,8 @@ POSSIBILITY OF SUCH DAMAGE.
    padding-top:3px;
    margin-left:10px;
    font-size:12px;
-   // display:inline; 
-   // line-height:10px; 
+   // display:inline;
+   // line-height:10px;
    float:left;
    margin-right:5px;
 }
@@ -198,7 +198,7 @@ POSSIBILITY OF SUCH DAMAGE.
 {
     display:inline;
     float:left;
-    // margin-left: 20px; 
+    // margin-left: 20px;
 }
 
 .leftLabel{
@@ -206,7 +206,7 @@ POSSIBILITY OF SUCH DAMAGE.
     float:left;
 }
 
-//  Skin Radio Buttons  
+//  Skin Radio Buttons
 input[type="radio"] {
     -webkit-appearance: none;
     background: $color-radio-bg;
@@ -219,7 +219,7 @@ input[type="radio"] {
     font-size:10px;
     color:$color-radio;
     margin:4px;
-       
+
 }
 
 input[type="radio"]:hover {
@@ -233,7 +233,7 @@ input[type="radio"]:checked {
     border-style: solid;
 }
 
-// disabled settings for checkbox and radiobutton 
+// disabled settings for checkbox and radiobutton
 input[type="radio"]:disabled {
     opacity: .3;
     background: $color-radio-border;
@@ -255,8 +255,8 @@ input[type="radio"]:disabled {
 }
 
 .checkBoxLabel{
-    // margin-top:0.5em; 
-    // margin-left:-5em; 
+    // margin-top:0.5em;
+    // margin-left:-5em;
     padding-top:3px;
     font-size:12px;
     float:left;
@@ -269,7 +269,7 @@ input[type="radio"]:disabled {
     margin-right:4em;
     margin-top:3px;
     height:15px;
-    
+
 }
 .toolButtonColor {
     background: $color-tool-bg;
@@ -283,7 +283,7 @@ input[type="radio"]:disabled {
 .toolButtonSelectedColor {
     border-top-color: $color-tool-border-selected;
     border-left-color: $color-tool-border-selected;
-  //   background: $color-tool-bg-active; 
+  //   background: $color-tool-bg-active;
 
 }
 
@@ -325,7 +325,7 @@ input[type="radio"]:disabled {
   @include marginTop(5px);
 }
 
-//  Begin: styles for tag toolbar  
+//  Begin: styles for tag toolbar
 .tagRadioButtons input.divTool {
     background-image: url("../images/optionsbar/tag/div-tag.png");
 }
@@ -358,7 +358,7 @@ input[type="radio"]:disabled {
 .tagRadioButtons select[disabled].nj-skinned  {
     visibility: hidden;
 }
-//  End: styles for tag toolbar  
+//  End: styles for tag toolbar
 
 #zoomToolOptionHolder .zoomOutToolIcon {
     background-image:url("../images/optionsbar/zoom/zoom_minus.png");
@@ -389,67 +389,67 @@ input[type="radio"]:disabled {
 }
 
 .alignTopIcon {
-    background-image: url("../images/optionsbar/selection/AlignTop.png");  
+    background-image: url("../images/optionsbar/selection/AlignTop.png");
 }
 
 .alignMiddleIcon {
-    background-image: url("../images/optionsbar/selection/AlignMiddle.png");  
+    background-image: url("../images/optionsbar/selection/AlignMiddle.png");
 }
 
 .alignBottomIcon {
-    background-image: url("../images/optionsbar/selection/AlignBottom.png");  
+    background-image: url("../images/optionsbar/selection/AlignBottom.png");
 }
 
 .alignLeftIcon {
-    background-image: url("../images/optionsbar/selection/AlignLeft.png");  
+    background-image: url("../images/optionsbar/selection/AlignLeft.png");
 }
 
 .alignCenterIcon {
-    background-image: url("../images/optionsbar/selection/AlignCenter.png");  
+    background-image: url("../images/optionsbar/selection/AlignCenter.png");
 }
 
 .alignRightIcon {
-    background-image: url("../images/optionsbar/selection/AlignRight.png");  
+    background-image: url("../images/optionsbar/selection/AlignRight.png");
 }
 
 .arrangeBringForwardIcon {
-    background-image: url("../images/optionsbar/selection/ArrangeBringForward.png");  
+    background-image: url("../images/optionsbar/selection/ArrangeBringForward.png");
 }
 
 .arrangeSendBackwardIcon {
-    background-image: url("../images/optionsbar/selection/ArrangeSendBackward.png");  
+    background-image: url("../images/optionsbar/selection/ArrangeSendBackward.png");
 }
 
 .arrangeBringToFrontIcon {
-    background-image: url("../images/optionsbar/selection/ArrangeBringToFront.png");  
+    background-image: url("../images/optionsbar/selection/ArrangeBringToFront.png");
 }
 
 .arrangeSendToBackIcon {
-    background-image: url("../images/optionsbar/selection/ArrangeSendToBack.png");  
+    background-image: url("../images/optionsbar/selection/ArrangeSendToBack.png");
 }
 
 .distTopIcon {
-    background-image: url("../images/optionsbar/selection/DistTop.png");  
+    background-image: url("../images/optionsbar/selection/DistTop.png");
 }
 
 .distMiddleIcon {
-    background-image: url("../images/optionsbar/selection/DistMiddle.png");  
+    background-image: url("../images/optionsbar/selection/DistMiddle.png");
 }
 
 .distBottomIcon {
-    background-image: url("../images/optionsbar/selection/DistBottom.png");  
+    background-image: url("../images/optionsbar/selection/DistBottom.png");
 }
 
 .distLeftIcon {
-    background-image: url("../images/optionsbar/selection/DistLeft.png");  
+    background-image: url("../images/optionsbar/selection/DistLeft.png");
 }
 
 .distCenterIcon {
-    background-image: url("../images/optionsbar/selection/DistCenter.png");  
+    background-image: url("../images/optionsbar/selection/DistCenter.png");
 }
 
 .distRightIcon {
-    background-image: url("../images/optionsbar/selection/DistRight.png");  
+    background-image: url("../images/optionsbar/selection/DistRight.png");
 }
 
 .optionsPenTool {
