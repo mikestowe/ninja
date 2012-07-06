@@ -169,15 +169,15 @@ var PropertyControl = exports.PropertyControl = Montage.create(Component, {
     },
 
     handleEvent:
-	{
-		value:function(event)
-		{
+    {
+        value:function(event)
+        {
             if(event.wasSetByCode) {
                 return;
             }
             this._dispatchPropEvent(event);
-		}
-	},
+        }
+    },
 
     _dispatchPropEvent: {
         value: function(event) {

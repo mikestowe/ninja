@@ -37,19 +37,19 @@ var FlagMaterial = function FlagMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-	this._name = "Flag";
-	this._shaderName = "flag";
+    this._name = "Flag";
+    this._shaderName = "flag";
 
-	this._texMap = 'assets/images/us_flag.png';
+    this._texMap = 'assets/images/us_flag.png';
 
-	this._time = 0.0;
-	this._dTime = 0.1;
+    this._time = 0.0;
+    this._dTime = 0.1;
 
-	this._speed = 1.0;
+    this._speed = 1.0;
     this._waveWidth = 1.0;
     this._waveHeight = 1.0;
 
-	this._hasVertexDeformation = true;
+    this._hasVertexDeformation = true;
 
     // array textures indexed by shader uniform name
     this._glTextures = [];
@@ -57,51 +57,51 @@ var FlagMaterial = function FlagMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Properties
     ///////////////////////////////////////////////////////////////////////
-	// all defined in parent PulseMaterial.js
-	// load the local default value
-	this._propNames			= ["u_tex0",        "u_waveWidth",      "u_waveHeight",		"u_speed" ];
-	this._propLabels		= ["Texture map",   "Wave Width",       "Wave Height",		"Speed" ];
-	this._propTypes			= ["file",          "float",            "float",			"float" ];
-	this._propValues		= [];
+    // all defined in parent PulseMaterial.js
+    // load the local default value
+    this._propNames         = ["u_tex0",        "u_waveWidth",      "u_waveHeight",     "u_speed" ];
+    this._propLabels        = ["Texture map",   "Wave Width",       "Wave Height",      "Speed" ];
+    this._propTypes         = ["file",          "float",            "float",            "float" ];
+    this._propValues        = [];
 
-	this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
+    this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
     this._propValues[ this._propNames[1] ] = this._waveWidth;
     this._propValues[ this._propNames[2] ] = this._waveHeight;
     this._propValues[ this._propNames[3] ] = this._speed;
 
 
-	// a material can be animated or not. default is not.  
-	// Any material needing continuous rendering should override this method
-	this.isAnimated	= function()			{  return true;  };
-	this.getShaderDef		= function()	{  return flagMaterialDef;	}
+    // a material can be animated or not. default is not.  
+    // Any material needing continuous rendering should override this method
+    this.isAnimated = function()            {  return true;  };
+    this.getShaderDef       = function()    {  return flagMaterialDef;  }
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-	// duplcate method requirde
+    // duplcate method requirde
 
-	this.init = function( world )
-	{
-		// save the world
-		if (world)  this.setWorld( world );
+    this.init = function( world )
+    {
+        // save the world
+        if (world)  this.setWorld( world );
 
-		// set up the shader
-		this._shader = new RDGE.jshader();
-		this._shader.def = flagMaterialDef;
-		this._shader.init();
+        // set up the shader
+        this._shader = new RDGE.jshader();
+        this._shader.def = flagMaterialDef;
+        this._shader.init();
 
-		// set up the material node
-		this._materialNode = RDGE.createMaterialNode("flagMaterial" + "_" + world.generateUniqueNodeID());
-		this._materialNode.setShader(this._shader);
+        // set up the material node
+        this._materialNode = RDGE.createMaterialNode("flagMaterial" + "_" + world.generateUniqueNodeID());
+        this._materialNode.setShader(this._shader);
 
-		this._time = 0;
-		if (this._shader && this._shader['default'])
-			this._shader['default'].u_time.set( [this._time] );
+        this._time = 0;
+        if (this._shader && this._shader['default'])
+            this._shader['default'].u_time.set( [this._time] );
 
-		// set the shader values in the shader
-		this.setShaderValues();
-		this.update( 0 );
-	}
+        // set the shader values in the shader
+        this.setShaderValues();
+        this.update( 0 );
+    }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -110,43 +110,43 @@ var FlagMaterial = function FlagMaterial() {
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var flagMaterialDef =
 {'shaders': 
-	{
-		'defaultVShader':"assets/shaders/Flag.vert.glsl",
-		'defaultFShader':"assets/shaders/Flag.frag.glsl"
-	},
-	'techniques':
-	{ 
-		'default':
-		[
-			{
-				'vshader' : 'defaultVShader',
-				'fshader' : 'defaultFShader',
-				// attributes
-				'attributes' :
-				{
-					'vert'  :   { 'type' : 'vec3' },
-					'normal' :  { 'type' : 'vec3' },
-					'texcoord'  :   { 'type' : 'vec2' }
-				},
-				// parameters
-				'params' : 
-				{
-					'u_tex0': { 'type' : 'tex2d' },
-					'u_time' : { 'type' : 'float' },
-					'u_speed' : { 'type' : 'float' },
-					'u_waveWidth'  :   { 'type' : 'float' },
-					'u_waveHeight'  :   { 'type' : 'float' }
-				},
+    {
+        'defaultVShader':"assets/shaders/Flag.vert.glsl",
+        'defaultFShader':"assets/shaders/Flag.frag.glsl"
+    },
+    'techniques':
+    { 
+        'default':
+        [
+            {
+                'vshader' : 'defaultVShader',
+                'fshader' : 'defaultFShader',
+                // attributes
+                'attributes' :
+                {
+                    'vert'  :   { 'type' : 'vec3' },
+                    'normal' :  { 'type' : 'vec3' },
+                    'texcoord'  :   { 'type' : 'vec2' }
+                },
+                // parameters
+                'params' : 
+                {
+                    'u_tex0': { 'type' : 'tex2d' },
+                    'u_time' : { 'type' : 'float' },
+                    'u_speed' : { 'type' : 'float' },
+                    'u_waveWidth'  :   { 'type' : 'float' },
+                    'u_waveHeight'  :   { 'type' : 'float' }
+                },
 
-				// render states
-				'states' : 
-				{
-					'depthEnable' : true,
-					'offset':[1.0, 0.1]
-				}
-			}
-		]
-	}
+                // render states
+                'states' : 
+                {
+                    'depthEnable' : true,
+                    'offset':[1.0, 0.1]
+                }
+            }
+        ]
+    }
 };
 
 FlagMaterial.prototype = new PulseMaterial();

@@ -36,45 +36,45 @@ var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
 var snapManager = require("js/helper-classes/3D/snap-manager");
 var Snap2DRecord = exports.Snap2DRecord = Object.create(Object.prototype,
 {
-	///////////////////////////////////////////////////////////////////////
-	// Constant definitions
-	///////////////////////////////////////////////////////////////////////
-	
-	///////////////////////////////////////////////////////////////////////
-	// Instance variables
-	///////////////////////////////////////////////////////////////////////
-	_elt : { value: null , writable: true},				// the four boundary points for the element in global screen space
-	_screenPtArray : { value: null , writable: true},	// snap point in global screen space
-	_alignPtArray : { value: null , writable: true},		// points for snap-align.  Kept in working plane space
-	
-	_localToGlobalMat : { value: null, writable: true },
-	_globalToLocalMat : { value: null, writable: true },
+    ///////////////////////////////////////////////////////////////////////
+    // Constant definitions
+    ///////////////////////////////////////////////////////////////////////
+    
+    ///////////////////////////////////////////////////////////////////////
+    // Instance variables
+    ///////////////////////////////////////////////////////////////////////
+    _elt : { value: null , writable: true},             // the four boundary points for the element in global screen space
+    _screenPtArray : { value: null , writable: true},   // snap point in global screen space
+    _alignPtArray : { value: null , writable: true},        // points for snap-align.  Kept in working plane space
+    
+    _localToGlobalMat : { value: null, writable: true },
+    _globalToLocalMat : { value: null, writable: true },
 
-	// indices to the extremal align points
-	_xMinArray : { value: [], writable: true },
-	_xMaxArray : { value: [] , writable: true},
-	_yMinArray : { value: [] , writable: true},
-	_yMaxArray : { value: [] , writable: true},
+    // indices to the extremal align points
+    _xMinArray : { value: [], writable: true },
+    _xMaxArray : { value: [] , writable: true},
+    _yMinArray : { value: [] , writable: true},
+    _yMaxArray : { value: [] , writable: true},
 
-	///////////////////////////////////////////////////////////////////////
-	// Property accessors
-	///////////////////////////////////////////////////////////////////////
-	getElement: { value: function()			{  return this._elt;					}},
-	setElement: { value: function()			{  this._elt = e;						}},
+    ///////////////////////////////////////////////////////////////////////
+    // Property accessors
+    ///////////////////////////////////////////////////////////////////////
+    getElement: { value: function()         {  return this._elt;                    }},
+    setElement: { value: function()         {  this._elt = e;                       }},
 
-	getScreenPointArray: { value: function()			{  return this._screenPtArray;			}},
-	getAlignPointArray: { value: function()			{  return this._alignPtArray;			}},
+    getScreenPointArray: { value: function()            {  return this._screenPtArray;          }},
+    getAlignPointArray: { value: function()         {  return this._alignPtArray;           }},
 
-	getLocalToGlobalMatrix: { value: function()			{  return this._localToGlobalMat;		}},
-	setLocalToGlobalMatrix: { value: function()			{  this._localToGlobalMat = l2g.slice(0);	}},
+    getLocalToGlobalMatrix: { value: function()         {  return this._localToGlobalMat;       }},
+    setLocalToGlobalMatrix: { value: function()         {  this._localToGlobalMat = l2g.slice(0);   }},
 
-	getGlobalToLocalMatrix: { value: function()			{  return this._globalToLocalMat;		}},
-	setGlobalToLocalMatrix: { value: function()			{  this._globalToLocalMat = g2l.slice(0);	}},
+    getGlobalToLocalMatrix: { value: function()         {  return this._globalToLocalMat;       }},
+    setGlobalToLocalMatrix: { value: function()         {  this._globalToLocalMat = g2l.slice(0);   }},
 
-	///////////////////////////////////////////////////////////////////////
-	// Methods
-	///////////////////////////////////////////////////////////////////////
-	init: {
+    ///////////////////////////////////////////////////////////////////////
+    // Methods
+    ///////////////////////////////////////////////////////////////////////
+    init: {
         value: function( elt ) {
             this._elt = elt;
             var bounds = viewUtils.getElementViewBounds3D( elt );
@@ -112,7 +112,7 @@ var Snap2DRecord = exports.Snap2DRecord = Object.create(Object.prototype,
         }
     },
 
-	initAlignExtremalPoints: {
+    initAlignExtremalPoints: {
         value: function() {
             var xMinArray = [0],  xMaxArray = [0],
                 yMinArray = [0],  yMaxArray = [0];
@@ -135,7 +135,7 @@ var Snap2DRecord = exports.Snap2DRecord = Object.create(Object.prototype,
         }
     },
 
-	getScreenPoint: {
+    getScreenPoint: {
         value: function( index ) {
             var rtnPt;
             if ((index >= 0) && (index < 4) && (this._screenPtArray != null))
@@ -145,7 +145,7 @@ var Snap2DRecord = exports.Snap2DRecord = Object.create(Object.prototype,
         }
     },
 
-	addAlignPoint: {
+    addAlignPoint: {
         value: function( pt ) {
             this._alignPtArray.push( pt );
         }

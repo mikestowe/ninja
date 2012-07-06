@@ -151,9 +151,9 @@ exports.DrawingTool = Montage.create(ToolBase, {
                     this._currentDY = point.y - this._currentY;
 
                     this.downPoint.x += this._currentDX;
-			        this.downPoint.y += this._currentDY;
+                    this.downPoint.y += this._currentDY;
                     this.currentX += this._currentDX;
-			        this.currentY += this._currentDY;
+                    this.currentY += this._currentDY;
                     
                     DrawingToolBase.draw2DRectangle(this.downPoint.x,this.downPoint.y,this.currentX - this.downPoint.x,this.currentY - this.downPoint.y);
                 } else {

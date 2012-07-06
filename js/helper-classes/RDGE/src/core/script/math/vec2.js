@@ -34,9 +34,9 @@ POSSIBILITY OF SUCH DAMAGE.
 * This library contains functions for operating on 2D vectors. 
 * A 2D vector can be any array containing at least 2 numeric components.  
 * All of the following are valid methods for declaring a RDGE.vec2:
-*		var a = [0, 1];
-*		var b = RDGE.vec2.zero();
-*		var c = RDGE.vec2.up();
+*       var a = [0, 1];
+*       var b = RDGE.vec2.zero();
+*       var c = RDGE.vec2.up();
 */
 var RDGE = RDGE || {};
 RDGE.vec2 = {};

@@ -49,17 +49,17 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
-    this.getName		= function ()	{ return this._name;				};
-    this.getShaderName	= function ()	{ return this._shaderName;			};
-	this.getShaderDef	= function()	{  return radialBlurMaterialDef;	};
-    this.isAnimated		= function ()	{ return true;						};
+    this.getName        = function ()   { return this._name;                };
+    this.getShaderName  = function ()   { return this._shaderName;          };
+    this.getShaderDef   = function()    {  return radialBlurMaterialDef;    };
+    this.isAnimated     = function ()   { return true;                      };
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-    this._propNames  = ["u_tex0",		"u_speed"];
-    this._propLabels = ["Texture map",	"Speed" ];
-    this._propTypes  = ["file",			"float" ];
+    this._propNames  = ["u_tex0",       "u_speed"];
+    this._propLabels = ["Texture map",  "Speed" ];
+    this._propTypes  = ["file",         "float" ];
     this._propValues = [];
 
     this._propValues[this._propNames[0]] = this._defaultTexMap.slice(0);
@@ -126,42 +126,42 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var radialBlurMaterialDef =
 { 'shaders':
-	{
-	    'defaultVShader': "assets/shaders/Basic.vert.glsl",
-	    'defaultFShader': "assets/shaders/radialBlur.frag.glsl"
-	},
+    {
+        'defaultVShader': "assets/shaders/Basic.vert.glsl",
+        'defaultFShader': "assets/shaders/radialBlur.frag.glsl"
+    },
     'techniques':
-	{
-	    'default':
-		[
-			{
-			    'vshader': 'defaultVShader',
-			    'fshader': 'defaultFShader',
-			    // attributes
-			    'attributes':
-				{
-				    'vert': { 'type': 'vec3' },
-				    'normal': { 'type': 'vec3' },
-				    'texcoord': { 'type': 'vec2' }
-				},
-			    // parameters
-			    'params':
-				{
-				    'u_tex0': { 'type': 'tex2d' },
-				    'u_time': { 'type': 'float' },
-				    'u_speed': { 'type': 'float' },
-				    'u_resolution': { 'type': 'vec2' },
-				},
+    {
+        'default':
+        [
+            {
+                'vshader': 'defaultVShader',
+                'fshader': 'defaultFShader',
+                // attributes
+                'attributes':
+                {
+                    'vert': { 'type': 'vec3' },
+                    'normal': { 'type': 'vec3' },
+                    'texcoord': { 'type': 'vec2' }
+                },
+                // parameters
+                'params':
+                {
+                    'u_tex0': { 'type': 'tex2d' },
+                    'u_time': { 'type': 'float' },
+                    'u_speed': { 'type': 'float' },
+                    'u_resolution': { 'type': 'vec2' },
+                },
 
-			    // render states
-			    'states':
-				{
-				    'depthEnable': true,
-				    'offset': [1.0, 0.1]
-				}
-			}
-		]
-	}
+                // render states
+                'states':
+                {
+                    'depthEnable': true,
+                    'offset': [1.0, 0.1]
+                }
+            }
+        ]
+    }
 };
 
 

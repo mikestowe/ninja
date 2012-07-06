@@ -30,15 +30,15 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 			require("montage/core/core").Montage,
-	Component = 		require("montage/ui/component").Component,
-	BaseDocumentView = 	require("js/document/views/base").BaseDocumentView;
+var Montage =           require("montage/core/core").Montage,
+    Component =         require("montage/ui/component").Component,
+    BaseDocumentView =  require("js/document/views/base").BaseDocumentView;
 ////////////////////////////////////////////////////////////////////////
 //
 exports.CodeDocumentView = Montage.create(BaseDocumentView, {
-	////////////////////////////////////////////////////////////////////
-	//
-	hasTemplate: {
+    ////////////////////////////////////////////////////////////////////
+    //
+    hasTemplate: {
         value: false
     },
     ////////////////////////////////////////////////////////////////////
@@ -103,7 +103,7 @@ exports.CodeDocumentView = Montage.create(BaseDocumentView, {
     //Creates a new instance of a code editor
     initializeTextView: {
         value: function(file, textDocument) {
-        	//
+            //
             var type;
             //
             switch(file.extension) {
@@ -146,7 +146,7 @@ exports.CodeDocumentView = Montage.create(BaseDocumentView, {
     //
     show: {
         value: function (callback) {
-        	//
+            //
             this.textViewContainer.style.display = "block";
             //
             if (callback) callback();
@@ -156,7 +156,7 @@ exports.CodeDocumentView = Montage.create(BaseDocumentView, {
     //
     hide: {
         value: function (callback) {
-        	//
+            //
             this.textViewContainer.style.display = "none";
             //
             if (callback) callback();

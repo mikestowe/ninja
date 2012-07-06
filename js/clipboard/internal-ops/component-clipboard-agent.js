@@ -31,8 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
 ////////////////////////////////////////////////////////////////////////
 //
 
-var Montage = 		        require("montage/core/core").Montage,
-    Component = 	require("montage/ui/component").Component;
+var Montage =               require("montage/core/core").Montage,
+    Component =     require("montage/ui/component").Component;
 
 var ComponentsClipboardAgent = exports.ComponentsClipboardAgent = Montage.create(Component, {
 

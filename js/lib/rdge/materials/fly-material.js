@@ -35,13 +35,13 @@ var FlyMaterial = function FlyMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-	this._name = "Fly";
-	this._shaderName = "fly";
+    this._name = "Fly";
+    this._shaderName = "fly";
 
-	this._defaultTexMap = 'assets/images/rocky-normal.jpg';
+    this._defaultTexMap = 'assets/images/rocky-normal.jpg';
 
-	this._time = 0.0;
-	this._dTime = 0.01;
+    this._time = 0.0;
+    this._dTime = 0.01;
 
     // array textures indexed by shader uniform name
     this._glTextures = [];
@@ -49,50 +49,50 @@ var FlyMaterial = function FlyMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Properties
     ///////////////////////////////////////////////////////////////////////
-	// all defined in parent PulseMaterial.js
-	// load the local default value
-	var u_tex0_index	= 0,  u_speed_index = 1;
-	this._propNames			= ["u_tex0",		"u_speed" ];
-	this._propLabels		= ["Texture map",	"Speed" ];
-	this._propTypes			= ["file",			"float" ];
-	this._propValues		= [];
+    // all defined in parent PulseMaterial.js
+    // load the local default value
+    var u_tex0_index    = 0,  u_speed_index = 1;
+    this._propNames         = ["u_tex0",        "u_speed" ];
+    this._propLabels        = ["Texture map",   "Speed" ];
+    this._propTypes         = ["file",          "float" ];
+    this._propValues        = [];
     this._propValues[this._propNames[u_tex0_index]] = this._defaultTexMap.slice(0);
     this._propValues[this._propNames[u_speed_index]] = 1.0;
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this.isAnimated			= function()			{  return true;		};
-	this.getShaderDef		= function()			{  return flyMaterialDef;	};
+    this.isAnimated         = function()            {  return true;     };
+    this.getShaderDef       = function()            {  return flyMaterialDef;   };
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-	// duplcate method requirde
+    // duplcate method requirde
 
-	this.init = function( world ) {
-		// save the world
-		if (world)  this.setWorld( world );
+    this.init = function( world ) {
+        // save the world
+        if (world)  this.setWorld( world );
 
-		// set up the shader
-		this._shader = new RDGE.jshader();
-		this._shader.def = flyMaterialDef;
-		this._shader.init();
+        // set up the shader
+        this._shader = new RDGE.jshader();
+        this._shader.def = flyMaterialDef;
+        this._shader.init();
 
-		// set up the material node
-		this._materialNode = RDGE.createMaterialNode("flyMaterial" + "_" + world.generateUniqueNodeID());
-		this._materialNode.setShader(this._shader);
+        // set up the material node
+        this._materialNode = RDGE.createMaterialNode("flyMaterial" + "_" + world.generateUniqueNodeID());
+        this._materialNode.setShader(this._shader);
 
-		this._time = 0;
-		if (this._shader && this._shader['default']) {
-			this._shader['default'].u_time.set( [this._time] );
+        this._time = 0;
+        if (this._shader && this._shader['default']) {
+            this._shader['default'].u_time.set( [this._time] );
         }
 
-		// set the shader values in the shader
+        // set the shader values in the shader
         this.setShaderValues();
-		this.setResolution( [world.getViewportWidth(),world.getViewportHeight()] );
-		this.update( 0 );
-	};
+        this.setResolution( [world.getViewportWidth(),world.getViewportHeight()] );
+        this.update( 0 );
+    };
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -102,42 +102,42 @@ var FlyMaterial = function FlyMaterial() {
 var flyMaterialDef =
 {
     'shaders': 
-	{
-		'defaultVShader':"assets/shaders/Basic.vert.glsl",
-		'defaultFShader':"assets/shaders/Fly.frag.glsl"
-	},
-	'techniques':
-	{ 
-		'default':
-		[
-			{
-				'vshader' : 'defaultVShader',
-				'fshader' : 'defaultFShader',
-				// attributes
-				'attributes' :
-				{
-					'vert'  :   { 'type' : 'vec3' },
-					'normal' :  { 'type' : 'vec3' },
-					'texcoord'  :   { 'type' : 'vec2' }
-				},
-				// parameters
-				'params' : 
-				{
-					'u_tex0': { 'type' : 'tex2d' },
-					'u_time' : { 'type' : 'float' },
-					'u_speed'  : { 'type' : 'float' },
-					'u_resolution'  :   { 'type' : 'vec2' },
-				},
+    {
+        'defaultVShader':"assets/shaders/Basic.vert.glsl",
+        'defaultFShader':"assets/shaders/Fly.frag.glsl"
+    },
+    'techniques':
+    { 
+        'default':
+        [
+            {
+                'vshader' : 'defaultVShader',
+                'fshader' : 'defaultFShader',
+                // attributes
+                'attributes' :
+                {
+                    'vert'  :   { 'type' : 'vec3' },
+                    'normal' :  { 'type' : 'vec3' },
+                    'texcoord'  :   { 'type' : 'vec2' }
+                },
+                // parameters
+                'params' : 
+                {
+                    'u_tex0': { 'type' : 'tex2d' },
+                    'u_time' : { 'type' : 'float' },
+                    'u_speed'  : { 'type' : 'float' },
+                    'u_resolution'  :   { 'type' : 'vec2' },
+                },
 
-				// render states
-				'states' : 
-				{
-					'depthEnable' : true,
-					'offset':[1.0, 0.1]
-				}
-			}
-		]
-	}
+                // render states
+                'states' : 
+                {
+                    'depthEnable' : true,
+                    'offset':[1.0, 0.1]
+                }
+            }
+        ]
+    }
 };
 
 FlyMaterial.prototype = new PulseMaterial();

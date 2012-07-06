@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
  </notice> */
 
 /**
-	@module components/core/class-uuid
+    @module components/core/class-uuid
     @requires montage/core/core
 */
 /**

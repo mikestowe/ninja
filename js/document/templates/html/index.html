@@ -31,34 +31,34 @@ POSSIBILITY OF SUCH DAMAGE.
  
  
 <!-- 
-	NOTE(s):
-	All elements in the head of the document to be exclude from I/O
-	must set the 'data-ninja-template'
-	data-ninja-template="true"
+    NOTE(s):
+    All elements in the head of the document to be exclude from I/O
+    must set the 'data-ninja-template'
+    data-ninja-template="true"
 -->
 
 <!-- TODO: Determine if loading Montage is always needed or if it could be done author-time or on file open -->
 
 <html>
 
-	<head>
+    <head>
         
-       	<style type="text/css" id="nj-stage-stylesheet" data-ninja-template="true">
-       		* {
+        <style type="text/css" id="nj-stage-stylesheet" data-ninja-template="true">
+            * {
                 -webkit-animation: none !important;
-        		-webkit-transition-duration: 0s !important;
-    			-webkit-animation-duration: 0s !important;
-    			-webkit-animation-name: none !important;
+                -webkit-transition-duration: 0s !important;
+                -webkit-animation-duration: 0s !important;
+                -webkit-animation-name: none !important;
                 -webkit-animation-fill-mode: none !important;
-			}
-			
-			body {
-				margin: 0;
-    			padding: 0;
-				position: absolute;
-				-webkit-transform-style: preserve-3d;
-				-webkit-transform: perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-			}
+            }
+            
+            body {
+                margin: 0;
+                padding: 0;
+                position: absolute;
+                -webkit-transform-style: preserve-3d;
+                -webkit-transform: perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+            }
 
             html {
                 overflow: scroll;
@@ -68,18 +68,18 @@ POSSIBILITY OF SUCH DAMAGE.
                 width: 100%;
                 height: 100%;
             }
-			
-			ninjaloadinghack {
-				display: none;
-			}
+            
+            ninjaloadinghack {
+                display: none;
+            }
 
-			.active-element-outline {
-    			outline: #adff2f solid 2px;
-			}
+            .active-element-outline {
+                outline: #adff2f solid 2px;
+            }
 
-			.nj-preset-transition {
-				-webkit-transition: all 450ms linear !important;
-			}
+            .nj-preset-transition {
+                -webkit-transition: all 450ms linear !important;
+            }
 
             .nj-element-highlight {
                  outline: 4px solid #ff0000;
@@ -132,9 +132,9 @@ POSSIBILITY OF SUCH DAMAGE.
                 }
             });
 
-    	</script>
+        </script>
     
-    	<script type="text/javascript" data-package="../app" src="../../../../node_modules/montage/montage.js" data-ninja-template="true"></script>
+        <script type="text/javascript" data-package="../app" src="../../../../node_modules/montage/montage.js" data-ninja-template="true"></script>
 
         <script type="text/montage-serialization" data-ninja-template="true">
         {
@@ -144,8 +144,8 @@ POSSIBILITY OF SUCH DAMAGE.
         }
         </script>
 
-	</head>
+    </head>
 
-	<body></body>
+    <body></body>
 
 </html>

@@ -38,7 +38,7 @@ var Texture = require("js/lib/rdge/texture").Texture;
 var TaperMaterial = function TaperMaterial()
 {
     // initialize the inherited members
-	this.inheritedFrom = Material;
+    this.inheritedFrom = Material;
     this.inheritedFrom();
 
     ///////////////////////////////////////////////////////////////////////
@@ -55,8 +55,8 @@ var TaperMaterial = function TaperMaterial()
     this.getShaderName = function () { return this._shaderName; };
 
     this.isAnimated = function () { return true; };
-	this.getShaderDef	= function()	{  return taperShaderDef;	};
-	this.getTechniqueName	= function() {  return 'colorMe'  };
+    this.getShaderDef   = function()    {  return taperShaderDef;   };
+    this.getTechniqueName   = function() {  return 'colorMe'  };
 
     this.hasVertexDeformation = function () { return this._hasVertexDeformation; };
     this._hasVertexDeformation = true;
@@ -117,7 +117,7 @@ var TaperMaterial = function TaperMaterial()
             }
 
             var t1 = this._propValues["u_limit1"] - this._deltaTime,
-				t2 = this._propValues["u_limit2"] - this._deltaTime;
+                t2 = this._propValues["u_limit2"] - this._deltaTime;
 
 
             this._shader.colorMe["u_limit1"].set([t1]);
@@ -138,31 +138,31 @@ taperShaderDef = {
     },
     'techniques': { // rendering control
         'colorMe': [ // simple color pass
-			{
-			'vshader': 'defaultVShader',
-			'fshader': 'defaultFShader',
+            {
+            'vshader': 'defaultVShader',
+            'fshader': 'defaultFShader',
 
-			// attributes
-			'attributes':
-				 {
-				     'vert': { 'type': 'vec3' },
-				     'normal': { 'type': 'vec3' },
-				     'texcoord': { 'type': 'vec2' }
-				 },
-			// attributes
-			'params':
-				 {
-				     'u_limit1': { 'type': 'float' },
-				     'u_limit2': { 'type': 'float' },
-				     'u_limit3': { 'type': 'float' },
-				     'u_minVal': { 'type': 'float' },
-				     'u_maxVal': { 'type': 'float' },
-				     'u_center': { 'type': 'float' },
-				     'u_taperAmount': { 'type': 'float' },
-				     'u_speed': { 'type': 'float' }
-				 }
+            // attributes
+            'attributes':
+                 {
+                     'vert': { 'type': 'vec3' },
+                     'normal': { 'type': 'vec3' },
+                     'texcoord': { 'type': 'vec2' }
+                 },
+            // attributes
+            'params':
+                 {
+                     'u_limit1': { 'type': 'float' },
+                     'u_limit2': { 'type': 'float' },
+                     'u_limit3': { 'type': 'float' },
+                     'u_minVal': { 'type': 'float' },
+                     'u_maxVal': { 'type': 'float' },
+                     'u_center': { 'type': 'float' },
+                     'u_taperAmount': { 'type': 'float' },
+                     'u_speed': { 'type': 'float' }
+                 }
             }
-		]
+        ]
     }
 };
 

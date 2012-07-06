@@ -28,23 +28,23 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
-var Montage = 	require("montage/core/core").Montage,
+var Montage =   require("montage/core/core").Montage,
     ShapeTool = require("js/tools/ShapeTool").ShapeTool,
     DrawingToolBase = require("js/tools/drawing-tool-base").DrawingToolBase,
     NJUtils = require("js/lib/NJUtils").NJUtils,
     TagTool = require("js/tools/TagTool").TagTool,
-    ShapesController = 	require("js/controllers/elements/shapes-controller").ShapesController,
+    ShapesController =  require("js/controllers/elements/shapes-controller").ShapesController,
     ShapeModel = require("js/models/shape-model").ShapeModel;
 
 var Line = require("js/lib/geom/line").Line;
 var MaterialsModel = require("js/models/materials-model").MaterialsModel;
 
 exports.LineTool = Montage.create(ShapeTool, {
-	_toolID: { value: "lineTool" },
-	_imageID: { value: "lineToolImg" },
-	_toolImageClass: { value: "lineToolUp" },
-	_selectedToolImageClass: { value: "lineToolDown" },
-	_toolTipText: { value: "Line Tool (L)" },
+    _toolID: { value: "lineTool" },
+    _imageID: { value: "lineToolImg" },
+    _toolImageClass: { value: "lineToolUp" },
+    _selectedToolImageClass: { value: "lineToolDown" },
+    _toolTipText: { value: "Line Tool (L)" },
 
     _tmpDrawIndex : { value : 1, writable:true},
 
@@ -174,9 +174,9 @@ exports.LineTool = Montage.create(ShapeTool, {
                 dx,
                 dy;
             
-			if (hitRec0 && hitRec1) {
-				var p0 = hitRec0.getLocalPoint(),
-					p1 = hitRec1.getLocalPoint();
+            if (hitRec0 && hitRec1) {
+                var p0 = hitRec0.getLocalPoint(),
+                    p1 = hitRec1.getLocalPoint();
 
                 dx = Math.floor(p0[0] - p1[0]);
                 dy = Math.floor(p0[1] - p1[1]);
@@ -246,7 +246,7 @@ exports.LineTool = Montage.create(ShapeTool, {
     },
 
     RenderShape: {
-		value: function (w, h, planeMat, midPt, canvas, slope, xAdj, yAdj)
+        value: function (w, h, planeMat, midPt, canvas, slope, xAdj, yAdj)
         {
 
             var strokeStyleIndex = this.options.strokeStyleIndex;
@@ -268,7 +268,7 @@ exports.LineTool = Montage.create(ShapeTool, {
                 {
                     strokeMaterial = Object.create(MaterialsModel.getMaterial(strokeM));
                 }
-				strokeColor = ShapesController.getMaterialColor(strokeM) || strokeColor;
+                strokeColor = ShapesController.getMaterialColor(strokeM) || strokeColor;
             }
 
             var world = this.getGLWorld(canvas, this.options.use3D);

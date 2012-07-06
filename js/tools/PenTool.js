@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
 var ShapeTool = require("js/tools/ShapeTool").ShapeTool;
-var ShapesController = 	require("js/controllers/elements/shapes-controller").ShapesController;
+var ShapesController =  require("js/controllers/elements/shapes-controller").ShapesController;
 var DrawingToolBase = require("js/tools/drawing-tool-base").DrawingToolBase;
 var defaultEventManager = require("montage/core/event/event-manager").defaultEventManager;
 var Montage = require("montage/core/core").Montage;

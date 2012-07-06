@@ -40,29 +40,29 @@ var World = require("js/lib/drawing/world").World;
 exports.ShapeTool = Montage.create(DrawingTool, {
     drawingFeedback: { value: { mode: "Draw3D", type: "rectangle" } },
 
-	_targetedElement: { value: null, writable: true },
+    _targetedElement: { value: null, writable: true },
 
-	_mouseDownHitRec: { value: null, writable: true, enumerable: true, configurable: true },
-	_mouseUpHitRec: { value: null, writable: true, enumerable: true, configurable: true },
+    _mouseDownHitRec: { value: null, writable: true, enumerable: true, configurable: true },
+    _mouseUpHitRec: { value: null, writable: true, enumerable: true, configurable: true },
 
-	_canvasCounter: {value: 0,  writable: true,  enumerable: true, configurable: true },
+    _canvasCounter: {value: 0,  writable: true,  enumerable: true, configurable: true },
 
-	HandleLeftButtonDown:
-	{
-		value: function (event)
-		{
-			if(this._canDraw) {
-				this._isDrawing = true;
-			}
+    HandleLeftButtonDown:
+    {
+        value: function (event)
+        {
+            if(this._canDraw) {
+                this._isDrawing = true;
+            }
 
             this.startDraw(event);
-		}
-	},
+        }
+    },
 
     HandleMouseMove:
-	{
-		value: function (event)
-		{
+    {
+        value: function (event)
+        {
 
             /* TAG */
             if(this.isDrawing) {
@@ -77,7 +77,7 @@ exports.ShapeTool = Montage.create(DrawingTool, {
         }
     },
 
-	HandleLeftButtonUp: {
+    HandleLeftButtonUp: {
         value: function (event) {
             var canvas, w, h;
             this.drawData = this.getDrawingData();
@@ -137,67 +137,67 @@ exports.ShapeTool = Montage.create(DrawingTool, {
         }
     },
 
-	AddCustomFeedback: {
-		value: function (event) {
-			NJevent("enableStageMove");
+    AddCustomFeedback: {
+        value: function (event) {
+            NJevent("enableStageMove");
 
             this.application.ninja.stage.stageDeps.snapManager.setupDragPlaneFromPlane( workingPlane );
-		}
-	},
+        }
+    },
 
-	RemoveCustomFeedback: {
-		value: function (event) {
-			if (this._targetedElement) {
+    RemoveCustomFeedback: {
+        value: function (event) {
+            if (this._targetedElement) {
                 this._targetedElement.classList.remove("active-element-outline");
-				this._targetedElement = null;
-			}
+                this._targetedElement = null;
+            }
 
-			NJevent("disableStageMove");
+            NJevent("disableStageMove");
 
             this.application.ninja.stage.stageDeps.snapManager.clearDragPlane();
-		}
-	},
+        }
+    },
 
-	/** Show a border when mousing
-	 * over existing canvas elements to signal to the user that
-	 * the drawing operation will act on the targeted canvas.
-	**/
-	_showFeedbackOnMouseMove: {
-		value: function (event) {
-			// TODO - This call is causing the canvas to redraw 3 times per mouse move
-			var targetedObject = this.application.ninja.stage.getElement(event, true);
+    /** Show a border when mousing
+     * over existing canvas elements to signal to the user that
+     * the drawing operation will act on the targeted canvas.
+    **/
+    _showFeedbackOnMouseMove: {
+        value: function (event) {
+            // TODO - This call is causing the canvas to redraw 3 times per mouse move
+            var targetedObject = this.application.ninja.stage.getElement(event, true);
 
-			if (targetedObject) {
-				if((targetedObject.nodeName === "CANVAS") && !ShapesController.isElementAShape(targetedObject))
-				{
-					if (targetedObject !== this._targetedElement) {
-						if(this._targetedElement)
-						{
+            if (targetedObject) {
+                if((targetedObject.nodeName === "CANVAS") && !ShapesController.isElementAShape(targetedObject))
+                {
+                    if (targetedObject !== this._targetedElement) {
+                        if(this._targetedElement)
+                        {
                             this._targetedElement.classList.remove("active-element-outline");
-						}
-						this._targetedElement = targetedObject;
+                        }
+                        this._targetedElement = targetedObject;
                         this._targetedElement.classList.add("active-element-outline");
-					}
-				}
-				else if (this._targetedElement) {
-					this._targetedElement.classList.remove("active-element-outline");
-					this._targetedElement = null;
-				}
-			}
-			else if (this._targetedElement) {
-				this._targetedElement.classList.remove("elem-red-outline");
-				this._targetedElement = null;
-			}
-		}
-	},
+                    }
+                }
+                else if (this._targetedElement) {
+                    this._targetedElement.classList.remove("active-element-outline");
+                    this._targetedElement = null;
+                }
+            }
+            else if (this._targetedElement) {
+                this._targetedElement.classList.remove("elem-red-outline");
+                this._targetedElement = null;
+            }
+        }
+    },
 
-	RenderShape:
-	{
-		value: function (w, h, planeMat, midPt)
-		{
-			// Override in subclasses
-		}
-	},
+    RenderShape:
+    {
+        value: function (w, h, planeMat, midPt)
+        {
+            // Override in subclasses
+        }
+    },
 
     getGLWorld: {
         value: function (canvas, use3D)
@@ -214,26 +214,26 @@ exports.ShapeTool = Montage.create(DrawingTool, {
         }
     },
 
-	// We can draw on an existing canvas unless it has only a single shape object
-	_useExistingCanvas: {
-		value: function()
-		{
-			var target;
-			if (this._targetedElement && (this._targetedElement.nodeName === "CANVAS") && !ShapesController.isElementAShape(this._targetedElement))
-				target = this._targetedElement;
-			else
-			{
-				var container = this.application.ninja.currentDocument.model.domContainer;
-				if (container && (container.nodeName === "CANVAS"))
-				{
-					target = container;
-					this._targetedElement = target;
-				}
-			}
+    // We can draw on an existing canvas unless it has only a single shape object
+    _useExistingCanvas: {
+        value: function()
+        {
+            var target;
+            if (this._targetedElement && (this._targetedElement.nodeName === "CANVAS") && !ShapesController.isElementAShape(this._targetedElement))
+                target = this._targetedElement;
+            else
+            {
+                var container = this.application.ninja.currentDocument.model.domContainer;
+                if (container && (container.nodeName === "CANVAS"))
+                {
+                    target = container;
+                    this._targetedElement = target;
+                }
+            }
 
-			return target;
-		}
-	},
+            return target;
+        }
+    },
 
     setColor: {
         value: function(canvas, color, isFill, toolId)

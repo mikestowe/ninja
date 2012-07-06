@@ -60,17 +60,17 @@ var LinePlaneIntersectRec = exports.LinePlaneIntersectRec = Object.create(Object
     getElementPlanes: { value: function()        {  return this._elementPlanes;  } },
     setElementPlanes: { value: function(p)       {  this._elementPlanes = p;     } },
 
-	getT: { value: function()		{  return this._t;				} },
-	setT: { value: function(t)		{  this._t = t;					} },
+    getT: { value: function()       {  return this._t;              } },
+    setT: { value: function(t)      {  this._t = t;                 } },
 
-	setDeltaVis: { value: function(d)       {  this._deltaVis = d;          } },
-	getDeltaVis: { value: function()        {  return this._deltaVis;       } },
+    setDeltaVis: { value: function(d)       {  this._deltaVis = d;          } },
+    getDeltaVis: { value: function()        {  return this._deltaVis;       } },
 
-	setNext: { value: function(n)		{  this._next = n;				} },
-	getNext: { value: function()		{  return this._next;			} },
+    setNext: { value: function(n)       {  this._next = n;              } },
+    getNext: { value: function()        {  return this._next;           } },
 
-	getPrev: { value: function()		{  return this._prev;			} },
-	setPrev: { value: function(p)		{  this._prev = p;				} }
+    getPrev: { value: function()        {  return this._prev;           } },
+    setPrev: { value: function(p)       {  this._prev = p;              } }
 
     ///////////////////////////////////////////////////////////////////////
     // Methods

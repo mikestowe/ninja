@@ -33,7 +33,7 @@ var Montage = require("montage/core/core").Montage,
 
 var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
 
-	hasReel: {
+    hasReel: {
         value: true
     },
 

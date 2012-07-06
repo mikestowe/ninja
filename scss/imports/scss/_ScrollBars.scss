@@ -127,10 +127,10 @@ POSSIBILITY OF SUCH DAMAGE.
 ::-webkit-scrollbar-corner {
     // background-color: black; 
 
-	//For some reason this is the only way I can find to not show the corner.
-	//Setting the ::-webkit-scrollbar-corner:disabled style doesn't work as that
-	//pseudo-class seems to be ignored.
-	//John Mayhew
+    //For some reason this is the only way I can find to not show the corner.
+    //Setting the ::-webkit-scrollbar-corner:disabled style doesn't work as that
+    //pseudo-class seems to be ignored.
+    //John Mayhew
      
     background-color: $color-sb-border;
 }

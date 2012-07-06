@@ -153,12 +153,12 @@ exports.Combobox = Montage.create(Component, {
     handleChange:
     {
         value:function(event)
-		{
+        {
             this._valueSyncedWithInputField = true;
             this._wasSetByCode = false;
             this.value = this.element.value;
             this.needsDraw = true;
-		}
+        }
     },
 
     willDraw: {

@@ -70,14 +70,14 @@ exports.Icon = Montage.create(Component, {
     },
 
     willDraw: {
-    	enumerable: false,
-    	value: function() {
+        enumerable: false,
+        value: function() {
 
-    	}
+        }
     },
     draw: {
-    	enumerable: false,
-    	value: function() {
+        enumerable: false,
+        value: function() {
             if(this.icondata.type === "directory"){
                 this.iconImg.src = this.imgStore.img_root + this.imgStore.directory;
             }else{
@@ -91,11 +91,11 @@ exports.Icon = Montage.create(Component, {
                 }
                 this.iconImg.src = fileImg;
             }
-    	}
+        }
     },
     didDraw: {
-    	enumerable: false,
-    	value: function() {
+        enumerable: false,
+        value: function() {
             var that = this;
 
             var icon = this.iconImg;
@@ -131,7 +131,7 @@ exports.Icon = Montage.create(Component, {
                 selectedItemEvent.uri = this.icondata.uri;
                 this.element.dispatchEvent(selectedItemEvent);
             }
-    	}
+        }
     },
 
     /**
@@ -195,12 +195,12 @@ exports.Icon = Montage.create(Component, {
     formatTimestamp:{
         writable:false,
         enumerable: false,
-    	value: function(timestamp) {
+        value: function(timestamp) {
             var aDate = new Date();
             timestamp = timestamp - (aDate.getTimezoneOffset()*60*1000);//convert from GMT to local timestamp
             aDate = new Date(timestamp);
             return aDate.toLocaleString();
-    	}
+        }
     },
 
     imgStore:{

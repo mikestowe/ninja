@@ -31,14 +31,14 @@ POSSIBILITY OF SUCH DAMAGE.
 var GeomObj =           require("js/lib/geom/geom-obj").GeomObj;
 var ShapePrimitive =    require("js/lib/geom/shape-primitive").ShapePrimitive;
 var MaterialsModel = require("js/models/materials-model").MaterialsModel;
-var drawUtils		= require("js/helper-classes/3D/draw-utils").DrawUtils;
-var vecUtils		= require("js/helper-classes/3D/vec-utils").VecUtils;
+var drawUtils       = require("js/helper-classes/3D/draw-utils").DrawUtils;
+var vecUtils        = require("js/helper-classes/3D/vec-utils").VecUtils;
 
 ///////////////////////////////////////////////////////////////////////
 // Class GLCircle
 //      GL representation of a circle.
 //      Derived from class GLGeomObj
-//		The position and dimensions of the stroke, fill, and inner Radius should be in pixels
+//      The position and dimensions of the stroke, fill, and inner Radius should be in pixels
 ///////////////////////////////////////////////////////////////////////
 exports.Circle = Object.create(GeomObj, {
 
@@ -57,7 +57,7 @@ exports.Circle = Object.create(GeomObj, {
     _strokeStyle: { value : "Solid", writable: true },
     _aspectRatio: { value : 1.0, writable: true },
 
-	init: {
+    init: {
         value: function(world, xOffset, yOffset, width, height, strokeSize, strokeColor, fillColor, innerRadius, strokeMaterial, fillMaterial, strokeStyle) {
             if(arguments.length > 0) {
                 this._width = width;
@@ -85,14 +85,14 @@ exports.Circle = Object.create(GeomObj, {
             } else {
                 this._strokeMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() ).dup();
             }
-			if (strokeColor && this._strokeMaterial.hasProperty( "color" ))  this._strokeMaterial.setProperty( "color",  this._strokeColor );
+            if (strokeColor && this._strokeMaterial.hasProperty( "color" ))  this._strokeMaterial.setProperty( "color",  this._strokeColor );
 
             if(fillMaterial) {
                 this._fillMaterial = fillMaterial.dup();
             } else {
                 this._fillMaterial = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() ).dup();
             }
-			if (fillColor && this._fillMaterial.hasProperty( "color" ))  this._fillMaterial.setProperty( "color",  this._fillColor );
+            if (fillColor && this._fillMaterial.hasProperty( "color" ))  this._fillMaterial.setProperty( "color",  this._fillColor );
         }
     },
 
@@ -203,7 +203,7 @@ exports.Circle = Object.create(GeomObj, {
     },
 
     ///////////////////////////////////////////////////////////////////////
-	// update the "color of the material
+    // update the "color of the material
     getFillColor: {
         value: function() {
             return this._fillColor;
@@ -251,15 +251,15 @@ exports.Circle = Object.create(GeomObj, {
 
             // get the normalized device coordinates (NDC) for
             // all position and dimensions.
-            var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-		    var	xNDC = 2*this._xOffset/vpw,  yNDC = -2*this._yOffset/vph,
+            var vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
+            var xNDC = 2*this._xOffset/vpw,  yNDC = -2*this._yOffset/vph,
                 xRadNDC = this._width/vpw,  yRadNDC = this._height/vph,
                 xStrokeNDC = 2*this._strokeWidth/vpw,  yStrokeNDC = 2*this._strokeWidth/vph,
                 xInnRadNDC = this._innerRadius*xRadNDC,  yInnRadNDC = this._innerRadius*yRadNDC;
 
             var aspect = world.getAspect();
             var zn = world.getZNear(),  zf = world.getZFar();
-            var	t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
+            var t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
                 b = -t,
                 r = aspect*t,
                 l = -r;
@@ -321,7 +321,7 @@ exports.Circle = Object.create(GeomObj, {
             if(this._strokeWidth > 0) {
                 var numStrokes = 1;
                 if(this._innerRadius !== 0) {
-					strokeMaterial0 = this.makeStrokeMaterial();
+                    strokeMaterial0 = this.makeStrokeMaterial();
                     strokePrim0 = this.generateOvalRing(x, y, reverseRotMat, innerStrokeScaleMat, innerRadiusScaleMat, nTriangles,  strokeMaterial0);
                 }
 
@@ -330,14 +330,14 @@ exports.Circle = Object.create(GeomObj, {
             }
 
             if (strokePrim0) {
-				strokeMaterial0.fitToPrimitive( strokePrim0 );
+                strokeMaterial0.fitToPrimitive( strokePrim0 );
 
                 this._primArray.push( strokePrim0 );
                 this._materialNodeArray.push( strokeMaterial0.getMaterialNode() );
             }
 
             if (strokePrim1) {
-				strokeMaterial2.fitToPrimitive( strokePrim1 );
+                strokeMaterial2.fitToPrimitive( strokePrim1 );
 
                 this._primArray.push( strokePrim1 );
                 this._materialNodeArray.push( strokeMaterial2.getMaterialNode() );
@@ -353,7 +353,7 @@ exports.Circle = Object.create(GeomObj, {
             }
 
             if (fillPrim) {
-				fillMaterial.fitToPrimitive( fillPrim );
+                fillMaterial.fitToPrimitive( fillPrim );
 
                 this._primArray.push( fillPrim );
                 this._materialNodeArray.push( fillMaterial.getMaterialNode() );
@@ -371,7 +371,7 @@ exports.Circle = Object.create(GeomObj, {
             var x = pts[0],  y = pts[1], z = 0;
             var xs = scaleMat[0], ys = scaleMat[4];
 
-            var	vrts = [], nrms = [], uvs = [], indices = [];
+            var vrts = [], nrms = [], uvs = [], indices = [];
             var index = 0;
             for (var i=0;  i<nTriangles;  i++) {
                 //pt = rotationMat.multiply( pt );
@@ -418,14 +418,14 @@ exports.Circle = Object.create(GeomObj, {
 
             this.recalcTexMapCoords( vrts, uvs );
 
-			//refine the mesh for vertex deformations
-			if (material) {
-				if (material.hasVertexDeformation()) {
-					var paramRange = material.getVertexDeformationRange();
-					var tolerance = material.getVertexDeformationTolerance();
-					ShapePrimitive.refineMesh( vrts, nrms, uvs, indices, vrts.length/3,  paramRange,  tolerance );
-				}
-			}
+            //refine the mesh for vertex deformations
+            if (material) {
+                if (material.hasVertexDeformation()) {
+                    var paramRange = material.getVertexDeformationRange();
+                    var tolerance = material.getVertexDeformationTolerance();
+                    ShapePrimitive.refineMesh( vrts, nrms, uvs, indices, vrts.length/3,  paramRange,  tolerance );
+                }
+            }
 
             return ShapePrimitive.create(vrts, nrms, uvs, indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, index);
         }
@@ -442,7 +442,7 @@ exports.Circle = Object.create(GeomObj, {
             pt0s = glmat4.multiplyVec3(innerScaleMat, pt, []);
             pt1s = glmat4.multiplyVec3(outerScaleMat, pt, []);
 
-            var	vrts = [], nrms = [], uvs = [], indices = [];
+            var vrts = [], nrms = [], uvs = [], indices = [];
 
             // normals
             var insideAngle  = -15.0*Math.PI/180.0,
@@ -486,16 +486,16 @@ exports.Circle = Object.create(GeomObj, {
 
             this.recalcTexMapCoords( vrts, uvs );
 
-			/*
-			//refine the mesh for vertex deformations
-			if (material) {
-				if (material.hasVertexDeformation()) {
-					var paramRange = material.getVertexDeformationRange();
-					var tolerance = material.getVertexDeformationTolerance();
-					ShapePrimitive.refineMesh( vrts, nrms, uvs, indices, indices.length,  paramRange,  tolerance );
-				}
-			}
-			*/
+            /*
+            //refine the mesh for vertex deformations
+            if (material) {
+                if (material.hasVertexDeformation()) {
+                    var paramRange = material.getVertexDeformationRange();
+                    var tolerance = material.getVertexDeformationTolerance();
+                    ShapePrimitive.refineMesh( vrts, nrms, uvs, indices, indices.length,  paramRange,  tolerance );
+                }
+            }
+            */
 
             return ShapePrimitive.create(vrts, nrms, uvs, indices, RDGE.globals.engine.getContext().renderer.TRIANGLE_STRIP, indices.length);
         }
@@ -572,7 +572,7 @@ exports.Circle = Object.create(GeomObj, {
                         ctx.fillStyle = c;
                     }
                     // draw the fill
-    //				ctx.beginPath();
+    //              ctx.beginPath();
                     var p = MathUtils.transformPoint( bezPts[0],   mat );
                     ctx.moveTo( p[0],  p[1] );
                     var index = 1;
@@ -623,7 +623,7 @@ exports.Circle = Object.create(GeomObj, {
 
                 // set up the stroke style
                 ctx.beginPath();
-                ctx.lineWidth	= lineWidth;
+                ctx.lineWidth   = lineWidth;
                 if (this._strokeColor) {
                     if(this._strokeColor.gradientMode) {
                         if(this._strokeColor.gradientMode === "radial") {
@@ -695,19 +695,19 @@ exports.Circle = Object.create(GeomObj, {
         value: function() {
             var jObj =
             {
-                'type'			: this.geomType(),
-                'xoff'			: this._xOffset,
-                'yoff'			: this._yOffset,
-                'width'			: this._width,
-                'height'		: this._height,
-                'strokeWidth'	: this._strokeWidth,
-                'strokeColor'	: this._strokeColor,
-                'fillColor'		: this._fillColor,
-                'innerRadius'	: this._innerRadius,
-                'strokeStyle'	: this._strokeStyle,
-                'strokeMat'		: this._strokeMaterial ? this._strokeMaterial.getName() :  MaterialsModel.getDefaultMaterialName(),
-                'fillMat'		: this._fillMaterial ?  this._fillMaterial.getName() :  MaterialsModel.getDefaultMaterialName(),
-                'materials'		: this.exportMaterialsJSON()
+                'type'          : this.geomType(),
+                'xoff'          : this._xOffset,
+                'yoff'          : this._yOffset,
+                'width'         : this._width,
+                'height'        : this._height,
+                'strokeWidth'   : this._strokeWidth,
+                'strokeColor'   : this._strokeColor,
+                'fillColor'     : this._fillColor,
+                'innerRadius'   : this._innerRadius,
+                'strokeStyle'   : this._strokeStyle,
+                'strokeMat'     : this._strokeMaterial ? this._strokeMaterial.getName() :  MaterialsModel.getDefaultMaterialName(),
+                'fillMat'       : this._fillMaterial ?  this._fillMaterial.getName() :  MaterialsModel.getDefaultMaterialName(),
+                'materials'     : this.exportMaterialsJSON()
             };
 
             return jObj;
@@ -716,17 +716,17 @@ exports.Circle = Object.create(GeomObj, {
 
     importJSON: {
         value: function(jObj) {
-            this._xOffset			= jObj.xoff;
-            this._yOffset			= jObj.yoff;
-            this._width				= jObj.width;
-            this._height			= jObj.height;
-            this._strokeWidth		= jObj.strokeWidth;
-            this._strokeColor		= jObj.strokeColor;
-            this._fillColor			= jObj.fillColor;
-            this._innerRadius		= jObj.innerRadius;
-            this._strokeStyle		= jObj.strokeStyle;
-            var strokeMaterialName	= jObj.strokeMat;
-            var fillMaterialName	= jObj.fillMat;
+            this._xOffset           = jObj.xoff;
+            this._yOffset           = jObj.yoff;
+            this._width             = jObj.width;
+            this._height            = jObj.height;
+            this._strokeWidth       = jObj.strokeWidth;
+            this._strokeColor       = jObj.strokeColor;
+            this._fillColor         = jObj.fillColor;
+            this._innerRadius       = jObj.innerRadius;
+            this._strokeStyle       = jObj.strokeStyle;
+            var strokeMaterialName  = jObj.strokeMat;
+            var fillMaterialName    = jObj.fillMat;
 
             var strokeMat = MaterialsModel.getMaterial( strokeMaterialName ).dup();
             if (!strokeMat) {
@@ -734,8 +734,8 @@ exports.Circle = Object.create(GeomObj, {
                 strokeMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() ).dup();
             }
             this._strokeMaterial = strokeMat;
-			if (this._strokeMaterial.hasProperty( 'color' ))
-				this._strokeMaterial.setProperty( 'color', this._strokeColor );
+            if (this._strokeMaterial.hasProperty( 'color' ))
+                this._strokeMaterial.setProperty( 'color', this._strokeColor );
 
             var fillMat = MaterialsModel.getMaterial( fillMaterialName ).dup();
             if (!fillMat) {
@@ -743,8 +743,8 @@ exports.Circle = Object.create(GeomObj, {
                 fillMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() ).dup();
             }
             this._fillMaterial = fillMat;
-			if (this._fillMaterial.hasProperty( 'color' ))
-				this._fillMaterial.setProperty( 'color', this._fillColor );
+            if (this._fillMaterial.hasProperty( 'color' ))
+                this._fillMaterial.setProperty( 'color', this._fillColor );
 
             this.importMaterialsJSON( jObj.materials );
         }
@@ -780,8 +780,8 @@ exports.Circle = Object.create(GeomObj, {
 
             // get the normalized device coordinates (NDC) for
             // the position and radii.
-            var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-            var	xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
+            var vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
+            var xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
                 xRadNDC = this._width/vpw,  yRadNDC = this._height/vph;
             var projMat = world.makePerspectiveMatrix();
             var z = -world.getViewDistance();
@@ -793,7 +793,7 @@ exports.Circle = Object.create(GeomObj, {
             // get the gl coordinates
             var aspect = world.getAspect();
             var zn = world.getZNear(),  zf = world.getZFar();
-            var	t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
+            var t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
                 b = -t,
                 r = aspect*t,
                 l = -r;
@@ -805,7 +805,7 @@ exports.Circle = Object.create(GeomObj, {
             var ctrNDC = [xNDC, yNDC];
 
             var distToBoundary = VecUtils.vecDist( 2, ctrNDC, objPtNDC ),
-                distToPt		= VecUtils.vecDist( 2, ctrNDC, planePtNDC );
+                distToPt        = VecUtils.vecDist( 2, ctrNDC, planePtNDC );
 
             return (MathUtils.fpCmp(distToPt,distToBoundary) <= 0);
         }
@@ -854,44 +854,44 @@ exports.Circle = Object.create(GeomObj, {
         }
     },
 
-	recalcTexMapCoords: {
-		value: function(vrts, uvs) {
-			var n = vrts.length/3;
-			if (n === 0)  return;
-			var ivrt = 0,  iuv = 0;
-			var uMin = 1.e8,  uMax = -1.e8,
-				vMin = 1.e8,  vMax = -1.e8;
-			
-			var i, index = 3;
-			var xMin = vrts[0], xMax = vrts[0],
-				yMin = vrts[1], yMax = vrts[1];
-			for (i=1;  i<n;  i++)
-			{
-				if (vrts[index] < xMin)  xMin = vrts[index];
-				else if (vrts[index] > xMax)  xMax = vrts[index];
+    recalcTexMapCoords: {
+        value: function(vrts, uvs) {
+            var n = vrts.length/3;
+            if (n === 0)  return;
+            var ivrt = 0,  iuv = 0;
+            var uMin = 1.e8,  uMax = -1.e8,
+                vMin = 1.e8,  vMax = -1.e8;
+            
+            var i, index = 3;
+            var xMin = vrts[0], xMax = vrts[0],
+                yMin = vrts[1], yMax = vrts[1];
+            for (i=1;  i<n;  i++)
+            {
+                if (vrts[index] < xMin)  xMin = vrts[index];
+                else if (vrts[index] > xMax)  xMax = vrts[index];
 
-				if (vrts[index+1] < yMin)  yMin = vrts[index+1];
-				else if (vrts[index+1] > yMax)  yMax = vrts[index+1];
+                if (vrts[index+1] < yMin)  yMin = vrts[index+1];
+                else if (vrts[index+1] > yMax)  yMax = vrts[index+1];
 
-				index += 3;
-			}
-			var ovalWidth  = xMax - xMin,
-				ovalHeight = yMax - yMin;
-			for (i=0;  i<n;  i++) {
-				uvs[iuv] = (vrts[ivrt]-xMin)/ovalWidth;
-				if (uvs[iuv] < uMin)  uMin = uvs[iuv];
-				if (uvs[iuv] > uMax)  uMax = uvs[iuv];
+                index += 3;
+            }
+            var ovalWidth  = xMax - xMin,
+                ovalHeight = yMax - yMin;
+            for (i=0;  i<n;  i++) {
+                uvs[iuv] = (vrts[ivrt]-xMin)/ovalWidth;
+                if (uvs[iuv] < uMin)  uMin = uvs[iuv];
+                if (uvs[iuv] > uMax)  uMax = uvs[iuv];
 
-				iuv++;  ivrt++;
-				uvs[iuv] = (vrts[ivrt]-yMin)/ovalHeight;
-				if (uvs[iuv] < vMin)  vMin = uvs[iuv];
-				if (uvs[iuv] > vMax)  vMax = uvs[iuv];
-				iuv++;  ivrt += 2;
-			}
+                iuv++;  ivrt++;
+                uvs[iuv] = (vrts[ivrt]-yMin)/ovalHeight;
+                if (uvs[iuv] < vMin)  vMin = uvs[iuv];
+                if (uvs[iuv] > vMax)  vMax = uvs[iuv];
+                iuv++;  ivrt += 2;
+            }
 
-			//console.log( "remap" );
-			//console.log( "uRange: " + uMin + " => " + uMax );
-			//console.log( "vRange: " + vMin + " => " + vMax );
-		}
-	}
+            //console.log( "remap" );
+            //console.log( "uRange: " + uMin + " => " + uMax );
+            //console.log( "vRange: " + vMin + " => " + vMax );
+        }
+    }
 });

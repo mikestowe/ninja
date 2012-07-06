@@ -55,22 +55,22 @@ var IconsList = exports.IconsList = Montage.create(Component, {
     },
 
     willDraw: {
-    	enumerable: false,
-    	value: function() {
+        enumerable: false,
+        value: function() {
 
-    	}
+        }
     },
     draw: {
-    	enumerable: false,
-    	value: function() {
+        enumerable: false,
+        value: function() {
 
-    	}
+        }
     },
     didDraw: {
-    	enumerable: false,
-    	value: function() {
+        enumerable: false,
+        value: function() {
 
-    	}
+        }
     }
 
 });

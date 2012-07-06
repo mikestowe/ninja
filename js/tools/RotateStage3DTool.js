@@ -94,15 +94,15 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
             var eltCtr = viewUtils.getCenterOfProjection();
             viewUtils.popViewportObj();
 
-			// cache the local to global and global to local matrices
-			var l2gMat = viewUtils.getLocalToGlobalMatrix( elt );
-			var g2lMat = glmat4.inverse( l2gMat, [] );
-			eltCtr = MathUtils.transformAndDivideHomogeneousPoint( eltCtr, l2gMat );
+            // cache the local to global and global to local matrices
+            var l2gMat = viewUtils.getLocalToGlobalMatrix( elt );
+            var g2lMat = glmat4.inverse( l2gMat, [] );
+            eltCtr = MathUtils.transformAndDivideHomogeneousPoint( eltCtr, l2gMat );
 
             elt.elementModel.setProperty("mat", curMat);
             elt.elementModel.setProperty("matInv", curMatInv);
             elt.elementModel.setProperty("ctr", eltCtr);
-			elt.elementModel.setProperty("l2g", l2gMat);
+            elt.elementModel.setProperty("l2g", l2gMat);
             elt.elementModel.setProperty("g2l", g2lMat);
 
             ElementsMediator.setMatrix(elt, curMat, false, "rotateStage3DTool");
@@ -172,11 +172,11 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
                                         iMat, false, "rotateStage3DTool");
            this.application.ninja.currentDocument.model.documentRoot.elementModel.props3D.m_transformCtr = null;
 
-			// let the document and stage manager know about the zoom change
-			stage._firstDraw = true;
-			this.application.ninja.documentBar.zoomFactor = 100;
+            // let the document and stage manager know about the zoom change
+            stage._firstDraw = true;
+            this.application.ninja.documentBar.zoomFactor = 100;
             this.application.ninja.currentDocument.model.views.design.iframe.style.zoom = 1.0;
-			stage._firstDraw = false;
+            stage._firstDraw = false;
 
            viewUtils.clearStageTranslation();
            stage.centerStage();
@@ -185,7 +185,7 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
            this.isDrawing = false;
            this.endDraw(event);
 
-//			this.UpdateSelection(true);
+//          this.UpdateSelection(true);
            this.Configure(true);
        }
     }

@@ -736,14 +736,14 @@ exports.TranslateHandle = Montage.create(ToolHandle, {
     },
     
     collidesWithPoint: 
-	{
+    {
         value:function (x, y) 
-		{
+        {
             var globalPt = [x, y, this._origin[2]];
 
-			// test for a hit on the origin
-			var dist = vecUtils.vecDist( 2, globalPt, this._origin );
-			if (dist <= 5)  return 1;
+            // test for a hit on the origin
+            var dist = vecUtils.vecDist( 2, globalPt, this._origin );
+            if (dist <= 5)  return 1;
 
             var nearPt = MathUtils.nearestPointOnLine2D( this._origin, this._dirVec,  globalPt );
             if(!nearPt)

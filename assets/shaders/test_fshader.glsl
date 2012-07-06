@@ -40,7 +40,7 @@ uniform vec4 u_light0Amb;
 // diffuse map
 uniform sampler2D u_colMap;
 
-// environment map	
+// environment map  
 uniform sampler2D envMap;
 
 // normal map
@@ -72,12 +72,12 @@ varying float vDiffuseIntensity;
 
 void main()
 {
- 	vec4 rgba_depth = texture2D(depthMap, vShadowCoord.xy/vShadowCoord.w, -32.0);
- 	const vec4 bit_shift = vec4(1.0/(256.0*256.0*256.0), 1.0/(256.0*256.0), 1.0/256.0, 1.0);
- 	float dist = vShadowCoord.w/200.0;
- 	float d = dot(rgba_depth, bit_shift);
-	float shadowCoef = (dist > d + 0.00779) ? (0.6) : (1.0);
-	
+    vec4 rgba_depth = texture2D(depthMap, vShadowCoord.xy/vShadowCoord.w, -32.0);
+    const vec4 bit_shift = vec4(1.0/(256.0*256.0*256.0), 1.0/(256.0*256.0), 1.0/256.0, 1.0);
+    float dist = vShadowCoord.w/200.0;
+    float d = dot(rgba_depth, bit_shift);
+    float shadowCoef = (dist > d + 0.00779) ? (0.6) : (1.0);
+    
   vec4 colMapTexel = vec4(0);
   if (u_renderGlow <= 0.5) {
     colMapTexel = vec4(texture2D(u_colMap, vec2(vNormal.w, vECPos.w)).rgb, 1.0);
@@ -120,7 +120,7 @@ void main()
   vec4 diffuse = u_matDiffuse * (colMapTexel + envMapTexel)*shadowCoef;
 
   if (u_renderGlow <= 0.5) {
-  	diffuse *= u_light0Diff;
+    diffuse *= u_light0Diff;
   }
   
   vec4 specular = 2.0 * pf * envMapTexel;
@@ -138,7 +138,7 @@ void main()
   vec4 colMapTexel = vec4(texture2D(u_colMap, vec2(vNormal.w, vECPos.w)).rgb, 1.0);
 
 //   // normal mapping
-	vec3 normal = normalize(vNormal.xyz);
+    vec3 normal = normalize(vNormal.xyz);
 //   vec3 mapNormal = texture2D(u_normalMap, vec2(vNormal.w, vECPos.w)).xyz * 2.0 - 1.0;
 //   mapNormal = normalize(mapNormal.x*vec3(normal.z, 0.0, -normal.x) + vec3(0.0, mapNormal.y, 0.0) + mapNormal.z*normal);
 //   

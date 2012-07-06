@@ -61,14 +61,14 @@ RDGE.shadowLight = function () {
     };
 
     /*
-    *	makes the light the current 'camera'
+    *   makes the light the current 'camera'
     */
     this.activate = function () {
         this.cameraManager.pushCamera(this);
     };
 
     /*
-    *	restores the camera stack
+    *   restores the camera stack
     */
     this.deactivate = function () {
         this.cameraManager.popCamera();

@@ -105,7 +105,7 @@ var Track = exports.Track = Montage.create(Component, {
 
     //TEMP
     keyFrames:{
-    	serializable: true,
+        serializable: true,
         value:[]
     },
     

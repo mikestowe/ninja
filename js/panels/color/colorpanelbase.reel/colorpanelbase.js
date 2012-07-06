@@ -30,12 +30,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 			require("montage/core/core").Montage,
-	Component = 		require("montage/ui/component").Component,
-	Popup = 			require("js/components/popup.reel").Popup,
-	Slider = 			require("js/components/slider.reel").Slider,
-	HotText = 			require("js/components/hottext.reel").HotText,
-	ColorBar = 			require("js/components/colorbar.reel").ColorBar;
+var Montage =           require("montage/core/core").Montage,
+    Component =         require("montage/ui/component").Component,
+    Popup =             require("js/components/popup.reel").Popup,
+    Slider =            require("js/components/slider.reel").Slider,
+    HotText =           require("js/components/hottext.reel").HotText,
+    ColorBar =          require("js/components/colorbar.reel").ColorBar;
 ////////////////////////////////////////////////////////////////////////
 //Exporting as ColorPanelBase
 exports.ColorPanelBase = Montage.create(Component, {
@@ -47,7 +47,7 @@ exports.ColorPanelBase = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Storing ColorPanel sliders mode
     _panelMode: {
-	    value: 'rgb'
+        value: 'rgb'
     },
     ////////////////////////////////////////////////////////////////////
     //Storing ColorPanel sliders mode
@@ -505,11 +505,11 @@ exports.ColorPanelBase = Montage.create(Component, {
                         if (c && c.css) {
                             this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
                             if (m === 'gradient') {
-                            	this.style.backgroundImage = c.css;
-                            	this.style.backgroundColor = 'transparent';
+                                this.style.backgroundImage = c.css;
+                                this.style.backgroundColor = 'transparent';
                             } else {
-	                            this.style.backgroundColor = c.css;
-	                            this.style.backgroundImage = 'none';
+                                this.style.backgroundColor = c.css;
+                                this.style.backgroundImage = 'none';
                             }
                         } else {
                             this.drawNoColor(this, this.cvs);
@@ -839,7 +839,7 @@ exports.ColorPanelBase = Montage.create(Component, {
             this.application.ninja.colorController.colorPopupManager.hideColorPopup();
             //
             var stroke = this.colorManager.colorHistory.fill[this.colorManager.colorHistory.fill.length - 1],
-    			fill = this.colorManager.colorHistory.stroke[this.colorManager.colorHistory.stroke.length - 1];
+                fill = this.colorManager.colorHistory.stroke[this.colorManager.colorHistory.stroke.length - 1];
             stroke.c.wasSetByCode = fill.c.wasSetByCode = false;
             stroke.c.type = fill.c.type = 'change';
             ////////////////////////////////////////////////////////////
@@ -924,18 +924,18 @@ exports.ColorPanelBase = Montage.create(Component, {
             var mode, max1, max2, max3, color, fColor, sColor;
             if (this.panelMode === 'hsl') {
                 mode = 'hsl',
-    			max1 = 360,
-    			max2 = 100,
-    			max3 = 100,
-    			fColor = { h: 0, s: 0, l: 100 },
-    			sColor = { h: 0, s: 0, l: 0 };
+                max1 = 360,
+                max2 = 100,
+                max3 = 100,
+                fColor = { h: 0, s: 0, l: 100 },
+                sColor = { h: 0, s: 0, l: 0 };
             } else {
                 mode = 'rgb',
-    			max1 = 255,
-    			max2 = 255,
-    			max3 = 255,
-    			sColor = { r: 0, g: 0, b: 0 },
-    			fColor = { r: 255, g: 255, b: 255 };
+                max1 = 255,
+                max2 = 255,
+                max3 = 255,
+                sColor = { r: 0, g: 0, b: 0 },
+                fColor = { r: 255, g: 255, b: 255 };
             }
             //
             sColor.wasSetByCode = false;
@@ -1009,19 +1009,19 @@ exports.ColorPanelBase = Montage.create(Component, {
             var update, type;
             //
             if (!e._event.wasSetByCode) {
-            	//
-            	if (!e.target.cInputType) {
-	            	type = 'hottext';  
+                //
+                if (!e.target.cInputType) {
+                    type = 'hottext';  
                 } else {
-	               	type = 'slider'
-	            }
-	            //
+                    type = 'slider'
+                }
+                //
                 if (e.target.changesColor) {
                     //
                     if (this.panelMode === 'rgb') {
                         //
                         if (this.colorManager.rgb && Math.round(this._combo[0][type].value) === this.colorManager.rgb.r && Math.round(this._combo[1][type].value) === this.colorManager.rgb.g && Math.round(this._combo[2][type].value) === this.colorManager.rgb.b) {
-                        	return;
+                            return;
                         }
                         //
                         update = { r: Math.round(this._combo[0][type].value), g: Math.round(this._combo[1][type].value), b: Math.round(this._combo[2][type].value) };
@@ -1032,7 +1032,7 @@ exports.ColorPanelBase = Montage.create(Component, {
                     } else if (this.panelMode === 'hsl') {
                         //
                         if (this.colorManager.hsl && Math.round(this._combo[0][type].value) === this.colorManager.hsl.h && Math.round(this._combo[1][type].value) === this.colorManager.hsl.s && Math.round(this._combo[2][type].value) === this.colorManager.hsl.l) {
-                        	return;
+                            return;
                         }
                         //
                         update = { h: Math.round(this._combo[0][type].value), s: Math.round(this._combo[1][type].value), l: Math.round(this._combo[2][type].value) };
@@ -1042,9 +1042,9 @@ exports.ColorPanelBase = Montage.create(Component, {
                         this.colorManager.hsl = update;
                     }
                 } else {
-                	//
-                	update = { value: this._combo[3][type].value/100, wasSetByCode: false, type: 'change' };
-                	//
+                    //
+                    update = { value: this._combo[3][type].value/100, wasSetByCode: false, type: 'change' };
+                    //
                     this.colorManager.alpha = update;
                 }
             }
@@ -1432,10 +1432,10 @@ exports.ColorPanelBase = Montage.create(Component, {
     //
     selectInputType: {
         value: function (type) {
-        	if (this.colorManager.input === 'chip') {
-            	this.application.ninja.colorController.colorPopupManager.hideColorPopup();
-           		return;
-           	}
+            if (this.colorManager.input === 'chip') {
+                this.application.ninja.colorController.colorPopupManager.hideColorPopup();
+                return;
+            }
             //Checking for the type to be formatted as expected, otherwise we unselected all buttons
             try {
                 type._event.srcElement.inputType;
@@ -1479,7 +1479,7 @@ exports.ColorPanelBase = Montage.create(Component, {
                         this.application.ninja.colorController.colorPopupManager.showColorPopup((type._event.clientX - type._event.offsetX) + 'px', (type._event.target.clientHeight / 2 + type._event.clientY - type._event.offsetY) + 'px', 'right', 'top');
                         //} else {
                         //
-                        //	this.application.ninja.colorController.colorPopupManager.showColorPopup((type._event.clientX - type._event.offsetX)+parseInt(type._event.target.offsetWidth)+'px', (type._event.target.offsetHeight/2+type._event.clientY - type._event.offsetY)+'px', 'left', 'top');
+                        //  this.application.ninja.colorController.colorPopupManager.showColorPopup((type._event.clientX - type._event.offsetX)+parseInt(type._event.target.offsetWidth)+'px', (type._event.target.offsetHeight/2+type._event.clientY - type._event.offsetY)+'px', 'left', 'top');
                         //}
                     }
                 }
@@ -1580,7 +1580,7 @@ exports.ColorPanelBase = Montage.create(Component, {
                     ctx.lineTo(2, 1);
                     ctx.stroke();
                 } else {
-                    //Adding class to buttons with no canvas						
+                    //Adding class to buttons with no canvas                        
                     selected[i].className = selected[i].className + ' selected';
                 }
             }

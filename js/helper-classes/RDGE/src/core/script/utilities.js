@@ -68,7 +68,7 @@ RDGE.unProject = function (winx, winy, winz, modelMatrix, projMatrix, viewport) 
     var v4Out = RDGE.mat4.transformPoint(finalMatrix, inVal);
     
     if (v4Out[3] <= 0.0001) 
-		return null;
+        return null;
     
     v4Out[0] /= v4Out[3];
     v4Out[1] /= v4Out[3];
@@ -181,19 +181,19 @@ RDGE.createShader = function (ctx, strVertShaderName, strFragShaderName, attribs
   if (strVertShaderName.indexOf('{') != -1) {
     vShader = strVertShaderName;
     } else {
-	var vshaderRequest = new XMLHttpRequest();
-	vshaderRequest.open("GET", RDGE.globals.engine._assetPath+'shaders/' + strVertShaderName + '.glsl', false);
-	vshaderRequest.send(null);
-	vShader = vshaderRequest.responseText;
+    var vshaderRequest = new XMLHttpRequest();
+    vshaderRequest.open("GET", RDGE.globals.engine._assetPath+'shaders/' + strVertShaderName + '.glsl', false);
+    vshaderRequest.send(null);
+    vShader = vshaderRequest.responseText;
   }
 
   if (strFragShaderName.indexOf('{') != -1) {
     fShader = strFragShaderName;
     } else {
-	var fshaderRequest = new XMLHttpRequest();
+    var fshaderRequest = new XMLHttpRequest();
     fshaderRequest.open("GET", RDGE.globals.engine._assetPath+'shaders/' + strFragShaderName + '.glsl', false);
     fshaderRequest.send(null);
-	fShader = fshaderRequest.responseText;
+    fShader = fshaderRequest.responseText;
   }
 
   ctx.useProgram(null);

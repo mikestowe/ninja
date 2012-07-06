@@ -35,9 +35,9 @@ POSSIBILITY OF SUCH DAMAGE.
  * containing at least 3 numeric components can represent a 3D vector. 
  *
  * For example, all of these are valid RDGE.vec3 declarations:
- *		var a = [0, 0, 1];
- *		var b = RDGE.vec3.zero();
- *		var c = RDGE.vec3.up();
+ *      var a = [0, 0, 1];
+ *      var b = RDGE.vec3.zero();
+ *      var c = RDGE.vec3.up();
  *
  */
 var RDGE = RDGE || {};
@@ -268,8 +268,8 @@ RDGE.vec3.normalize = function (v) {
 */
 RDGE.vec3.cross = function (a, b) {
     return [a[1] * b[2] - b[1] * a[2],
-				a[2] * b[0] - b[2] * a[0],
-				a[0] * b[1] - b[0] * a[1]];
+                a[2] * b[0] - b[2] * a[0],
+                a[0] * b[1] - b[0] * a[1]];
 };
 
 /**
@@ -367,8 +367,8 @@ RDGE.vec3.equal = function (a, b, t) {
 */
 RDGE.vec3.lerp = function (a, b, t) {
     return [
-		a[0] + (b[0] - a[0]) * t,
-		a[1] + (b[1] - a[1]) * t,
-		a[2] + (b[2] - a[2]) * t
-	];
+        a[0] + (b[0] - a[0]) * t,
+        a[1] + (b[1] - a[1]) * t,
+        a[2] + (b[2] - a[2]) * t
+    ];
 };

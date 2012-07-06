@@ -40,13 +40,13 @@ var Montage = require("montage/core/core").Montage,
     ShapesController = require("js/controllers/elements/shapes-controller").ShapesController;
 
 exports.FillTool = Montage.create(ModifierToolBase, {
-	_canSnap: { value: false },
-	_canColor: { value: true },
-	_targetedElement: { value: null },
+    _canSnap: { value: false },
+    _canColor: { value: true },
+    _targetedElement: { value: null },
 
     HandleMouseMove: {
         value : function (event)
-		{
+        {
             var obj = this.application.ninja.stage.getElement(event, true);
             var cursor = "url('images/cursors/fill.png') 14 14, default";
             var canColor = true;
@@ -78,13 +78,13 @@ exports.FillTool = Montage.create(ModifierToolBase, {
             }
             this.application.ninja.stage.drawingCanvas.style.cursor = cursor;
             this._canColor = canColor;
-		}
-	},
+        }
+    },
 
     HandleLeftButtonUp: {
         value : function () {
             //if(this._isDrawing)
-			{
+            {
                 this.application.ninja.stage.clearDrawingCanvas();
                 this._hasDraw = false;
                 this._isDrawing = false;

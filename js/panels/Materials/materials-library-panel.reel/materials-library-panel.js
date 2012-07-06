@@ -40,8 +40,8 @@ exports.MaterialsLibraryPanel = Montage.create(Component, {
     },
 
     _hasFocus: {
-    	enumerable: false,
-    	value: false
+        enumerable: false,
+        value: false
     },
 
     didCreate: {
@@ -98,10 +98,10 @@ exports.MaterialsLibraryPanel = Montage.create(Component, {
     },
     
     _showMaterialPopup: {
-    	enumerable: false,
-    	value: function (materialObj) {
+        enumerable: false,
+        value: function (materialObj) {
 
-			if(!this._materialPopup)
+            if(!this._materialPopup)
             {
                 this._materialPopup = Popup.create();
                 this._materialPopup.content = this._materialInfo;
@@ -113,15 +113,15 @@ exports.MaterialsLibraryPanel = Montage.create(Component, {
 
             materialID = materialObj.materialId;
             this._materialInfo.loadMaterials(materialID,  materialObj.useSelection, materialObj.whichMaterial);
-    	}
+        }
     },
 
     handleHideMaterialPopup: {
-    	enumerable: false,
-    	value: function (event) {
+        enumerable: false,
+        value: function (event) {
             if(this._materialPopup){
                 this._materialPopup.hide();
             }
-    	}
+        }
     }
 });

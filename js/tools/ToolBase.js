@@ -178,7 +178,7 @@ exports.toolBase = Montage.create(Component, {
 
 //            if (drawUtils.isDrawingGrid())
 //            {
-//			    snapManager.updateWorkingPlaneFromView();
+//              snapManager.updateWorkingPlaneFromView();
 //            }
         }
     },

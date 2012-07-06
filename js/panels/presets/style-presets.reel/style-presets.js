@@ -53,6 +53,6 @@ exports.StylesLibrary = Montage.create(Component, {
         value: function(sourceObject) {
             console.log(sourceObject);
         }
-  	}
+    }
 
 });

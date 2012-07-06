@@ -41,7 +41,7 @@ uniform vec4 u_lightAmb;
 // diffuse map
 uniform sampler2D colMap;
 
-// environment map	
+// environment map  
 uniform sampler2D envMap;
 
 // normal map
@@ -90,15 +90,15 @@ void main()
   
   float pf;
   if(diffuseIntensity == 0.0)
-	pf = 0.0;
+    pf = 0.0;
   else
-	pf = pow(specularModifier, 76.0);
+    pf = pow(specularModifier, 76.0);
   
   vec4 ambient = u_matAmbient * u_lightAmb;
   vec4 diffuse = u_matDiffuse * (colMapTexel + envMapTexel);
 
   if (u_renderGlow <= 0.5)
-  	diffuse *= u_lightDiff * diffuseIntensity * attenuation;
+    diffuse *= u_lightDiff * diffuseIntensity * attenuation;
   
   vec4 specular = 2.0 * pf * envMapTexel;
   

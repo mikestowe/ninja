@@ -44,7 +44,7 @@ POSSIBILITY OF SUCH DAMAGE.
 .subToolHolderPanel .toolbutton {
     float:left;
     -webkit-transform: scale(0.6);
-	margin-top: -4px;
+    margin-top: -4px;
 }
 
 .subToolHolderPanel .toolbutton:hover, .subToolHolderPanel .toolbutton.active {
@@ -67,8 +67,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 .toolColorChipContainer
 {
-	background: url(../../../../../images/colorpanel/transparent.png) repeat;
-	width: 18px;
+    background: url(../../../../../images/colorpanel/transparent.png) repeat;
+    width: 18px;
     height: 18px;
     margin-top: 1px;
     margin-left: 3px;    
@@ -86,30 +86,30 @@ POSSIBILITY OF SUCH DAMAGE.
 
 // generic styles for image radio button groups used in the tool options bar
 .subToolHolderPanel input.toolOptsRadioButton {
-	width: 24px;
-	height: 24px;
-	margin: 0px 5px 0px 0px;
-	padding: 0px;
-	cursor: pointer;
-	border-radius: 3px;
-	-webkit-user-select: none;
-	border: 1px solid transparent;
-	background: none;
-	background-repeat: no-repeat;
-	background-position: center center;
-	-webkit-transform: scale(0.9);
+    width: 24px;
+    height: 24px;
+    margin: 0px 5px 0px 0px;
+    padding: 0px;
+    cursor: pointer;
+    border-radius: 3px;
+    -webkit-user-select: none;
+    border: 1px solid transparent;
+    background: none;
+    background-repeat: no-repeat;
+    background-position: center center;
+    -webkit-transform: scale(0.9);
 }
 
 .subToolHolderPanel input.toolOptsRadioButton:hover {
-	box-shadow:  0px 0px 2px 2px #999;
+    box-shadow:  0px 0px 2px 2px #999;
     -webkit-transform: scale(1);
 }
 
 .subToolHolderPanel input.toolOptsRadioButton:checked {
     box-shadow: inset 0px 0px 2px 2px #999;
     background-color:#363636;
-	background-position: center center;
-	background-repeat: no-repeat;
+    background-position: center center;
+    background-repeat: no-repeat;
     -webkit-transform: scale(1);
 }
 
@@ -172,26 +172,26 @@ POSSIBILITY OF SUCH DAMAGE.
 
 .cornerRadius.topLeft {
     -webkit-transform: rotate(0deg);
-	margin-top: 1px;
-	margin-right: 3px;
+    margin-top: 1px;
+    margin-right: 3px;
 }
 
 .cornerRadius.topRight {
     -webkit-transform: rotate(90deg);
-	margin-right: 3px;
-	margin-top: 1px;
+    margin-right: 3px;
+    margin-top: 1px;
 }
 
 .cornerRadius.bottomLeft {
     -webkit-transform: rotate(270deg);
-	margin-right: 2px;
+    margin-right: 2px;
      margin-top: -1px;
 }
 
 .cornerRadius.bottomRight {
     -webkit-transform: rotate(180deg);
-	margin-right: 4px;
-	margin-top: -1px;
+    margin-right: 4px;
+    margin-top: -1px;
 }
 
 #toolOptionsContainer
@@ -202,8 +202,8 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 .leftLabel{
-	margin-top: 3px;
-	float:left;
+    margin-top: 3px;
+    float:left;
 }
 
 //  Skin Radio Buttons  
@@ -327,36 +327,36 @@ input[type="radio"]:disabled {
 
 //  Begin: styles for tag toolbar  
 .tagRadioButtons input.divTool {
-	background-image: url("../images/optionsbar/tag/div-tag.png");
+    background-image: url("../images/optionsbar/tag/div-tag.png");
 }
 .tagRadioButtons input.imageTool {
-	background-image: url("../images/optionsbar/tag/img-tag.png");
+    background-image: url("../images/optionsbar/tag/img-tag.png");
 }
 .tagRadioButtons input.videoTool {
-	background-image: url("../images/optionsbar/tag/vid-tag.png");
+    background-image: url("../images/optionsbar/tag/vid-tag.png");
 }
 .tagRadioButtons input.canvasTool {
-	background-image: url("../images/optionsbar/tag/canvas-tag.png");
+    background-image: url("../images/optionsbar/tag/canvas-tag.png");
 }
 .tagRadioButtons input.customTool {
-	background-image: url("../images/optionsbar/tag/custom-tag.png");
+    background-image: url("../images/optionsbar/tag/custom-tag.png");
 }
 
 .tagRadioButtons .nj-divider {
-	height: 100%;
-	float: left;
-	position: relative;
+    height: 100%;
+    float: left;
+    position: relative;
 }
 
 .tagRadioButtons select.nj-skinned {
-	visibility: visible;
-	position: relative;
-	margin-top: 1px;
+    visibility: visible;
+    position: relative;
+    margin-top: 1px;
 }
 
 .tagRadioButtons select[disabled="true"].nj-skinned,
 .tagRadioButtons select[disabled].nj-skinned  {
-	visibility: hidden;
+    visibility: hidden;
 }
 //  End: styles for tag toolbar  
 
@@ -370,86 +370,86 @@ input[type="radio"]:disabled {
 
 // object 3D container styles
 .object3DToolContainer input.rotateLocally {
-	background-image: url("../images/optionsbar/options3D/rotate-locally.png");
+    background-image: url("../images/optionsbar/options3D/rotate-locally.png");
 }
 .object3DToolContainer input.rotateGlobally {
-	background-image: url("../images/optionsbar/options3D/rotate-globally.png");
+    background-image: url("../images/optionsbar/options3D/rotate-globally.png");
 }
 
 // Selection Tool Options Styles
 .optionsSelectionTool button {
-	padding-top: 0px;
+    padding-top: 0px;
 }
 
 .selectionToolIcon {
-	width: 16px;
-	height: 16px;
-	background-repeat:no-repeat;
-	background-position: 1px 2px;
+    width: 16px;
+    height: 16px;
+    background-repeat:no-repeat;
+    background-position: 1px 2px;
 }
 
 .alignTopIcon {
-	background-image: url("../images/optionsbar/selection/AlignTop.png");  
+    background-image: url("../images/optionsbar/selection/AlignTop.png");  
 }
 
 .alignMiddleIcon {
-	background-image: url("../images/optionsbar/selection/AlignMiddle.png");  
+    background-image: url("../images/optionsbar/selection/AlignMiddle.png");  
 }
 
 .alignBottomIcon {
-	background-image: url("../images/optionsbar/selection/AlignBottom.png");  
+    background-image: url("../images/optionsbar/selection/AlignBottom.png");  
 }
 
 .alignLeftIcon {
-	background-image: url("../images/optionsbar/selection/AlignLeft.png");  
+    background-image: url("../images/optionsbar/selection/AlignLeft.png");  
 }
 
 .alignCenterIcon {
-	background-image: url("../images/optionsbar/selection/AlignCenter.png");  
+    background-image: url("../images/optionsbar/selection/AlignCenter.png");  
 }
 
 .alignRightIcon {
-	background-image: url("../images/optionsbar/selection/AlignRight.png");  
+    background-image: url("../images/optionsbar/selection/AlignRight.png");  
 }
 
 .arrangeBringForwardIcon {
-	background-image: url("../images/optionsbar/selection/ArrangeBringForward.png");  
+    background-image: url("../images/optionsbar/selection/ArrangeBringForward.png");  
 }
 
 .arrangeSendBackwardIcon {
-	background-image: url("../images/optionsbar/selection/ArrangeSendBackward.png");  
+    background-image: url("../images/optionsbar/selection/ArrangeSendBackward.png");  
 }
 
 .arrangeBringToFrontIcon {
-	background-image: url("../images/optionsbar/selection/ArrangeBringToFront.png");  
+    background-image: url("../images/optionsbar/selection/ArrangeBringToFront.png");  
 }
 
 .arrangeSendToBackIcon {
-	background-image: url("../images/optionsbar/selection/ArrangeSendToBack.png");  
+    background-image: url("../images/optionsbar/selection/ArrangeSendToBack.png");  
 }
 
 .distTopIcon {
-	background-image: url("../images/optionsbar/selection/DistTop.png");  
+    background-image: url("../images/optionsbar/selection/DistTop.png");  
 }
 
 .distMiddleIcon {
-	background-image: url("../images/optionsbar/selection/DistMiddle.png");  
+    background-image: url("../images/optionsbar/selection/DistMiddle.png");  
 }
 
 .distBottomIcon {
-	background-image: url("../images/optionsbar/selection/DistBottom.png");  
+    background-image: url("../images/optionsbar/selection/DistBottom.png");  
 }
 
 .distLeftIcon {
-	background-image: url("../images/optionsbar/selection/DistLeft.png");  
+    background-image: url("../images/optionsbar/selection/DistLeft.png");  
 }
 
 .distCenterIcon {
-	background-image: url("../images/optionsbar/selection/DistCenter.png");  
+    background-image: url("../images/optionsbar/selection/DistCenter.png");  
 }
 
 .distRightIcon {
-	background-image: url("../images/optionsbar/selection/DistRight.png");  
+    background-image: url("../images/optionsbar/selection/DistRight.png");  
 }
 
 .optionsPenTool {

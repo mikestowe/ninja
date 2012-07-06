@@ -172,13 +172,13 @@ exports.Hintable = Montage.create(Editable, {
                 
             this._super(arguments);
             
-			/// Remove the phantom "<BR>" element that is generated when 
-			/// content editable element is empty
-			this._children(this._element, function(item) { 
-			    return item.nodeName === 'BR';
-			}).forEach(function(item) {
-			    this._element.removeChild(item);
-			}, this);
+            /// Remove the phantom "<BR>" element that is generated when 
+            /// content editable element is empty
+            this._children(this._element, function(item) { 
+                return item.nodeName === 'BR';
+            }).forEach(function(item) {
+                this._element.removeChild(item);
+            }, this);
             
             if(k === 39) {
                 selection = window.getSelection();

@@ -45,7 +45,7 @@ exports.Line = Object.create(GeomObj, {
     _xOffset: { value : 0, writable: true },
     _yOffset: { value : 0, writable: true },
 
-	// If line doesn't fit in canvas world, we had to grow the canvas by this much on either side
+    // If line doesn't fit in canvas world, we had to grow the canvas by this much on either side
     _xAdj: { value : 0, writable: true },
     _yAdj: { value : 0, writable: true },
 
@@ -88,12 +88,12 @@ exports.Line = Object.create(GeomObj, {
 
             if(strokeMaterial) {
                 this._strokeMaterial = strokeMaterial;
-				if (strokeColor && this._strokeMaterial.hasProperty( "color" ))  this._strokeMaterial.setProperty( "color",  this._strokeColor );
+                if (strokeColor && this._strokeMaterial.hasProperty( "color" ))  this._strokeMaterial.setProperty( "color",  this._strokeColor );
             }
         }
     },
 
-	////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
     // TODO - Use getters/setters in the future
@@ -217,26 +217,26 @@ exports.Line = Object.create(GeomObj, {
         }
     },
 
-	///////////////////////////////////////////////////////////////////////
-	// Methods
-	///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////
+    // Methods
+    ///////////////////////////////////////////////////////////////////////
     exportJSON: {
         value: function() {
             var jObj =
             {
-                'type'			: this.geomType(),
-                'xoff'			: this._xOffset,
-                'yoff'			: this._yOffset,
-                'width'			: this._width,
-                'height'		: this._height,
-                'xAdj'		    : this._xAdj,
-                'yAdj'		    : this._yAdj,
-                'slope'	        : this._slope,
-                'strokeWidth'	: this._strokeWidth,
-                'strokeColor'	: this._strokeColor,
-                'strokeStyle'	: this._strokeStyle,
-                'strokeMat'		: this._strokeMaterial ? this._strokeMaterial.getName() : MaterialsModel.getDefaultMaterialName(),
-                'materials'		: this.exportMaterialsJSON()
+                'type'          : this.geomType(),
+                'xoff'          : this._xOffset,
+                'yoff'          : this._yOffset,
+                'width'         : this._width,
+                'height'        : this._height,
+                'xAdj'          : this._xAdj,
+                'yAdj'          : this._yAdj,
+                'slope'         : this._slope,
+                'strokeWidth'   : this._strokeWidth,
+                'strokeColor'   : this._strokeColor,
+                'strokeStyle'   : this._strokeStyle,
+                'strokeMat'     : this._strokeMaterial ? this._strokeMaterial.getName() : MaterialsModel.getDefaultMaterialName(),
+                'materials'     : this.exportMaterialsJSON()
             };
 
             return jObj;
@@ -245,17 +245,17 @@ exports.Line = Object.create(GeomObj, {
 
     importJSON: {
         value: function(jObj) {
-            this._xOffset			= jObj.xoff;
-            this._yOffset			= jObj.yoff;
-            this._width				= jObj.width;
-            this._height			= jObj.height;
-            this._xAdj			    = jObj.xAdj;
-            this._yAdj			    = jObj.yAdj;
-            this._strokeWidth		= jObj.strokeWidth;
-            this._slope 		    = jObj.slope;
-            this._strokeStyle		= jObj.strokeStyle;
-            this._strokeColor		= jObj.strokeColor;
-            var strokeMaterialName	= jObj.strokeMat;
+            this._xOffset           = jObj.xoff;
+            this._yOffset           = jObj.yoff;
+            this._width             = jObj.width;
+            this._height            = jObj.height;
+            this._xAdj              = jObj.xAdj;
+            this._yAdj              = jObj.yAdj;
+            this._strokeWidth       = jObj.strokeWidth;
+            this._slope             = jObj.slope;
+            this._strokeStyle       = jObj.strokeStyle;
+            this._strokeColor       = jObj.strokeColor;
+            var strokeMaterialName  = jObj.strokeMat;
 
             var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
             if (!strokeMat) {
@@ -295,15 +295,15 @@ exports.Line = Object.create(GeomObj, {
 
             // get the normalized device coordinates (NDC) for
             // all position and dimensions.
-            var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-            var	xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
+            var vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
+            var xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
                 xFillNDC = this._width/vpw,  yFillNDC = this._height/vph,
                 xAdjNDC = this._xAdj/vpw,  yAdjNDC = this._yAdj/vph,
                 xStrokeNDC = this._strokeWidth/vpw,  yStrokeNDC = this._strokeWidth/vph;
 
             var aspect = world.getAspect();
             var zn = world.getZNear(),  zf = world.getZFar();
-            var	t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
+            var t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
                 b = -t,
                 r = aspect*t,
                 l = -r;
@@ -472,7 +472,7 @@ exports.Line = Object.create(GeomObj, {
                 cs;
 
             ctx.beginPath();
-            ctx.lineWidth	= lineWidth;
+            ctx.lineWidth   = lineWidth;
             if (this._strokeColor) {
                 if(this._strokeColor.gradientMode) {
                     if(this._strokeColor.gradientMode === "radial") {

@@ -62,8 +62,8 @@ RDGE.particle = function (def, id) {
 
     this.randomize3 = function (min, max) {
         return [this.randomize(min[0], max[0]),
-							this.randomize(min[1], max[1]),
-							this.randomize(min[2], max[2])];
+                            this.randomize(min[1], max[1]),
+                            this.randomize(min[2], max[2])];
     };
 
     this.spawn = function (spawnMatrix) {
@@ -148,7 +148,7 @@ RDGE.particleBuffer = function (pdef, emitter, size) {
                     'u_textureSize': { 'type': 'vec2' },
                     'u_frameSize': { 'type': 'vec2' },
                     's_texture0': { 'type': 'tex2d' }
-                    //					's_texture1' : { 'type' : 'tex2d' }
+                    //                  's_texture1' : { 'type' : 'tex2d' }
                 }
             }]
         }
@@ -336,8 +336,8 @@ RDGE.particleBuffer = function (pdef, emitter, size) {
             var age = (p.age / p.lifespan); // normalized age
             // combine frame number and age and store in w. 
             // to decode : 
-            //		frame = floor( w ); 
-            //		age = fract( w ); 
+            //      frame = floor( w ); 
+            //      age = fract( w ); 
             var pw = Math.min(age, 0.999) + Math.floor(p.frame);
             if (age < 1.0) { // || (pdef.persist != undefined && pdef.persist == true)) {
                 var px = p.pos[0];
@@ -481,7 +481,7 @@ RDGE.particleBuffer = function (pdef, emitter, size) {
             else {
                 shaderparms.u_viewMatrix.set(activeCam.view);
                 shaderparms.u_worldMatrix.set(this.owner.world);
-                //				shaderparms.u_mvMatrix.set(RDGE.mat4.mul(this.owner.world, activeCam.view));
+                //              shaderparms.u_mvMatrix.set(RDGE.mat4.mul(this.owner.world, activeCam.view));
             }
             shaderparms.u_projMatrix.set(activeCam.proj);
 
@@ -492,7 +492,7 @@ RDGE.particleBuffer = function (pdef, emitter, size) {
             shaderparms.u_textureSize.set(pdef.textureSize);
             shaderparms.u_frameSize.set(pdef.frameSize);
             shaderparms.s_texture0.set(this.texture);
-            //			shaderparms.s_texture1.set(null);
+            //          shaderparms.s_texture1.set(null);
 
             var passCount = this.shader.begin();
             for (passIdx = 0; passIdx < passCount; ++passIdx) {

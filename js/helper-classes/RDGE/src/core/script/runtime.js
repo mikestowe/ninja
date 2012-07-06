@@ -51,7 +51,7 @@ RDGE.globals = (function () {
 /***************************************************************************************************************/
 
 /*
- *	RDGEState a RDGEstate is an interface that is defined by the user and called by the engine
+ *  RDGEState a RDGEstate is an interface that is defined by the user and called by the engine
  */
 RDGE.core.RDGEState = function RDGEState() { };
 RDGE.core.RDGEState.prototype.init = function () { };
@@ -62,7 +62,7 @@ RDGE.core.RDGEState.prototype.shutdown = function () { };
 RDGE.core.RDGEState.prototype.onComplete = function () { };
 
 /*
- *	Calling this makes sure the passed in run state has all the functions
+ *  Calling this makes sure the passed in run state has all the functions
  *  that are required, adding dummy functions where needed
  */
 RDGE.utilities.validateUserState = function (userState) {
@@ -101,11 +101,11 @@ RDGE.utilities.validateUserState = function (userState) {
 };
 
 /*
- *	Used to start the RDGE engine, pass the initState and runState, both of which are RDGEState objects
- *	initState is used to asynchronously load scene data while allowing you to render and update if needed
- *	runState is used clear the execution path for regular rendering and updating once loading is complete
- *	@param initState	- the initialization state, false if you don't want to use one
- *	@param runState		- the run state
+ *  Used to start the RDGE engine, pass the initState and runState, both of which are RDGEState objects
+ *  initState is used to asynchronously load scene data while allowing you to render and update if needed
+ *  runState is used clear the execution path for regular rendering and updating once loading is complete
+ *  @param initState    - the initialization state, false if you don't want to use one
+ *  @param runState     - the run state
  */
 RDGE.RDGEStart = function (canvasOrID) {
     var canvas = canvasOrID;
@@ -118,11 +118,11 @@ RDGE.RDGEStart = function (canvasOrID) {
 
     RDGE.globals.engine.registerCanvas(canvas);
 
-	if (!canvas.task)
-	{
-		//canvas.task = new RDGE.RDGETask(canvas, true);
-		canvas.task = new RDGE.RDGETask(canvas, false);
-	}
+    if (!canvas.task)
+    {
+        //canvas.task = new RDGE.RDGETask(canvas, true);
+        canvas.task = new RDGE.RDGETask(canvas, false);
+    }
 
     if (!RDGE.globals.shaderMan)
         RDGE.globals.shaderMan = new RDGE.ShaderManager();

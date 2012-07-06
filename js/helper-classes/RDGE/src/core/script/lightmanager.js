@@ -71,12 +71,12 @@ RDGE.LightManager = function (lightUniformList) {
     this.typeDirLight = "dir_light";
 
     this.defaultLights =
-	[
-		RDGE.createLightNode("default0"),
-		RDGE.createLightNode("default1"),
-		RDGE.createLightNode("default2"),
-		RDGE.createLightNode("default3")
-	];
+    [
+        RDGE.createLightNode("default0"),
+        RDGE.createLightNode("default1"),
+        RDGE.createLightNode("default2"),
+        RDGE.createLightNode("default3")
+    ];
 };
 
 /*

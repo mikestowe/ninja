@@ -47,6 +47,6 @@ exports.AnimationsLibrary = Montage.create(Component, {
     handleNodeActivation: {
         value: function(presetData) {
             this.application.ninja.presetsController.applyPreset(presetData);
-      	}
- 	}
+        }
+    }
 });

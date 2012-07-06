@@ -27,10 +27,10 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = 			require("montage/core/core").Montage,
-    Component = 		require("montage/ui/component").Component,
-    Template =			require("montage/ui/template").Template,
-    TemplateCreator =	require("tools/template/template-creator").TemplateCreator;
+var Montage =           require("montage/core/core").Montage,
+    Component =         require("montage/ui/component").Component,
+    Template =          require("montage/ui/template").Template,
+    TemplateCreator =   require("tools/template/template-creator").TemplateCreator;
 
 
 //var njmodelGet = function njmodelGet() {
@@ -85,7 +85,7 @@ exports.Main = Montage.create(Component, {
                         var componentRequire = component[data.name];
                         var componentInstance = componentRequire.create();
 
-						componentInstance.identifier = data.identifier;
+                        componentInstance.identifier = data.identifier;
                         componentInstance.addEventListener("firstDraw", self, false);
 
                         componentInstance.element = element;

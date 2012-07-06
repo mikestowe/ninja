@@ -31,29 +31,29 @@ POSSIBILITY OF SUCH DAMAGE.
  
  
 <!-- 
-	NOTE(s):
-	All elements in the head of the document to be exclude from I/O
-	must set the 'data-ninja-template'
-	data-ninja-template="true"
+    NOTE(s):
+    All elements in the head of the document to be exclude from I/O
+    must set the 'data-ninja-template'
+    data-ninja-template="true"
 -->
 <html>
 
-	<head>
+    <head>
         
-       	<style type="text/css" id="nj-stage-stylesheet" data-ninja-template="true">
-       		* {
+        <style type="text/css" id="nj-stage-stylesheet" data-ninja-template="true">
+            * {
                 -webkit-animation: none !important;
-        		-webkit-transition-duration: 0s !important;
-    			-webkit-animation-duration: 0s !important;
-    			-webkit-animation-name: none !important;
+                -webkit-transition-duration: 0s !important;
+                -webkit-animation-duration: 0s !important;
+                -webkit-animation-name: none !important;
                 -webkit-animation-fill-mode: none !important;
-			}
-			
-			body {
-				margin: 0;
-    			padding: 0;
-				position: absolute;
-			}
+            }
+            
+            body {
+                margin: 0;
+                padding: 0;
+                position: absolute;
+            }
 
             html {
                 overflow: scroll;
@@ -65,38 +65,38 @@ POSSIBILITY OF SUCH DAMAGE.
                 background: #666;
             }
 
-			.active-element-outline {
-    			outline: #adff2f solid 2px;
-			}
+            .active-element-outline {
+                outline: #adff2f solid 2px;
+            }
 
-			.nj-preset-transition {
-				-webkit-transition: all 450ms linear !important;
-			}
-			
-			ninjaloadinghack {
-				display: none;
-			}
-			
-			ninja-viewport, ninja-content {
-				display: block;
-               	margin: 0;
-               	padding: 0;
-               	border: 0;
-               	position: absolute;
-               	overflow: visible;
-               	top: 0;
-               	left: 0;
-               	background: transparent;
-			}
-			
-			ninja-viewport {
-               	background: #FFF;
-           	}
-			
-			ninja-content {
+            .nj-preset-transition {
+                -webkit-transition: all 450ms linear !important;
+            }
+            
+            ninjaloadinghack {
+                display: none;
+            }
+            
+            ninja-viewport, ninja-content {
+                display: block;
+                margin: 0;
+                padding: 0;
+                border: 0;
+                position: absolute;
+                overflow: visible;
+                top: 0;
+                left: 0;
+                background: transparent;
+            }
+            
+            ninja-viewport {
+                background: #FFF;
+            }
+            
+            ninja-content {
                 -webkit-transform-style: preserve-3d;
                 -webkit-transform: perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-			}
+            }
 
             ::-webkit-scrollbar { width: 11px; height: 11px; }
             ::-webkit-scrollbar-button:start:decrement, ::-webkit-scrollbar-button:end:increment { display: none; }
@@ -144,11 +144,11 @@ POSSIBILITY OF SUCH DAMAGE.
                 set: function() {
                 }
             });
-    	</script>
-    	
-    	<!-- TODO: Determine if loading Montage is always needed or if it could be done author-time or on file open -->
+        </script>
+        
+        <!-- TODO: Determine if loading Montage is always needed or if it could be done author-time or on file open -->
     
-    	<script type="text/javascript" data-package="../app" src="../../../../node_modules/montage/montage.js" data-ninja-template="true"></script>
+        <script type="text/javascript" data-package="../app" src="../../../../node_modules/montage/montage.js" data-ninja-template="true"></script>
 
         <script type="text/montage-serialization" data-ninja-template="true">
         {
@@ -158,18 +158,18 @@ POSSIBILITY OF SUCH DAMAGE.
         }
         </script>
 
-	</head>
+    </head>
 
-	<body>
-		
-		<ninjaloadinghack></ninjaloadinghack>
+    <body>
+        
+        <ninjaloadinghack></ninjaloadinghack>
         
         <ninja-viewport>
-		    
-		    <ninja-content></ninja-content>
-		    
+            
+            <ninja-content></ninja-content>
+            
         </ninja-viewport>
         
-	</body>
+    </body>
 
 </html>

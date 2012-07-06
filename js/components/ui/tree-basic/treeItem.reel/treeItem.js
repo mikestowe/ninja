@@ -76,8 +76,8 @@ exports.TreeItem = Montage.create(Component, {
            value:null
        },
     willDraw: {
-    	enumerable: false,
-    	value: function() {
+        enumerable: false,
+        value: function() {
             var that = this;
             this.itemName.innerHTML = this.treeItemData.name;
 
@@ -108,14 +108,14 @@ exports.TreeItem = Montage.create(Component, {
         }
     },
     draw: {
-    	enumerable: false,
-    	value: function() {
+        enumerable: false,
+        value: function() {
 
         }
     },
     didDraw: {
-    	enumerable: false,
-    	value: function() {
+        enumerable: false,
+        value: function() {
             var that = this;
             this.element.identifier = "treeItem";
             this.treeArrow.identifier = "treeArrow";
@@ -333,12 +333,12 @@ exports.TreeItem = Montage.create(Component, {
     formatTimestamp:{
         writable:false,
         enumerable: false,
-    	value: function(timestamp) {
+        value: function(timestamp) {
             var aDate = new Date();
             timestamp = timestamp - (aDate.getTimezoneOffset()*60*1000);//convert from GMT to local timestamp
             aDate = new Date(timestamp);
             return aDate.toLocaleString();
-    	}
+        }
     }
 
 });

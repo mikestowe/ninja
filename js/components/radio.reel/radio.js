@@ -176,11 +176,11 @@ exports.Radio = Montage.create(Component, {
     handleChange:
     {
         value:function(event)
-		{
+        {
             this._valueSyncedWithInputField = true;
             this._wasSetByCode = false;
             this.checked = this.radioField.checked;
-		}
+        }
     },
     handleClick: {
         value: function() {

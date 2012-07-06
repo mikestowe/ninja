@@ -37,7 +37,7 @@ exports.Panel = Montage.create(Component, {
         value: "Panel"
     },
 
-	groups: {
+    groups: {
         value: []
     },
 

@@ -97,15 +97,15 @@ exports.Resizer = Montage.create(Component, {
     },
 
     _isPanel: {
-    	value: true
+        value: true
     },
     isPanel: {
-    	get: function() {
-    		return this._isPanel;
-    	},
-    	set: function(value) {
-    		this._isPanel = value;
-    	},
+        get: function() {
+            return this._isPanel;
+        },
+        set: function(value) {
+            this._isPanel = value;
+        },
         serializable: true
     },
 
@@ -239,11 +239,11 @@ exports.Resizer = Montage.create(Component, {
                 this.panel.style.height = this.value + "px";
             }
             else {
-            	if (this.isPanel) {
-                	this.value = this._initDimension + (this._startPosition - e.x);
-            	} else {
-            		this.value = this._isInversed ? this._initDimension + (this._startPosition - e.x) : this._initDimension + (e.x - this._startPosition);
-            	}
+                if (this.isPanel) {
+                    this.value = this._initDimension + (this._startPosition - e.x);
+                } else {
+                    this.value = this._isInversed ? this._initDimension + (this._startPosition - e.x) : this._initDimension + (e.x - this._startPosition);
+                }
                 this.panel.style.width = this.value + "px";
             }
  

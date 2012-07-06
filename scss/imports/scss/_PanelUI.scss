@@ -125,7 +125,7 @@ POSSIBILITY OF SUCH DAMAGE.
     font-size : 11px;
     margin-left: 20px;
     cursor:default;
-	color: $color-panel-text;
+    color: $color-panel-text;
 }
 
 .treeComponent ul
@@ -165,7 +165,7 @@ ul.treeComponent > img:first-child
 .treeItem {
     font-weight : normal;
     vertical-align:middle;
-	color: $color-panel-text;
+    color: $color-panel-text;
 }
 
 //  ======  Used by Properties Panel ======  
@@ -330,7 +330,7 @@ ul.treeComponent > img:first-child
 
 //  Begin: Project Panel UI classes  
 .Project-Panel {
-	height: 100%;
+    height: 100%;
 }
 #pp-container {
     height: 100%;
@@ -379,40 +379,40 @@ ul.treeComponent > img:first-child
  
 
 .pp-scroll-main {
-	display: block;
-	position:absolute;
-	height:auto;
-	bottom:0;
-	top:0;
-	left:0;
-	right:0;
-	margin-top:18px;
-	overflow: auto;
+    display: block;
+    position:absolute;
+    height:auto;
+    bottom:0;
+    top:0;
+    left:0;
+    right:0;
+    margin-top:18px;
+    overflow: auto;
 }
 .pp-scroll-main .pp-scroll-linked{
-	display: block;
-	position:absolute;
-	height: auto;
-	bottom:0;
-	top:0;
-	left:0;
-	right:0;
-	overflow: visible;
-	
+    display: block;
+    position:absolute;
+    height: auto;
+    bottom:0;
+    top:0;
+    left:0;
+    right:0;
+    overflow: visible;
+    
 }
 #pp-view-assets {
-	display: none;
+    display: none;
 }
 // 
 #pp-container-assets .pp-scroll-linked,
 #pp-container-list .pp-scroll-linked {
-	//width: 420px;
+    //width: 420px;
 }
  
 
 .pp-header-container {
     position: relative;
-	overflow: hidden;
+    overflow: hidden;
     border-bottom: 1px solid $color-menu-border;
     background-color: $color-panel-shadow;
     min-width: 390px;
@@ -429,30 +429,30 @@ ul.treeComponent > img:first-child
     position: relative;
 }
 .pp-header .pp-resize-grip {
-	width: 7px;
-	height: 18px;
-	overflow: hidden;
-	position: absolute;
-	top: 0px;
-	right: 0px;
-	cursor: col-resize;
-	z-index: 10;
+    width: 7px;
+    height: 18px;
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    cursor: col-resize;
+    z-index: 10;
 }
 .pp-header-container .header-file {
-	min-width: 100px;
-	width: 160px;
+    min-width: 100px;
+    width: 160px;
 }
 .pp-header-container .header-size {
-	min-width: 50px;
-	width: 50px;
+    min-width: 50px;
+    width: 50px;
 }
 .pp-header-container .header-type {
-	min-width: 50px;
-	width: 50px;
+    min-width: 50px;
+    width: 50px;
 }
 .pp-header-container .header-date {
-	min-width: 100px;
-	width: 120px;
+    min-width: 100px;
+    width: 120px;
 }
 
 #pp-container-list ul {
@@ -460,10 +460,10 @@ ul.treeComponent > img:first-child
     margin-left: 11px;
 }
 #pp-container-list ul.tree {
-	border-right: 1px solid $color-menu-divider;
+    border-right: 1px solid $color-menu-divider;
 }
 #pp-container-list ul.tree > li:first-child > .pp-span-all:first-child {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 #pp-container-list ul ul {
@@ -502,56 +502,56 @@ ul.treeComponent > img:first-child
     cursor: default;
 }
 span.pp-span-all {
-	display: block;
+    display: block;
 }
 span.pp-span-all:focus {
-	-webkit-box-shadow: none;
-	background-color: $color-focus-outline;
-	border-color: $color-focus-outline;
-	color: $color-menu-bg;
+    -webkit-box-shadow: none;
+    background-color: $color-focus-outline;
+    border-color: $color-focus-outline;
+    color: $color-menu-bg;
 }
 
 #pp-view-assets .pp-asset-col {
-	float: left;
+    float: left;
 }
 #pp-view-assets .pp-col-files {
-	width: 167px;
+    width: 167px;
 }
 #pp-view-assets .pp-col-size {
-	width: 57px;
+    width: 57px;
 }
 #pp-view-assets .pp-col-type {
-	width: 57px;
+    width: 57px;
 }
 #pp-view-assets .pp-col-date {
-	width: 127px;
+    width: 127px;
 }
 .pp-sort-arrow {
-	display: none;
+    display: none;
 }
 .pp-sort .pp-sort-arrow {
-	display: block;
-	width: 9px;
-	height: 5px;
-	// 
-	margin-right: 10px;
-	margin-top: 2px;
-	 
-	background-image: url("../images/panels/project-panel/icon-sort-arrow.png");
-	background-repeat: no-repeat;
-	position: absolute;
-	top: 5px;
-	right: 10px;
+    display: block;
+    width: 9px;
+    height: 5px;
+    // 
+    margin-right: 10px;
+    margin-top: 2px;
+     
+    background-image: url("../images/panels/project-panel/icon-sort-arrow.png");
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 5px;
+    right: 10px;
 }
 .pp-sort.sort-ascending .pp-sort-arrow {
-	background-position: 0 0;
+    background-position: 0 0;
 }
 .pp-sort.sort-descending .pp-sort-arrow {
-	background-position: 0px -5px;
+    background-position: 0px -5px;
 }
 #pp-view-assets .pp-asset-col div {
-	color: $color-panel-text;
-	padding-left: 5px;
+    color: $color-panel-text;
+    padding-left: 5px;
     border-bottom: 1px solid $color-menu-divider;
     padding-top: 3px;
     padding-bottom: 3px;
@@ -561,17 +561,17 @@ span.pp-span-all:focus {
     border-right: 1px solid $color-menu-divider;
 }
 #pp-view-assets .focused {
-	background-color: #ccc;
+    background-color: #ccc;
 }
 #pp-view-assets :focus {
-	-webkit-box-shadow: none;
+    -webkit-box-shadow: none;
 }
 
 #pp-view-assets #pp-container-assets :focus,
 #pp-view-assets #pp-container-assets .focused {
-	background-color: $color-focus-outline;
-	border-color: $color-focus-outline;
-	color: $color-menu-bg;
+    background-color: $color-focus-outline;
+    border-color: $color-focus-outline;
+    color: $color-menu-bg;
 }
 
 //  Icons!  
@@ -633,14 +633,14 @@ span.pp-span-all:focus {
     background-image: url("../images/panels/project-panel/icon-file-tag.png");
 }
 #pp-view-assets .pp-col-files div {
-	background-repeat: no-repeat;
-	background-position: 7px 2px;
-	padding-left: 25px;
+    background-repeat: no-repeat;
+    background-position: 7px 2px;
+    padding-left: 25px;
 }
 
 #pp-view-assets h3 {
-	text-align: center;
-	display: none;
+    text-align: center;
+    display: none;
 }
 
 #pp-container-list span.pp-col-files, 
@@ -659,10 +659,10 @@ span.pp-span-all:focus {
     padding-left: 10px;
 }
 #pp-container-list span.pp-col-size {
-	width: 47px;
+    width: 47px;
 }
 #pp-container-list span.pp-col-date {
-	width: 97px;
+    width: 97px;
 }
 #pp-container-list span.pp-col-files {
     width: 151px;
@@ -678,8 +678,8 @@ span.pp-span-all:focus {
 //  Buttons  
 .pp-button, 
 #pp-col-buttons .pp-button div {
-	margin: 0px;
-	padding: 0px;
+    margin: 0px;
+    padding: 0px;
     width: 26px;
     height: 25px;
     background-repeat: no-repeat;
@@ -692,31 +692,31 @@ span.pp-span-all:focus {
     left: 2px;
 }
 .pp-disabled .pp-button {
-	cursor: default;
-	opacity: 0.50;
+    cursor: default;
+    opacity: 0.50;
 }
 .pp-disabled .pp-button:focus {
-	-webkit-box-shadow: none;
+    -webkit-box-shadow: none;
 }
 #pp-container-list h3 {
-	display: none;
+    display: none;
 }
 .pp-disabled #pp-container-list h3 {
-	display: block;
-	text-align: center;
+    display: block;
+    text-align: center;
 }
 
 .pp-button.active {
     background-image: url("../images/panels/project-panel/icon-button-selected.png");
 }
 .pp-disabled .pp-button.active {
-	background-image: none;
+    background-image: none;
 }
 .pp-button.active:focus {
-	outline: none;
+    outline: none;
 }
 .pp-button:active:focus {
-	outline: none;
+    outline: none;
 }
 .pp-button.button-project div {
     background-image: url("../images/panels/project-panel/icon-button-project.png")
@@ -760,7 +760,7 @@ div.pp-button.button-divider div {
 }
 
 .pp-button.button-undefined {
-	display: none;
+    display: none;
 }
 
 //  Hide and Show different types of assets  
@@ -770,59 +770,59 @@ div.pp-button.button-divider div {
 .pp-type-image,
 .pp-type-flash,
 .pp-type-other {
-	display: none;
+    display: none;
 }
 .pp-show-all .pp-asset-col div {
-	display: block;
+    display: block;
 }
 
 .pp-show-scripts .pp-type-script {
-	display: block;
+    display: block;
 }
 .pp-show-videos .pp-type-video {
-	display: block;
+    display: block;
 }
 .pp-show-audio .pp-type-audio {
-	display: block;
+    display: block;
 }
 .pp-show-images .pp-type-image {
-	display: block;
+    display: block;
 }
 .pp-show-flash .pp-type-flash {
-	display: block;
+    display: block;
 }
 
 //  New file flyout  
 .pp-popup {
-	position: absolute;
-	top: -53px;
-	left: -40px;
-	width: 80px;
-	height: 50px;
-	overflow: hidden;
-	border-radius: 5px;
+    position: absolute;
+    top: -53px;
+    left: -40px;
+    width: 80px;
+    height: 50px;
+    overflow: hidden;
+    border-radius: 5px;
     background-color: $color-tool-bg;
     border: 2px solid $color-app-border;
     z-index: 100;
     display: none;
 }
 .pp-popup p {
-	color: $color-menu-text;
-	margin: 0px;
-	padding: 0px;
+    color: $color-menu-text;
+    margin: 0px;
+    padding: 0px;
 }
 //  Search subwidget  
 #pp-search {
-	position: absolute;
-	display: block;
+    position: absolute;
+    display: block;
     height: 24px;
-	border: 2px solid $color-menu-border;
-	background-color: $color-menu-bg;
-	margin-left: 30px;
-	margin-right: 10px;
-	left: 0px;
-	bottom: 10px;
-	right: 0px;
+    border: 2px solid $color-menu-border;
+    background-color: $color-menu-bg;
+    margin-left: 30px;
+    margin-right: 10px;
+    left: 0px;
+    bottom: 10px;
+    right: 0px;
 }
 #pp-search label {
     position: absolute;
@@ -835,7 +835,7 @@ div.pp-button.button-divider div {
     z-index: 10;
 }
 #pp-search input {
-	width: 100%;
+    width: 100%;
     height: 16px;
     margin-left: 7px;
     margin-top: 0px;
@@ -844,15 +844,15 @@ div.pp-button.button-divider div {
     position: relative;
 }
 #pp-search div.pp-button {
-	position: relative;
+    position: relative;
     width: 20px;
     height: 20px;
     float: right;
     margin-left: 5px;
     background-repeat: no-repeat;
     background-position: 0 2px;
-	overflow: visible;
-	top: -6px;
+    overflow: visible;
+    top: -6px;
 }
 #pp-search div.button-add {
     background-image: url("../images/panels/project-panel/icon-button-plus.png");
@@ -861,19 +861,19 @@ div.pp-button.button-divider div {
     background-image: url("../images/panels/project-panel/icon-button-delete.png");
 }
 #pp-view-assets #pp-container-assets .pp-filter-hidden {
-	display: none;
+    display: none;
 }
 
 
 //  Inline editor styling  
 #pp-container-assets input.inline-editor {
-	height: 11px;
-	width: 80%;
-	background-color: $color-panel-hilite-text !IMPORTANT;
-	color: $color-panel-hilite-bg !IMPORTANT;
-	top:-2px;
-	border-width: 0px;
-	font-size: 11px;
+    height: 11px;
+    width: 80%;
+    background-color: $color-panel-hilite-text !IMPORTANT;
+    color: $color-panel-hilite-bg !IMPORTANT;
+    top:-2px;
+    border-width: 0px;
+    font-size: 11px;
 }
 
 
@@ -881,8 +881,8 @@ div.pp-button.button-divider div {
 
 //  Begin: Properties Panel styles  
 .properties_panel {
-	overflow-x: hidden;
-	color: $color-panel-text;
+    overflow-x: hidden;
+    color: $color-panel-text;
 }
 
 //  Begin: styling the form elements  
@@ -890,7 +890,7 @@ div.pp-button.button-divider div {
     -webkit-appearance: none;
     font-size: 9px;
     color: $color-panel-text;
-	background-color: $color-panel-input-bg;
+    background-color: $color-panel-input-bg;
     border: 1px solid $color-panel-input-border;
     width : 120px;
     height: 15px;
@@ -900,39 +900,39 @@ div.pp-button.button-divider div {
     background-position: right center;
 }
 .properties_panel select:focus {
-	outline: none;
-	border: 1px solid $color-panel-input-border;
+    outline: none;
+    border: 1px solid $color-panel-input-border;
 }
 .properties_panel .layout-table .layout-cell input[type="text"] {
-	height: 11px;
-	width: 120px;
-	font-size: 10px;
+    height: 11px;
+    width: 120px;
+    font-size: 10px;
     border: 1px solid $color-panel-input-border;
-	background-color: $color-panel-input-bg;
-	outline: none;
+    background-color: $color-panel-input-bg;
+    outline: none;
 }
 .properties_panel input[type="checkbox"] {
-	position: relative;
-	top: -2px;
+    position: relative;
+    top: -2px;
 }
 
 button.panel-button {
-	-webkit-appearance: none;
-	font-size: 9px;
-	color: $color-panel-text;
-	background-color: $color-panel-input-bg;
+    -webkit-appearance: none;
+    font-size: 9px;
+    color: $color-panel-text;
+    background-color: $color-panel-input-bg;
     border: 1px solid $color-panel-input-border;
     cursor: pointer;
     margin-left: 75%;
 }
 .properties_panel .hottextunit input {
-	width: 40px; 
-	height: 12px;
-	font-size: 10px;
-	-webkit-appearance: none;
-	border-color: $color-panel-input-border;
-	background-color: $color-panel-input-bg;
-	color: $color-panel-input;
+    width: 40px; 
+    height: 12px;
+    font-size: 10px;
+    -webkit-appearance: none;
+    border-color: $color-panel-input-border;
+    background-color: $color-panel-input-bg;
+    color: $color-panel-input;
 }
 //  End: styling the form elements  
 
@@ -1019,13 +1019,13 @@ button.panel-button {
     margin-right: 7px;
 }
 .panel .layout-table.table-2col-wide {
-	width: 100%;
+    width: 100%;
 }
 .layout-table.table-2col-wide .layout-row {
-	width: 100%;
+    width: 100%;
 }
 .panel .layout-table.table-2col-wide .layout-cell {
-	width: 50%;
+    width: 50%;
 }
 //  Slider properties  
 .slider_props .layout-table.table-2col-wide .layout-cell:first-child,
@@ -1034,27 +1034,27 @@ button.panel-button {
 .imagecont_props .layout-table.table-2col-wide .layout-cell:first-child,
 .toggle_props .layout-table.table-2col-wide .layout-cell:first-child,
 .image_props .layout-table.table-2col-wide .layout-cell:first-child {
-	width: 100%;
+    width: 100%;
 }
 .image_props .layout-table.table-2col-wide .layout-cell:first-child {
-	width: 200%;
+    width: 200%;
 }
 .hottext_props .layout-table.table-2col-wide .layout-cell {
-	margin-bottom: 6px;
+    margin-bottom: 6px;
 }
 .panel .layout-table.table-2col-wide .layout-cell:first-child {
-	text-align: right;
+    text-align: right;
 }
 .panel .layout-table.table-2col-wide .layout-cell:last-child {
-	padding-left: 7px;
+    padding-left: 7px;
 }
 .panel .layout-table.table-4col .layout-cell:first-child {
-	width: 30px;
-	text-align: right;
-	margin-right: 7px;
+    width: 30px;
+    text-align: right;
+    margin-right: 7px;
 }
 .panel .layout-table .flexor {
-	padding-right: 7px;
+    padding-right: 7px;
 }
 
 .panel .layout-table .flexor {
@@ -1062,7 +1062,7 @@ button.panel-button {
     padding-right: 7px;
 }
 .panel .layout-table.table-4col .flexor {
-	width: 55px;
+    width: 55px;
 }
 
 
@@ -1086,13 +1086,13 @@ button.panel-button {
     width: 35px;
     height: 20px;
     overflow: hidden;
-	text-indent: -9999px;
-	padding: 0px 0px 0px 0px;
-	display: block;
-	float: left;
-	cursor: pointer;
-	background-color: #333;
-	border: solid 1px #000;
+    text-indent: -9999px;
+    padding: 0px 0px 0px 0px;
+    display: block;
+    float: left;
+    cursor: pointer;
+    background-color: #333;
+    border: solid 1px #000;
 }
 .pp_strokelabel{
     border: none;

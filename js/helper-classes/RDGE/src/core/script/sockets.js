@@ -112,70 +112,70 @@ RDGE.ConnPoll = function() {
 */
 RDGE.ConnectionPool = funciton(base, startAddr, endAddr, messageHandlerFunc)
 {
-	this.start = startAddr;
-	this.end = endAddr;
-	this.port = 38951;
-	this.messageHandler = messageHandlerFunc;
-	
-	this.listenSockets		= [];
-	this.connectedSockets	= [];
-	
-	this.openHandler = null;
-	this.closeHandler = null;
-	
-	this.interval = null;
+    this.start = startAddr;
+    this.end = endAddr;
+    this.port = 38951;
+    this.messageHandler = messageHandlerFunc;
+    
+    this.listenSockets      = [];
+    this.connectedSockets   = [];
+    
+    this.openHandler = null;
+    this.closeHandler = null;
+    
+    this.interval = null;
 
-	this.Init = function (openHandler, closeHandler) {
-	    // empty out lists
-	    this.listenSockets = [];
-	    this.connectedSockets = [];
+    this.Init = function (openHandler, closeHandler) {
+        // empty out lists
+        this.listenSockets = [];
+        this.connectedSockets = [];
 
-	    this.openHandler = openHandler;
-	    this.closeHandler = closeHandler;
+        this.openHandler = openHandler;
+        this.closeHandler = closeHandler;
 
-	    var len = this.end - this.start;
-	    for (var i = 0; i < len; ++i) {
-	        var url = base + (this.start + i) + ":" + this.port + "/resourcePath";
-	        var ws = CreateSocket(url, this.listenSockets, this.connectedSockets, this.messageHandler, i, this.openHandler, this.closeHandler);
+        var len = this.end - this.start;
+        for (var i = 0; i < len; ++i) {
+            var url = base + (this.start + i) + ":" + this.port + "/resourcePath";
+            var ws = CreateSocket(url, this.listenSockets, this.connectedSockets, this.messageHandler, i, this.openHandler, this.closeHandler);
 
-	        this.listenSockets.push(ws);
-	    }
+            this.listenSockets.push(ws);
+        }
 
-	    this.interval = setInterval(ConnPoll, 200);
-	};
+        this.interval = setInterval(ConnPoll, 200);
+    };
 
-	this.Shutdown = function () {
-	    if (this.interval != null) {
-	        clearInterval(this.interval);
-	        this.interval = null;
-	    }
-	    var len = this.connectedSockets.length;
-	    for (var i = 0; i < len; ++i) {
-	        // send disconnect message
-	        this.connectedSockets[i].send("type=srv\nmsg=2\n"); ;
-	    }
-	};
+    this.Shutdown = function () {
+        if (this.interval != null) {
+            clearInterval(this.interval);
+            this.interval = null;
+        }
+        var len = this.connectedSockets.length;
+        for (var i = 0; i < len; ++i) {
+            // send disconnect message
+            this.connectedSockets[i].send("type=srv\nmsg=2\n"); ;
+        }
+    };
 
-	this.Close = function (socket) {
-	    socket.rdge_tryDisconnect = true;
-	};
+    this.Close = function (socket) {
+        socket.rdge_tryDisconnect = true;
+    };
 
-	this.Poll = function () {
-	    var len = this.end - this.start;
-	    for (var i = 0; i < len; ++i) {
-	        // re init the sockets to simulate broadcast
-	        if (this.listenSockets[i].readyState == 3/*CLOSING*/ || this.listenSockets[i].readyState == 2/*CLOSING*/ || this.listenSockets[i].rdge_tryDisconnect == true) {
-	            if (this.listenSockets[i].rdge_tryDisconnect) {
-	                document.getElementById("socketConnection").innerHTML += "graceful discon: " + this.listenSockets[i].URL + "</br>";
-	            }
+    this.Poll = function () {
+        var len = this.end - this.start;
+        for (var i = 0; i < len; ++i) {
+            // re init the sockets to simulate broadcast
+            if (this.listenSockets[i].readyState == 3/*CLOSING*/ || this.listenSockets[i].readyState == 2/*CLOSING*/ || this.listenSockets[i].rdge_tryDisconnect == true) {
+                if (this.listenSockets[i].rdge_tryDisconnect) {
+                    document.getElementById("socketConnection").innerHTML += "graceful discon: " + this.listenSockets[i].URL + "</br>";
+                }
 
-	            this.listenSockets[i].rdge_tryDisconnect = false;
+                this.listenSockets[i].rdge_tryDisconnect = false;
 
-	            var url = base + (this.start + i) + ":" + this.port + "/resourcePath";
-	            this.listenSockets[i].close();
-	            this.listenSockets[i] = CreateSocket(url, this.listenSockets, this.connectedSockets, this.messageHandler, i, this.openHandler, this.closeHandler);
-	        }
-	    }
-	};	
+                var url = base + (this.start + i) + ":" + this.port + "/resourcePath";
+                this.listenSockets[i].close();
+                this.listenSockets[i] = CreateSocket(url, this.listenSockets, this.connectedSockets, this.messageHandler, i, this.openHandler, this.closeHandler);
+            }
+        }
+    };  
 };
 

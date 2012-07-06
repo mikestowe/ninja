@@ -208,9 +208,9 @@ RDGE.camera = function () {
     this.getFTR = function () {
         var fovyRad = (this.persp.fov * 0.5) * Math.PI / 180.0;
         return [
-		Math.tan(fovyRad) * this.persp.far,
-		Math.tan(fovyRad / this.persp.aratio) * this.persp.far,
-		this.persp.far];
+        Math.tan(fovyRad) * this.persp.far,
+        Math.tan(fovyRad / this.persp.aratio) * this.persp.far,
+        this.persp.far];
     };
 
     this.attachCameraToNode = function (node) {
@@ -219,7 +219,7 @@ RDGE.camera = function () {
 };
 
 
-/**	Camera Manager
+/** Camera Manager
  * This class is used to manage the active camera. It provides functionality 
  * for getting and setting the active camera, as well as providing stack operations 
  * to switch to and from multiple cameras. 
