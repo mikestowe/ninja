@@ -52,7 +52,7 @@ RDGE.LoadState.prototype.loadTexture = function (textureObject) {
     if (this.stateManager.currentState().name != "LoadState") {
         this.stateManager.PushState( this.stateManager.RDGEInitState, "noInit" );
     }
-    
+
     this.textureLoadQueue.push(textureObject);
 };
 
@@ -82,10 +82,10 @@ RDGE.LoadState.prototype.Update = function (dt) {
     // for the current scene go through processing steps
     var sceneLoadTop = this.sceneLoadQueue.length - 1;
     var texLoadTop  = this.textureLoadQueue.length - 1;
-    
+
     if (sceneLoadTop > -1) {
         var curSceneReq = this.sceneLoadQueue[sceneLoadTop];
-        
+
         // check for completed mesh requests and load the data
         RDGE.globals.meshMan.processMeshData();
 
@@ -102,7 +102,7 @@ RDGE.LoadState.prototype.Update = function (dt) {
                 // setup the scene and save a map of mesh names
                 // that will be check off as the meshes load
                 curSceneReq.scene.Traverse(curSceneReq.sceneProcessor, false);
-                
+
                 // processing is complete
                 curSceneReq.sceneBeginProcessing = false;
             }
@@ -110,41 +110,41 @@ RDGE.LoadState.prototype.Update = function (dt) {
             else if (curSceneReq.processingComplete()) {
                 // pop the head node
                 var sceneReq = this.sceneLoadQueue.shift();
-                this.userRunState.onComplete(sceneReq.name, sceneReq.scene);    
+                this.userRunState.onComplete(sceneReq.name, sceneReq.scene);
             }
         }
-        
+
     }
-    
+
     // load any waiting textures
     while (this.textureLoadQueue.length > 0) {
         this.renderer.commitTexture( this.textureLoadQueue.shift() );
     }
-    
+
     // if there is nothing left to load move back to the run state
     if (this.sceneLoadQueue.length == 0 && this.textureLoadQueue.length == 0) {
         // loaded... remove the state
         var stateMan = RDGE.globals.engine.getContext().ctxStateManager;
         stateMan.PopState();
     }
-    
+
     if (RDGE.globals.engine.getContext().getScene() && RDGE.globals.engine.getContext().getScene() != "not-ready" && this.stateManager.RDGERunState.initialized)
-        this.userRunState.update(dt);   
+        this.userRunState.update(dt);
 };
 
 RDGE.LoadState.prototype.Draw = function () {
     this.renderer._clear();
-    
+
     if (RDGE.globals.engine.getContext().getScene() && RDGE.globals.engine.getContext().getScene() != "not-ready" && this.stateManager.RDGERunState.initialized)
-        this.userRunState.draw();   
+        this.userRunState.draw();
 };
-    
+
 RDGE.LoadState.prototype.Shutdown = function () {
 };
 
 RDGE.LoadState.prototype.LeaveState = function () {
     if (this.userRunState.onComplete != undefined) {
-        this.userRunState.onComplete(); 
+        this.userRunState.onComplete();
     }
 };
 
@@ -181,7 +181,7 @@ RDGE.SetupScene = function ()
         if(this.meshLoadingMap[meshName])
             this.meshLoadingMap[meshName].stillLoading = false;
     };
-    
+
     // set a call back handler to notify us when a mesh is loaded
     RDGE.globals.meshMan.addOnLoadedCallback( this );
 };
@@ -195,12 +195,12 @@ RDGE.SetupScene.prototype.process = function (trNode, parent) {
     if (trNode.local !== undefined) {
         trNode.local = RDGE.mat4.transpose(trNode.local);
     }
-  
+
     if (((trNode.materialNode || {}).meshNode || {}) != 'undefined') {
         if (trNode.materialNode !== undefined) {
 
             var lookup = RDGE.globals.meshMan.loadMesh(trNode.materialNode.meshNode.mesh);
-            
+
             //~~~~ Hack - the mesh node should be placed in an array of meshes under the transform when exported
             trNode.meshes.push(trNode.materialNode.meshNode);
 
@@ -221,9 +221,9 @@ RDGE.SetupScene.prototype.process = function (trNode, parent) {
                     // mark this mesh as loading
                     this.meshLoadingMap[trNode.materialNode.meshNode.mesh.name] = { 'stillLoading':true, 'remotelyLoading':true };
                 }
-                    
+
             }
-            
+
             //add set texture helper function
             RDGE.verifyMaterialNode(trNode.materialNode);
 
@@ -232,7 +232,7 @@ RDGE.SetupScene.prototype.process = function (trNode, parent) {
             mapLookUp["TEX_SPEC"] = {'slot':1, 'uni':"envMap"};
             mapLookUp["TEX_NORM"] = {'slot':2, 'uni':"normalMap"};
             mapLookUp["TEX_GLOW"] = {'slot':3, 'uni':"glowMap"};
-      
+
             // get handle and setup slot bindings
             var texList = trNode.materialNode.textureList;
             var extractedList = [];
@@ -240,11 +240,11 @@ RDGE.SetupScene.prototype.process = function (trNode, parent) {
                 var handle = this.renderer.getTextureByName(texList[i].name);
                 extractedList[i] = { 'name': mapLookUp[texList[i].type].uni, 'handle': handle, 'unit': mapLookUp[texList[i].type].slot, 'type': RDGE.UNIFORMTYPE.TEXTURE2D };
             }
-            
+
             trNode.materialNode.textureList = extractedList;
         }
     }
-  
+
     if ((trNode.lightNode || {}) != 'undefined') {
         if (trNode.lightNode !== undefined) {
             trNode.lightNode.parent = trNode;
@@ -261,7 +261,7 @@ RDGE.sceneRequestDef = function (addr, sceneName) {
     this.requestComplete        = false;
     this.sceneProcessor = new RDGE.SetupScene();
     this.doSceneRequest         = false;
-    
+
     /*
      *  @return - returns true when all meshes for the request are done
      */
@@ -269,7 +269,7 @@ RDGE.sceneRequestDef = function (addr, sceneName) {
         for (var m in this.sceneProcessor.meshLoadingMap) {
             // if a mesh is still loading than loading is not complete
             if (this.sceneProcessor.meshLoadingMap[m].stillLoading == false) {
-                
+
                 if (this.sceneProcessor.meshLoadingMap[m].remotelyLoading == true) {
                     // In this case we need to generate the buffers on our render device
                     var mesh = RDGE.globals.meshMan.getModelByName(m);
@@ -277,23 +277,23 @@ RDGE.sceneRequestDef = function (addr, sceneName) {
                 }
             }
             else {
-                return false;               
+                return false;
             }
         }
-        
+
         // loading done
         return true;
     };
-    
+
     this.requestScene = function () {
         this.doSceneRequest = false;
-        
+
         var request = new XMLHttpRequest();
         request.handler = this;
-        
+
         // set this scene as not-ready just in case anyone is looking for it
         RDGE.globals.engine.getContext().sceneGraphMap[name] = "not-ready";
-        
+
         // on request complete - set the flags of this request to trigger the next step in loading
         request.onreadystatechange = function () {
             if (request.readyState == 4) {
@@ -307,7 +307,7 @@ RDGE.sceneRequestDef = function (addr, sceneName) {
                 }
             }
         }
-        
+
         request.open("GET", addr, true);
         request.send(null);
     };

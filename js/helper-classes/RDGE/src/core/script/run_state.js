@@ -80,9 +80,9 @@ RDGE.RunState.prototype.Init = function () {
     //  g_mainLight.shadowMatrix=RDGE.mat4.scale(g_mainLight.shadowMatrix,[0.5,0.5,0.5]);
     //  g_mainLight.shadowMatrix=RDGE.mat4.translate(g_mainLight.shadowMatrix,[0.5,0.5,0.5]);
 //  //g_cameraManager.setActiveCamera( g_mainLight );
-//  
+//
     //  uniformEnableGlow = this.renderer.ctx.getUniformLocation(RDGE.globals.engine.defaultContext.shaderProg, "u_renderGlow");
-//  
+//
 //  depthRTT=createRenderTargetTexture(1024,1024);
 //  glowRTT=createRenderTargetTexture(512,512);
     //  blurFX=new RDGE.fx.fxBlur([256,128,64],true);
@@ -110,7 +110,7 @@ RDGE.RunState.prototype.Init = function () {
 
     //  RDGE.globals.engine.defaultContext.textureList.push({ 'handle': hrDepthRTT,'unit': 7,'type': RDGE.UNIFORMTYPE.TEXTURE2D });
     //  RDGE.globals.engine.defaultContext.uniforms.push({ 'name': "depthMap",'value': [hrDepthRTT] });
-        
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 };
 
@@ -139,11 +139,11 @@ RDGE.RunState.prototype.Resize = function () {
 RDGE.RunState.prototype.Draw = function () {
     var width = this.renderer.vpWidth;
     var height = this.renderer.vpHeight;
-    
+
 //  this.renderer._clear();
-    
+
     this.userRunState.draw();
-    
+
 // ~~~~ removing post process till multi-context and post process system is in place
 //      if(this.currentScene==null)
 //          return;
@@ -162,7 +162,7 @@ RDGE.RunState.prototype.Draw = function () {
 //      renderProcHighResDepth.cullFront=false;
 //      this.currentScene.render(renderProcHighResDepth);
 
-//      if(g_enableShadowMapping) 
+//      if(g_enableShadowMapping)
 //      {
 //          this.renderer.cameraManager().pushCamera(g_mainLight);
 
@@ -178,16 +178,16 @@ RDGE.RunState.prototype.Draw = function () {
 //      this.renderer.ctx.bindFramebuffer(this.renderer.ctx.FRAMEBUFFER, mainRTT.frameBuffer);
 //      this.renderer.setViewPort(0,0,1024,1024);
 
-//      if(g_showScene) 
+//      if(g_showScene)
 //      {
 //          this.renderer.clear( this.renderer.colorBuffer | this.renderer.depthBuffer );
 //          this.currentScene.render(renderProc);
-//      } else 
+//      } else
 //      {
 //          this.renderer.clear( this.renderer.ctx.colorBuffer | this.renderer.ctx.depthBuffer );
 //      }
 
-//      if(g_showSSAO) 
+//      if(g_showSSAO)
 //      {
 //          ssaoFX.doSSAO(mainRTT, depthRTT, hrDepthRTTSSAO, ssaoRTT, g_sampleRadius, g_intensity, g_distScale, g_bias);
 //      }
@@ -202,7 +202,7 @@ RDGE.RunState.prototype.Draw = function () {
 //          // Combine
 //          blurFX.doBlur(glowRTT,null,[g_bloomIntensity1,g_bloomIntensity2,g_bloomIntensity3,g_bloomIntensity4],g_showSSAO?ssaoRTT:mainRTT);
 //      }
-//      else if(g_showScene||g_showSSAO) 
+//      else if(g_showScene||g_showSSAO)
 //      {
 //          this.renderer.bindFramebuffer(this.renderer.ctx.FRAMEBUFFER,null);
 //          this.renderer.setViewPort(0, 0, width, height);
@@ -211,12 +211,12 @@ RDGE.RunState.prototype.Draw = function () {
 //          mainSceneQuad.texture=g_showSSAO?ssaoRTT:mainRTT;
     //          RDGE.renderProcScreenQuad(mainSceneQuad);
 //      }
-//      else 
+//      else
 //      {
 //          this.renderer.clear( this.renderer.colorBuffer | this.renderer.depthBuffer );
 //      }
 };
-    
+
 RDGE.RunState.prototype.Shutdown = function () {
     if (this.userRunState.shutdown != undefined) {
         this.userRunState.shutdown();
@@ -225,10 +225,10 @@ RDGE.RunState.prototype.Shutdown = function () {
 
 RDGE.RunState.prototype.LeaveState = function () {
     if (this.userRunState.onComplete != undefined) {
-        this.userRunState.onComplete(); 
+        this.userRunState.onComplete();
     }
 };
-            
+
 /*
 // These are currently unused for Ninja
 ///////////////////////////////////////////////////////////////////////////////
@@ -267,7 +267,7 @@ RDGE.SceneRender.prototype.process = function (context, trNode, parent) {
 
 
         renderer.disableCulling();
-        
+
         if(!g_wireframe)
             renderer.drawIndexedPrimitive(mesh.primitive, this.shaderProgram, {"vert":"vec3", "normal":"vec3", "texcoord":"vec2"} );
         else
@@ -283,7 +283,7 @@ RDGE.GenerateGlowMap = function () {
 
 RDGE.GenerateGlowMap.prototype.process = function (context, trNode, parent) {
     var renderer = RDGE.globals.engine.getContext().renderer;
-    
+
     // apply the context
     context.Apply(this.shaderProgram);
 
@@ -336,7 +336,7 @@ RDGE.GenerateDepthMap.prototype.process = function (context, trNode, parent) {
             return;
 
         renderer.enablePolyOffsetFill();
-        
+
         renderer.drawIndexedPrimitive(mesh.primitive, this.shaderProgram, {"vert":"vec3", "normal":"vec3", "texcoord":"vec2"} );
 
         renderer.disablePolyOffsetFill();
@@ -372,7 +372,7 @@ RDGE.GenerateHighResDepthMap.prototype.process = function (context, trNode, pare
 
         renderer.disableCulling();
         renderer.enablePolyOffsetFill();
-        
+
         this.cullFront ? renderer.cullFrontFace() : renderer.cullBackFace();
 
         renderer.drawIndexedPrimitive( mesh.primitive, this.shaderProgram, { "vert":"vec3", "normal":"vec3", "texcoord":"vec2" } );
