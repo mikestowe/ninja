@@ -805,6 +805,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			var obj = this._stateArray.pop();
 			this._lineColor = obj._lineColor;
 			this._drawingContext.lineWidth = obj._lineWidth;
+			this._drawingContext.strokeStyle = obj._lineColor;
 		}
 	},
 
