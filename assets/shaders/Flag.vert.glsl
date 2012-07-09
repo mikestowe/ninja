@@ -59,7 +59,8 @@ void main()
 	const float pi = 3.14159;
 	float angle = time;
 
-    v_uv = texcoord;
+    v_uv.x = texcoord.x;
+    v_uv.y = texcoord.y;
 
 	float x = 2.0*pi*texcoord.x/u_waveWidth;
 	float y = 2.0*pi*texcoord.y;

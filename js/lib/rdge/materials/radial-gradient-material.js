@@ -99,9 +99,26 @@ var RadialGradientMaterial = function RadialGradientMaterial() {
         this.setShaderValues();
     };
 
-	this.fitToPrimitive = function( prim )
+	this.resetToDefault = function()
 	{
-		var bounds = ShapePrimitive.getBounds( prim );
+		this._propValues[this._propNames[0]] = this._defaultColor1.slice(0);
+		this._propValues[this._propNames[1]] = this._defaultColor2.slice(0);
+		this._propValues[this._propNames[2]] = this._defaultColor3.slice(0);
+		this._propValues[this._propNames[3]] = this._defaultColor4.slice(0);
+
+		this._propValues[this._propNames[4]] = this._defaultColorStop1;
+		this._propValues[this._propNames[5]] = this._defaultColorStop2;
+		this._propValues[this._propNames[6]] = this._defaultColorStop3;
+		this._propValues[this._propNames[7]] = this._defaultColorStop4;
+	
+		var nProps = this._propNames.length;
+		for (var i=0; i<nProps;  i++) {
+			this.setProperty( this._propNames[i],  this._propValues[this._propNames[i]]  );
+        }
+	};
+
+	this.fitToBounds = function( bounds )
+	{
 		if (bounds)
 		{
 			var dx = Math.abs( bounds[3] - bounds[0] ),
@@ -131,6 +148,36 @@ var RadialGradientMaterial = function RadialGradientMaterial() {
 				this._shader['default'].u_texTransform.set( this._textureTransform );	
 
 		}
+	};
+
+	this.fitToPrimitiveArray = function( primArray )
+	{
+		if (!primArray)  return;
+		var nPrims = primArray.length;
+		if (nPrims == 0)  return;
+		var bounds = ShapePrimitive.getBounds( primArray[0] );
+		for (var i=1;  i<nPrims;  i++)
+		{
+			var prim = primArray[i];
+			var b2 = ShapePrimitive.getBounds( prim );
+
+			// [xMin, yMin, zMin,  xMax, yMax, zMax]
+			if (b2[0] < bounds[0])  bounds[0] = b2[0];
+			if (b2[1] < bounds[1])  bounds[1] = b2[1];
+			if (b2[2] < bounds[2])  bounds[2] = b2[2];
+
+			if (b2[3] > bounds[3])  bounds[3] = b2[3];
+			if (b2[4] > bounds[4])  bounds[4] = b2[4];
+			if (b2[5] > bounds[5])  bounds[5] = b2[5];
+		}
+
+		this.fitToBounds( bounds );
+	};
+
+	this.fitToPrimitive = function( prim )
+	{
+		var bounds = ShapePrimitive.getBounds( prim );
+		this.fitToBounds( bounds );
 	};
 
 	this.customExport = function( jObj )

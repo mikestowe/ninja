@@ -466,6 +466,7 @@ World.prototype.updateObject = function (obj) {
 	if (prims.length != materialNodes.length)
 		throw new Error("inconsistent material and primitive counts");
 	var nPrims = prims.length;
+	var iPrim = 0;
 	var ctrTrNode;
 	if (nPrims > 0)
 	{
@@ -483,8 +484,12 @@ World.prototype.updateObject = function (obj) {
 		);
 		ctrTrNode.meshes = [];
 
-		ctrTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prims[0]);
 		ctrTrNode.attachMaterial(materialNodes[0]);
+		while ((iPrim < nPrims) && (materialNodes[iPrim] == materialNodes[0]))
+		{
+			ctrTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prims[iPrim]);
+			iPrim++;
+		}
 	}
 	
 	// delete all of the child nodes
@@ -505,16 +510,18 @@ World.prototype.updateObject = function (obj) {
 	}
 	ctrTrNode.children = [];
 
-	for (var i = 1; i < nPrims; i++)
+	while (iPrim < nPrims)
 	{
-		// get the next primitive
 		childTrNode = RDGE.createTransformNode("objNode_" + this._nodeCounter++);
 		ctrTrNode.insertAsChild(childTrNode);
+		var matNode = materialNodes[iPrim];
+		childTrNode.attachMaterial(matNode);
 
-		// attach the instanced box goe
-		var prim = prims[i];
-		childTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prim);
-		childTrNode.attachMaterial(materialNodes[i]);
+		while ((iPrim < nPrims) && (materialNodes[iPrim] == matNode))
+		{
+			childTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prims[iPrim]);
+			iPrim++;
+		}
 	}
 
 	// send a notification that the tree has changed

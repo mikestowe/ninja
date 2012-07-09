@@ -62,7 +62,7 @@ varying vec3 vEyePos;
 
 void main()
 {
-  vec4 colMapTexel = vec4(texture2D(colMap, vec2(vNormal.w, vECPos.w)).rgb, 1.0);
+  vec4 colMapTexel = vec4(texture2D(colMap, vec2(vNormal.w, 1.0 - vECPos.w)).rgb, 1.0);
 
   // normal mapping
   vec3 normal = normalize(vNormal.xyz);
