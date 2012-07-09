@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -146,9 +147,9 @@ var UberMaterial = function UberMaterial() {
 		    'spotOuterCutoff': 15.0,                   // fragments outside the outer cutoff 'cone' are unlit.
 		    'position': [8.0, 2.0, 8.0],             // light position; ignored for directional lights
 		    'direction': [-1.0, -1.0, -1.0],         // light direction; ignored for point lights
-		    'attenuation': [1.0, 0.025, 0.00125],    // light attenuation; constant, linear, quadratic 
+		    'attenuation': [1.0, 0.025, 0.00125],    // light attenuation; constant, linear, quadratic
 		    'diffuseColor': [1.0, 0.5, 0.5, 1.0],    // diffuse light color
-		    'specularColor': [1.0, 1.0, 1.0, 1.0]    // specular light color  
+		    'specularColor': [1.0, 1.0, 1.0, 1.0]    // specular light color
 		},
 		{
 		    'type': 'point',
@@ -184,7 +185,7 @@ var UberMaterial = function UberMaterial() {
 
     this._ubershaderCaps =
 	{
-	    // ubershader material properties. 
+	    // ubershader material properties.
 	    'material': {
 	        'ambientColor': this._ambientColor,    // material ambient color
 	        'diffuseColor': this._diffuseColor,    // material diffuse color
@@ -192,7 +193,7 @@ var UberMaterial = function UberMaterial() {
 	        'specularPower': this._specularPower    // material specular power (shininess)
 	    },
 
-	    // ubershader supports up to four lights. 
+	    // ubershader supports up to four lights.
 	    'lighting': {
 	        'light0': this._lights[0],
 	        'light1': this._lights[1],
@@ -386,7 +387,7 @@ var UberMaterial = function UberMaterial() {
         // get the current values;
         var propNames = [], propValues = [], propTypes = [], propLabels = [];
         this.getAllProperties(propNames, propValues, propTypes, propLabels);
-        
+
         // allocate a new material
         var newMat = new UberMaterial();
         newMat._useDiffuseMap = this._useDiffuseMap;
@@ -434,7 +435,7 @@ var UberMaterial = function UberMaterial() {
             }
         }
     }
-	
+
     this.isAnimated	= function()
     {
         var anim = (this._diffuseTexture && this._diffuseTexture.isAnimated());
@@ -687,7 +688,7 @@ var UberMaterial = function UberMaterial() {
         var vshader = preproc + uberVShader;
         var fshader = preproc + uberFShader;
 
-        // build output jshader  
+        // build output jshader
         var uberJShader = new RDGE.jshader();
         uberJShader.def = {
             'shaders': {

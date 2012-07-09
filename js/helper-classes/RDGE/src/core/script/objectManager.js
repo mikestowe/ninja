@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -37,18 +38,18 @@ RDGE.objectManager = function() {
 	this.objects = [];
 	this.numObjects = 0;
 	this.freelist = [];
-	
+
 	this.reset = function() {
 		this.objects = [];
 		this.freelist = [];
 		this.guidCounter = 0;
 	}
-	
+
 	// validHandle
 	this.validHandle = function(h) {
 		return this.handleToIndex(h) != -1;
 	}
-	
+
 	// handleToIndex
 	this.handleToIndex = function(h) {
 		var index = ( h >> 16 ) & 0xFFFF;
@@ -58,35 +59,35 @@ RDGE.objectManager = function() {
 		return -1;
 	}
 
-	// handleToObject	
+	// handleToObject
 	this.handleToObject = function(h) {
-		var index = this.handleToIndex( h ); 
+		var index = this.handleToIndex( h );
 		if( index != -1 ) {
 			return this.objects[index];
 		}
 		return null;
 	}
-	
+
 	// add object
 	this.addObject = function(ob) {
 		var index = this.objects.length;
 
 		if( this.freelist.length > 0 ) {
-			index = this.freelist.pop(); 
+			index = this.freelist.pop();
 		}
 		if( ++this.guidCounter >= 0xFFFF ) {
 			// wrap the counter, zero is reserved for invalid handles.
 			this.guidCounter = 1;
 		}
-		ob.handle = ( index << 16 | ++this.guidCounter );				
+		ob.handle = ( index << 16 | ++this.guidCounter );
 		this.objects[index] = ob;
-		
+
 		return ob.handle;
 	}
-	
+
 	// remove object
-	this.removeObject = function(h) {	
-		var index = this.handleToIndex( h );	
+	this.removeObject = function(h) {
+		var index = this.handleToIndex( h );
 		if( index != -1 ) {
 			if( this.objects[index].onremove != undefined ) {
 				this.objects[index].onremove();

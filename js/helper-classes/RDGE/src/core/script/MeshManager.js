@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -73,7 +74,7 @@ RDGE.MeshManager.prototype.loadMesh = function (meshStump, tempMesh) {
 
 	// add the temp mesh to the map of loaded meshes
     this.modelMap[meshStump.name] = tempMesh;
-    
+
     // update the request counter - we now have one more mesh to load
     this.requestCounter++;
 
@@ -87,7 +88,7 @@ RDGE.MeshManager.prototype.loadMesh = function (meshStump, tempMesh) {
  */
 RDGE.MeshManager.prototype.deleteMesh = function (name) {
 	var model = this.modelMap[name];
-	
+
     if (model) {
         RDGE.globals.engine.ctxMan.forEach(function (context) {
 			context.renderer.deletePrimitive(model.primitive);
@@ -113,20 +114,20 @@ RDGE.MeshManager.prototype.getModelNames = function () {
 
 RDGE.MeshManager.prototype.processMeshData = function () {
     var renderer = RDGE.globals.engine.getContext().renderer;
-	
+
     // loop through meshes and load ready data
     for (var index in this.readyList) {
         // if item is ready load it
         if (this.readyList[index] && this.readyList[index].ready && renderer.id === this.readyList[index].ctxID) {
-        
+
 
             // pop the item
             var model = this.readyList[index];
             this.readyList.splice(index, 1);
-            
+
             var primset = new RDGE.rdgePrimitiveDefinition();
-            
-            primset.vertexDefinition = 
+
+            primset.vertexDefinition =
             {
 				// this shows two ways to map this data to an attribute
                 "vert": { 'type': RDGE.rdgeConstants.VS_ELEMENT_POS, 'bufferIndex': 0, 'bufferUsage': RDGE.rdgeConstants.BUFFER_STATIC },
@@ -139,27 +140,27 @@ RDGE.MeshManager.prototype.processMeshData = function () {
                 "a_texcoords": { 'type': RDGE.rdgeConstants.VS_ELEMENT_FLOAT2, 'bufferIndex': 2, 'bufferUsage': RDGE.rdgeConstants.BUFFER_STATIC },
                 "a_uv": { 'type': RDGE.rdgeConstants.VS_ELEMENT_FLOAT2, 'bufferIndex': 2, 'bufferUsage': RDGE.rdgeConstants.BUFFER_STATIC }
             };
-            
-            primset.bufferStreams = 
+
+            primset.bufferStreams =
             [
 				model.root.data.coords,
 				model.root.data.normals,
 				model.root.data.uvs
             ];
-            
-            primset.streamUsage = 
+
+            primset.streamUsage =
             [
 				RDGE.rdgeConstants.BUFFER_STATIC,
 				RDGE.rdgeConstants.BUFFER_STATIC,
 				RDGE.rdgeConstants.BUFFER_STATIC
             ];
-            
+
             primset.indexUsage = RDGE.rdgeConstants.BUFFER_STREAM;
-            
+
             primset.indexBuffer = model.root.data.indices;
 
 			renderer.createPrimitive( primset );
-			
+
 			model.root.primitive = primset;
 
             // generate a bounding box for this mesh
@@ -173,10 +174,10 @@ RDGE.MeshManager.prototype.processMeshData = function () {
             }
 
             this.modelMap[model.root.attribs.name] = model.root;
-            
+
             // now that the model is load reduce the request count
             this.requestCounter--;
-            
+
             this.onLoaded(model.root.attribs.name);
             //break;
         }
@@ -185,7 +186,7 @@ RDGE.MeshManager.prototype.processMeshData = function () {
 };
 
 RDGE.MeshManager.prototype.isReady = function () {
-	return this.readyList.length == 0; 
+	return this.readyList.length == 0;
 };
 
 RDGE.MeshManager.prototype.addOnLoadedCallback = function (callback) {
@@ -203,14 +204,14 @@ RDGE.MeshManager.prototype.exportJSON = function () {
     for (var m in this.modelMap) {
 		this.modelMap[m].primitive.built = false;
 	}
-	
+
 	return JSON.stringify(this.modelMap);
 };
 
 RDGE.MeshManager.prototype.importJSON = function (jsonMeshExport) {
     try {
 		var tempModelMap = JSON.parse(jsonMeshExport);
-		
+
         for (var m in tempModelMap) {
             if (!this.modelMap[m]) {
 				this.modelMap[m] = tempModelMap[m];
@@ -218,13 +219,13 @@ RDGE.MeshManager.prototype.importJSON = function (jsonMeshExport) {
 		}
 		window.console.log("meshes imported");
     } catch (e) {
-		window.console.error("error importing meshes: " + e.description );		
+		window.console.error("error importing meshes: " + e.description );
 	}
 };
 
 /*
  *	global function for the mesh manager to make mesh file requests
- */ 
+ */
 RDGE.requestMesh = function (mesh) {
     var request = new XMLHttpRequest();
     request.mesh = mesh;

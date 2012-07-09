@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -27,7 +28,7 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
- 
+
 ////////////////////////////////////////////////////////////////////////
 //
 var Montage =			require("montage/core/core").Montage,
@@ -45,7 +46,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     _hasCloseEvents: {
-	 	value: false  
+	 	value: false
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -81,7 +82,7 @@ exports.ColorPopupManager = Montage.create(Component, {
 	  	value: function (e) {
 		  	//
 		  	this.closeAllPopups(e);
-	  	}  
+	  	}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -89,7 +90,7 @@ exports.ColorPopupManager = Montage.create(Component, {
 	  	value: function (e) {
 		  	//
 		  	this.hideColorPopup();
-	  	}  
+	  	}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -121,7 +122,7 @@ exports.ColorPopupManager = Montage.create(Component, {
             		this.hideColorPopup();
         		}
         	}
-		}  
+		}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -129,11 +130,11 @@ exports.ColorPopupManager = Montage.create(Component, {
 	  	value: function (element, e) {
 	  		//Prevent any action for button to handle toggling
 	  		if (e._event.target.inputType || e._event.target.colorMode) return true;
-	  		//Storing limits of popup 
+	  		//Storing limits of popup
 	  		var top, bottom, left, right;
 	  		//Checking for popup to be opened otherwise nothing happens
 	  		if (element && element.opened && element.popup && element.popup.element) {
-            	//Getting horizontal limits	
+            	//Getting horizontal limits
                	left = parseInt(element.popup.element.style.left) + parseInt(element.popup.element.style.marginLeft);
                	right = left + parseInt(element.popup.element.offsetWidth);
                	//Getting vertical limits
@@ -151,7 +152,7 @@ exports.ColorPopupManager = Montage.create(Component, {
             	//Hides popups since element not detected
 	            return false;
             }
-	  	}  
+	  	}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -239,7 +240,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     			//
     			this._popupBase.needsDraw = true;
     			this._popupBase.addEventListener('firstDraw', this, false);
-        	}		
+        	}
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -648,11 +649,11 @@ exports.ColorPopupManager = Montage.create(Component, {
 		    			this._popupChipBase._components.hex.value = null;
 	    			} else if (!isNaN(e._target._xStart) && !e._event.wasSetByCode) {
 	    				if (!isNaN(e._target._numValue)) {
-		    				this._popupChipBase.colorManager.alpha = {value: e._target._numValue/100, type: 'change', wasSetByCode: false};	
+		    				this._popupChipBase.colorManager.alpha = {value: e._target._numValue/100, type: 'change', wasSetByCode: false};
 	    				}
 	    				this.colorChipChange(e);
 	    			} else if (!e._event.wasSetByCode && (e._event.mode && e._event.mode === 'nocolor')) {
-		    			this.colorChipChange(e);	
+		    			this.colorChipChange(e);
 	    			} else if (!e._event.wasSetByCode && (e._event.mode && e._event.mode === 'hex')) {
 		    			this.colorChipChange(e);
 	    			}
@@ -668,7 +669,7 @@ exports.ColorPopupManager = Montage.create(Component, {
 			    		this._popupChipBase._components.hex.value = null;
 			    	} else if (!isNaN(e._target._xStart) && !e._event.wasSetByCode) {
     					if (!isNaN(e._target._numValue)) {
-		    				this._popupGradientChipBase.colorManager.alpha = {value: e._target._numValue/100, type: 'change', wasSetByCode: false};	
+		    				this._popupGradientChipBase.colorManager.alpha = {value: e._target._numValue/100, type: 'change', wasSetByCode: false};
 	    				}
     					this.colorGradientChipChange(e);
     				} else if (!e._event.wasSetByCode && (e._event.mode && e._event.mode === 'hex')) {
@@ -677,7 +678,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     			} else {
     				if (!isNaN(e._target._xStart) && !e._event.wasSetByCode) {
     					if (!isNaN(e._target._numValue)) {
-		    				this._popupGradientChipBase.colorManager.alpha = {value: e._target._numValue/100, type: 'change', wasSetByCode: false};	
+		    				this._popupGradientChipBase.colorManager.alpha = {value: e._target._numValue/100, type: 'change', wasSetByCode: false};
 	    				}
     					this.colorGradientChipChange(e);
     				} else if (!e._event.wasSetByCode && (e._event.mode && e._event.mode === 'hex')) {
@@ -716,7 +717,7 @@ exports.ColorPopupManager = Montage.create(Component, {
     			}
     			//Converting color to RGB to update buttons background colors (affecting only view)
 				var color = this.colorManager.hsvToRgb(e._event.hsv.h/(Math.PI*2), e._event.hsv.s, e._event.hsv.v), i, input = this.colorManager.input;
-				
+
 				if (input === 'chip') {
 					var ctx, cvs = this.application.ninja.colorController.colorView.currentChip.getElementsByTagName('canvas')[0];
     				//if (cvs && color) {

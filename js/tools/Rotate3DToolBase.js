@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -232,7 +233,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
             }
 
 			this.DrawHandles(this._delta);
-            
+
 			if(this._canSnap)
             {
                 snapManager.drawLastHit();
@@ -380,7 +381,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 var tMat = Matrix.I(4);
 
 				// _startOriginArray is the location of the center of rotation
-				// in view space of the element.  
+				// in view space of the element.
                 var transformCtr = this._startOriginArray[i];
 
                 tMat[12] = transformCtr[0];
@@ -497,7 +498,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                         eltCtr[2] = 0;
                         eltCtr = vecUtils.vecAdd(3, eltCtr, ctrOffset);
                     }
-                    
+
                     this._origin = viewUtils.localToGlobal(eltCtr, this.target);
 					//console.log( "Rotate3DToolBase.captureSelectionDrawn _origin: " + this._origin );
                     this._updateTargets();
@@ -579,7 +580,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
         }
     },
 
-	calculateMultiSelOrigin: 
+	calculateMultiSelOrigin:
 	{
 		value: function()
 		{
@@ -637,9 +638,9 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 } else {
                     element = this.application.ninja.selectedElements[0];
                 }
-                
+
 				if(shouldUpdateCenter) {
-                    
+
 //                    eltCtr = element.elementModel.getProperty("ctr");
 //                    ctrOffset = vecUtils.vecSubtract(3, this._origin, eltCtr);
 
@@ -667,7 +668,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                     this._startOriginArray[i] = ctrOffset;
                 }
 				*/
-				
+
 				// Update transform ctr for all elements if transform origin was modified
 				if (!this._origin)  this._origin = this.calculateMultiSelOrigin();
 				var globalCtr = this._origin;

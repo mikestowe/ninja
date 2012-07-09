@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -158,7 +159,7 @@ exports.ViewUtils = Montage.create(Component, {
             var stageMat = this.getMatrixFromElement(stage);
 
 			var mat = glmat4.multiply( stageMat, objMat, [] );
-			
+
 			var viewDir;
 			if (localMode)
 			{
@@ -183,7 +184,7 @@ exports.ViewUtils = Montage.create(Component, {
 					else
 						plane = vecUtils.vecCross( 3, yVec, xVec );
 					break;
-					
+
 				case 1:
 					xDot = Math.abs(vecUtils.vecDot(3, yVec, viewDir));
 					zDot = Math.abs(vecUtils.vecDot(3, zVec, viewDir));
@@ -571,7 +572,7 @@ exports.ViewUtils = Montage.create(Component, {
             return localPlane;
         }
     },
-    
+
     parentToChild: {
         value: function( parentPt, child,  passthrough ) {
             var pt = parentPt.slice(0);
@@ -620,7 +621,7 @@ exports.ViewUtils = Montage.create(Component, {
             return childPt;
         }
     },
-    
+
     parentToChildWorld: {
         value: function( parentPt, child ) {
             var pt = parentPt.slice(0);
@@ -694,7 +695,7 @@ exports.ViewUtils = Montage.create(Component, {
             return vec;
         }
     },
-    
+
     getElementBounds: {
         value: function( elt, localSpace ) {
             // optional argument localSpace, if true, puts the top left at (0,0).
@@ -876,7 +877,7 @@ exports.ViewUtils = Montage.create(Component, {
         }
     },
 
-    
+
     unproject: {
         value: function( pt ) {
             if(!this._perspectiveDist)
@@ -968,7 +969,7 @@ exports.ViewUtils = Montage.create(Component, {
             return viewPt;
         }
     },
-    
+
     globalScreenToLocalWorld: {
         value: function( globalPt,  elt ) {
             var objPt = this.globalToLocal( globalPt, elt );
@@ -1341,7 +1342,7 @@ exports.ViewUtils = Montage.create(Component, {
 //		drawLayoutModule
 //
 //	STAGE ACCESSORS:
-//	activeDocument:					this.application.ninja.currentDocument				
+//	activeDocument:					this.application.ninja.currentDocument
 //	userContent (stage):			this.application.ninja.currentDocument.model.documentRoot
 //	stageManager:					this.application.ninja.stage								// MainApp\js\stage\stage.reel\stage.js
 //	stageManager._canvas:			this.application.ninja.stage.canvas
@@ -1490,6 +1491,6 @@ exports.ViewUtils = Montage.create(Component, {
 	}
 
 ///////////////////////////////////////////////////////////////////////////////////
-	
+
 });
 

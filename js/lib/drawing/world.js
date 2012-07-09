@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -68,7 +69,7 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 	{
 		this._2DContext = canvas.getContext( "2d" );
     }
-    
+
 	this._viewportWidth = canvas.width;
     this._viewportHeight = canvas.height;
 
@@ -152,7 +153,7 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 
     // Flag to play/pause animation at authortime
     this._previewAnimation = true;
-  
+
   ////////////////////////////////////////////////////////////////////////////////////
   // RDGE
   // local variables
@@ -175,7 +176,7 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 	var camMat = Matrix.I(4);
 	camMat[14] = this.getViewDistance();
 	this.setCameraMat( camMat );
-    
+
     // post-load processing of the scene
     this.init = function()
 	{
@@ -184,13 +185,13 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 		if (ctx1 != ctx2)  console.log( "***** different contexts *****" );
 		this.renderer = ctx1.renderer;
 		this.renderer._world = this;
-      
+
 		// create a camera, set its perspective, and then point it at the origin
 		var cam = new RDGE.camera();
 		this._camera = cam;
 		cam.setPerspective(this.getFOV(), this.getAspect(), this.getZNear(), this.getZFar());
 		cam.setLookAt([0, 0, this.getViewDistance()], [0, 0, 0], RDGE.vec3.up());
-        
+
 		// make this camera the active camera
 		this.renderer.cameraManager().setActiveCamera(cam);
 
@@ -198,61 +199,61 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 		//this.renderer.setClearFlags(RDGE.globals.engine.getContext().DEPTH_BUFFER_BIT);
 		this.renderer.setClearColor([0.0, 0.0, 0.0, 0.0]);
 		//this.renderer.NinjaWorld = this;
-        
+
 		// create an empty scene graph
 		this.myScene = new RDGE.SceneGraph();
-        
+
 		// create some lights
 		// light 1
 //		this.light = RDGE.createLightNode("myLight");
 //		this.light.setPosition([0,0,1.2]);
 //		this.light.setDiffuseColor([0.75,0.9,1.0,1.0]);
-        
+
 		// light 2
 //		this.light2 = RDGE.createLightNode("myLight2");
 //		this.light2.setPosition([-0.5,0,1.2]);
 //		this.light2.setDiffuseColor([1.0,0.9,0.75,1.0]);
-        
+
 		// create a light transform
 		var lightTr = RDGE.createTransformNode("lightTr");
-        
+
 		// create and attach a material - materials hold the light data
 		lightTr.attachMaterial(RDGE.createMaterialNode("lights"));
-        
+
 		// enable light channels 1, 2 - channel 0 is used by the default shader
 //		lightTr.materialNode.enableLightChannel(1, this.light);
 //		lightTr.materialNode.enableLightChannel(2, this.light2);
-     
+
 		// all added objects are parented to the light node
 		this._rootNode = lightTr;
-        
+
 		// add the light node to the scene
 		this.myScene.addNode(lightTr);
-        
+
 		// Add the scene to the engine - necessary if you want the engine to draw for you
 		//RDGE.globals.engine.AddScene("myScene" + this._canvas.id, this.myScene);
-		var name = this._canvas.getAttribute( "data-RDGE-id" ); 
+		var name = this._canvas.getAttribute( "data-RDGE-id" );
 		RDGE.globals.engine.AddScene("myScene" + name, this.myScene);
 	};
-    
-	// main code for handling user interaction and updating the scene   
+
+	// main code for handling user interaction and updating the scene
 	this.update = function(dt)
 	{
 		if (!dt)  dt = 0.2;
-        
+
 		dt = 0.01;	// use our own internal throttle
 		this.elapsed += dt;
-        
+
 		if (this._useWebGL)
 		{
 			// changed the global position uniform of light 0, another way to change behavior of a light
 		    RDGE.rdgeGlobalParameters.u_light0Pos.set([5 * Math.cos(this.elapsed), 5 * Math.sin(this.elapsed), 20]);
-        
+
 			// orbit the light nodes around the boxes
 //			this.light.setPosition([1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), 1.2*Math.cos(this.elapsed*2.0)]);
 //			this.light2.setPosition([-1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), -1.2*Math.cos(this.elapsed)]);
 		}
-        
+
 		this.updateMaterials( this.getGeomRoot(), this.elapsed );
 
 		// now update all the nodes in the scene
@@ -260,7 +261,7 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 			this.myScene.update(dt);
     };
 
-    // defining the draw function to control how the scene is rendered      
+    // defining the draw function to control how the scene is rendered
 	this.draw = function()
 	{
 		if (this._useWebGL)
@@ -306,12 +307,12 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 			this.render();
 		}
     };
-	
+
     this.onRunState = function() {
 //		console.log( "GLWorld.onRunState" );
 		this.restartRenderLoop();
 	};
-	
+
     this.onLoadState = function() {
 //		console.log( "GLWorld.onLoadState" );
 	};
@@ -375,7 +376,7 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 			world.textureMapLoaded( name );
         }
 	};
-	
+
 	this.hasAnimatedMaterials = function() {
 		var root = this.getGeomRoot();
 		var rtnVal = false;
@@ -433,7 +434,7 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
     {
         this._notifier.removeListener( obj );
     }
-    
+
     // start RDGE passing your runtime object, and false to indicate we don't need a an initialization state
     // in the case of a procedurally built scene an init state is not needed for loading data
 	this._canvas.rdgeid = this._canvas.getAttribute( "data-RDGE-id" );
@@ -486,7 +487,7 @@ World.prototype.updateObject = function (obj) {
 		ctrTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prims[0]);
 		ctrTrNode.attachMaterial(materialNodes[0]);
 	}
-	
+
 	// delete all of the child nodes
 	var i;
 	var childTrNode;
@@ -803,11 +804,11 @@ World.prototype.render = function()
 		var ctx = this.get2DContext();
 		if (!ctx)  return;
 		ctx.clearRect(0, 0, this.getViewportWidth(), this.getViewportHeight());
-		
+
 		// render the geometry
 		var root = this.getGeomRoot();
 		this.hRender( root );
-	} 
+	}
 	else
 	{
 		RDGE.globals.engine.setContext( this._canvas.rdgeid );
@@ -834,7 +835,7 @@ World.prototype.setViewportFromCanvas = function(canvas) {
 		this._glContext.viewportHeight = canvas.height;
 
 		this.getCamera().setPerspective(this.getFOV(), this.getAspect(), this.getZNear(), this.getZFar());
-		
+
 		this.renderer.setViewPort(0, 0, canvas.width, canvas.height);
 	}
 };
@@ -863,7 +864,7 @@ World.prototype.getShapeFromPoint = function( offsetX, offsetY ) {
 World.prototype.exportJSON = function ()
 {
 	// world properties
-	var worldObj = 
+	var worldObj =
 	{
 		'version'	: 1.1,
 		'id'		: this.getCanvas().getAttribute( "data-RDGE-id" ),
@@ -900,7 +901,7 @@ World.prototype.exportJSON = function ()
 	// and pre-JSON versions of fileIO.
 	// the ending ';' in the version string is necessary
 	jStr = "v1.0;" + jStr;
-	
+
 	return jStr;
 };
 
@@ -963,7 +964,7 @@ World.prototype.importJSON = function (jObj)
 	{
 		// start RDGE
 		rdgeStarted = true;
-		var id = this._canvas.getAttribute( "data-RDGE-id" ); 
+		var id = this._canvas.getAttribute( "data-RDGE-id" );
 		this._canvas.rdgeid = id;
         RDGE.globals.engine.registerCanvas(this._canvas, this);
         RDGE.RDGEStart(this._canvas);
