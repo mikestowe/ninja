@@ -63,6 +63,10 @@ POSSIBILITY OF SUCH DAMAGE.
     width: 160px;
 }
 
+.optionsTextTool .montage-button:hover {
+    color:#FFF;
+}
+
 .fontColorChipContainer {
     margin-left: 10px !important;
     margin-right: 0px;
