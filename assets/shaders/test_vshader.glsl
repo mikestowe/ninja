@@ -46,8 +46,8 @@ uniform mat4 u_vShadowLight;
 uniform vec3 u_lightPos;
 
 // varyings
-varying vec4 vNormal;	// w = texcoord.x
-varying vec4 vECPos;	// w = texcoord.y
+varying vec4 vNormal;   // w = texcoord.x
+varying vec4 vECPos;    // w = texcoord.y
 varying vec3 vEyePos;
 varying vec4 vShadowCoord;
 varying vec2 vEnvTexCoord;
@@ -56,18 +56,18 @@ varying float vDiffuseIntensity;
 #ifdef PC
 void main()
 {
-	vNormal.w       = texcoord.x;
-	vECPos.w		= texcoord.y;
+    vNormal.w       = texcoord.x;
+    vECPos.w        = texcoord.y;
     vEyePos         = u_eye;
 
-//	position normals and vert
-	vECPos.xyz	= (u_mvMatrix*vec4(vert, 1.0)).xyz;
-	vNormal.xyz = (u_normalMatrix*vec4(normal, 0.0)).xyz;
+//  position normals and vert
+    vECPos.xyz  = (u_mvMatrix*vec4(vert, 1.0)).xyz;
+    vNormal.xyz = (u_normalMatrix*vec4(normal, 0.0)).xyz;
 
-//	pass along the geo
-	gl_Position	= u_projMatrix * vec4(vECPos.xyz, 1.0);
-	
- 	mat4 shadowMat  = u_shadowBiasMatrix*u_projMatrix*u_vShadowLight*u_worldMatrix;
+//  pass along the geo
+    gl_Position = u_projMatrix * vec4(vECPos.xyz, 1.0);
+
+    mat4 shadowMat  = u_shadowBiasMatrix*u_projMatrix*u_vShadowLight*u_worldMatrix;
      vShadowCoord    = shadowMat * vec4(vert, 1.0);
 }
 #endif
@@ -76,31 +76,31 @@ void main()
 
 void main()
 {
-	vNormal.w       = texcoord.x;
-	vECPos.w		= texcoord.y;
+    vNormal.w       = texcoord.x;
+    vECPos.w        = texcoord.y;
     vEyePos         = u_eye;
 
-//	position normals and vert
-	vECPos.xyz	= (u_mvMatrix*vec4(vert, 1.0)).xyz;
-	vNormal.xyz = (u_normalMatrix*vec4(normal, 0.0)).xyz;
+//  position normals and vert
+    vECPos.xyz  = (u_mvMatrix*vec4(vert, 1.0)).xyz;
+    vNormal.xyz = (u_normalMatrix*vec4(normal, 0.0)).xyz;
 
-//	pass along the geo
-	gl_Position	= u_projMatrix * vec4(vECPos.xyz, 1.0);
-	
- 	//mat4 shadowMat  = u_shadowBiasMatrix*u_projMatrix*u_vShadowLight*u_worldMatrix;
+//  pass along the geo
+    gl_Position = u_projMatrix * vec4(vECPos.xyz, 1.0);
+
+    //mat4 shadowMat  = u_shadowBiasMatrix*u_projMatrix*u_vShadowLight*u_worldMatrix;
     //vShadowCoord    = shadowMat * vec4(vert, 1.0);
-     
-    // normal mapping
-	vec3 normal = normalize(vNormal.xyz);
 
-	// create envmap coordinates
-	vec3 r = reflect( vec3(vECPos.xyz - u_eye.xyz), normal);
-	float m = 2.0 * length(r);
-	vEnvTexCoord = vec2(r.x/m + 0.5, r.y/m + 0.5);
-	
-	vec3 lightDirection = normalize(u_lightPos - vECPos.xyz);
-	vDiffuseIntensity = max(0.0, dot(normal, lightDirection));
-	
+    // normal mapping
+    vec3 normal = normalize(vNormal.xyz);
+
+    // create envmap coordinates
+    vec3 r = reflect( vec3(vECPos.xyz - u_eye.xyz), normal);
+    float m = 2.0 * length(r);
+    vEnvTexCoord = vec2(r.x/m + 0.5, r.y/m + 0.5);
+
+    vec3 lightDirection = normalize(u_lightPos - vECPos.xyz);
+    vDiffuseIntensity = max(0.0, dot(normal, lightDirection));
+
 }
 
 #endif

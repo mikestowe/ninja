@@ -37,7 +37,7 @@ exports.LineProperties = Montage.create(ToolProperties, {
         value: null,
         serializable: true
     },
-    
+
     _subPrepare: {
         value: function() {
             //this.divElement.addEventListener("click", this, false);

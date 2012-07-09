@@ -28,9 +28,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
-var Montage = 	require("montage/core/core").Montage,
+var Montage =   require("montage/core/core").Montage,
     ShapeTool = require("js/tools/ShapeTool").ShapeTool,
-    ShapesController = 	require("js/controllers/elements/shapes-controller").ShapesController;
+    ShapesController =  require("js/controllers/elements/shapes-controller").ShapesController;
 
 var Rectangle = require("js/lib/geom/rectangle").Rectangle;
 var MaterialsModel = require("js/models/materials-model").MaterialsModel;
@@ -63,7 +63,7 @@ exports.RectTool = Montage.create(ShapeTool, {
     _buttons: {enumerable: false,value: { hexinput: [] , lockbutton: []}},
 
     RenderShape: {
-		value: function (w, h, planeMat, midPt, canvas)
+        value: function (w, h, planeMat, midPt, canvas)
         {
             if( (Math.floor(w) === 0) || (Math.floor(h) === 0) )
             {

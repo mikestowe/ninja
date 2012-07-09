@@ -71,7 +71,7 @@ var FileInput = exports.FileInput = Montage.create(Component, {
     handleChange:
     {
         value:function(event)
-		{
+        {
             if(event.currentTarget.type === "file")
             {
                 this.filePath = this.inputField.value;
@@ -86,7 +86,7 @@ var FileInput = exports.FileInput = Montage.create(Component, {
             e.type = "change";
             e.filePath = this.filePath;
             this.dispatchEvent(e);
-		}
+        }
     },
 
     prepareForDraw: {

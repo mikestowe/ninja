@@ -105,10 +105,10 @@ var Track = exports.Track = Montage.create(Component, {
 
     //TEMP
     keyFrames:{
-    	serializable: true,
+        serializable: true,
         value:[]
     },
-    
+
     prepareForDraw: {
         value: function() {
             this.keyFrames = new Array();
@@ -187,7 +187,7 @@ var Track = exports.Track = Montage.create(Component, {
 
     updateKeyframePercents:{
         value:function(){
-            
+
         }
     },
 

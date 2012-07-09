@@ -78,7 +78,7 @@ var GLSubpath = function GLSubpath() {
     //drawing context
     this._world = null;
     this._canvas = null; //todo this might be unnecessary (but faster) since we can get it from the world
-    
+
     //tool that owns this subpath
     this._drawingTool = null;
 
@@ -380,7 +380,7 @@ GLSubpath.prototype.removeAnchor = function (index) {
             retAnchor = this._Anchors.splice(index, 1);
         }
         this.makeDirty();
-        
+
     }
     //deselect any selected anchor point
     this.deselectAnchorPoint();

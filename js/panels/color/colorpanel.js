@@ -30,18 +30,18 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage =	require("montage/core/core").Montage,
-    PanelBase =	require("js/panels/panelbase").PanelBase;
+var Montage =   require("montage/core/core").Montage,
+    PanelBase = require("js/panels/panelbase").PanelBase;
 ////////////////////////////////////////////////////////////////////////
 //Exporting as ColorPanel
 exports.ColorPanel = Montage.create(PanelBase, {
     ////////////////////////////////////////////////////////////////////
     //Panel Configuration
-    panelName: 			{value: "Color", 					writable: true, enumerable: true, configurable: true},
-    panelHeaderID: 		{value: "colorPanelHeader", 		writable: true, enumerable: true, configurable: true},
-    disclosureIconID: 	{value: "colorPanelDisclosureIcon",	writable: true, enumerable: true, configurable: true},
-    closeButtonID: 		{value: "colorPanelCloseButton", 	writable: true, enumerable: true, configurable: true},
-    panelContentID: 	{value: "colorPanelContent", 		writable: true, enumerable: true, configurable: true},
+    panelName:          {value: "Color",                    writable: true, enumerable: true, configurable: true},
+    panelHeaderID:      {value: "colorPanelHeader",         writable: true, enumerable: true, configurable: true},
+    disclosureIconID:   {value: "colorPanelDisclosureIcon", writable: true, enumerable: true, configurable: true},
+    closeButtonID:      {value: "colorPanelCloseButton",    writable: true, enumerable: true, configurable: true},
+    panelContentID:     {value: "colorPanelContent",        writable: true, enumerable: true, configurable: true},
     ////////////////////////////////////////////////////////////////////
     //Creating panel from base view class
     init: {

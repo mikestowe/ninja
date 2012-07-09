@@ -28,11 +28,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
-var Montage = 		require("montage/core/core").Montage,
-    Component =		require("montage/ui/component").Component,
-    UndoManager = 	require("montage/core/undo-manager").UndoManager,
-    AppData = 		require("js/data/appdata").AppData,
-    Popup = 		require("js/components/popup.reel").Popup;
+var Montage =       require("montage/core/core").Montage,
+    Component =     require("montage/ui/component").Component,
+    UndoManager =   require("montage/core/undo-manager").UndoManager,
+    AppData =       require("js/data/appdata").AppData,
+    Popup =         require("js/components/popup.reel").Popup;
 
 var matrix = require("js/lib/math/matrix");
 var NjUtils = require("js/lib/NJUtils").NJUtils;
@@ -215,7 +215,7 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
-	_workspaceMode: {
+    _workspaceMode: {
         value: null
     },
 
@@ -370,7 +370,7 @@ exports.Ninja = Montage.create(Component, {
             window.addEventListener("resize", this, false);
             //Prompting the user to make sure data was saved before closing Ninja
             window.onbeforeunload = function () {
-            	return 'Are you sure you want to close Ninja? Any unsaved data will be lost.';
+                return 'Are you sure you want to close Ninja? Any unsaved data will be lost.';
             };
 
             this.eventManager.addEventListener("selectTool", this, false);
@@ -381,48 +381,48 @@ exports.Ninja = Montage.create(Component, {
             this.addPropertyChangeListener("appModel.debug", this.toggleDebug, false);
         }
     },
-    
-    
+
+
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
-	//TODO: Expand method to allow other browsers for preview
+    //TODO: Expand method to allow other browsers for preview
     executeChromePreview: {
-    	value: function () {
-    		//TODO: Make into proper component
-    		this.saveOperationScreen = {};
-    		this._saveOperationPopup = {};
-    		//Show
-    		this.saveOperationScreen.show = function (ctxt) {
-    			//
-    			ctxt._saveOperationPopup.blackout = document.createElement('div');
-    			ctxt._saveOperationPopup.blackout.style.width = '100%';
-    			ctxt._saveOperationPopup.blackout.style.height = '100%';
-    			ctxt._saveOperationPopup.blackout.style.background = 'rgba(0,0,0,0.8)'; //'-webkit-radial-gradient(center, ellipse cover, rgba(0,0,0,.65) 0%, rgba(0,0,0,0.8) 80%)';
-    			ctxt.application.ninja.popupManager.addPopup(ctxt._saveOperationPopup.blackout);
-    		};
-    		//Hide
-    		this.saveOperationScreen.hide = function (ctxt) {
-	    		ctxt.application.ninja.popupManager.removePopup(ctxt._saveOperationPopup.blackout);
-    		};
-    		//
-    		this.currentDocument.model.browserPreview('chrome', this.saveOperationScreen, this);
-    	}
+        value: function () {
+            //TODO: Make into proper component
+            this.saveOperationScreen = {};
+            this._saveOperationPopup = {};
+            //Show
+            this.saveOperationScreen.show = function (ctxt) {
+                //
+                ctxt._saveOperationPopup.blackout = document.createElement('div');
+                ctxt._saveOperationPopup.blackout.style.width = '100%';
+                ctxt._saveOperationPopup.blackout.style.height = '100%';
+                ctxt._saveOperationPopup.blackout.style.background = 'rgba(0,0,0,0.8)'; //'-webkit-radial-gradient(center, ellipse cover, rgba(0,0,0,.65) 0%, rgba(0,0,0,0.8) 80%)';
+                ctxt.application.ninja.popupManager.addPopup(ctxt._saveOperationPopup.blackout);
+            };
+            //Hide
+            this.saveOperationScreen.hide = function (ctxt) {
+                ctxt.application.ninja.popupManager.removePopup(ctxt._saveOperationPopup.blackout);
+            };
+            //
+            this.currentDocument.model.browserPreview('chrome', this.saveOperationScreen, this);
+        }
     },
-	////////////////////////////////////////////////////////////////////
-	
-	//TODO: Make into proper component
-	_saveOperationPopup: {
-		value: null
-	},
-	//TODO: Make into proper component
-	saveOperationScreen: {
-		value: null
-	},
-	
-	////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////
-	
-	
+    ////////////////////////////////////////////////////////////////////
+
+    //TODO: Make into proper component
+    _saveOperationPopup: {
+        value: null
+    },
+    //TODO: Make into proper component
+    saveOperationScreen: {
+        value: null
+    },
+
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+
+
     handleResize: {
         value: function() {
             this.stage.resizeCanvases = true;
@@ -444,14 +444,14 @@ exports.Ninja = Montage.create(Component, {
     _didDraw: {
         value: false
     },
-    
+
     didDraw: {
         value: function() {
 
             if(!this._didDraw) {
-            	if (!this.application.ninja.coreIoApi.ioServiceDetected) {
-            		var check = this.application.ninja.coreIoApi.cloudAvailable();
-            	}
+                if (!this.application.ninja.coreIoApi.ioServiceDetected) {
+                    var check = this.application.ninja.coreIoApi.cloudAvailable();
+                }
                 NJevent("appLoaded");
                 this._didDraw = true;
             }

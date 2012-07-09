@@ -52,7 +52,7 @@ var BrushStroke = function GLBrushStroke() {
     this._BBoxMax = [0, 0, 0];
     this._isDirty = true;
     this._isInit = false;
-    
+
     //the HTML5 canvas that holds this brush stroke
     this._canvas = null;
     //flag indicating whether or not to freeze the size and position of canvas
@@ -312,7 +312,7 @@ BrushStroke.prototype.setWidth = function (newW) {
     }
     var minWidth = 1+this._strokeWidth;
     if (newW<minWidth) {
-        newW=minWidth; 
+        newW=minWidth;
     }
 
     if (oldCanvasWidth<minWidth) {
@@ -731,7 +731,7 @@ BrushStroke.prototype.drawToContext = function(ctx, drawStageWorldPts, stageWorl
         w = world.getViewportWidth();
         h = world.getViewportHeight();
     }
-    
+
     if (this._strokeUseCalligraphic) {
         //build the stamp for the brush stroke
         var t=0;

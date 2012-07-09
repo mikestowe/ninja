@@ -67,7 +67,7 @@ var Rectangle = exports.Rectangle = Object.create(Object.prototype, {
     getHeight: { value: function()        {  return this.m_height;                    } },
     setHeight: { value: function(h)       {  this.m_height = h;                       } },
 
-	geomType: { value: function()		{  return this.GEOM_TYPE_RECTANGLE;			} },
+    geomType: { value: function()       {  return this.GEOM_TYPE_RECTANGLE;         } },
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
@@ -84,7 +84,7 @@ var Rectangle = exports.Rectangle = Object.create(Object.prototype, {
         }
     },
 
-	dup: {
+    dup: {
         value: function()
         {
             var rtnRec = Object.create(Rectangle, {});
@@ -122,7 +122,7 @@ var Rectangle = exports.Rectangle = Object.create(Object.prototype, {
         }
     },
 
-	setToBounds: {
+    setToBounds: {
         value: function( bounds )
         {
             var pt = bounds[0];
@@ -166,7 +166,7 @@ var Rectangle = exports.Rectangle = Object.create(Object.prototype, {
         }
     },
 
-	getQuadrant: {
+    getQuadrant: {
         value: function( iQuad )
         {
             // quadrant ordering starts at upper left and continues around counter-clockwise
@@ -220,7 +220,7 @@ var Rectangle = exports.Rectangle = Object.create(Object.prototype, {
             this.setTop( yMin );    this.setHeight( yMax - yMin );
         }
     },
-    
+
 
     translate: {
         value: function( dx, dy )

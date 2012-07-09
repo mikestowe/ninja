@@ -33,13 +33,13 @@ var Montage = require("montage/core/core").Montage,
     ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 exports.InkBottleTool = Montage.create(ModifierToolBase, {
-	_canSnap: { value: false },
-	_canColor: { value: true },
+    _canSnap: { value: false },
+    _canColor: { value: true },
     _targetedElement: { value: null },
 
     HandleMouseMove: {
         value : function (event)
-		{
+        {
             var obj = this.application.ninja.stage.getElement(event, true);
             var cursor = "url('images/cursors/ink.png') 6 11, default";
             var canColor = true;
@@ -72,13 +72,13 @@ exports.InkBottleTool = Montage.create(ModifierToolBase, {
             }
             this.application.ninja.stage.drawingCanvas.style.cursor = cursor;
             this._canColor = canColor;
-		}
-	},
+        }
+    },
 
     HandleLeftButtonUp: {
         value : function () {
             //if(this._isDrawing)
-			{
+            {
                 this.application.ninja.stage.clearDrawingCanvas();
                 this._hasDraw = false;
                 this._isDrawing = false;

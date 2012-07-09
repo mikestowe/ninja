@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
  </notice> */
 
 /**
-	@module components/core/class-uuid
+    @module components/core/class-uuid
     @requires montage/core/core
 */
 /**
@@ -62,7 +62,7 @@ var Montage = require("montage/core/core").Montage,
                 id[2] = c[(r >>>= 4) & 0xf];
                 id[3] = c[(r >>>= 4) & 0xf];
                 id[4] = c[(r >>>= 4) & 0xf];
-                
+
                 return id.join('');
             }
         }

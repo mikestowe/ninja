@@ -202,7 +202,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             }
         }
     },
-    
+
     pickerModel:{
         enumerable:false,
         writable:true,
@@ -210,25 +210,25 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
     },
 
     willDraw: {
-    	enumerable: false,
-    	value: function() {
+        enumerable: false,
+        value: function() {
 
-    	}
+        }
     },
     draw: {
-    	enumerable: false,
-    	value: function() {
+        enumerable: false,
+        value: function() {
             this.filterVal.innerHTML = this.pickerModel.currentFilter;
 
             if(this.pickerModel.fatalError !== null){
                 this.error.innerHTML = this.pickerModel.fatalError;
             }
 
-    	}
+        }
     },
     didDraw: {
-    	enumerable: false,
-    	value: function() {
+        enumerable: false,
+        value: function() {
 
             var that = this;
             this.iconList = null;
@@ -376,7 +376,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             //ready to show picker now
             this.element.style.visibility = "visible";
             this.element.focus();
-    	}
+        }
     },
 
     updateAddressBar:{
@@ -388,7 +388,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                 addressBarEl.value = folderUri;
 
                 //update left drive selection
-                
+
             }
         }
     },

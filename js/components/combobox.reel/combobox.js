@@ -80,7 +80,7 @@ exports.Combobox = Montage.create(Component, {
             }
         }
     },
-    
+
     _value: {
         enumerable: false,
         value: null
@@ -153,12 +153,12 @@ exports.Combobox = Montage.create(Component, {
     handleChange:
     {
         value:function(event)
-		{
+        {
             this._valueSyncedWithInputField = true;
             this._wasSetByCode = false;
             this.value = this.element.value;
             this.needsDraw = true;
-		}
+        }
     },
 
     willDraw: {
@@ -166,7 +166,7 @@ exports.Combobox = Montage.create(Component, {
             if(!this._valueSyncedWithInputField)
             {
                 this.element.innerHTML = "";
-                
+
                 var optionItem = document.createElement("option");
                 var items = this._items;
                 var len = items.length;

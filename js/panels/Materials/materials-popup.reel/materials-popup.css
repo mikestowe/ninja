@@ -130,8 +130,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 .mp_properties_list > .mp_property > .colortoolbar
 {
-	width: 27px !important;
-	height: 27px !important;
+    width: 27px !important;
+    height: 27px !important;
     overflow:hidden !important;
     margin-top: -6px;
 }

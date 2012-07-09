@@ -74,7 +74,7 @@ RDGE.rdgeConstants = (function () {
         // render constants
         MAX_MATERIAL_LIGHTS: 4,
 
-        //	Material categories determine sorting materials support the following categories
+        //  Material categories determine sorting materials support the following categories
         categoryEnumeration:
         {
             'BACKGROUND': 0,
@@ -99,7 +99,7 @@ RDGE.rdgeConstants = (function () {
 
 RDGE._renderer = function (canvas) {
     /*
-    *	Initialize the context associated with this canvas
+    *   Initialize the context associated with this canvas
     */
     try {
         this.ctx = canvas.getContext("experimental-webgl", { preserveDrawingBuffer: true }); // true, true, false, true, true);
@@ -127,36 +127,36 @@ RDGE._renderer = function (canvas) {
     this.console = ("console" in window) ? window.console : { log: function () { } };
 
     /*
-    *	Set the default clear color
+    *   Set the default clear color
     */
     this.ctx.clearColor(1, 0, 0, 1);
 
     /*
-    *	the clear color of this renderer
+    *   the clear color of this renderer
     */
     this.clearColor = [1, 0, 0, 1];
 
     /*
-    *	The clear flags clear color and depth buffers by default
+    *   The clear flags clear color and depth buffers by default
     */
     this.clearFlags = this.ctx.COLOR_BUFFER_BIT | this.ctx.DEPTH_BUFFER_BIT
 
     /*
-    *	clear flags
+    *   clear flags
     */
     this.colorBuffer = this.ctx.COLOR_BUFFER_BIT;
     this.depthBuffer = this.ctx.DEPTH_BUFFER_BIT;
     this.stencilBuffer = this.ctx.STENCIL_BUFFER_BIT;
 
     /*
-    *	buffer types
+    *   buffer types
     */
     this.BUFFER_STATIC = 0;
     this.BUFFER_DYNAMIC = 1;
     this.BUFFER_STREAM = 2;
 
     /*
-    *	primitive types
+    *   primitive types
     */
     this.POINTS = 0;
     this.LINES = 1;
@@ -167,7 +167,7 @@ RDGE._renderer = function (canvas) {
     this.TRIANGLE_FAN = 6;
 
     /*
-    *	primitive data types
+    *   primitive data types
     */
     this.BYTE = 0x1400;
     this.UNSIGNED_BYTE = 0x1401;
@@ -178,7 +178,7 @@ RDGE._renderer = function (canvas) {
     this.FLOAT = 0x1406;
 
     /*
-    *	pre-defined vertex element type
+    *   pre-defined vertex element type
     */
     this.VS_ELEMENT_FLOAT4 = 4;
     this.VS_ELEMENT_POS = 3;
@@ -201,7 +201,7 @@ RDGE._renderer = function (canvas) {
     this.usedTextureUnits = 5;
 
     /*
-    *	the renderers current viewport
+    *   the renderers current viewport
     */
     this.vpX = 0;
     this.vpY = 0;
@@ -209,18 +209,18 @@ RDGE._renderer = function (canvas) {
     this.vpHeight = canvas.height;
 
     /*
-    *	the camera manager - contains the camera stack for this render context
+    *   the camera manager - contains the camera stack for this render context
     */
     this.cameraMan = new RDGE.cameraManager();
 
     /*
-    *	a list of device buffers that are owned by this render context
+    *   a list of device buffers that are owned by this render context
     */
     this.buffers = [];
 
 
     /*
-    *	State wrappers
+    *   State wrappers
     */
     this.cullBackFace = function () {
         this.ctx.cullFace(this.ctx.Back);
@@ -260,35 +260,35 @@ RDGE._renderer = function (canvas) {
     };
 
     /*
-    *	flags that specify how to clear the scene, can be OR'ed together
+    *   flags that specify how to clear the scene, can be OR'ed together
     */
     this.setClearFlags = function (flags) {
         this.clearFlags = flags;
     };
 
     /*
-    *	called by the system to clear the video buffer according to pre-set flags
+    *   called by the system to clear the video buffer according to pre-set flags
     */
     this._clear = function () {
         this.ctx.clear(this.clearFlags);
     };
 
     /*
-    *	clears the video buffer with flags provided
+    *   clears the video buffer with flags provided
     */
     this.clear = function (flags) {
         this.ctx.clear(flags);
     };
 
     /*
-    *	flush the video buffer
+    *   flush the video buffer
     */
     this.flush = function () {
         this.ctx.flush();
     };
 
     /*
-    *	Sets the current viewport
+    *   Sets the current viewport
     */
     this.setViewPort = function (x, y, width, height) {
         this.vpX = x;
@@ -299,23 +299,23 @@ RDGE._renderer = function (canvas) {
     };
 
     /*
-    *	access the camera manager associated with the renderer
+    *   access the camera manager associated with the renderer
     */
     this.cameraManager = function () {
         return this.cameraMan;
     };
 
     /*
-    *	Sets of texture maps owned by the renderer
+    *   Sets of texture maps owned by the renderer
     */
     this.textureMap = [];
     this.rttMap = [];
 
     /*
-    *	gets the texture by name or creates the texture requested
-    *	@param name - the name of the texture to try and get
-    *	@param wrap - optional "CLAMP or "REPEAT", default is clamp
-    *	@param mips - optional true/false value to create mipmaps, the default is true
+    *   gets the texture by name or creates the texture requested
+    *   @param name - the name of the texture to try and get
+    *   @param wrap - optional "CLAMP or "REPEAT", default is clamp
+    *   @param mips - optional true/false value to create mipmaps, the default is true
     */
     this.getTextureByName = function (name, wrap, mips) {
         var ext = name.split('.')[1];
@@ -329,7 +329,7 @@ RDGE._renderer = function (canvas) {
 
         if (tex === undefined) {
             // load the texture
-			name = RDGE.globals.engine.remapAssetFolder( name );
+            name = RDGE.globals.engine.remapAssetFolder( name );
             tex = this.createTexture(name + ext, wrap, mips);
             this.textureMap[name] = tex;
             tex.lookUpName = name;
@@ -344,10 +344,10 @@ RDGE._renderer = function (canvas) {
     };
 
     /*
-    *	creates a texture from the given URL
-    *	@param url - the resource location
-    *	@param wrap - optional "CLAMP or "REPEAT", default is clamp
-    *	@param mips - optional true/false value to create mipmaps, the default is true
+    *   creates a texture from the given URL
+    *   @param url - the resource location
+    *   @param wrap - optional "CLAMP or "REPEAT", default is clamp
+    *   @param mips - optional true/false value to create mipmaps, the default is true
     */
     this.unloadedTextureCount = 0;
     _texparams = function (wrap, mips) {
@@ -388,8 +388,8 @@ RDGE._renderer = function (canvas) {
     };
 
     /*
-    *	commits a texture to video memory
-    *	@param - the texture object created by a call to create texture
+    *   commits a texture to video memory
+    *   @param - the texture object created by a call to create texture
     */
     this.commitTexture = function (texture) {
         this.ctx.bindTexture(this.ctx.TEXTURE_2D, texture);
@@ -506,7 +506,7 @@ RDGE._renderer = function (canvas) {
     };
 
     /*
-    *	The default shader setup
+    *   The default shader setup
     */
     this.defaultShaderDefintion = {
         'shaders': {
@@ -519,35 +519,35 @@ RDGE._renderer = function (canvas) {
                 'fshader': 'defaultFShader',
                 // attributes
                 'attributes':
-							 {
-							     'vert': { 'type': 'vec3' },
-							     'normal': { 'type': 'vec3' },
-							     'texcoord': { 'type': 'vec2' }
-							 },
+                             {
+                                 'vert': { 'type': 'vec3' },
+                                 'normal': { 'type': 'vec3' },
+                                 'texcoord': { 'type': 'vec2' }
+                             },
                 // parameters
                 'params':
-							 {
-							 },
+                             {
+                             },
 
                 // render states
                 'states':
-							 {
-							     'depthEnable': true,
-							     'blendEnable': false,
-							     'culling': true,
-							     'cullFace': "BACK"
-							 }
+                             {
+                                 'depthEnable': true,
+                                 'blendEnable': false,
+                                 'culling': true,
+                                 'cullFace': "BACK"
+                             }
             }]
         }
     };
 };
 
 /*
-*	Shader definitions
+*   Shader definitions
 */
 
 /*
-*	The default shader setup
+*   The default shader setup
 */
 RDGE.rdgeDefaultShaderDefintion = {
     'shaders': {
@@ -562,30 +562,30 @@ RDGE.rdgeDefaultShaderDefintion = {
             'fshader': 'defaultFShader',
             // attributes
             'attributes':
-						 {
-						     'vert': { 'type': 'vec3' },
-						     'normal': { 'type': 'vec3' },
-						     'texcoord': { 'type': 'vec2' }
-						 },
+                         {
+                             'vert': { 'type': 'vec3' },
+                             'normal': { 'type': 'vec3' },
+                             'texcoord': { 'type': 'vec2' }
+                         },
             // parameters
             'params':
-						 {
-						 },
+                         {
+                         },
 
             // render states
             'states':
-						 {
-						     'depthEnable': true,
-						     'blendEnable': false,
-						     'culling': true,
-						     'cullFace': "BACK"
-						 }
+                         {
+                             'depthEnable': true,
+                             'blendEnable': false,
+                             'culling': true,
+                             'cullFace': "BACK"
+                         }
         }]
     }
 };
 
 /*
-*	The default depth map shader techniques
+*   The default depth map shader techniques
 */
 // currently not used in Ninja
 // RDGE.rdgeDepthMapShaderDef = {
@@ -596,51 +596,51 @@ RDGE.rdgeDefaultShaderDefintion = {
 //     'techniques':
 //     {
 //         'shadowDepthMap':
-// 	    [{
-// 	        'vshader': 'depthMapVShader',
-// 	        'fshader': 'depthMapFShader',
-// 	        // attributes
-// 	        'attributes':
-// 				     { 'vert': { 'type': 'vec3' },
-// 				         'normal': { 'type': 'vec3' },
-// 				         'texcoord': { 'type': 'vec2' }
-// 				     },
-// 	        // parameters
-// 	        'params': {},
-// 	        // render states
-// 	        'states':
-// 				     { 'depthEnable': true,
-// 				         'blendEnable': false,
-// 				         'culling': true,
-// 				         'cullFace': "BACK"
-// 				     }
-// 	    }],
+//      [{
+//          'vshader': 'depthMapVShader',
+//          'fshader': 'depthMapFShader',
+//          // attributes
+//          'attributes':
+//                   { 'vert': { 'type': 'vec3' },
+//                       'normal': { 'type': 'vec3' },
+//                       'texcoord': { 'type': 'vec2' }
+//                   },
+//          // parameters
+//          'params': {},
+//          // render states
+//          'states':
+//                   { 'depthEnable': true,
+//                       'blendEnable': false,
+//                       'culling': true,
+//                       'cullFace': "BACK"
+//                   }
+//      }],
 //         'depthMap':
-// 	    [{
-// 	        'vshader': 'depthMapVShader',
-// 	        'fshader': 'depthMapFShader',
-// 	        // attributes
-// 	        'attributes':
-// 				     { 'vert': { 'type': 'vec3' },
-// 				         'normal': { 'type': 'vec3' },
-// 				         'texcoord': { 'type': 'vec2' }
-// 				     },
-// 	        // parameters
-// 	        'params': {},
-// 	        // render states
-// 	        'states':
-// 				     { 'depthEnable': true,
-// 				         'blendEnable': false,
-// 				         'culling': true,
-// 				         'cullFace': "BACK"
-// 				     }
-// 	    }]
-// 
+//      [{
+//          'vshader': 'depthMapVShader',
+//          'fshader': 'depthMapFShader',
+//          // attributes
+//          'attributes':
+//                   { 'vert': { 'type': 'vec3' },
+//                       'normal': { 'type': 'vec3' },
+//                       'texcoord': { 'type': 'vec2' }
+//                   },
+//          // parameters
+//          'params': {},
+//          // render states
+//          'states':
+//                   { 'depthEnable': true,
+//                       'blendEnable': false,
+//                       'culling': true,
+//                       'cullFace': "BACK"
+//                   }
+//      }]
+//
 //     }
 // };
 
 /*
-*	capture normals in view space
+*   capture normals in view space
 */
 // currently not used in Ninja
 // RDGE.rdgeViewSpaceNormalsShader = {
@@ -651,30 +651,30 @@ RDGE.rdgeDefaultShaderDefintion = {
 //     'techniques':
 //     {
 //         'depthMapWNormal':
-// 	    [{
-// 	        'vshader': 'normalsVShader',
-// 	        'fshader': 'normalsFShader',
-// 	        // attributes
-// 	        'attributes':
-// 				     { 'vert': { 'type': 'vec3' },
-// 				         'normal': { 'type': 'vec3'}
-// 				     },
-// 	        // parameters
-// 	        'params': {},
-// 	        // render states
-// 	        'states':
-// 				     { 'depthEnable': true,
-// 				         'blendEnable': false,
-// 				         'culling': true,
-// 				         'cullFace': "BACK"
-// 				     }
-// 	    }]
-// 
+//      [{
+//          'vshader': 'normalsVShader',
+//          'fshader': 'normalsFShader',
+//          // attributes
+//          'attributes':
+//                   { 'vert': { 'type': 'vec3' },
+//                       'normal': { 'type': 'vec3'}
+//                   },
+//          // parameters
+//          'params': {},
+//          // render states
+//          'states':
+//                   { 'depthEnable': true,
+//                       'blendEnable': false,
+//                       'culling': true,
+//                       'cullFace': "BACK"
+//                   }
+//      }]
+//
 //     }
 // };
 
 /*
-*	basic screen squad shader definition
+*   basic screen squad shader definition
 */
 // currently not used in Ninja
 // RDGE.rdgeScreenQuadShaderDef = {
@@ -682,42 +682,42 @@ RDGE.rdgeDefaultShaderDefintion = {
 //         // Texture coordinates are setup so that the full texture
 //         // is mapped completely onto the screen
 //         'screenQuadVShader': "\
-// 				attribute vec3 a_pos;\
-// 				attribute vec2 a_uv;\
-// 				uniform float u_inv_viewport_width;\
-// 				uniform float u_inv_viewport_height;\
-// 				varying vec2 vTexcoord;\
-// 				void main()\
-// 				{\
-// 					gl_Position = vec4(a_pos.xy, 0.0, 1.0);\
-// 				\
-// 				vTexcoord.x = 0.5 * (1.0 + a_pos.x + u_inv_viewport_width);\
-// 				vTexcoord.y = 0.5 * (1.0 - a_pos.y + u_inv_viewport_height);\
-// 				}",
+//              attribute vec3 a_pos;\
+//              attribute vec2 a_uv;\
+//              uniform float u_inv_viewport_width;\
+//              uniform float u_inv_viewport_height;\
+//              varying vec2 vTexcoord;\
+//              void main()\
+//              {\
+//                  gl_Position = vec4(a_pos.xy, 0.0, 1.0);\
+//              \
+//              vTexcoord.x = 0.5 * (1.0 + a_pos.x + u_inv_viewport_width);\
+//              vTexcoord.y = 0.5 * (1.0 - a_pos.y + u_inv_viewport_height);\
+//              }",
 //         'screenQuadFShader': "\
-// 				precision highp float;\
-// 				uniform sampler2D u_mainRT;\
-// 				uniform sampler2D u_glowFinal;\
-// 				uniform sampler2D u_ssaoRT;\
-// 				uniform sampler2D u_shadowMap;\
-// 				varying vec2 vTexcoord;\
-// 				void main()\
-// 				{\
-// 				 vec2 tex = vec2(vTexcoord.x, 1.0 - vTexcoord.y);\
-// 				 vec4 glowTexel = texture2D(u_glowFinal, tex);\
-// 				 vec4 ssaoTexel = texture2D(u_ssaoRT, tex);\
-// 				 vec4 smapCoef = texture2D(u_shadowMap, tex);\
-// 				 ssaoTexel.a = 0.0;\
-// 				 vec4 texel		= texture2D(u_mainRT, tex);\
-// 				 gl_FragColor = vec4(texel.r*((1.0 - glowTexel.r)*smapCoef.r), texel.g*((1.0 - glowTexel.g)*smapCoef.g), texel.b*((1.0 - glowTexel.b)*smapCoef.b), texel.a) + glowTexel - ssaoTexel;\
-// 				}"
+//              precision highp float;\
+//              uniform sampler2D u_mainRT;\
+//              uniform sampler2D u_glowFinal;\
+//              uniform sampler2D u_ssaoRT;\
+//              uniform sampler2D u_shadowMap;\
+//              varying vec2 vTexcoord;\
+//              void main()\
+//              {\
+//               vec2 tex = vec2(vTexcoord.x, 1.0 - vTexcoord.y);\
+//               vec4 glowTexel = texture2D(u_glowFinal, tex);\
+//               vec4 ssaoTexel = texture2D(u_ssaoRT, tex);\
+//               vec4 smapCoef = texture2D(u_shadowMap, tex);\
+//               ssaoTexel.a = 0.0;\
+//               vec4 texel     = texture2D(u_mainRT, tex);\
+//               gl_FragColor = vec4(texel.r*((1.0 - glowTexel.r)*smapCoef.r), texel.g*((1.0 - glowTexel.g)*smapCoef.g), texel.b*((1.0 - glowTexel.b)*smapCoef.b), texel.a) + glowTexel - ssaoTexel;\
+//              }"
 //     },
 //     'techniques': {
 //         // rendering control
 //         'screenQuad': [{
 //             'vshader': 'screenQuadVShader',
 //             'fshader': 'screenQuadFShader',
-// 
+//
 //             // attributes
 //             'attributes': {
 //                 'a_pos': { 'type': 'vec3' },
@@ -740,7 +740,7 @@ RDGE.rdgeDefaultShaderDefintion = {
 // };
 
 /*
-*	creates the glow map
+*   creates the glow map
 */
 // currently not used in Ninja
 // RDGE.rdgeGlowMapShader = {
@@ -750,35 +750,35 @@ RDGE.rdgeDefaultShaderDefintion = {
 //     },
 //     'techniques': {
 //         'createGlowMap': [
-// 			{
-// 			    'vshader': 'createGlowVShader',
-// 			    'fshader': 'createGlowFShader',
-// 			    // attributes
-// 			    'attributes':
-// 				 {
-// 				     'vert': { 'type': 'vec3' },
-// 				     'normal': { 'type': 'vec3' },
-// 				     'texcoord': { 'type': 'vec2' }
-// 				 },
-// 			    // parameters
-// 			    'params':
-// 				 {
-// 				 },
-// 
-// 			    // render states
-// 			    'states':
-// 				 {
-// 				     'depthEnable': true,
-// 				     'blendEnable': false,
-// 				     'culling': true,
-// 				     'cullFace': "BACK"
-// 				 }
-// 			}
-// 	]
+//          {
+//              'vshader': 'createGlowVShader',
+//              'fshader': 'createGlowFShader',
+//              // attributes
+//              'attributes':
+//               {
+//                   'vert': { 'type': 'vec3' },
+//                   'normal': { 'type': 'vec3' },
+//                   'texcoord': { 'type': 'vec2' }
+//               },
+//              // parameters
+//              'params':
+//               {
+//               },
+//
+//              // render states
+//              'states':
+//               {
+//                   'depthEnable': true,
+//                   'blendEnable': false,
+//                   'culling': true,
+//                   'cullFace': "BACK"
+//               }
+//          }
+//  ]
 //     }
 // };
 
-/* 
+/*
 * Gaussian blur shader
 */
 // currently not used in Ninja
@@ -789,34 +789,34 @@ RDGE.rdgeDefaultShaderDefintion = {
 //     },
 //     'techniques': {
 //         'gaussianBlur': [
-// 			{
-// 			    'vshader': 'blurVShader',
-// 			    'fshader': 'blurFShader',
-// 			    // attributes
-// 			    'attributes':
-// 				 {
-// 				     'vert': { 'type': 'vec3' },
-// 				     'texcoord': { 'type': 'vec2' }
-// 				 },
-// 			    // parameters
-// 			    'params':
-// 				 {
-// 				     'vCoeffs': { 'type': 'vec3', 'data': [5.0 / 16.0, 6.0 / 16.0, 5.0 / 16.0] },
-// 				     'vOffset': { 'type': 'vec2', 'data': [0.00617, 0.00617] },
-// 				     'u_weight': { 'type': 'float', 'data': [1.0] },
-// 				     'sTexture': { 'type': "tex2d" }
-// 				 },
-// 			    // render states
-// 			    'states':
-// 				 {
-// 				     'culling': false
-// 				 }
-// 			}
-// 		]
+//          {
+//              'vshader': 'blurVShader',
+//              'fshader': 'blurFShader',
+//              // attributes
+//              'attributes':
+//               {
+//                   'vert': { 'type': 'vec3' },
+//                   'texcoord': { 'type': 'vec2' }
+//               },
+//              // parameters
+//              'params':
+//               {
+//                   'vCoeffs': { 'type': 'vec3', 'data': [5.0 / 16.0, 6.0 / 16.0, 5.0 / 16.0] },
+//                   'vOffset': { 'type': 'vec2', 'data': [0.00617, 0.00617] },
+//                   'u_weight': { 'type': 'float', 'data': [1.0] },
+//                   'sTexture': { 'type': "tex2d" }
+//               },
+//              // render states
+//              'states':
+//               {
+//                   'culling': false
+//               }
+//          }
+//      ]
 //     }
 // };
 
-/* 
+/*
 * Screen space ambient occlusion shader
 */
 // currently not used in Ninja
@@ -827,38 +827,38 @@ RDGE.rdgeDefaultShaderDefintion = {
 //     },
 //     'techniques': {
 //         'ssao': [
-// 			{
-// 			    'vshader': 'blurVShader',
-// 			    'fshader': 'blurFShader',
-// 			    // attributes
-// 			    'attributes':
-// 				 {
-// 				     'vert': { 'type': 'vec3' },
-// 				     'texcoord': { 'type': 'vec2' }
-// 				 },
-// 			    // parameters
-// 			    'params':
-// 				 {
-// 				     'u_normalsRT': { 'type': "tex2d" },
-// 				     'u_depthMap': { 'type': "tex2d" },
-// 				     'sRandMap': { 'type': "tex2d", 'data': "assets/images/random_normal.png", 'wrap': "REPEAT", 'mips': false },
-// 				     'u_cameraFTR': { 'type': 'vec3' },
-// 				     'u_artVals': { 'type': 'vec4', 'data': [0.36, 0.75, 0.60, 0.05] }, // sample radius, intensity, distScale, bias
-// 				     'u_randMapSize': { 'type': 'float', 'data': [64.0] },
-// 				     'u_screenSize': { 'type': 'vec2', 'data': [1024, 1024] }
-// 				 },
-// 			    // render states
-// 			    'states':
-// 				 {
-// 				     'culling': false
-// 				 }
-// 			}
-// 		]
+//          {
+//              'vshader': 'blurVShader',
+//              'fshader': 'blurFShader',
+//              // attributes
+//              'attributes':
+//               {
+//                   'vert': { 'type': 'vec3' },
+//                   'texcoord': { 'type': 'vec2' }
+//               },
+//              // parameters
+//              'params':
+//               {
+//                   'u_normalsRT': { 'type': "tex2d" },
+//                   'u_depthMap': { 'type': "tex2d" },
+//                   'sRandMap': { 'type': "tex2d", 'data': "assets/images/random_normal.png", 'wrap': "REPEAT", 'mips': false },
+//                   'u_cameraFTR': { 'type': 'vec3' },
+//                   'u_artVals': { 'type': 'vec4', 'data': [0.36, 0.75, 0.60, 0.05] }, // sample radius, intensity, distScale, bias
+//                   'u_randMapSize': { 'type': 'float', 'data': [64.0] },
+//                   'u_screenSize': { 'type': 'vec2', 'data': [1024, 1024] }
+//               },
+//              // render states
+//              'states':
+//               {
+//                   'culling': false
+//               }
+//          }
+//      ]
 //     }
 // };
 
 /*
-*	Shadow map generation
+*   Shadow map generation
 */
 // currently not used in Ninja
 // RDGE.rdgeShadowMapShader = {
@@ -868,37 +868,37 @@ RDGE.rdgeDefaultShaderDefintion = {
 //     },
 //     'techniques': {
 //         'shadowMap': [
-// 			{
-// 			    'vshader': 'shadowMapVShader',
-// 			    'fshader': 'shadowMapFShader',
-// 			    // attributes
-// 			    'attributes':
-// 				 {
-// 				     'a_pos': { 'type': 'vec3' },
-// 				     'a_uv': { 'type': 'vec2' }
-// 				 },
-// 			    // parameters
-// 			    'params':
-// 				 {
-// 				     'u_lightSize': { 'type': 'float', 'data': [7.93] },
-// 				     // color is inverted, alpha represents intensity and is not inverted
-// 				     'u_shadowColor': { 'type': 'vec4', 'data': [0.922, 0.7373, 0.4824, 0.5] }
-// 				 },
-// 			    // render states
-// 			    'states':
-// 				 {
-// 				     'depthEnable': true,
-// 				     'blendEnable': false,
-// 				     'culling': true,
-// 				     'cullFace': "BACK"
-// 				 }
-// 			}
-// 		]
+//          {
+//              'vshader': 'shadowMapVShader',
+//              'fshader': 'shadowMapFShader',
+//              // attributes
+//              'attributes':
+//               {
+//                   'a_pos': { 'type': 'vec3' },
+//                   'a_uv': { 'type': 'vec2' }
+//               },
+//              // parameters
+//              'params':
+//               {
+//                   'u_lightSize': { 'type': 'float', 'data': [7.93] },
+//                   // color is inverted, alpha represents intensity and is not inverted
+//                   'u_shadowColor': { 'type': 'vec4', 'data': [0.922, 0.7373, 0.4824, 0.5] }
+//               },
+//              // render states
+//              'states':
+//               {
+//                   'depthEnable': true,
+//                   'blendEnable': false,
+//                   'culling': true,
+//                   'cullFace': "BACK"
+//               }
+//          }
+//      ]
 //     }
 // };
 
 /*
-*	Noise blur filter
+*   Noise blur filter
 */
 // currently not used in Ninja
 // RDGE.rdgeNoiseBlurShader = {
@@ -908,27 +908,27 @@ RDGE.rdgeDefaultShaderDefintion = {
 //     },
 //     'techniques': {
 //         'blur': [
-// 			{
-// 			    'vshader': 'blurVShader',
-// 			    'fshader': 'blurFShader',
-// 			    // attributes
-// 			    'attributes':
-// 				 {
-// 				     'a_pos': { 'type': 'vec3' },
-// 				     'a_uv': { 'type': 'vec2' }
-// 				 },
-// 			    // parameters
-// 			    'params':
-// 				 {
-// 				     'u_blurSourceMap': { 'type': "tex2d" }
-// 				 },
-// 			    // render states
-// 			    'states':
-// 				 {
-// 				     'culling': false
-// 				 }
-// 			}
-// 		]
+//          {
+//              'vshader': 'blurVShader',
+//              'fshader': 'blurFShader',
+//              // attributes
+//              'attributes':
+//               {
+//                   'a_pos': { 'type': 'vec3' },
+//                   'a_uv': { 'type': 'vec2' }
+//               },
+//              // parameters
+//              'params':
+//               {
+//                   'u_blurSourceMap': { 'type': "tex2d" }
+//               },
+//              // render states
+//              'states':
+//               {
+//                   'culling': false
+//               }
+//          }
+//      ]
 //     }
 // };
 
@@ -937,153 +937,153 @@ RDGE.rdgeDefaultShaderDefintion = {
 */
 RDGE.rdgePrimitiveDefinition = function () {
     /*
-    *	The type of primitive
-    *	supported types are
-    *	renderer.POINTS      
-    *  renderer.LINES          
-    *	renderer.LINE_LOOP      
-    *	renderer.LINE_STRIP     
-    *	renderer.TRIANGLES      
-    *	renderer.TRIANGLE_STRIP 
-    *	renderer.TRIANGLE_FAN   
+    *   The type of primitive
+    *   supported types are
+    *   renderer.POINTS
+    *  renderer.LINES
+    *   renderer.LINE_LOOP
+    *   renderer.LINE_STRIP
+    *   renderer.TRIANGLES
+    *   renderer.TRIANGLE_STRIP
+    *   renderer.TRIANGLE_FAN
     */
     this.type = RDGE.rdgeConstants.TRIANGLE_STRIP;
 
     /*
-    *	Define vertex elements size in bytes and order the element appears in the stream
+    *   Define vertex elements size in bytes and order the element appears in the stream
     *  Predefined size types:
     *  renderer.VS_ELEMENT_FLOAT4
-    *	renderer.VS_ELEMENT_FLOAT3
-    *	renderer.VS_ELEMENT_FLOAT2
-    *	renderer.VS_ELEMENT_FLOAT
-    *	renderer.VS_ELEMENT_UINT16
-    *	renderer.VS_ELEMENT_UINT8
+    *   renderer.VS_ELEMENT_FLOAT3
+    *   renderer.VS_ELEMENT_FLOAT2
+    *   renderer.VS_ELEMENT_FLOAT
+    *   renderer.VS_ELEMENT_UINT16
+    *   renderer.VS_ELEMENT_UINT8
     */
     this.vertexDefinition =
-	{
-	    // usage example: two ways of declaring a float 3 stream
-	    //"vert"	:{	'type':renderer.VS_ELEMENT_POS, 'bufferIndex':indexIntoBufferStream,	'usage': renderer.BUFFER_STATIC }
-	    //"a_pos"	:{	'type':renderer.VS_ELEMENT_POS, 'bufferIndex':indexIntoBufferStream,	'usage': renderer.BUFFER_STATIC }
-	};
+    {
+        // usage example: two ways of declaring a float 3 stream
+        //"vert"    :{  'type':renderer.VS_ELEMENT_POS, 'bufferIndex':indexIntoBufferStream,    'usage': renderer.BUFFER_STATIC }
+        //"a_pos"   :{  'type':renderer.VS_ELEMENT_POS, 'bufferIndex':indexIntoBufferStream,    'usage': renderer.BUFFER_STATIC }
+    };
 
     /*
-    *	Arrays of buffer data listed in the order given by the vertex definition
+    *   Arrays of buffer data listed in the order given by the vertex definition
     */
     this.bufferStreams =
-	[
+    [
 
-	];
+    ];
 
     /*
-    *	An array indicating the the stream usage listed in the order given by the vertex definition
+    *   An array indicating the the stream usage listed in the order given by the vertex definition
     *  Valid usage values: renderer.BUFFER_STATIC  The data store contents will be specified once by the application, and used many times
-    *						renderer.BUFFER_DYNAMIC The data store contents will be respecified repeatedly by the application, and used many times
-    *						renderer.BUFFER_STREAM  The data store contents will be specified once by the application, and used at most a few times
+    *                       renderer.BUFFER_DYNAMIC The data store contents will be respecified repeatedly by the application, and used many times
+    *                       renderer.BUFFER_STREAM  The data store contents will be specified once by the application, and used at most a few times
     */
     this.streamUsage =
-	[
+    [
 
-	];
+    ];
 
     /*
-    *	indicates the the stream usage of the index buffer
+    *   indicates the the stream usage of the index buffer
     *  Valid usage values: renderer.BUFFER_STATIC  The data store contents will be specified once by the application, and used many times
-    *						renderer.BUFFER_DYNAMIC The data store contents will be respecified repeatedly by the application, and used many times
-    *						renderer.BUFFER_STREAM  The data store contents will be specified once by the application, and used at most a few times
+    *                       renderer.BUFFER_DYNAMIC The data store contents will be respecified repeatedly by the application, and used many times
+    *                       renderer.BUFFER_STREAM  The data store contents will be specified once by the application, and used at most a few times
     */
     this.indexUsage = RDGE.rdgeConstants.BUFFER_STREAM;
 
     /*
-    *	a references to an array of indices
+    *   a references to an array of indices
     */
     this.indexBuffer =
-	[
-	];
+    [
+    ];
 
     /*
-    *	the number of sets of geometry in this primitive
+    *   the number of sets of geometry in this primitive
     */
     this.setCount = 0;
 
     /*
     * Offset of a primitive in an index buffer
-    *	if the primitive represents a set each set array has a corresponding index offset
+    *   if the primitive represents a set each set array has a corresponding index offset
     */
     this.indexOffsets =
-	 [
-	 ];
+     [
+     ];
 
     //////////////////////////////////////////////////////////////
-    //						OUTPUT VALUES						//
+    //                      OUTPUT VALUES                       //
     //////////////////////////////////////////////////////////////
 
     /*
-    *	the number of coordinates's that make this primitive
-    *	auto populated with a call to renderer.createPrimitive
+    *   the number of coordinates's that make this primitive
+    *   auto populated with a call to renderer.createPrimitive
     */
     this.posCount = 0;
 
     /*
-    *	the number of triangle that make up this primitive
-    *	auto populated with a call to renderer.createPrimitive
+    *   the number of triangle that make up this primitive
+    *   auto populated with a call to renderer.createPrimitive
     */
     this.triCount = 0;
 
     /*
-    *	the number of indices in the primitive
-    *	auto populated with a call to renderer.createPrimitive
+    *   the number of indices in the primitive
+    *   auto populated with a call to renderer.createPrimitive
     */
     this.indexCount = 0;
 
     /*
-    *	size of an index value in bytes
+    *   size of an index value in bytes
     */
     this.indexElementSize = RDGE.rdgeConstants.UNSIGNED_SHORT;
 
     /*
-    *	bufferHanldes are created when passing a primitive to renderer.createPrimitive
-    *	An array of handles to buffers in vram, listed in the order given by the vertex definition
+    *   bufferHanldes are created when passing a primitive to renderer.createPrimitive
+    *   An array of handles to buffers in vram, listed in the order given by the vertex definition
     */
     this.bufferHandles =
-	[
-	];
+    [
+    ];
 
     /*
-    *	An index into the buffers table for the render context that created the buffer
+    *   An index into the buffers table for the render context that created the buffer
     */
     this.buffersID = -1;
 
     /*
-    *	Handle to index buffer object
+    *   Handle to index buffer object
     */
     this.indexHandle = null;
 
 
     /*
-    *	------------------- Double buffer Setup-----------------------------
+    *   ------------------- Double buffer Setup-----------------------------
     */
 
     /*
-    *	user flag used to create a double buffered primitive
-    *	Double buffer flag - when double buffered a .front() and .back() buffer
-    *	are available as well as a call .flip() to flip the buffers
+    *   user flag used to create a double buffered primitive
+    *   Double buffer flag - when double buffered a .front() and .back() buffer
+    *   are available as well as a call .flip() to flip the buffers
     */
     this.useDoubleBuffer = false;
 
     /*
-    *	The double buffer offset tells the renderer where in its 'bufferID' array for this primitive the 'doubled' buffers begin
+    *   The double buffer offset tells the renderer where in its 'bufferID' array for this primitive the 'doubled' buffers begin
     */
     this.doubleBufferOffset = 0;
 
     /*
-    *	Keeps track of which buffer is the front buffer or active buffer
+    *   Keeps track of which buffer is the front buffer or active buffer
     */
     this.frontBufferIndex = 0;
 
     /*
-    *	Helper function for retrieving the buffer for editing - successfully calling this makes the buffer dirty and will trigger a buffer swap
-    *	@param bufIndex - buffer stream index
-    *	@return buffer stream requested, or null if invalid index is given
+    *   Helper function for retrieving the buffer for editing - successfully calling this makes the buffer dirty and will trigger a buffer swap
+    *   @param bufIndex - buffer stream index
+    *   @return buffer stream requested, or null if invalid index is given
     */
     this.update = function (bufIndex) {
         if (!this.bufferStreams[bufIndex])
@@ -1095,7 +1095,7 @@ RDGE.rdgePrimitiveDefinition = function () {
 
 
     /*
-    *	Flips the front and back buffers
+    *   Flips the front and back buffers
     */
     this.flip = function (renderer) {
         if (this.useDoubleBuffer === true) {
@@ -1118,10 +1118,10 @@ RDGE._renderer.prototype.getBufferID = function () {
     return RDGE._renderer.prototype._rendererID++;
 };
 /*
-* @param bufferSizeOrData:	an array of indices, or the size in bytes to preallocate
-* @param bufferUsage:		BUFFER_STATIC  The data store contents will be specified once by the application, and used many times
-*							BUFFER_DYNAMIC The data store contents will be respecified repeatedly by the application, and used many times
-*							BUFFER_STREAM  The data store contents will be specified once by the application, and used at most a few times
+* @param bufferSizeOrData:  an array of indices, or the size in bytes to preallocate
+* @param bufferUsage:       BUFFER_STATIC  The data store contents will be specified once by the application, and used many times
+*                           BUFFER_DYNAMIC The data store contents will be respecified repeatedly by the application, and used many times
+*                           BUFFER_STREAM  The data store contents will be specified once by the application, and used at most a few times
 * @return an unsigned short index buffer object
 */
 RDGE._renderer.prototype.createIndexBufferUINT16 = function (bufferSizeOrData, bufferUsage) {
@@ -1129,16 +1129,16 @@ RDGE._renderer.prototype.createIndexBufferUINT16 = function (bufferSizeOrData, b
     bufferObject.type = bufferSizeOrData.type;
     this.ctx.bindBuffer(this.ctx.ELEMENT_ARRAY_BUFFER, bufferObject);
     this.ctx.bufferData(this.ctx.ELEMENT_ARRAY_BUFFER, (typeof k == "number")
-			? bufferSizeOrData
-			: new Uint16Array(bufferSizeOrData), bufferUsage);
+            ? bufferSizeOrData
+            : new Uint16Array(bufferSizeOrData), bufferUsage);
     return bufferObject;
 };
 
 /*
-* @param bufferSizeOrData:	an array of indices, or the size in bytes to preallocate
-* @param bufferUsage:		BUFFER_STATIC  The data store contents will be specified once by the application, and used many times
-*							BUFFER_DYNAMIC The data store contents will be respecified repeatedly by the application, and used many times
-*							BUFFER_STREAM  The data store contents will be specified once by the application, and used at most a few times
+* @param bufferSizeOrData:  an array of indices, or the size in bytes to preallocate
+* @param bufferUsage:       BUFFER_STATIC  The data store contents will be specified once by the application, and used many times
+*                           BUFFER_DYNAMIC The data store contents will be respecified repeatedly by the application, and used many times
+*                           BUFFER_STREAM  The data store contents will be specified once by the application, and used at most a few times
 * @return an unsigned byte index buffer object
 */
 RDGE._renderer.prototype.createIndexBufferUINT8 = function (bufferSizeOrData, bufferUsage) {
@@ -1146,16 +1146,16 @@ RDGE._renderer.prototype.createIndexBufferUINT8 = function (bufferSizeOrData, bu
     bufferObject.type = bufferSizeOrData.type;
     this.ctx.bindBuffer(this.ctx.ELEMENT_ARRAY_BUFFER, bufferObject);
     this.ctx.bufferData(this.ctx.ELEMENT_ARRAY_BUFFER, (typeof k == "number")
-			? bufferSizeOrData
-			: new Uint8Array(bufferSizeOrData), bufferUsage);
+            ? bufferSizeOrData
+            : new Uint8Array(bufferSizeOrData), bufferUsage);
     return bufferObject;
 };
 
 /*
-* @param bufferSizeOrData:	a buffer of data the represents a stream in a vertex, or the size in bytes to preallocate
-* @param bufferUsage:		BUFFER_STATIC  The data store contents will be specified once by the application, and used many times
-*							BUFFER_DYNAMIC The data store contents will be respecified repeatedly by the application, and used many times
-*							BUFFER_STREAM  The data store contents will be specified once by the application, and used at most a few times
+* @param bufferSizeOrData:  a buffer of data the represents a stream in a vertex, or the size in bytes to preallocate
+* @param bufferUsage:       BUFFER_STATIC  The data store contents will be specified once by the application, and used many times
+*                           BUFFER_DYNAMIC The data store contents will be respecified repeatedly by the application, and used many times
+*                           BUFFER_STREAM  The data store contents will be specified once by the application, and used at most a few times
 * @return an unsigned byte index buffer object
 */
 RDGE._renderer.prototype.createBufferFLOAT32 = function (bufferSizeOrData, bufferUsage) {
@@ -1163,16 +1163,16 @@ RDGE._renderer.prototype.createBufferFLOAT32 = function (bufferSizeOrData, buffe
     bufferObject.type = bufferSizeOrData.type;
     this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, bufferObject);
     this.ctx.bufferData(this.ctx.ARRAY_BUFFER, (typeof k == "number")
-			? bufferSizeOrData
-			: new Float32Array(bufferSizeOrData), bufferUsage);
+            ? bufferSizeOrData
+            : new Float32Array(bufferSizeOrData), bufferUsage);
     return bufferObject;
 };
 
 /*
-* @param bufferSizeOrData:	a buffer of data the represents a stream in a vertex, or the size in bytes to preallocate
-* @param bufferUsage:		BUFFER_STATIC  The data store contents will be specified once by the application, and used many times
-*							BUFFER_DYNAMIC The data store contents will be respecified repeatedly by the application, and used many times
-*							BUFFER_STREAM  The data store contents will be specified once by the application, and used at most a few times
+* @param bufferSizeOrData:  a buffer of data the represents a stream in a vertex, or the size in bytes to preallocate
+* @param bufferUsage:       BUFFER_STATIC  The data store contents will be specified once by the application, and used many times
+*                           BUFFER_DYNAMIC The data store contents will be respecified repeatedly by the application, and used many times
+*                           BUFFER_STREAM  The data store contents will be specified once by the application, and used at most a few times
 * @return an unsigned byte index buffer object
 */
 RDGE._renderer.prototype.createBufferINT32 = function (bufferSizeOrData, bufferUsage) {
@@ -1180,16 +1180,16 @@ RDGE._renderer.prototype.createBufferINT32 = function (bufferSizeOrData, bufferU
     bufferObject.type = bufferSizeOrData.type;
     this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, bufferObject);
     this.ctx.bufferData(this.ctx.ARRAY_BUFFER, (typeof k == "number")
-		? bufferSizeOrData
-		: new Int32Array(bufferSizeOrData), bufferUsage);
+        ? bufferSizeOrData
+        : new Int32Array(bufferSizeOrData), bufferUsage);
     return bufferObject;
 };
 
 /*
-* @param bufferSizeOrData:	a buffer of data the represents a stream in a vertex, or the size in bytes to preallocate
-* @param bufferUsage:		BUFFER_STATIC  The data store contents will be specified once by the application, and used many times
-*							BUFFER_DYNAMIC The data store contents will be respecified repeatedly by the application, and used many times
-*							BUFFER_STREAM  The data store contents will be specified once by the application, and used at most a few times
+* @param bufferSizeOrData:  a buffer of data the represents a stream in a vertex, or the size in bytes to preallocate
+* @param bufferUsage:       BUFFER_STATIC  The data store contents will be specified once by the application, and used many times
+*                           BUFFER_DYNAMIC The data store contents will be respecified repeatedly by the application, and used many times
+*                           BUFFER_STREAM  The data store contents will be specified once by the application, and used at most a few times
 * @return an unsigned byte index buffer object
 */
 RDGE._renderer.prototype.createBufferINT16 = function (bufferSizeOrData, bufferUsage) {
@@ -1197,8 +1197,8 @@ RDGE._renderer.prototype.createBufferINT16 = function (bufferSizeOrData, bufferU
     bufferObject.type = bufferSizeOrData.type;
     this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, bufferObject);
     this.ctx.bufferData(this.ctx.ARRAY_BUFFER, (typeof k == "number")
-		? bufferSizeOrData
-		: new Int16Array(bufferSizeOrData), bufferUsage);
+        ? bufferSizeOrData
+        : new Int16Array(bufferSizeOrData), bufferUsage);
     return bufferObject;
 };
 
@@ -1215,7 +1215,7 @@ RDGE._renderer.prototype.updateBuffer = function (dstBuffer, srcBuffer, bufferUs
 };
 
 /*
-*	@param primitiveDef defines a primitive using java script types, creates the video ram objects and attaches them to the primitive passed in
+*   @param primitiveDef defines a primitive using java script types, creates the video ram objects and attaches them to the primitive passed in
 */
 RDGE._renderer.prototype.createPrimitive = function (primitiveDef) {
     if (!primitiveDef.built) {
@@ -1237,7 +1237,7 @@ RDGE._renderer.prototype.createPrimitive = function (primitiveDef) {
 };
 
 /*
-*	@param primitiveDef defines a primitive using java script types, creates the video ram objects and attaches them to the primitive passed in
+*   @param primitiveDef defines a primitive using java script types, creates the video ram objects and attaches them to the primitive passed in
 */
 RDGE._renderer.prototype.updatePrimitive = function (prim) {
     if (!prim.built) {
@@ -1332,7 +1332,7 @@ RDGE._renderer.prototype.updatePrimitive = function (prim) {
 };
 
 /*
-*	@param prim the primitive to delete from the GL context
+*   @param prim the primitive to delete from the GL context
 */
 RDGE._renderer.prototype.deletePrimitive = function (prim) {
     var buffers = this.buffers[prim.buffersID];
@@ -1349,7 +1349,7 @@ RDGE._renderer.prototype.deletePrimitive = function (prim) {
 };
 
 /*
-*	@param prim the primitive for which to retrieve the GL VBO handle
+*   @param prim the primitive for which to retrieve the GL VBO handle
 *  @param bufferIndex which buffer name to retrieve
 */
 RDGE._renderer.prototype.getPrimitiveBuffer = function (prim, bufferIndex) {
@@ -1371,8 +1371,8 @@ RDGE._renderer.prototype.drawPrimitive = function (prim, program, attribs) {
 };
 
 /*
-*	Draws a single primitive using indices
-*	@param: prim a single primitive
+*   Draws a single primitive using indices
+*   @param: prim a single primitive
 */
 RDGE._renderer.prototype.drawIndexedPrimitive = function (prim, program, attribs) {
     var bufferIndex = 0;
@@ -1409,8 +1409,8 @@ RDGE._renderer.prototype.drawIndexedPrimitive = function (prim, program, attribs
 };
 
 /*
-*	Draws a single primitive using indices in wireframe mode
-*	@param: prim a single primitive
+*   Draws a single primitive using indices in wireframe mode
+*   @param: prim a single primitive
 */
 RDGE._renderer.prototype.drawIndexedPrimitiveWireFrame = function (prim, program, attribs) {
     var bufferIndex = 0;
@@ -1445,8 +1445,8 @@ RDGE._renderer.prototype.drawIndexedPrimitiveWireFrame = function (prim, program
 };
 
 /*
-*	Draws a single primitive (non-indexed primitive)
-*	@param: prim a single primitive
+*   Draws a single primitive (non-indexed primitive)
+*   @param: prim a single primitive
 */
 RDGE._renderer.prototype.drawNonIndexedPrimitive = function (prim, program, attribs) {
     var bufferIndex = 0;
@@ -1479,7 +1479,7 @@ RDGE._renderer.prototype.drawNonIndexedPrimitive = function (prim, program, attr
 };
 
 /*
-*	Not yet supported but stubbed out here
+*   Not yet supported but stubbed out here
 */
 RDGE._renderer.prototype.drawIndexedPrimitiveSet = function (prim) {
     window.alert("drawIndexedPrimitiveSet is not implemented");
@@ -1504,22 +1504,22 @@ RDGE.renderDebug = function (maxLines) {
     this.shader.def = {
         'shaders': {
             'defaultVShader': "\
-				uniform mat4 u_mvMatrix;\
-				uniform mat4 u_projMatrix;\
-				attribute vec3	a_pos;\
-				attribute vec4  a_color;\
-				varying vec4 v_color;\
-				void main() {\
-					gl_Position = u_projMatrix * u_mvMatrix * vec4(a_pos,1.0);\
-					v_color = a_color;\
-				}",
+                uniform mat4 u_mvMatrix;\
+                uniform mat4 u_projMatrix;\
+                attribute vec3  a_pos;\
+                attribute vec4  a_color;\
+                varying vec4 v_color;\
+                void main() {\
+                    gl_Position = u_projMatrix * u_mvMatrix * vec4(a_pos,1.0);\
+                    v_color = a_color;\
+                }",
             'defaultFShader': "\
-				precision mediump float;\
-				varying vec4 v_color;\
-				void main() {\
-					gl_FragColor = v_color;\
-					gl_FragColor.a = 1.0;\
-				}"
+                precision mediump float;\
+                varying vec4 v_color;\
+                void main() {\
+                    gl_FragColor = v_color;\
+                    gl_FragColor.a = 1.0;\
+                }"
         },
         'techniques': {
             'defaultTechnique': [{
@@ -1614,7 +1614,7 @@ RDGE.renderDebug.prototype.sphere = function (p, r, c) {
             phi += phi_step;
 
             this.line([x0, y0, z0],
-					  [x1, y1, z1], c);
+                      [x1, y1, z1], c);
         }
         rho += rho_step;
     }

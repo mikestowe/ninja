@@ -46,19 +46,19 @@ exports.ObjectsTray = Montage.create(Component, {
     offStageObjectsController : {
         value: null
     },
-    
+
     _showAllObjects : { value: null },
     showAllObjects : {
         get : function() { return this._showAllObjects; },
         set : function(value) {
             if(value === this._showAllObjects) { return; }
-            
+
             this._showAllObjects = value;
-            
+
             this.needsDraw = true;
         }
     },
-    
+
     workspaceMode : {
         get : function() { return this._workspaceMode; },
         set : function(value) {
@@ -119,7 +119,7 @@ exports.ObjectsTray = Montage.create(Component, {
      Draw Cycle
      --------------------- */
 
-    templateDidLoad: { 
+    templateDidLoad: {
         value: function() {
             this.offStageObjectsController.filterFunction = this.offStageObjectFilter.bind(this);
         }

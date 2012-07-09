@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!doctype html>
 <!-- <copyright>
 Copyright (c) 2012, Motorola Mobility, Inc
 All Rights Reserved.
@@ -29,10 +29,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> -->
 <html lang="en">
-	<head>
-    	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    	<link rel="stylesheet" type="text/css" href="css/TimelinePanel.css">
-   		
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/TimelinePanel.css">
+
 
         <script type="text/montage-serialization">
             {
@@ -77,73 +77,73 @@ POSSIBILITY OF SUCH DAMAGE.
                     }
                 },
 
-                
-	            "repetition1": {
-	                "prototype": "montage/ui/repetition.reel",
-	                "properties": {
-	                    "element": {"#": "container-layers"},
-	                    "isSelectionEnabled" : true
-	                },
-	                "bindings": {
-	                    "objects": {
-	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "arrLayers",
-	                        "oneway": false
-	                    }
-	                }
-	            },
-	            "layer" : {
-	            	"prototype" : "js/panels/Timeline/Layer.reel",
-	            	"properties" : {
-	            		"element": {"#": "container-layer"}
-	            	},
-	            	"bindings" : {
+
+                "repetition1": {
+                    "prototype": "montage/ui/repetition.reel",
+                    "properties": {
+                        "element": {"#": "container-layers"},
+                        "isSelectionEnabled" : true
+                    },
+                    "bindings": {
+                        "objects": {
+                            "boundObject": {"@": "owner"},
+                            "boundObjectPropertyPath": "arrLayers",
+                            "oneway": false
+                        }
+                    }
+                },
+                "layer" : {
+                    "prototype" : "js/panels/Timeline/Layer.reel",
+                    "properties" : {
+                        "element": {"#": "container-layer"}
+                    },
+                    "bindings" : {
                         "layerData" : {
-                        	"boundObject" : {"@" : "repetition1"},
-                        	"boundObjectPropertyPath" : "objectAtCurrentIteration.layerData",
-                        	"oneway" : false
+                            "boundObject" : {"@" : "repetition1"},
+                            "boundObjectPropertyPath" : "objectAtCurrentIteration.layerData",
+                            "oneway" : false
                         },
                         "bindingPoint" : {
-            	            "boundObject" : {"@" : "repetition1"},
-            	            "boundObjectPropertyPath" : "objectAtCurrentIteration.layerData.triggerBinding",
-            	            "oneway" : false
-            	        }
-	            	}
-	            },
-	            
-	            "repetition2" : {
-	                "prototype": "montage/ui/repetition.reel",
-	                "properties": {
-	                    "element": {"#": "container-tracks"},
-	                    "isSelectionEnabled" : false
-	                },
-	                "bindings": {
-	                    "objects": {
-	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "arrLayers",
-	                        "oneway": false
-	                    }
-	                }
-	            },
-	            "track" : {
-	            	"prototype" : "js/panels/Timeline/TimelineTrack.reel",
-	            	"properties" : {
-	            		"element": {"#": "container-track"}
-	            	},
-	            	"bindings" : {
+                            "boundObject" : {"@" : "repetition1"},
+                            "boundObjectPropertyPath" : "objectAtCurrentIteration.layerData.triggerBinding",
+                            "oneway" : false
+                        }
+                    }
+                },
+
+                "repetition2" : {
+                    "prototype": "montage/ui/repetition.reel",
+                    "properties": {
+                        "element": {"#": "container-tracks"},
+                        "isSelectionEnabled" : false
+                    },
+                    "bindings": {
+                        "objects": {
+                            "boundObject": {"@": "owner"},
+                            "boundObjectPropertyPath": "arrLayers",
+                            "oneway": false
+                        }
+                    }
+                },
+                "track" : {
+                    "prototype" : "js/panels/Timeline/TimelineTrack.reel",
+                    "properties" : {
+                        "element": {"#": "container-track"}
+                    },
+                    "bindings" : {
                         "trackData" : {
-            	            "boundObject" : {"@" : "repetition2"},
-            	            "boundObjectPropertyPath" : "objectAtCurrentIteration.layerData",
-            	            "oneway" : false
-            	        },
+                            "boundObject" : {"@" : "repetition2"},
+                            "boundObjectPropertyPath" : "objectAtCurrentIteration.layerData",
+                            "oneway" : false
+                        },
                         "bindingPoint" : {
-            	            "boundObject" : {"@" : "repetition2"},
-            	            "boundObjectPropertyPath" : "objectAtCurrentIteration.layerData.triggerBinding",
-            	            "oneway" : false
-            	        }
-            	        
-	            	}
-	            },
+                            "boundObject" : {"@" : "repetition2"},
+                            "boundObjectPropertyPath" : "objectAtCurrentIteration.layerData.triggerBinding",
+                            "oneway" : false
+                        }
+
+                    }
+                },
 
                 "timelineZoomSlider":{
                     "prototype":"js/components/slider.reel",
@@ -163,22 +163,22 @@ POSSIBILITY OF SUCH DAMAGE.
 
                 "endHottext" : {
                     "prototype": "js/components/hottextunit.reel[HotTextUnit]",
-            	    "properties": {
-            	        "element": {"#": "end_hottext"},
-            	        "maxValue" : 100000,
+                    "properties": {
+                        "element": {"#": "end_hottext"},
+                        "maxValue" : 100000,
                         "minValue" : 1,
                         "acceptableUnits" : "sec",
                         "units" : "sec",
                         "value" : 25
-            	    }
+                    }
                 }
             }
         </script>
 
-	</head>
-	<body>
-    
-    	<div data-montage-id="timeline_panel" class="tl_container">
+    </head>
+    <body>
+
+        <div data-montage-id="timeline_panel" class="tl_container">
 
             <div data-montage-id="bread_crumb"></div>
 
@@ -195,23 +195,23 @@ POSSIBILITY OF SUCH DAMAGE.
                         </div>
 
 
-                        
+
                         <div data-montage-id="user_layers" class="userlayers">
                             <div data-montage-id="master_layer" class="masterlayer">
                                 <div class="layer-master">Master Layer
-	                                <div class="tl-configbutton" data-montage-id="tl-configbutton">
-	                                	<div class="tl-dropdown">
-	                                		<div class="checkable" data-montage-id="checkable_animated">Show only animated layers</div>
+                                    <div class="tl-configbutton" data-montage-id="tl-configbutton">
+                                        <div class="tl-dropdown">
+                                            <div class="checkable" data-montage-id="checkable_animated">Show only animated layers</div>
                                             <div class="checkable" data-montage-id="checkable_lock">Lock Layers</div>
                                             <div class="checkable" data-montage-id="checkable_visible">Visibility of Layers</div>
-	                                	</div>
-	                                </div>
-                                
+                                        </div>
+                                    </div>
+
                                 </div>
 
                             </div>
                             <div data-montage-id="container-layers" style="position: relative;" class="container-layers">
-                            	<div data-montage-id="container-layer"></div>
+                                <div data-montage-id="container-layer"></div>
                             </div>
                         </div>
 
@@ -226,31 +226,31 @@ POSSIBILITY OF SUCH DAMAGE.
 
                 <div data-montage-id="timeline_rightpane" class="tl_rightpane">
                     <div data-montage-id="right_inside" class="rightinside">
-                    	<div class="layout_markers">
+                        <div class="layout_markers">
                             <div data-montage-id="playhead" class="playhead"></div>
-	                        <div data-montage-id="timeline_markers" class="timelinemarkers"></div>
-                    	</div>
+                            <div data-montage-id="timeline_markers" class="timelinemarkers"></div>
+                        </div>
 
 
                         <div data-montage-id="layer_tracks" class="tl_layertracks">
-                        	<div class="layout-tracks" data-montage-id="layout_tracks">
-	                            <div data-montage-id="playhead_marker" class="playheadmarker"></div>
-	                            <div data-montage-id="master_track" class="mastertrack">
+                            <div class="layout-tracks" data-montage-id="layout_tracks">
+                                <div data-montage-id="playhead_marker" class="playheadmarker"></div>
+                                <div data-montage-id="master_track" class="mastertrack">
                                     <div data-montage-id="time_bar" class="timebar"></div>
-	                            </div>
-	                            <div data-montage-id="container-tracks" class="container-tracks">
-	                            	<div data-montage-id="container-track"></div>
-	                            </div>
-                        	</div>
+                                </div>
+                                <div data-montage-id="container-tracks" class="container-tracks">
+                                    <div data-montage-id="container-track"></div>
+                                </div>
+                            </div>
 
                         </div>
                     </div>
                 </div>
 
-				<div class="timeline-disabled" data-montage-id="timeline-disabler"></div>
-                
+                <div class="timeline-disabled" data-montage-id="timeline-disabler"></div>
+
             </div>
-    	</div>
+        </div>
 
     </body>
 </html>

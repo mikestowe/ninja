@@ -78,7 +78,7 @@ exports.TextProperties = Montage.create(ToolProperties, {
                     break;
                 case "full":
                     this.alignJustify.pressed = true;
-            }
+        }
 
             switch(this.application.ninja.stage.textTool.listStyle) {
                 case "ordered":
@@ -86,7 +86,7 @@ exports.TextProperties = Montage.create(ToolProperties, {
                     break;
                 case "unordered":
                     this.bulletedList.pressed = true;
-            }
+        }
         }
     },
 
@@ -101,10 +101,10 @@ exports.TextProperties = Montage.create(ToolProperties, {
     prepareForDraw: {
         value: function() {
 
-            this.fontColor.props = {side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80};
-            this.application.ninja.colorController.addButton("chip", this.fontColor);
-            this.fontColor.color('rgb', {wasSetByCode: true, type: 'change', color: {r: 0, g: 0, b: 0}, css: 'rgb(0,0,0)'});
-            this.fontColor.addEventListener("change",this.handleFontColorChange.bind(this),false);
+                this.fontColor.props = {side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80};
+                this.application.ninja.colorController.addButton("chip", this.fontColor);
+                this.fontColor.color('rgb', {wasSetByCode: true, type: 'change', color: {r: 0, g: 0, b: 0}, css: 'rgb(0,0,0)'});
+                this.fontColor.addEventListener("change",this.handleFontColorChange.bind(this),false);
 
             this.application.ninja.stage.textTool.addEventListener("editorSelect", this.handleEditorSelect.bind(this), false);
 
@@ -122,29 +122,29 @@ exports.TextProperties = Montage.create(ToolProperties, {
                 oneway: false
             });
 
-            Object.defineBinding(this.btnBold, "pressed", {
-                boundObject: this.application.ninja.stage.textTool,
-                boundObjectPropertyPath: "bold",
-                oneway: false
-            });
+                Object.defineBinding(this.btnBold, "pressed", {
+                  boundObject: this.application.ninja.stage.textTool,
+                  boundObjectPropertyPath: "bold",
+                  oneway: false
+                });
 
-            Object.defineBinding(this.btnItalic, "pressed", {
-                boundObject: this.application.ninja.stage.textTool,
-                boundObjectPropertyPath: "italic",
-                oneway: false
-            });
+                Object.defineBinding(this.btnItalic, "pressed", {
+                  boundObject: this.application.ninja.stage.textTool,
+                  boundObjectPropertyPath: "italic",
+                  oneway: false
+                });
 
-            Object.defineBinding(this.btnUnderline, "pressed", {
-                boundObject: this.application.ninja.stage.textTool,
-                boundObjectPropertyPath: "underline",
-                oneway: false
-            });
+                Object.defineBinding(this.btnUnderline, "pressed", {
+                  boundObject: this.application.ninja.stage.textTool,
+                  boundObjectPropertyPath: "underline",
+                  oneway: false
+                });
 
-            Object.defineBinding(this.btnStrikethrough, "pressed", {
-                boundObject: this.application.ninja.stage.textTool,
-                boundObjectPropertyPath: "strikeThrough",
-                oneway: false
-            });
+                Object.defineBinding(this.btnStrikethrough, "pressed", {
+                  boundObject: this.application.ninja.stage.textTool,
+                  boundObjectPropertyPath: "strikeThrough",
+                  oneway: false
+                });
         }
     },
 
@@ -155,7 +155,7 @@ exports.TextProperties = Montage.create(ToolProperties, {
             this.alignRight.pressed = false;
             this.alignJustify.pressed = false;
             this.application.ninja.stage.textTool.justify = "left";
-        }
+            }
     },
 
     handleJustifyCenterAction: {
@@ -215,7 +215,7 @@ exports.TextProperties = Montage.create(ToolProperties, {
                 this.application.ninja.stage.textTool.listStyle = "ordered";
             } else {
                 this.application.ninja.stage.textTool.listStyle = "none";
-            }
+        }
         }
     },
 

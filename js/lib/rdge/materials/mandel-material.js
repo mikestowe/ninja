@@ -35,60 +35,60 @@ var MandelMaterial = function MandelMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-	this._name = "Mandel";
-	this._shaderName = "mandel";
+    this._name = "Mandel";
+    this._shaderName = "mandel";
 
-	this._time = 0.0;
-	this._dTime = 0.01;
+    this._time = 0.0;
+    this._dTime = 0.01;
 
     ///////////////////////////////////////////////////////////////////////
     // Properties
     ///////////////////////////////////////////////////////////////////////
-	// properties inherited from PulseMaterial
+    // properties inherited from PulseMaterial
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	var u_speed_index = 0;
-	this._propNames			= [ "u_speed" ];
-	this._propLabels		= [ "Speed" ];
-	this._propTypes			= [	"float" ];
-	this._propValues		= [];
+    var u_speed_index = 0;
+    this._propNames         = [ "u_speed" ];
+    this._propLabels        = [ "Speed" ];
+    this._propTypes         = [ "float" ];
+    this._propValues        = [];
     this._propValues[this._propNames[u_speed_index]] = 1.0;
 
     ///////////////////////////////////////////////////////////////////////
 
-	this.isAnimated		= function()	{ return true;					};
-	this.getShaderDef	= function()	{  return MandelMaterialDef;	}
+    this.isAnimated     = function()    { return true;                  };
+    this.getShaderDef   = function()    {  return MandelMaterialDef;    }
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-	// duplcate method requirde
+    // duplcate method requirde
 
-	this.init = function( world ) {
-		// save the world
-		if (world)  this.setWorld( world );
+    this.init = function( world ) {
+        // save the world
+        if (world)  this.setWorld( world );
 
-		// set up the shader
-		this._shader = new RDGE.jshader();
-		this._shader.def = MandelMaterialDef;
-		this._shader.init();
+        // set up the shader
+        this._shader = new RDGE.jshader();
+        this._shader.def = MandelMaterialDef;
+        this._shader.init();
 
-		// set up the material node
-		this._materialNode = RDGE.createMaterialNode("mandelMaterial" + "_" + world.generateUniqueNodeID());
-		this._materialNode.setShader(this._shader);
+        // set up the material node
+        this._materialNode = RDGE.createMaterialNode("mandelMaterial" + "_" + world.generateUniqueNodeID());
+        this._materialNode.setShader(this._shader);
 
-		this._time = 0;
-		if (this._shader && this._shader['default']) {
-			this._shader['default'].u_time.set( [this._time] );
+        this._time = 0;
+        if (this._shader && this._shader['default']) {
+            this._shader['default'].u_time.set( [this._time] );
         }
 
-		// set the shader values in the shader
+        // set the shader values in the shader
         this.setShaderValues();
-		this.setResolution( [world.getViewportWidth(),world.getViewportHeight()] );
-		this.update( 0 );
-	};
+        this.setResolution( [world.getViewportWidth(),world.getViewportHeight()] );
+        this.update( 0 );
+    };
 
 	this.resetToDefault = function()
 	{
@@ -97,50 +97,50 @@ var MandelMaterial = function MandelMaterial() {
 		var nProps = this._propNames.length;
 		for (var i=0; i<nProps;  i++)
 			this.setProperty( this._propNames[i],  this._propValues[this._propNames[i]]  );
-	};
+};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var MandelMaterialDef =
-{'shaders': 
-	{
-		'defaultVShader':"assets/shaders/Basic.vert.glsl",
-		'defaultFShader':"assets/shaders/Mandel.frag.glsl"
-	},
-	'techniques':
-	{ 
-		'default':
-		[
-			{
-				'vshader' : 'defaultVShader',
-				'fshader' : 'defaultFShader',
-				// attributes
-				'attributes' :
-				{
-					'vert'  :   { 'type' : 'vec3' },
-					'normal' :  { 'type' : 'vec3' },
-					'texcoord'  :   { 'type' : 'vec2' }
-				},
-				// parameters
-				'params' : 
-				{
-					'u_time' : { 'type' : 'float' },
-					'u_speed' : { 'type' : 'float' },
-					'u_resolution'  :   { 'type' : 'vec2' },
-				},
+{'shaders':
+    {
+        'defaultVShader':"assets/shaders/Basic.vert.glsl",
+        'defaultFShader':"assets/shaders/Mandel.frag.glsl"
+    },
+    'techniques':
+    {
+        'default':
+        [
+            {
+                'vshader' : 'defaultVShader',
+                'fshader' : 'defaultFShader',
+                // attributes
+                'attributes' :
+                {
+                    'vert'  :   { 'type' : 'vec3' },
+                    'normal' :  { 'type' : 'vec3' },
+                    'texcoord'  :   { 'type' : 'vec2' }
+                },
+                // parameters
+                'params' :
+                {
+                    'u_time' : { 'type' : 'float' },
+                    'u_speed' : { 'type' : 'float' },
+                    'u_resolution'  :   { 'type' : 'vec2' },
+                },
 
-				// render states
-				'states' : 
-				{
-					'depthEnable' : true,
-					'offset':[1.0, 0.1]
-				}
-			}
-		]
-	}
+                // render states
+                'states' :
+                {
+                    'depthEnable' : true,
+                    'offset':[1.0, 0.1]
+                }
+            }
+        ]
+    }
 };
 
 MandelMaterial.prototype = new PulseMaterial();

@@ -31,12 +31,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /**
 * RDGE.vec2 = {}
-* This library contains functions for operating on 2D vectors. 
-* A 2D vector can be any array containing at least 2 numeric components.  
+* This library contains functions for operating on 2D vectors.
+* A 2D vector can be any array containing at least 2 numeric components.
 * All of the following are valid methods for declaring a RDGE.vec2:
-*		var a = [0, 1];
-*		var b = RDGE.vec2.zero();
-*		var c = RDGE.vec2.up();
+*       var a = [0, 1];
+*       var b = RDGE.vec2.zero();
+*       var c = RDGE.vec2.up();
 */
 var RDGE = RDGE || {};
 RDGE.vec2 = {};
@@ -50,7 +50,7 @@ RDGE.vec2.string = function (v) {
 
 /**
 * RDGE.vec2.verify
-* This function is provided for debugging purposes only. It is not recommended 
+* This function is provided for debugging purposes only. It is not recommended
 * to be used in performance critical areas of the code.
 */
 RDGE.vec2.verify = function (v) {

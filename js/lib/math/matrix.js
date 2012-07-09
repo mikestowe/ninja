@@ -33,56 +33,56 @@ var Matrix = function Matrix() {
 };
 
 Matrix.create = function( rowArray ) {
-	var mat = Matrix.I(4);
-	var index = 0;
-	for(var j=0;  j<4;  j++) {
-		for (var i=0;  i<4;  i++) {
-			mat[index] = rowArray[i][j];
-			index++;
-		}
-	}
+    var mat = Matrix.I(4);
+    var index = 0;
+    for(var j=0;  j<4;  j++) {
+        for (var i=0;  i<4;  i++) {
+            mat[index] = rowArray[i][j];
+            index++;
+        }
+    }
 
-	return mat;
+    return mat;
 };
 
 Matrix.I = function(dimen) {
-	var mat = [];
+    var mat = [];
 
-	for (var i = 0; i<dimen*dimen; i++)  {
+    for (var i = 0; i<dimen*dimen; i++)  {
         mat.push(0);
     }
 
-	var index = 0;
-	for (var j = 0; j<dimen; j++) {
-		mat[index] = 1.0;
-		index += dimen + 1;
-	}
-	
-	return mat;	
+    var index = 0;
+    for (var j = 0; j<dimen; j++) {
+        mat[index] = 1.0;
+        index += dimen + 1;
+    }
+
+    return mat;
 };
 
 Matrix.Translation = function (vec) {
-	var mat = Matrix.I(4);
-	glmat4.translate(mat, vec);
-	return mat;
+    var mat = Matrix.I(4);
+    glmat4.translate(mat, vec);
+    return mat;
 };
 
 Matrix.RotationX = function( angle ) {
-	var mat = Matrix.I(4);
-	glmat4.rotateX(mat, angle);
-	return mat;
+    var mat = Matrix.I(4);
+    glmat4.rotateX(mat, angle);
+    return mat;
 };
 
 Matrix.RotationY = function( angle ) {
-	var mat = Matrix.I(4);
-	glmat4.rotateY(mat, angle);
-	return mat;
+    var mat = Matrix.I(4);
+    glmat4.rotateY(mat, angle);
+    return mat;
 };
 
 Matrix.RotationZ = function( angle ) {
-	var mat = Matrix.I(4);
-	glmat4.rotateZ(mat, angle);
-	return mat;
+    var mat = Matrix.I(4);
+    glmat4.rotateZ(mat, angle);
+    return mat;
 };
 
 Matrix.Rotation = function(angle, axis) {
@@ -94,8 +94,8 @@ Matrix.Rotation = function(angle, axis) {
 Matrix.Scale = function( scaleVec ) {
     var mat = Matrix.I(4);
     mat[ 0] = scaleVec[0];
-	mat[ 5] = scaleVec[1];
-	mat[10] = scaleVec[2];
+    mat[ 5] = scaleVec[1];
+    mat[10] = scaleVec[2];
 
     return mat;
 };
@@ -106,7 +106,7 @@ Matrix.flatten = function (mat) {
         return [];
     }
 
-	for (var i=0; i<16; i++) {
+    for (var i=0; i<16; i++) {
         result.push(mat[i]);
     }
 

@@ -28,14 +28,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
-var Montage = 			require("montage/core/core").Montage,
-    Component = 		require("montage/ui/component").Component,
-    snapManager = 		require("js/helper-classes/3D/snap-manager").SnapManager,
-    viewUtils = 		require("js/helper-classes/3D/view-utils").ViewUtils,
-    drawUtils = 		require("js/helper-classes/3D/draw-utils").DrawUtils,
-    ElementPlanes = 	require("js/helper-classes/3D/element-planes").ElementPlanes,
-    MathUtilsClass = 	require("js/helper-classes/3D/math-utils").MathUtilsClass,
-    VecUtils = 			require("js/helper-classes/3D/vec-utils").VecUtils;
+var Montage =           require("montage/core/core").Montage,
+    Component =         require("montage/ui/component").Component,
+    snapManager =       require("js/helper-classes/3D/snap-manager").SnapManager,
+    viewUtils =         require("js/helper-classes/3D/view-utils").ViewUtils,
+    drawUtils =         require("js/helper-classes/3D/draw-utils").DrawUtils,
+    ElementPlanes =     require("js/helper-classes/3D/element-planes").ElementPlanes,
+    MathUtilsClass =    require("js/helper-classes/3D/math-utils").MathUtilsClass,
+    VecUtils =          require("js/helper-classes/3D/vec-utils").VecUtils;
 
 exports.StageDeps = Montage.create(Component, {
 

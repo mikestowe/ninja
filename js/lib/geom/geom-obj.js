@@ -288,13 +288,13 @@ exports.GeomObj = Object.create(Object.prototype, {
             this._materialArray.push(strokeMaterial);
             this._materialTypeArray.push("stroke");
 
-			// don't set the value here.  The material editor may set a color directly
-			// to the material without setting this value in the obj.  The following
-			// lines of code will clobber the value in the material
+            // don't set the value here.  The material editor may set a color directly
+            // to the material without setting this value in the obj.  The following
+            // lines of code will clobber the value in the material
             //if (this._strokeColor)
             //    this.setStrokeColor(this._strokeColor);
 
-			this._strokeMaterial = strokeMaterial;
+            this._strokeMaterial = strokeMaterial;
 
             return strokeMaterial;
         }
@@ -315,14 +315,14 @@ exports.GeomObj = Object.create(Object.prototype, {
 
             this._materialArray.push(fillMaterial);
             this._materialTypeArray.push("fill");
-			
-			// don't set the value here.  The material editor may set a color directly
-			// to the material without setting this value in the obj.  The following
-			// lines of code will clobber the value in the material
+
+            // don't set the value here.  The material editor may set a color directly
+            // to the material without setting this value in the obj.  The following
+            // lines of code will clobber the value in the material
             //if (this._fillColor)
             //     this.setFillColor(this._fillColor);
 
-			this._fillMaterial = fillMaterial;
+            this._fillMaterial = fillMaterial;
 
             return fillMaterial;
         }
@@ -330,7 +330,7 @@ exports.GeomObj = Object.create(Object.prototype, {
 
     exportMaterialsJSON: {
         value: function() {
-			MaterialsModel = require("js/models/materials-model").MaterialsModel;
+            MaterialsModel = require("js/models/materials-model").MaterialsModel;
 
             var jObj;
             if (this._materialArray && this._materialNodeArray && this.getWorld().isWebGL()) {
@@ -362,7 +362,7 @@ exports.GeomObj = Object.create(Object.prototype, {
 
     importMaterialsJSON: {
         value: function(jObj) {
-			MaterialsModel = require("js/models/materials-model").MaterialsModel;
+            MaterialsModel = require("js/models/materials-model").MaterialsModel;
 
             this._materialArray = [];
             this._materialTypeArray = [];
@@ -389,7 +389,7 @@ exports.GeomObj = Object.create(Object.prototype, {
                     case "tunnel":
                     case "reliefTunnel":
                     case "squareTunnel":
-					case "flag":
+                    case "flag":
                     case "twist":
                     case "fly":
                     case "julia":
@@ -399,8 +399,8 @@ exports.GeomObj = Object.create(Object.prototype, {
                     case "keleidoscope":
                     case "radialBlur":
                     case "pulse":
-					case "twistVert":
-					case "taper":
+                    case "twistVert":
+                    case "taper":
                         mat = MaterialsModel.getMaterialByShader(shaderName);
                         if (mat)  mat = mat.dup();
                         break;
@@ -454,12 +454,12 @@ exports.GeomObj = Object.create(Object.prototype, {
             // get the normalized device coordinates (NDC) for
             // all position and dimensions.
             var world = this.getWorld();
-            var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-            var	xNDC = 2*this._xOffset/vpw,  yNDC = -2*this._yOffset/vph;
+            var vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
+            var xNDC = 2*this._xOffset/vpw,  yNDC = -2*this._yOffset/vph;
 
             var aspect = world.getAspect();
             var zn = world.getZNear(),  zf = world.getZFar();
-            var	t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
+            var t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
                 b = -t,
                 r = aspect*t,
                 l = -r;
@@ -484,12 +484,12 @@ exports.GeomObj = Object.create(Object.prototype, {
             // get the normalized device coordinates (NDC) for
             // all position and dimensions.
             var world = this.getWorld();
-            var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-            var	xNDC = 2*preViewPt[0]/vpw,  yNDC = -2*preViewPt[1]/vph;
+            var vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
+            var xNDC = 2*preViewPt[0]/vpw,  yNDC = -2*preViewPt[1]/vph;
 
             var aspect = world.getAspect();
             var zn = world.getZNear(),  zf = world.getZFar();
-            var	t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
+            var t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
                 b = -t,
                 r = aspect*t,
                 l = -r;

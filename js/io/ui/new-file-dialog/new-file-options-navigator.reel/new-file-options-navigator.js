@@ -142,8 +142,8 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
     },
 
     didDraw: {
-    	enumerable: false,
-    	value: function() {
+        enumerable: false,
+        value: function() {
             var that = this;
 
             this.templateList = null;
@@ -309,7 +309,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
     handleOkButtonAction:{
         value: function(evt){
             var templateData,
-            	selectedProjectTypeID = this.selectedProjectType.uri,
+                selectedProjectTypeID = this.selectedProjectType.uri,
                 templateID = this.selectedTemplate.uri,
                 projectName = this.newFileLocation.newFileName.value,
                 projectDirectory = this.newFileLocation.fileInputField.newFileDirectory.value,
@@ -324,10 +324,10 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                             "projectDirectory="+projectDirectory+"\n"+
                             "projectWidth="+projectWidth+"\n"+
                             "projectHeight="+projectHeight;
-          	////////////////////////////////////////////////////////////////////           
-          	//Template data must be passed during file creation (lots of confusion data here, should be cleaned up…)
-      		templateData = {id: templateID, name: this.newFileModel.projectTypeData[selectedProjectTypeID].name, type: this.newFileModel.projectTypeData[selectedProjectTypeID].type};
-      		////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////
+            //Template data must be passed during file creation (lots of confusion data here, should be cleaned up…)
+            templateData = {id: templateID, name: this.newFileModel.projectTypeData[selectedProjectTypeID].name, type: this.newFileModel.projectTypeData[selectedProjectTypeID].type};
+            ////////////////////////////////////////////////////////////////////
 
             if(/[^/\\]$/g.test(projectDirectory)){
                 projectDirectory = projectDirectory + "/";

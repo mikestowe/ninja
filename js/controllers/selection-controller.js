@@ -261,11 +261,11 @@ exports.SelectionController = Montage.create(Component, {
         }
     },
 
-	isObjectSelected: {
-		value: function( elt ) {
-			return this.findSelectedElement(elt) > -1;
-		}
-	},
+    isObjectSelected: {
+        value: function( elt ) {
+            return this.findSelectedElement(elt) > -1;
+        }
+    },
 
     findSelectedElement: {
         value: function(item) {

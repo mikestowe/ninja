@@ -30,11 +30,11 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 			require("montage/core/core").Montage,
-	Component = 		require("montage/ui/component").Component,
-	FileIo = 			require("js/io/system/fileio").FileIo,
-	ProjectIo = 		require("js/io/system/projectio").ProjectIo,
-	TemplateMediator = 	require("js/document/mediators/template").TemplateDocumentMediator;
+var Montage =           require("montage/core/core").Montage,
+    Component =         require("montage/ui/component").Component,
+    FileIo =            require("js/io/system/fileio").FileIo,
+    ProjectIo =         require("js/io/system/projectio").ProjectIo,
+    TemplateMediator =  require("js/document/mediators/template").TemplateDocumentMediator;
 ////////////////////////////////////////////////////////////////////////
 //
 exports.IoMediator = Montage.create(Component, {
@@ -68,11 +68,11 @@ exports.IoMediator = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     parseToTemplate: {
-	    value: function(content, template) {
-		    //
+        value: function(content, template) {
+            //
             if (template.name.toLowerCase() === 'banner' || template.name.toLowerCase() === 'animation') {
-            	//Getting dimensions of banner
-           		var dimensions = template.id.split('x');
+                //Getting dimensions of banner
+                var dimensions = template.id.split('x');
                 dimensions = {width: String(dimensions[0])+'px', height: String(dimensions[1])+'px'};
                 //
                 content = content.replace(/Dimensions@@@/gi, "Dimensions@@@"+template.id);
@@ -81,7 +81,7 @@ exports.IoMediator = Montage.create(Component, {
             }
             //
             return content;
-	    }
+        }
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -113,8 +113,8 @@ exports.IoMediator = Montage.create(Component, {
             //Sending result to callback if requested for handling
             if (callback) callback(result);
             //Codes
-            //	204: File exists | 400: File exists
-            //	201: File succesfully created | 500: Unknown (Probably cloud API not running)
+            //  204: File exists | 400: File exists
+            //  201: File succesfully created | 500: Unknown (Probably cloud API not running)
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -159,9 +159,9 @@ exports.IoMediator = Montage.create(Component, {
             204: File exists (Success)
             404: File does not exists (Failure)
             500: Unknown (Probably cloud API not running)
-    		
+
             (Below only present if succesfull 204)
-    		
+
             Object.content
             Object.extension
             Object.name
@@ -186,9 +186,9 @@ exports.IoMediator = Montage.create(Component, {
                 case 'html':
                     //Getting content from function to properly handle saving assets (as in external if flagged)
                     if (doc.template && (doc.template.type === 'banner' || doc.template.type === 'animation')) {
-                    	parsedDoc = this.tmplt.parseNinjaTemplateToHtml(true, doc, true, libCopyCallback);
+                        parsedDoc = this.tmplt.parseNinjaTemplateToHtml(true, doc, true, libCopyCallback);
                     } else {
-                    	parsedDoc = this.tmplt.parseNinjaTemplateToHtml(true, doc, false, libCopyCallback);
+                        parsedDoc = this.tmplt.parseNinjaTemplateToHtml(true, doc, false, libCopyCallback);
                     }
                     break;
                 default:
@@ -196,21 +196,21 @@ exports.IoMediator = Montage.create(Component, {
                     break;
             }
             if (parsedDoc) {
-            	//Making call to save file
-            	save = this.fio.saveFile({uri: doc.file.uri, contents: parsedDoc.content});
-            	//Checking for callback
-            	if (callback) callback(save);
-            	//Checking for libraries, making callback if specified
-            	if (!parsedDoc.libs && libCopyCallback) libCopyCallback(true);
-            	//
-            	return {montageId: parsedDoc.montageId, canvasId: parsedDoc.canvasId};
+                //Making call to save file
+                save = this.fio.saveFile({uri: doc.file.uri, contents: parsedDoc.content});
+                //Checking for callback
+                if (callback) callback(save);
+                //Checking for libraries, making callback if specified
+                if (!parsedDoc.libs && libCopyCallback) libCopyCallback(true);
+                //
+                return {montageId: parsedDoc.montageId, canvasId: parsedDoc.canvasId};
             } else {
-	            //Making call to save file
-            	save = this.fio.saveFile({uri: doc.file.uri, contents: content});
-            	//Checking for callback
-            	if (callback) callback(save);
-            	//
-            	return null;
+                //Making call to save file
+                save = this.fio.saveFile({uri: doc.file.uri, contents: content});
+                //Checking for callback
+                if (callback) callback(save);
+                //
+                return null;
             }
         }
     },

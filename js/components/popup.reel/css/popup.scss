@@ -34,43 +34,43 @@ $grey_light: #494949;
 
 .default_popup
 {
-	//MUST HAVE TO ALLOW FOR SIZE AJUSTMENTS
-	position: absolute;
-	width: auto;
-	float: left;
-	
-	//TEXT STYLES
-	font-family: 'Droid Sans', sans-serif;
-	color: #FFF;
-	
-	//BACKGROUND AND CONTAINER
-	background: $grey_light;
-	border: 1px solid $grey_dark;
-	border-radius: 8px;
-	padding: 8px;
-	box-shadow: 0px 0px 8px rgba(0, 0, 0, .8);
-	pointerEvents: auto;
+    //MUST HAVE TO ALLOW FOR SIZE AJUSTMENTS
+    position: absolute;
+    width: auto;
+    float: left;
+
+    //TEXT STYLES
+    font-family: 'Droid Sans', sans-serif;
+    color: #FFF;
+
+    //BACKGROUND AND CONTAINER
+    background: $grey_light;
+    border: 1px solid $grey_dark;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, .8);
+    pointerEvents: auto;
 }
 
 .default_popup .content
 {
-	overflow: auto;
-	float: left;
+    overflow: auto;
+    float: left;
 }
 
 .default_popup .tooltip
 {
-	position: absolute;
-	overflow: hidden;
+    position: absolute;
+    overflow: hidden;
 }
 
 .default_popup .tooltip span
 {
-	-webkit-transform:rotate(45deg);
-	width: 12px;
-	height: 12px;
-	margin: 3px;
-	display: block;
-	background: $grey_light;
-	border: 1px solid $grey_dark;
+    -webkit-transform:rotate(45deg);
+    width: 12px;
+    height: 12px;
+    margin: 3px;
+    display: block;
+    background: $grey_light;
+    border: 1px solid $grey_dark;
 }

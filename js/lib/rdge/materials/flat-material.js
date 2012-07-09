@@ -48,8 +48,8 @@ var FlatMaterial = function FlatMaterial()
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
     this.getShaderName = function () { return this._shaderName; };
-    this.isAnimated = function ()			{ return false;		};
-	this.getTechniqueName	= function()	{  return 'colorMe' };
+    this.isAnimated = function ()           { return false;     };
+    this.getTechniqueName   = function()    {  return 'colorMe' };
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
@@ -57,7 +57,7 @@ var FlatMaterial = function FlatMaterial()
     // duplcate method requirde
 
     this.init = function (world)
-	{
+    {
         // save the world
         if (world) {
             this.setWorld(world);
@@ -70,8 +70,8 @@ var FlatMaterial = function FlatMaterial()
             // set up the material node
             this._materialNode = RDGE.createMaterialNode("flatMaterial_" + world.generateUniqueNodeID());
             this._materialNode.setShader(this._shader);
-		
-			this.setShaderValues();
+
+            this.setShaderValues();
         }
         else
             throw new Error("GLWorld not supplied to material initialization");
@@ -91,35 +91,35 @@ var FlatMaterial = function FlatMaterial()
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
-flatShaderDef  = 
+flatShaderDef  =
 {
-	'shaders':  { // shader files
-		'defaultVShader':"assets/shaders/Basic.vert.glsl",
-		'defaultFShader':"assets/shaders/Basic.frag.glsl"
-		},
-	'techniques': { // rendering control
-		'colorMe':[ // simple color pass
-			{
-				'vshader' : 'defaultVShader',
-				'fshader' : 'defaultFShader',
-		   
-				// attributes
-				'attributes' :
-				 {
-						'vert'	:	{ 'type' : 'vec3' },
-						'normal' :	{ 'type' : 'vec3' },
-						'texcoord'	:	{ 'type' : 'vec2' }
-				 },
-				// attributes
-				'params' :
-				 {
-					'color' :   { 'type' : 'vec4' }
-				 }
-			}
-		]
-	 }
+    'shaders':  { // shader files
+        'defaultVShader':"assets/shaders/Basic.vert.glsl",
+        'defaultFShader':"assets/shaders/Basic.frag.glsl"
+        },
+    'techniques': { // rendering control
+        'colorMe':[ // simple color pass
+            {
+                'vshader' : 'defaultVShader',
+                'fshader' : 'defaultFShader',
+
+                // attributes
+                'attributes' :
+                 {
+                        'vert'  :   { 'type' : 'vec3' },
+                        'normal' :  { 'type' : 'vec3' },
+                        'texcoord'  :   { 'type' : 'vec2' }
+                 },
+                // attributes
+                'params' :
+                 {
+                    'color' :   { 'type' : 'vec4' }
+                 }
+            }
+        ]
+     }
 };
 
 FlatMaterial.prototype = new Material();

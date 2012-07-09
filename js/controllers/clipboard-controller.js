@@ -30,8 +30,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 		require("montage/core/core").Montage,
-    Component = 	require("montage/ui/component").Component,
+var Montage =       require("montage/core/core").Montage,
+    Component =     require("montage/ui/component").Component,
     ElementsClipboardAgent =         require("js/clipboard/internal-ops/elements-clipboard-agent").ElementsClipboardAgent,
     ExternalAppsClipboardAgent= require("js/clipboard/external-apps-clipboard-agent").ExternalAppsClipboardAgent;
 

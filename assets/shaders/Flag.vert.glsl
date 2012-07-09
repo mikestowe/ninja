@@ -55,22 +55,22 @@ varying vec2 v_uv;
 
 void main()
 {
-	float time = u_time * u_speed;
-	const float pi = 3.14159;
-	float angle = time;
+    float time = u_time * u_speed;
+    const float pi = 3.14159;
+    float angle = time;
 
     v_uv.x = texcoord.x;
     v_uv.y = texcoord.y;
 
-	float x = 2.0*pi*texcoord.x/u_waveWidth;
-	float y = 2.0*pi*texcoord.y;
+    float x = 2.0*pi*texcoord.x/u_waveWidth;
+    float y = 2.0*pi*texcoord.y;
 
     vec3 v = a_pos;
-	v.z  = sin( x + angle );
-	v.z += sin( 0.2*y + angle);
-	v.z *= u_waveHeight;
-	v.z -=  2.0*u_waveHeight;
-	v.z *= x * 0.09;
-	
+    v.z  = sin( x + angle );
+    v.z += sin( 0.2*y + angle);
+    v.z *= u_waveHeight;
+    v.z -=  2.0*u_waveHeight;
+    v.z *= x * 0.09;
+
     gl_Position = u_projMatrix * u_mvMatrix * vec4(v,1.0) ;
 }

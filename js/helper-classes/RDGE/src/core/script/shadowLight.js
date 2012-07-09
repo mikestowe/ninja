@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 // RDGE namespaces
 var RDGE = RDGE || {};
 
-/* 
+/*
 * shadow light - a modified camera used to describe a shadow casting light
 */
 RDGE.shadowLight = function () {
@@ -61,14 +61,14 @@ RDGE.shadowLight = function () {
     };
 
     /*
-    *	makes the light the current 'camera'
+    *   makes the light the current 'camera'
     */
     this.activate = function () {
         this.cameraManager.pushCamera(this);
     };
 
     /*
-    *	restores the camera stack
+    *   restores the camera stack
     */
     this.deactivate = function () {
         this.cameraManager.popCamera();

@@ -76,7 +76,7 @@ exports.RectProperties = Montage.create(ToolProperties, {
     use3D: {
         get: function() { return this.base._use3D; }
     },
-    
+
     strokeSize: {
         get: function() { return this.base._strokeSize; }
     },

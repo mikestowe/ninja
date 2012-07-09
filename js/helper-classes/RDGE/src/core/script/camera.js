@@ -27,8 +27,8 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-/* 
- * camera class 
+/*
+ * camera class
  */
 var RDGE = RDGE || {};
 
@@ -84,7 +84,7 @@ RDGE.camera = function () {
             return p;
         };
 
-        /* This is the old way 
+        /* This is the old way
         var t = this.persp.near * Math.tan(0.017453292519943295769236 * this.persp.fov * 0.5);
         var r = t * this.persp.aratio;
         var u = t;
@@ -204,13 +204,13 @@ RDGE.camera = function () {
         return 0.0;
     };
 
-    // this is used by ambient occlusion... 
+    // this is used by ambient occlusion...
     this.getFTR = function () {
         var fovyRad = (this.persp.fov * 0.5) * Math.PI / 180.0;
         return [
-		Math.tan(fovyRad) * this.persp.far,
-		Math.tan(fovyRad / this.persp.aratio) * this.persp.far,
-		this.persp.far];
+        Math.tan(fovyRad) * this.persp.far,
+        Math.tan(fovyRad / this.persp.aratio) * this.persp.far,
+        this.persp.far];
     };
 
     this.attachCameraToNode = function (node) {
@@ -219,16 +219,16 @@ RDGE.camera = function () {
 };
 
 
-/**	Camera Manager
- * This class is used to manage the active camera. It provides functionality 
- * for getting and setting the active camera, as well as providing stack operations 
- * to switch to and from multiple cameras. 
+/** Camera Manager
+ * This class is used to manage the active camera. It provides functionality
+ * for getting and setting the active camera, as well as providing stack operations
+ * to switch to and from multiple cameras.
  */
 RDGE.cameraManager = function () {
     this.stack = [];
 
     /* Set the active camera.
-    * This function sets the active camera to the given camera. 
+    * This function sets the active camera to the given camera.
     */
     this.setActiveCamera = function (c) {
         // pop the active camera off the stack.
@@ -239,8 +239,8 @@ RDGE.cameraManager = function () {
         this.stack.push(c);
     };
 
-    /* Get the active camera. 
-    * The active camera always resides at the top of the stack. 
+    /* Get the active camera.
+    * The active camera always resides at the top of the stack.
     */
     this.getActiveCamera = function () {
         if (this.stack.length > 0) {
@@ -250,14 +250,14 @@ RDGE.cameraManager = function () {
         }
     };
 
-    /* Push a camera onto the stack. 
+    /* Push a camera onto the stack.
     * The given camera becomes the active camera.
     */
     this.pushCamera = function (c) {
         this.stack.push(c);
     };
 
-    /* Pop a camera off the stack. 
+    /* Pop a camera off the stack.
     * Returns the camera that was popped.
     * The next camera on the stack becomes active.
     */

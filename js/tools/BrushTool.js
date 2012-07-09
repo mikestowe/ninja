@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
 var ShapeTool = require("js/tools/ShapeTool").ShapeTool;
-var ShapesController = 	require("js/controllers/elements/shapes-controller").ShapesController;
+var ShapesController =  require("js/controllers/elements/shapes-controller").ShapesController;
 var DrawingToolBase = require("js/tools/drawing-tool-base").DrawingToolBase;
 var defaultEventManager = require("montage/core/event/event-manager").defaultEventManager;
 var Montage = require("montage/core/core").Montage;
@@ -281,7 +281,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
             if (this.options.useCalligraphic){
                 useCalligraphic = this.options.useCalligraphic;
             }
-            
+
             var ctx = this.application.ninja.stage.drawingContext;//stageManagerModule.stageManager.drawingContext;
             if (ctx === null)
                 throw ("null drawing context in Brushtool::ShowCurrentBrushStrokeOnStage");

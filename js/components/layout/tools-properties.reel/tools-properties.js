@@ -174,7 +174,7 @@ exports.ToolsProperties = Montage.create(Component, {
             this._selectedTool = value;
             this[this._selectedTool.properties].visible = true;
             */
-            
+
 
         }
     }

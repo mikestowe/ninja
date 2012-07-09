@@ -30,40 +30,40 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 	        	require("montage/core/core").Montage,
-	Component =         	require("montage/ui/component").Component,
-    HtmlDocumentModel = 	require("js/document/models/html").HtmlDocumentModel,
-    DesignDocumentView = 	require("js/document/views/design").DesignDocumentView;
+var Montage =               require("montage/core/core").Montage,
+    Component =             require("montage/ui/component").Component,
+    HtmlDocumentModel =     require("js/document/models/html").HtmlDocumentModel,
+    DesignDocumentView =    require("js/document/views/design").DesignDocumentView;
 ////////////////////////////////////////////////////////////////////////
-//	
+//
 exports.HtmlDocument = Montage.create(Component, {
-	////////////////////////////////////////////////////////////////////
-	//
-	hasTemplate: {
+    ////////////////////////////////////////////////////////////////////
+    //
+    hasTemplate: {
         value: false
     },
     ////////////////////////////////////////////////////////////////////
-	//
+    //
     model: {
         value: null
     },
-	////////////////////////////////////////////////////////////////////
-	//
+    ////////////////////////////////////////////////////////////////////
+    //
     loaded: {
         value: {callback: null, context: null}
     },
     ////////////////////////////////////////////////////////////////////
-	//
+    //
     _observer: {
         value: null
     },
-	////////////////////////////////////////////////////////////////////
-	//
+    ////////////////////////////////////////////////////////////////////
+    //
     exclusionList: {
         value: ["HTML", "BODY", "NINJA-CONTENT", "NINJA-VIEWPORT"]
     },
     ////////////////////////////////////////////////////////////////////
-	//
+    //
     inExclusion: {
         value: function(element) {
             if(this.exclusionList.indexOf(element.nodeName) === -1) {
@@ -72,62 +72,62 @@ exports.HtmlDocument = Montage.create(Component, {
             return 1;
         }
     },
-	////////////////////////////////////////////////////////////////////
-	//
+    ////////////////////////////////////////////////////////////////////
+    //
     init: {
         value:function(file, context, callback, view, template) {
-        	//Storing callback data for loaded dispatch
-        	this.loaded.callback = callback;
-        	this.loaded.context = context;
+            //Storing callback data for loaded dispatch
+            this.loaded.callback = callback;
+            this.loaded.context = context;
             //Creating instance of HTML Document Model
             this.model = Montage.create(HtmlDocumentModel,{
-            	file: {value: file},
-            	fileTemplate: {value: template},
-            	parentContainer: {value: document.getElementById("iframeContainer")}, //Saving reference to parent container of all views (should be changed to buckets approach
-            	views: {value: {'design': DesignDocumentView.create(), 'code': null}} //TODO: Add code view logic
+                file: {value: file},
+                fileTemplate: {value: template},
+                parentContainer: {value: document.getElementById("iframeContainer")}, //Saving reference to parent container of all views (should be changed to buckets approach
+                views: {value: {'design': DesignDocumentView.create(), 'code': null}} //TODO: Add code view logic
             });
             //Calling the any init routines in the model
             this.model.init();
             //Initiliazing views and hiding
-           	if (this.model.views.design.initialize(this.model.parentContainer)) {
-           		//Hiding iFrame, just initiliazing
-           		this.model.views.design.hide();
-           		//Setting the iFrame property for reference in helper class
-           		this.model.webGlHelper.iframe = this.model.views.design.iframe;
-           	} else {
-           		//ERROR: Design View not initialized
-           	}
+            if (this.model.views.design.initialize(this.model.parentContainer)) {
+                //Hiding iFrame, just initiliazing
+                this.model.views.design.hide();
+                //Setting the iFrame property for reference in helper class
+                this.model.webGlHelper.iframe = this.model.views.design.iframe;
+            } else {
+                //ERROR: Design View not initialized
+            }
             //
             if (view === 'design') {
-            	//TODO: Remove reference and use as part of model
-            	this.currentView = 'design';
-            	//Setting current view object to design
-            	this.model.currentView = this.model.views.design;
-            	//Showing design iFrame
-            	this.model.views.design.show();
-            	this.model.views.design.iframe.style.opacity = 0;
-            	this.model.views.design.content = this.model.file.content;
-            	//TODO: Improve reference (probably through binding values)
-            	this.model.views.design._webGlHelper = this.model.webGlHelper;
-            	//Rendering design view, using observers to know when template is ready
-            	this.model.views.design.render(function () {
-            		//Adding observer to know when template is ready
-            		this._observer = new WebKitMutationObserver(this.handleTemplateReady.bind(this));
-        			this._observer.observe(this.model.views.design.document.head, {childList: true});
-            	}.bind(this), template, {viewCallback: this.handleViewReady, context: this});
+                //TODO: Remove reference and use as part of model
+                this.currentView = 'design';
+                //Setting current view object to design
+                this.model.currentView = this.model.views.design;
+                //Showing design iFrame
+                this.model.views.design.show();
+                this.model.views.design.iframe.style.opacity = 0;
+                this.model.views.design.content = this.model.file.content;
+                //TODO: Improve reference (probably through binding values)
+                this.model.views.design._webGlHelper = this.model.webGlHelper;
+                //Rendering design view, using observers to know when template is ready
+                this.model.views.design.render(function () {
+                    //Adding observer to know when template is ready
+                    this._observer = new WebKitMutationObserver(this.handleTemplateReady.bind(this));
+                    this._observer.observe(this.model.views.design.document.head, {childList: true});
+                }.bind(this), template, {viewCallback: this.handleViewReady, context: this});
             } else {
-            	//TODO: Identify default view (probably code)
+                //TODO: Identify default view (probably code)
             }
         }
     },
     ////////////////////////////////////////////////////////////////////
-	//
+    //
     handleTemplateReady: {
-    	value: function (e) {
-    		//Removing observer, only needed on initial load
-    		this._observer.disconnect();
-    		this._observer = null;
-    	}
+        value: function (e) {
+            //Removing observer, only needed on initial load
+            this._observer.disconnect();
+            this._observer = null;
+        }
     },
     handleViewReady: {
         value: function(mObjects) {
@@ -143,17 +143,17 @@ exports.HtmlDocument = Montage.create(Component, {
         }
     },
     ////////////////////////////////////////////////////////////////////
-	//
-	closeDocument: {
-		value: function (context, callback) {
-			//Closing document (sending null to close all views)
-			this.model.close(null, function () {if (callback) callback.call(context, this);}.bind(this));
-		}
-	},
+    //
+    closeDocument: {
+        value: function (context, callback) {
+            //Closing document (sending null to close all views)
+            this.model.close(null, function () {if (callback) callback.call(context, this);}.bind(this));
+        }
+    },
     ////////////////////////////////////////////////////////////////////
-	//
+    //
     serializeDocument: {
-    	value: function () {
+        value: function () {
             // Serialize the current scroll position
             //TODO: Move these properties to the design view class
             this.model.scrollLeft = this.application.ninja.stage._scrollLeft;
@@ -169,12 +169,12 @@ exports.HtmlDocument = Montage.create(Component, {
             // Pause the videos
             //TODO: Move these to be handled on the show/hide methods in the view
             this.model.views.design.pauseVideos();
-    	}
+        }
     },
     ////////////////////////////////////////////////////////////////////
-	//
+    //
     deserializeDocument: {
-    	value: function () {
+        value: function () {
             // Deserialize the current scroll position
              //TODO: Move these properties to the design view class
             this.application.ninja.stage._scrollLeft = this.model.scrollLeft;
@@ -184,7 +184,7 @@ exports.HtmlDocument = Montage.create(Component, {
 
             // Serialize the undo
             // TODO: Save the montage undo queue
-    	}
+        }
     }
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////

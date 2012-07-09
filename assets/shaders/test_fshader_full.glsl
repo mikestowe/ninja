@@ -41,7 +41,7 @@ uniform vec4 u_lightAmb;
 // diffuse map
 uniform sampler2D colMap;
 
-// environment map	
+// environment map
 uniform sampler2D envMap;
 
 // normal map
@@ -68,39 +68,39 @@ void main()
   vec3 normal = normalize(vNormal.xyz);
   vec3 mapNormal = texture2D(normalMap, vec2(vNormal.w, vECPos.w)).xyz * 2.0 - 1.0;
   mapNormal = normalize(mapNormal.x*vec3(normal.z, 0.0, -normal.x) + vec3(0.0, mapNormal.y, 0.0) + mapNormal.z*normal);
-  
+
   // create envmap coordinates
   vec3 r = reflect( normalize(vec3(vECPos.xyz - vEyePos.xyz)), mapNormal);
   float m = 2.0 * sqrt( r.x*r.x + r.y*r.y + r.z*r.z );
-  
+
   // calculate environment map texel
   vec4 envMapTexel = vec4(texture2D(envMap, vec2(r.x/m + 0.5, r.y/m + 0.5)).rgb, 0.0);
-  
+
   // lighting
   vec3 lightDirection = u_lightPos - vECPos.xyz;
   float lightDist = length(lightDirection);
   lightDirection /= lightDist;
-  
+
   float attenuation = clamp(1.0 - lightDist * 0.01, 0.0, 1.0);
-  
+
   vec3 halfVec = normalize(lightDirection + vEyePos);
-  
+
   float diffuseIntensity = max(0.0, dot(mapNormal, lightDirection));
   float specularModifier = max(0.0, dot(mapNormal, halfVec));
-  
+
   float pf;
   if(diffuseIntensity == 0.0)
-	pf = 0.0;
+    pf = 0.0;
   else
-	pf = pow(specularModifier, 76.0);
-  
+    pf = pow(specularModifier, 76.0);
+
   vec4 ambient = u_matAmbient * u_lightAmb;
   vec4 diffuse = u_matDiffuse * (colMapTexel + envMapTexel);
 
   if (u_renderGlow <= 0.5)
-  	diffuse *= u_lightDiff * diffuseIntensity * attenuation;
-  
+    diffuse *= u_lightDiff * diffuseIntensity * attenuation;
+
   vec4 specular = 2.0 * pf * envMapTexel;
-  
+
   gl_FragColor = (colMapTexel*(ambient + diffuse)) + specular + vec4(0.0,0.0,0.0,1.0);
 }

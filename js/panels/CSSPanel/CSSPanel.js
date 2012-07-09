@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-	PanelBase = require("js/panels/PanelBase").PanelBase;
+    PanelBase = require("js/panels/PanelBase").PanelBase;
 
 var CSSPanelBase = require("js/panels/CSSPanel/CSSPanelBase.reel").CSSPanelBase;
 
@@ -74,4 +74,4 @@ exports.CSSPanel = Montage.create(PanelBase, {
         value: null,
         writable:true
     }
-}); 
+});

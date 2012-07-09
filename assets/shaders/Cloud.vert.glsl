@@ -34,7 +34,7 @@ precision highp float;
 #endif
 
 // attributes
-attribute vec3	a_pos;
+attribute vec3  a_pos;
 attribute vec2  texcoord;
 
 // uniforms
@@ -48,7 +48,7 @@ uniform mat4 u_mvMatrix;
 uniform mat4 u_projMatrix;
 
 // varying
-varying vec2	v_texCoord0;
+varying vec2    v_texCoord0;
 
 // constants
 const float zSpeed = 10.0;
@@ -57,19 +57,19 @@ const float zSpeed = 10.0;
 void main()
 {
     // Transform position
-	vec4 pos = vec4(a_pos,1);
+    vec4 pos = vec4(a_pos,1);
 
-	float dz = u_time*zSpeed;
-	float n = floor( dz/(u_zmax-u_zmin) );
-	dz -= n*(u_zmax - u_zmin);
-	float z = pos.z + dz;
-	if (z > u_zmax)
-	{
-		z = u_zmin + (z - u_zmax);
-	}
-	pos.z = z;
+    float dz = u_time*zSpeed;
+    float n = floor( dz/(u_zmax-u_zmin) );
+    dz -= n*(u_zmax - u_zmin);
+    float z = pos.z + dz;
+    if (z > u_zmax)
+    {
+        z = u_zmin + (z - u_zmax);
+    }
+    pos.z = z;
 
-	gl_Position = u_projMatrix * u_mvMatrix * pos;
-	    
+    gl_Position = u_projMatrix * u_mvMatrix * pos;
+
     v_texCoord0 = texcoord;
 }

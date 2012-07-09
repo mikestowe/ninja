@@ -59,26 +59,26 @@ Methods:
      - Delete stylesheets
      - Enable  stylesheets
      - Disable stylesheets
-     
+
      use case : set background color
       - needs to know most specific rule WITH that property
-      - 
+      -
 
 */
 
 var stylesController = exports.StylesController = Montage.create(Component, {
-    
+
     ///// Initialize after the active document has been set, and
     ///// bind the document to prop w/ setter. The setter calls to find
     ///// the stage and default css files.
 
-    ///// Active document gets automatically set when the 
+    ///// Active document gets automatically set when the
     ///// document controller changes it
     _currentDocument : {
         value : null,
         enumerable : false
     },
-    
+
     currentDocument : {
         get : function() {
             return this._currentDocument;
@@ -97,7 +97,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
             ///// setting document via binding
             this._currentDocument = document;
-            
+
             ///// Stage stylesheet should always be found
             this._stageStylesheet  = this.getSheetFromElement(this.CONST.STAGE_SHEET_ID);
             // Returns null if sheet not found (as in non-ninja projects)
@@ -191,29 +191,29 @@ var stylesController = exports.StylesController = Montage.create(Component, {
         }
     },
     /* ----------------- Rule methods ----------------- */
-    
+
     ///// Add Rule
     ///// Passed in rule will be appended to the default stylesheet
     ///// The rule can be in the form of a string (one argument), or
     ///// the selector string and declaration string (two arguments), or
     ///// the selector string and a declaration object.
     ///// Optionally pass in the rule index (defaults to end of sheet)
-    
+
     /*
-    Signature 1 : 
+    Signature 1 :
     addRule( "#div1", "color:blue; width:100px;", 3)
               [str]    [str]                    [num]
-    
-    Signature 2 (w/ styles object literal): 
+
+    Signature 2 (w/ styles object literal):
     addRule( "#div1", { color:"blue", width:"100px" }, 3)
               [str]    [obj]                         [num]
-    
-    Signature 3 (w/ full rule as one string) : 
+
+    Signature 3 (w/ full rule as one string) :
     addRule( "#div1 { color:blue; width:100px; }", 3)
               [str]                              [num]
-    
+
     */
-    
+
     addRule : {
         value : function(selector, declaration, stylesheet, index) {
             stylesheet = stylesheet || this._defaultStylesheet;
@@ -228,20 +228,20 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 rule;
 
             index = index || (argType === 'number') ? declaration : rulesLength;
-            
+
             if(argType === 'string') {
                 ruleText += '{' + declaration + '}';
             } else if(argType === 'object') {
                 ruleText += '{' + this.cssFromObject(declaration) + '}';
             }
-            
+
             stylesheet.insertRule(ruleText, index);
 
             ///// Invalidate cache because rule dominance is affected
             this._clearCache();
 
             this.styleSheetModified(stylesheet);
-            
+
             rule = stylesheet.rules[index];
 
             ///// attach specificity to rule object
@@ -256,7 +256,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             return rule;
         }
     },
-    
+
     ///// Create Override Rule
     ///// Takes a given rule and creates a rule with a selector of equal
     ///// or greater specificity, and inserts it after the original rule
@@ -264,10 +264,10 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     ///// and the class will have to be applied to the element in order for
     ///// the rule to stick
     ///// Returns an object containing this classname and the rule itself
-    
+
     createOverrideRule : {
         value : function(ruleToOverride, element) {
-            
+
             ///// Locally-scoped function to de-clutter variable declarations
             function getSelector(el, rule) {
                 return this._getMostSpecificSelectorForElement(el, rule[this.CONST.SPECIFICITY_KEY]).selector;
@@ -283,12 +283,12 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
             ///// Create new rule with selector and insert it after the rule we're overriding
             rule = this.addRule(overrideData.selector + ' { }', this.getRuleIndex(ruleToOverride)+1);
-            
+
             return {
                 className : overrideData.className,
                 rule      : rule
             };
-            
+
         }
     },
 
@@ -341,18 +341,18 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             };
         }
     },
-    
+
     ///// Delete Rule
     ///// Deletes the passed-in rule from its stylesheet
     ///// Argument can be the index of the rule, or the rule itself
     ///// If the index is passed, the sheet must be passed in
-    
+
     deleteRule : {
         value : function(rule, sheet) {
             var index;
-            
+
             if(typeof rule === 'number') {
-                ///// 1st arg is the index 
+                ///// 1st arg is the index
                 index = rule;
             } else {
                 ///// derive the index of the rule
@@ -360,7 +360,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 ///// the sheet is a property of the rule
                 sheet = rule.parentStyleSheet;
             }
-            
+
             if(index > -1) {
                 sheet.deleteRule(index);
             }
@@ -370,22 +370,22 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             return index;
         }
     },
-    
+
     ///// Get Dominant Rule For Style
-    ///// Given an element, this method returns the dominant rule 
+    ///// Given an element, this method returns the dominant rule
     ///// for the particular style property.
     ///// Optionally, it returns an override object if no single-target
     ///// rule is found.
     ///// An override object consists of a rule to override, and a
     ///// flag for using !important or not
-    
+
     getDominantRuleForElement : {
         value : function(element, property, returnOverrideObject, useStageStyleSheet) {
             var matchedRules = this.getMatchingRules(element, true, useStageStyleSheet),
                 doc          = element.ownerDocument,
                 useImportant = false,
                 inLineStyleRule, rulesWithProperty, importantRules, dominantRule;
-                
+
                 ///// First, since an element's style attribute is a CSSStyleDeclaration
                 ///// and not a CSSStyleRule, we want to create an imitation rule object
                 ///// to act like any returned by getMatchedCSSRules
@@ -417,7 +417,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                         - Get
                     2) No rules with the property (i.e., no chance of property collision)
                      - use the original rule list to find the most specific, single-target rule
-                        - start with the highest specificity to minimize calls to querySelectorAll() 
+                        - start with the highest specificity to minimize calls to querySelectorAll()
                      - if there is no single-target rule, create a new rule to apply this style
 
                 */
@@ -439,7 +439,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                         //dominantRule = this._getFirstSingleTargetRule(rulesWithProperty, doc);
                         dominantRule = rulesWithProperty[0];
                     }
-                    
+
                 } else { // no rules with property
                     ///// In this case, we don't want to use the inline style
                     ///// Important flag is irrelevant because the style property isn't defined
@@ -457,7 +457,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                         singleTargetBackup : this._getFirstSingleTargetRule(matchedRules.slice(1), doc)
                     };
                 }
-                
+
                 return dominantRule;
         }
     },
@@ -525,58 +525,58 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     ///// Disable Rule
     ///// Disables a rule by giving it a known garbage selector
-    
+
     disableRule : {
         value : function(rule, sheet) {
             rule = (typeof rule === 'number') ? sheet.rules[rule] : rule;
-            
+
             rule.selectorText += this.CONST.GARBAGE_SELECTOR;
-            
+
             return rule;
         }
     },
-    
+
     ///// Enable Rule
     ///// Enables a rule by removing the known garbage selector
-    
+
     enableRule : {
         value : function(rule, sheet) {
             rule = (typeof rule === 'number') ? sheet.rules[rule] : rule;
-            
+
             ///// remove any occurances of the garbage selector
             rule.selectorText.replace(this.CONST.GARBAGE_SELECTOR, '');
-            
+
             return rule;
         }
     },
-    
+
     ///// Has Property
     ///// Checks to see if a rule has the property defined in
     ///// its declaration.
     ///// Optionally checks for shortand property
-    
+
     hasProperty : {
         value: function(rule, property, checkForShorthand) {
             var properties = [property],
                 shorthands = cssShorthandMap[property];
-            
+
             ///// If shorthand properties are defined, add to the array
             ///// of which properties to check for
             if(shorthands) {
                 properties.concat(shorthands);
             }
-            
+
             ///// return true if any property exists in rule
             return properties.some(function(prop) {
                 return !!rule.style.getPropertyValue(prop);
             }, this);
-            
+
         }
     },
-    
+
     ///// Matches Multiple Elements
     ///// Checks to see if the rule affects multiple elements
-    
+
     matchesMultipleElements : {
         value: function(rule, document) {
             if(rule.isInlineStyle) {
@@ -606,12 +606,12 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
         }
     },
-    
-    
+
+
     ///// Set Rule Selector
     ///// Allows user to change the selector of given rule
     ///// while attaching new specificity value to rule object
-    
+
     setRuleSelector : {
         value : function(rule, selector) {
             rule.selectorText = selector;
@@ -622,13 +622,13 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             return rule;
         }
     },
-    
+
     ///// Get Rule Index
     ///// Returns the index of the passed-in rule.
     ///// Returns -1 if not found.
     ///// A rule's index is useful to know for deleting, inserting
     ///// and determining rule precedence
-    
+
     getRuleIndex : {
         value : function(rule) {
             var rules = nj.toArray(rule.parentStyleSheet.rules);
@@ -666,7 +666,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     ///// Get All Matching Rules
     ///// Returns an array of css rules for an element
     ///// Optionally sorted by specificity, and can omit pseudo elements
-    
+
     getMatchingRules : {          //TODO: Remove omitPseudos from here and usages
         value: function(element, omitPseudos, useStageStyleSheet) {
             var rules,
@@ -748,17 +748,17 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
                 return order;
             }
-            
+
             rules.sort(sorter.bind(this));
-            
+
             return rules;
         }
     },
-    
+
     ///// Get Common Rules
     ///// Returns an array of rules that are common to all the elements
     ///// in passed-in element array.
-    
+
     getCommonRules : {
         value : function(elements) {
             var itemIndex = -1,
@@ -783,17 +783,17 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             return commonRules;
         }
     },
-    
+
     ///// Get Most Specific Selector For Element
     ///// Given a selector+specificity array, find the most specific
     ///// selector for the passed-in element
-    
+
     _getMostSpecificSelectorForElement : {
         value : function(element, specArr) {
-            if(specArr.length === 1) { 
+            if(specArr.length === 1) {
                 return specArr[0];
             }
-            
+
             var matchingElements, i;
 
             for(i = 0; i < specArr.length; i++) {
@@ -840,12 +840,12 @@ var stylesController = exports.StylesController = Montage.create(Component, {
         }
      },
 
-    
+
     ///// Get First Single Target Rule
     ///// Loops through the array of rules sequentially, returning the first
     ///// single-target rule (i.e. first rule which affects only one element)
     ///// Returns null if no single target rule is found
-    
+
     _getFirstSingleTargetRule : {
         value : function(rules, document) {
             var i;
@@ -857,32 +857,32 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             return null;
         }
     },
-    
+
     ///// Compare Specificity
     ///// Takes two specificity objects and returns:
     ///// -1 if first is more specific than second
     ///// +1 if second is more speficic than first
     ///// 0 if equal in specificity
-    
+
     compareSpecificity : {
         value : function(a, b) {
             var specA = a,
                 specB = b,
                 order;
-                
+
             [this.CONST.SPEC_ID_KEY,this.CONST.SPEC_CLASS_KEY,this.CONST.SPEC_TYPE_KEY].some(function(t) {
                     order = specA[t] < specB[t] ? 1 : (specA[t] > specB[t]) ? -1 : 0;
                     return order !== 0;
             }, this);
-            
+
             return order;
         }
     },
-    
+
     ///// Get specificity
-    ///// Creates array of objects, ordered by specificity for each 
+    ///// Creates array of objects, ordered by specificity for each
     ///// selector in the passed-in selectorText.
-    
+
     getSpecificity : {
         value : function(selector) {
             var arr = selector.split(',').map(function(sel) {
@@ -891,14 +891,14 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                     specificity : this.calculateSpecificity(sel)
                 };
             }, this);
-            
+
             ///// now sort by specificity
             return arr.sort(function(a, b) {
                 return this.compareSpecificity(a.specificity, b.specificity);
             }.bind(this));
         }
     },
-    
+
     ///// Calculate specificity
     ///// Returns the specificity value of passed-in selector
     ///// WARNING: Do not pass in grouped selectors!
@@ -911,36 +911,36 @@ var stylesController = exports.StylesController = Montage.create(Component, {
         value : function(selector) {
             var s   = selector.replace(/\([^\)]+\)/,''),
                 obj = {};
-            
+
             ///// function for counting matches for different
             ///// selector patterns
             function m(reg) {
                 var matches = s.match(reg);
                 return matches ? matches.length : 0;
             }
-            
+
             obj[this.CONST.SPEC_ID_KEY]    = m(/#[\d\w-_]+/g);         /// match id selector
             obj[this.CONST.SPEC_CLASS_KEY] = m(/[\.:\[][^\.:\[+>]+/g); /// match class selector
             obj[this.CONST.SPEC_TYPE_KEY]  = m(/(^|[\s\+>])\w+/g);     /// match tag selector
-            
+
             return obj;
         }
     },
-    
+
     /* ----------------- Style methods ----------------- */
-    
+
     ///// Add style
     ///// Set style property and value on provided rule
     ///// with optional priority (!important)
     ///// Returns the browser's value of passed-in property
-    
+
     setStyle : {
         value: function(rule, property, value, useImportant) {
             var dec = rule.style, priority;
-            
+
             ///// Remove property for passive validation (sets it to null)
             dec.removeProperty(property);
-            
+
             priority = (useImportant) ? this.IMPORTANT_FLAG : null;
 
             ///// Use CSS declaration's setProperty()
@@ -955,23 +955,23 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             return dec.getPropertyValue(property);
         }
     },
-    
+
     ///// Add styles
     ///// Set multiple styles on provided rule
     ///// Returns a collection of browser values for the
     ///// passed-in properties
-    
+
     setStyles : {
         value: function(rule, styles, useImportant) {
             var browserValues = {}, property, value;
-            
+
             for(property in styles) {
                 if(styles.hasOwnProperty(property)) {
                     value = styles[property];
                     browserValues[property] = this.setStyle(rule, property, value, useImportant);
                 }
             }
-            
+
             return browserValues;
         }
     },
@@ -1061,7 +1061,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     ///// Delete style
     ///// Removes the property from the style declaration/rule
     ///// Returns the rule
-    
+
     deleteStyle : {
         value : function(rule, property) {
             this.styleSheetModified(rule.parentStyleSheet);
@@ -1071,34 +1071,34 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             return rule;
         }
     },
-    
+
     ///// Delete styles
     ///// Removes all style properties in passed-in array or object
     ///// Returns the rule
-    
+
     deleteStyles : {
         value : function(rule, properties) {
             if(properties.constructor !== Array && typeof properties === 'object') {
                 properties = Object.keys(properties);
             }
-            
+
             properties.forEach(function(prop) {
                 this.deleteStyle(rule, prop);
             }, this);
-            
+
             return rule;
         }
     },
-    
+
     /* ----------------- Element methods ----------------- */
-    
+
     ///// Set Element Style
     ///// Applies style to element via dominant rule logic:
-    
+
     ///// We find the most specific rule that has the style property (or it's shorthand)
     ///// and does not affect multiple elements (we don't want to change that style on
     ///// all elements sharing a class, for example).
-    
+
     ///// Here there are a few possibilities:
     ///// 1) We find the most specific, single-target matching rule with the property defined
     /////    - Great! Set the style on it.
@@ -1113,11 +1113,11 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     /////    - use most specific, single-target rule
     /////    - else (this means no single-target rule matches element), create a class
     /////    - for this element
-    
-    
+
+
     ///// For Undo/Redo: should return object detailing what actually happened
     ///// during the application of the style (created rule or amended rule)
-    
+
     setElementStyle : {
         value : function(element, property, value, isStageElement) {
             var doc = element.ownerDocument,
@@ -1151,7 +1151,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 className = this.generateClassName(element.nodeName);
                 dominantRule = this.addRule('.'+className + '{}');
                 this.addClass(element, className);
-                
+
             } else if(dominantRule.ruleToOverride) {
                 ///// Do we have to override a rule?
                 ///// Well, let's first see if a higher-specificity, single-target
@@ -1198,7 +1198,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     ///// Set Element Styles
     ///// Applies passed-in styles to the element via dominant rule logic
     ///// Styles must be in object format with the property as the key
-    
+
     setElementStyles : {
         value : function(element, styles, isStageElement) {
             for(var property in styles) {
@@ -1245,13 +1245,13 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             this.addRule(selectors.join(', '), styles);
         }
     },
-    
+
     ///// Get Element Style
     ///// Gets the style value that is currently applied to the element
     ///// Uses Dominant Rule logic to determine the rule that has the property
     ///// and if not found, can optionally return the computed style instead of
     ///// null.
-    
+
     getElementStyle : {
         value : function(element, property, fallbackOnComputed, isStageElement) {
             var cache = this._getCachedRuleForProperty(element, property),
@@ -1379,26 +1379,26 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             return rule;
         }
     },
-    
+
     ///// Add Class
     ///// Adds class to element
-    
+
     addClass : {
         value : function(element, className) {
             element.classList.add(className);
         }
     },
-    
+
     /* ----------------- Stylesheet methods ----------------- */
-    
+
     ///// Create a stylesheet via style tag in active document, or
     ///// optionally passed-in document
-    
+
     createStylesheet : {
         value: function(id, document) {
             var doc = document || this._currentDocument.model.views.design.document,
                 sheetElement, sheet;
-            
+
             sheetElement = nj.make('style', {
                 type  : 'text/css',
                 rel   : 'stylesheet',
@@ -1446,16 +1446,16 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
         }
     },
-    
+
     ///// Gets the stylesheet object associated with passed-in
     ///// element or element id, with option context (document)
     ///// (For <link> and <style> tags)
-    
+
     getSheetFromElement : {
         value : function(element, context) {
             var doc = context || this._currentDocument.model.views.design.document,
                 el  = (typeof element === 'string') ? nj.$(element, doc) : element;
-                
+
             if(el && el.sheet) {
                 return el.sheet;
             }
@@ -1529,21 +1529,21 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             var available = 'abcdefghijklmnopqrstuvwxyz0123456789',
                 len = length || 4,
                 chars = [], i;
-                
+
             for(i = 0; i<len; i++) {
                 chars[i] = available[Math.floor(Math.random() * available.length)];
             }
-                
+
             return chars.join('');
         }
     },
-    
+
     ///// Generate Class Name
     ///// Returns class name using optional passed-in prefix or default class name
     ///// prefix, and randomly created string
     ///// If creating a class name for a group, pass in true to second argument
     ///// and a different default class prefix will be used (better semantics)
-    
+
     generateClassName : {
         value : function(prefix, forGroup) {
             var className;
@@ -1687,14 +1687,14 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     },
 
     /* ----------------- Convenience functions for manual verifications ----------------- */
-    
+
     test : {
         value : {
             getStyleTest : function() {
                 var properties = ['background-position', 'width', 'height'];
-                
+
                 var el = stylesController.currentDocument.model.views.design.document.getElementById('Div_1');
-                
+
                 properties.forEach(function(prop) {
                     console.log('Getting value for "' + prop + '": ' + stylesController.getElementStyle(el, prop, true));
                 }, this);
@@ -1714,9 +1714,9 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             getMatchingRulesTest : function() {
                 var el = stylesController.currentDocument.model.views.design.document.getElementById('Div_1'),
                     mRules;
-                    
+
                 this.addRulesTest();
-                
+
                 mRules = stylesController.getMatchingRules(el, true);
                 mRules.forEach(function(rule, i) {
                     console.log('Rule ' + i + ' selector: ' + rule.selectorText);
@@ -1726,35 +1726,35 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 ///// This test will get the initial background style of the element,
                 ///// apply a new style using setElementStyle, and print out the new
                 ///// value.
-                
+
                 var el = stylesController.currentDocument.model.views.design.document.getElementById('Div_1'),
                     bg;
-                
+
                 console.log('----- Set Element Style Test -----');
-                
+
                 this.addRulesTest();
-                
+
                 bg = stylesController.getElementStyle(el, 'background-color');
-                
+
                 console.log('Initial background color is : ' +  bg);
-                
+
                 stylesController.setElementStyle(el, 'background-color', '#CCCCCC');
-                
+
                 bg = stylesController.getElementStyle(el, 'background-color');
                 console.log('Final background color is : ' +  bg);
-                
+
                 console.log('......Set Element Style Test[END].....');
             },
             setElementStyle2Test : function() {
                 // first, drag two divs on stage
-                
+
                 // create more specific, multi-target rule
                 var rules = ['#UserContent div { background-color: blue }'];
                 rules.forEach(function(rule) { stylesController.addRule(rule); });
 
                 var el = stylesController.currentDocument.model.views.design.document.getElementById('Div_1');
                 stylesController.setElementStyle(el, 'color', 'red');
-                
+
                 ///// the #Div_1 rule created by tag tool should have the color style
             },
             setElementStyle3Test : function() {
@@ -1784,13 +1784,13 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             setElementStylesTest : function() {
                 ///// draw a div on stage
                 var el = stylesController.currentDocument.model.views.design.document.getElementById('Div_1');
-                
+
                 mRules = stylesController.getMatchingRules(el, true);
                 mRules.forEach(function(rule) {
                     console.log('Deleting Rule ' + i + ' selector: ' + rule.selectorText);
                     stylesController.deleteRule(rule);
                 });
-                
+
                 stylesController.setElementStyles(el, {
                     'width':'100px',
                     'height':'100px',
@@ -1799,24 +1799,24 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             },
             createOverrideRuleTest : function() {
                 ///// Draw div on stage
-                                
+
                 console.log('----- Create Override Rule Test -----');
 
                 var el = stylesController.currentDocument.model.views.design.document.getElementById('Div_1'),
                     rule = stylesController.addRule('#UserContent div { background-color: blue }'),
                     override;
-                    
+
                 console.log('Old rule\'s selector: ' + rule.selectorText);
                 override = stylesController.createOverrideRule(rule, el);
-                
+
                 console.log('New rule\'s selector: ' + override.rule.selectorText);
-                
+
             },
             deleteRulesTest : function() {
                 // drag one div on stage
                 var el = stylesController.currentDocument.model.views.design.document.getElementById('Div_1');
                 this.addRulesTest();
-                
+
                 mRules = stylesController.getMatchingRules(el, true);
                 mRules.forEach(function(rule) {
                     console.log('Deleting Rule ' + i + ' selector: ' + rule.selectorText);
@@ -1833,5 +1833,5 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             }
         }
     }
-    
+
 });

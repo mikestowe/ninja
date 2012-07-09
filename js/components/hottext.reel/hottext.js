@@ -214,7 +214,7 @@ var HotText = exports.HotText = Montage.create(SliderBase, {
 
             var dX = clickPoint.x - this._xStart;
             var dY = clickPoint.y - this._yStart;
-            
+
             var dXAbs = Math.abs(dX);
             var dYAbs = Math.abs(dY);
 
@@ -224,7 +224,7 @@ var HotText = exports.HotText = Montage.create(SliderBase, {
             }
 
             var incrementVal = dXAbs-4;     // otherwise, the first value change will be 5 pixels
-            var multFactor = 1;            
+            var multFactor = 1;
 
             if(dXAbs > dYAbs)
             {

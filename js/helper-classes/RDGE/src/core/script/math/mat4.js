@@ -29,25 +29,25 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
 /**
-* This library contains functions for operating on 4x4 matrices. Any JS array 
-* containing at least 16 numeric components can represent a 4x4 matrix. 
+* This library contains functions for operating on 4x4 matrices. Any JS array
+* containing at least 16 numeric components can represent a 4x4 matrix.
 *
 * For example, all of these are valid matrix construction methods:
-*		...
-*		var a = mat4.identity();
-*		var b = mat4.perspective(90, aspectRatio, 0.1, 100.00);
-*		var c = mat4.lookAt( [0, 0, 0], [1, 0, 0], [ 0, 1, 0 ] );
-*		var d = mat4.basis( [1, 0, 0], [0, 1, 0], [ 0, 0, 1 ] );
+*       ...
+*       var a = mat4.identity();
+*       var b = mat4.perspective(90, aspectRatio, 0.1, 100.00);
+*       var c = mat4.lookAt( [0, 0, 0], [1, 0, 0], [ 0, 1, 0 ] );
+*       var d = mat4.basis( [1, 0, 0], [0, 1, 0], [ 0, 0, 1 ] );
 *
-* This library is implemented assuming components are arranged 
-* contiguously in memory as such: 
-*		M = [ x0, x1, x2, x3,
-*			  y0, y1, y2, y3,
-*			  z0, z1, z2, z3,
-*			  w0, w1, w2, w3 ];
-* The translation components of a transformation matrix would be stored in 
-* w0, w1, w2, or at indices 12, 13, and 14 of the array, as is consistent 
-* with OpenGL.			  
+* This library is implemented assuming components are arranged
+* contiguously in memory as such:
+*       M = [ x0, x1, x2, x3,
+*             y0, y1, y2, y3,
+*             z0, z1, z2, z3,
+*             w0, w1, w2, w3 ];
+* The translation components of a transformation matrix would be stored in
+* w0, w1, w2, or at indices 12, 13, and 14 of the array, as is consistent
+* with OpenGL.
 */
 // RDGE namespaces
 var RDGE = RDGE || {};
@@ -81,7 +81,7 @@ RDGE.mat4.toCSSString = function (m, conversionConstant) {
 
 /**
 * RDGE.mat4.verify
-* This function is provided for debugging purposes only. It is not recommended 
+* This function is provided for debugging purposes only. It is not recommended
 * to be used in performance critical areas of the code.
 */
 RDGE.mat4.verify = function (m) {
@@ -102,9 +102,9 @@ RDGE.mat4.verify = function (m) {
 */
 RDGE.mat4.copy = function (m) {
     return [m[0], m[1], m[2], m[3],
-				m[4], m[5], m[6], m[7],
-				m[8], m[9], m[10], m[11],
-				m[12], m[13], m[14], m[15]];
+                m[4], m[5], m[6], m[7],
+                m[8], m[9], m[10], m[11],
+                m[12], m[13], m[14], m[15]];
 };
 
 /**
@@ -134,9 +134,9 @@ RDGE.mat4.inplace_copy = function (dst, src) {
 */
 RDGE.mat4.identity = function () {
     return [1.0, 0.0, 0.0, 0.0,
-				0.0, 1.0, 0.0, 0.0,
-				0.0, 0.0, 1.0, 0.0,
-				0.0, 0.0, 0.0, 1.0];
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                0.0, 0.0, 0.0, 1.0];
 };
 
 /**
@@ -144,9 +144,9 @@ RDGE.mat4.identity = function () {
 */
 RDGE.mat4.zero = function () {
     return [0.0, 0.0, 0.0, 0.0,
-				0.0, 0.0, 0.0, 0.0,
-				0.0, 0.0, 0.0, 0.0,
-				0.0, 0.0, 0.0, 0.0];
+                0.0, 0.0, 0.0, 0.0,
+                0.0, 0.0, 0.0, 0.0,
+                0.0, 0.0, 0.0, 0.0];
 };
 
 /**
@@ -156,14 +156,14 @@ RDGE.mat4.zero = function () {
 RDGE.mat4.basis = function (rowx, rowy, rowz, roww) {
     if (roww == null || roww == undefined) {
         return [rowx[0], rowx[1], rowx[2], 0.0,
-					rowy[0], rowy[1], rowy[2], 0.0,
-					rowz[0], rowz[1], rowz[2], 0.0,
-					0, 0, 0, 1.0];
+                    rowy[0], rowy[1], rowy[2], 0.0,
+                    rowz[0], rowz[1], rowz[2], 0.0,
+                    0, 0, 0, 1.0];
     } else {
         return [rowx[0], rowx[1], rowx[2], rowx.length == 4 ? rowx[3] : 0.0,
-					rowy[0], rowy[1], rowy[2], rowy.length == 4 ? rowy[3] : 0.0,
-					rowz[0], rowz[1], rowz[2], rowz.length == 4 ? rowz[3] : 0.0,
-					roww[0], roww[1], roww[2], roww.length == 4 ? roww[3] : 1.0];
+                    rowy[0], rowy[1], rowy[2], rowy.length == 4 ? rowy[3] : 0.0,
+                    rowz[0], rowz[1], rowz[2], rowz.length == 4 ? rowz[3] : 0.0,
+                    roww[0], roww[1], roww[2], roww.length == 4 ? roww[3] : 1.0];
     }
 };
 
@@ -231,10 +231,10 @@ RDGE.mat4.angleAxis = function (angle, axis) {
 RDGE.mat4.lookAt = function (eye, at, up) {
     /*
     var w_axis = new RDGE.vec3(posVec.x, posVec.y, posVec.z);
-  
+
     var z_axis = subVec3(targetVec, w_axis);
     z_axis.normalize();
-  
+
     var x_axis = crossVec3(upVec, z_axis);
     x_axis.normalize();
 
@@ -353,24 +353,24 @@ RDGE.mat4.mul = function (a, b) {
     var b15 = b[15];
 
     return [a00 * b00 + a01 * b04 + a02 * b08 + a03 * b12,
-			a00 * b01 + a01 * b05 + a02 * b09 + a03 * b13,
-			a00 * b02 + a01 * b06 + a02 * b10 + a03 * b14,
-			a00 * b03 + a01 * b07 + a02 * b11 + a03 * b15,
+            a00 * b01 + a01 * b05 + a02 * b09 + a03 * b13,
+            a00 * b02 + a01 * b06 + a02 * b10 + a03 * b14,
+            a00 * b03 + a01 * b07 + a02 * b11 + a03 * b15,
 
-			a04 * b00 + a05 * b04 + a06 * b08 + a07 * b12,
-			a04 * b01 + a05 * b05 + a06 * b09 + a07 * b13,
-			a04 * b02 + a05 * b06 + a06 * b10 + a07 * b14,
-			a04 * b03 + a05 * b07 + a06 * b11 + a07 * b15,
+            a04 * b00 + a05 * b04 + a06 * b08 + a07 * b12,
+            a04 * b01 + a05 * b05 + a06 * b09 + a07 * b13,
+            a04 * b02 + a05 * b06 + a06 * b10 + a07 * b14,
+            a04 * b03 + a05 * b07 + a06 * b11 + a07 * b15,
 
-			a08 * b00 + a09 * b04 + a10 * b08 + a11 * b12,
-			a08 * b01 + a09 * b05 + a10 * b09 + a11 * b13,
-			a08 * b02 + a09 * b06 + a10 * b10 + a11 * b14,
-			a08 * b03 + a09 * b07 + a10 * b11 + a11 * b15,
+            a08 * b00 + a09 * b04 + a10 * b08 + a11 * b12,
+            a08 * b01 + a09 * b05 + a10 * b09 + a11 * b13,
+            a08 * b02 + a09 * b06 + a10 * b10 + a11 * b14,
+            a08 * b03 + a09 * b07 + a10 * b11 + a11 * b15,
 
-			a12 * b00 + a13 * b04 + a14 * b08 + a15 * b12,
-			a12 * b01 + a13 * b05 + a14 * b09 + a15 * b13,
-			a12 * b02 + a13 * b06 + a14 * b10 + a15 * b14,
-			a12 * b03 + a13 * b07 + a14 * b11 + a15 * b15];
+            a12 * b00 + a13 * b04 + a14 * b08 + a15 * b12,
+            a12 * b01 + a13 * b05 + a14 * b09 + a15 * b13,
+            a12 * b02 + a13 * b06 + a14 * b10 + a15 * b14,
+            a12 * b03 + a13 * b07 + a14 * b11 + a15 * b15];
 };
 
 /**
@@ -409,24 +409,24 @@ RDGE.mat4.mul4x3 = function (a, b) {
     var b14 = b[14];
 
     return [a00 * b00 + a01 * b04 + a02 * b08,
-			a00 * b01 + a01 * b05 + a02 * b09,
-			a00 * b02 + a01 * b06 + a02 * b10,
-			0,
+            a00 * b01 + a01 * b05 + a02 * b09,
+            a00 * b02 + a01 * b06 + a02 * b10,
+            0,
 
-			a04 * b00 + a05 * b04 + a06 * b08,
-			a04 * b01 + a05 * b05 + a06 * b09,
-			a04 * b02 + a05 * b06 + a06 * b10,
-			0,
+            a04 * b00 + a05 * b04 + a06 * b08,
+            a04 * b01 + a05 * b05 + a06 * b09,
+            a04 * b02 + a05 * b06 + a06 * b10,
+            0,
 
-			a08 * b00 + a09 * b04 + a10 * b08,
-			a08 * b01 + a09 * b05 + a10 * b09,
-			a08 * b02 + a09 * b06 + a10 * b10,
-			0,
+            a08 * b00 + a09 * b04 + a10 * b08,
+            a08 * b01 + a09 * b05 + a10 * b09,
+            a08 * b02 + a09 * b06 + a10 * b10,
+            0,
 
-			a12 * b00 + a13 * b04 + a14 * b08 + b12,
-			a12 * b01 + a13 * b05 + a14 * b09 + b13,
-			a12 * b02 + a13 * b06 + a14 * b10 + b14,
-			1.0];
+            a12 * b00 + a13 * b04 + a14 * b08 + b12,
+            a12 * b01 + a13 * b05 + a14 * b09 + b13,
+            a12 * b02 + a13 * b06 + a14 * b10 + b14,
+            1.0];
 };
 
 /**
@@ -441,8 +441,8 @@ RDGE.mat4._det2x2 = function (a, b, c, d) {
 */
 RDGE.mat4._det3x3 = function (a1, a2, a3, b1, b2, b3, c1, c2, c3) {
     return a1 * RDGE.mat4._det2x2(b2, b3, c2, c3)
-			- b1 * RDGE.mat4._det2x2(a2, a3, c2, c3)
-			+ c1 * RDGE.mat4._det2x2(a2, a3, b2, b3);
+            - b1 * RDGE.mat4._det2x2(a2, a3, c2, c3)
+            + c1 * RDGE.mat4._det2x2(a2, a3, b2, b3);
 };
 
 /**
@@ -470,9 +470,9 @@ RDGE.mat4._det4x4 = function (m) {
     var d4 = m[15];
 
     return a1 * RDGE.mat4._det3x3(b2, b3, b4, c2, c3, c4, d2, d3, d4)
-		   - b1 * RDGE.mat4._det3x3(a2, a3, a4, c2, c3, c4, d2, d3, d4)
-		   + c1 * RDGE.mat4._det3x3(a2, a3, a4, b2, b3, b4, d2, d3, d4)
-		   - d1 * RDGE.mat4._det3x3(a2, a3, a4, b2, b3, b4, c2, c3, c4);
+           - b1 * RDGE.mat4._det3x3(a2, a3, a4, c2, c3, c4, d2, d3, d4)
+           + c1 * RDGE.mat4._det3x3(a2, a3, a4, b2, b3, b4, d2, d3, d4)
+           - d1 * RDGE.mat4._det3x3(a2, a3, a4, b2, b3, b4, c2, c3, c4);
 };
 
 /**
@@ -500,21 +500,21 @@ RDGE.mat4._adjoint = function (m) {
     var d4 = m[15];
 
     return [RDGE.mat4._det3x3(b2, b3, b4, c2, c3, c4, d2, d3, d4),
-				-RDGE.mat4._det3x3(b1, b3, b4, c1, c3, c4, d1, d3, d4),
-				RDGE.mat4._det3x3(b1, b2, b4, c1, c2, c4, d1, d2, d4),
-				-RDGE.mat4._det3x3(b1, b2, b3, c1, c2, c3, d1, d2, d3),
-				-RDGE.mat4._det3x3(a2, a3, a4, c2, c3, c4, d2, d3, d4),
-				RDGE.mat4._det3x3(a1, a3, a4, c1, c3, c4, d1, d3, d4),
-				-RDGE.mat4._det3x3(a1, a2, a4, c1, c2, c4, d1, d2, d4),
-				RDGE.mat4._det3x3(a1, a2, a3, c1, c2, c3, d1, d2, d3),
-				RDGE.mat4._det3x3(a2, a3, a4, b2, b3, b4, d2, d3, d4),
-				-RDGE.mat4._det3x3(a1, a3, a4, b1, b3, b4, d1, d3, d4),
-				RDGE.mat4._det3x3(a1, a2, a4, b1, b2, b4, d1, d2, d4),
-				-RDGE.mat4._det3x3(a1, a2, a3, b1, b2, b3, d1, d2, d3),
-				-RDGE.mat4._det3x3(a2, a3, a4, b2, b3, b4, c2, c3, c4),
-				RDGE.mat4._det3x3(a1, a3, a4, b1, b3, b4, c1, c3, c4),
-				-RDGE.mat4._det3x3(a1, a2, a4, b1, b2, b4, c1, c2, c4),
-				RDGE.mat4._det3x3(a1, a2, a3, b1, b2, b3, c1, c2, c3)];
+                -RDGE.mat4._det3x3(b1, b3, b4, c1, c3, c4, d1, d3, d4),
+                RDGE.mat4._det3x3(b1, b2, b4, c1, c2, c4, d1, d2, d4),
+                -RDGE.mat4._det3x3(b1, b2, b3, c1, c2, c3, d1, d2, d3),
+                -RDGE.mat4._det3x3(a2, a3, a4, c2, c3, c4, d2, d3, d4),
+                RDGE.mat4._det3x3(a1, a3, a4, c1, c3, c4, d1, d3, d4),
+                -RDGE.mat4._det3x3(a1, a2, a4, c1, c2, c4, d1, d2, d4),
+                RDGE.mat4._det3x3(a1, a2, a3, c1, c2, c3, d1, d2, d3),
+                RDGE.mat4._det3x3(a2, a3, a4, b2, b3, b4, d2, d3, d4),
+                -RDGE.mat4._det3x3(a1, a3, a4, b1, b3, b4, d1, d3, d4),
+                RDGE.mat4._det3x3(a1, a2, a4, b1, b2, b4, d1, d2, d4),
+                -RDGE.mat4._det3x3(a1, a2, a3, b1, b2, b3, d1, d2, d3),
+                -RDGE.mat4._det3x3(a2, a3, a4, b2, b3, b4, c2, c3, c4),
+                RDGE.mat4._det3x3(a1, a3, a4, b1, b3, b4, c1, c3, c4),
+                -RDGE.mat4._det3x3(a1, a2, a4, b1, b2, b4, c1, c2, c4),
+                RDGE.mat4._det3x3(a1, a2, a3, b1, b2, b3, c1, c2, c3)];
 };
 
 /**
@@ -522,7 +522,7 @@ RDGE.mat4._adjoint = function (m) {
 */
 RDGE.mat4.inverse = function (m) {
     // Calculate the 4x4 determinant
-    // If the determinant is zero, 
+    // If the determinant is zero,
     // then the inverse matrix is not unique.
     var det = RDGE.mat4._det4x4(m);
 
@@ -535,9 +535,9 @@ RDGE.mat4.inverse = function (m) {
     var ood = 1.0 / det;
 
     return [adj[0] * ood, adj[1] * ood, adj[2] * ood, adj[3] * ood,
-				adj[4] * ood, adj[5] * ood, adj[6] * ood, adj[7] * ood,
-				adj[8] * ood, adj[9] * ood, adj[10] * ood, adj[11] * ood,
-				adj[12] * ood, adj[13] * ood, adj[14] * ood, adj[15] * ood];
+                adj[4] * ood, adj[5] * ood, adj[6] * ood, adj[7] * ood,
+                adj[8] * ood, adj[9] * ood, adj[10] * ood, adj[11] * ood,
+                adj[12] * ood, adj[13] * ood, adj[14] * ood, adj[15] * ood];
 };
 
 /**
@@ -556,9 +556,9 @@ RDGE.mat4.rigidInverse = function (m) {
 */
 RDGE.mat4.transpose = function (m) {
     return [m[0], m[4], m[8], m[12],
-				m[1], m[5], m[9], m[13],
-				m[2], m[6], m[10], m[14],
-				m[3], m[7], m[11], m[15]];
+                m[1], m[5], m[9], m[13],
+                m[2], m[6], m[10], m[14],
+                m[3], m[7], m[11], m[15]];
 };
 
 /**
@@ -566,9 +566,9 @@ RDGE.mat4.transpose = function (m) {
 */
 RDGE.mat4.transpose3x3 = function (m) {
     return [m[0], m[4], m[8], m[3],
-				m[1], m[5], m[9], m[7],
-				m[2], m[6], m[10], m[11],
-				m[12], m[13], m[14], m[15]];
+                m[1], m[5], m[9], m[7],
+                m[2], m[6], m[10], m[11],
+                m[12], m[13], m[14], m[15]];
 };
 
 /**
@@ -577,10 +577,10 @@ RDGE.mat4.transpose3x3 = function (m) {
 RDGE.mat4.transformPoint = function (m, v) {
     var x = v[0], y = v[1], z = v[2], w = v.length >= 4 ? v[3] : 1.0;
     return [m[0] * x + m[4] * y + m[8] * z + m[12] * w,
-			m[1] * x + m[5] * y + m[9] * z + m[13] * w,
-			m[2] * x + m[6] * y + m[10] * z + m[14] * w,
-			m[3] * x + m[7] * y + m[11] * z + m[15] * w];
-    // 12 adds, 16 multiplies, 16 lookups. 
+            m[1] * x + m[5] * y + m[9] * z + m[13] * w,
+            m[2] * x + m[6] * y + m[10] * z + m[14] * w,
+            m[3] * x + m[7] * y + m[11] * z + m[15] * w];
+    // 12 adds, 16 multiplies, 16 lookups.
 };
 
 /**
@@ -589,12 +589,12 @@ RDGE.mat4.transformPoint = function (m, v) {
 RDGE.mat4.transformVector = function (m, v) {
     m = RDGE.mat4.inverse(m);
     var x = v[0], y = v[1], z = v[2], w = v.length >= 4 ? v[3] : 0.0;
-    // 12 adds, 16 multiplies, 16 lookups. 
+    // 12 adds, 16 multiplies, 16 lookups.
     // transpose multiply
     return [m[0] * x + m[1] * y + m[2] * z + m[3] * w,
-				m[4] * x + m[5] * y + m[6] * z + m[7] * w,
-				m[8] * x + m[9] * y + m[10] * z + m[11] * w,
-				m[12] * x + m[13] * y + m[14] * z + m[15] * w];
+                m[4] * x + m[5] * y + m[6] * z + m[7] * w,
+                m[8] * x + m[9] * y + m[10] * z + m[11] * w,
+                m[12] * x + m[13] * y + m[14] * z + m[15] * w];
 };
 
 /**
@@ -605,9 +605,9 @@ RDGE.mat4.transformPoint4x3 = function (m, v) {
     var x = v[0], y = v[1], z = v[2];
     // 9 adds, 9 multiplies, 16 lookups.
     return [m[0] * x + m[4] * y + m[8] * z + m[12],
-				m[1] * x + m[5] * y + m[9] * z + m[13],
-				m[2] * x + m[6] * y + m[10] * z + m[14],
-				1.0];
+                m[1] * x + m[5] * y + m[9] * z + m[13],
+                m[2] * x + m[6] * y + m[10] * z + m[14],
+                1.0];
 };
 
 /**
@@ -618,9 +618,9 @@ RDGE.mat4.transformVector4x3 = function (m, v) {
     m = RDGE.mat4.inverse(m);
     var x = v[0], y = v[1], z = v[2];
     return [m[0] * x + m[1] * y + m[2] * z,
-				m[4] * x + m[5] * y + m[6] * z,
-				m[8] * x + m[9] * y + m[10] * z,
-				0.0];
+                m[4] * x + m[5] * y + m[6] * z,
+                m[8] * x + m[9] * y + m[10] * z,
+                0.0];
 };
 
 /**

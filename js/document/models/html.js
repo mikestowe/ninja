@@ -30,29 +30,29 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 				require("montage/core/core").Montage,
-    BaseDocumentModel = 	require("js/document/models/base").BaseDocumentModel,
-    webGlDocumentHelper = 	require("js/document/helpers/webgl-helper").webGlDocumentHelper;
+var Montage =               require("montage/core/core").Montage,
+    BaseDocumentModel =     require("js/document/models/base").BaseDocumentModel,
+    webGlDocumentHelper =   require("js/document/helpers/webgl-helper").webGlDocumentHelper;
 ////////////////////////////////////////////////////////////////////////
-//	
+//
 exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
-	////////////////////////////////////////////////////////////////////
-	//
-	hasTemplate: {
+    ////////////////////////////////////////////////////////////////////
+    //
+    hasTemplate: {
         value: false
     },
     ////////////////////////////////////////////////////////////////////
-	//Called by the document immidiately after the model is created
+    //Called by the document immidiately after the model is created
     init: {
         value:function() {
-        	//Creating instance of the webGL helper for this model
-        	this.webGlHelper = webGlDocumentHelper.create();
-        	//
-        	this.libs = {montage: false, canvas: false, montageId: null, canvasId: null};
-		}           
+            //Creating instance of the webGL helper for this model
+            this.webGlHelper = webGlDocumentHelper.create();
+            //
+            this.libs = {montage: false, canvas: false, montageId: null, canvasId: null};
+        }
     },
-	////////////////////////////////////////////////////////////////////
-	//
+    ////////////////////////////////////////////////////////////////////
+    //
     draw3DGrid: {
         value: false
     },
@@ -77,24 +77,24 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
         value: null
     },
     ////////////////////////////////////////////////////////////////////
-	//TODO: Convert to bindings
+    //TODO: Convert to bindings
     documentRoot: {
         get: function() {return this.views.design._documentRoot;},
         set: function(value) {this.views.design._documentRoot = value;}
     },
     ////////////////////////////////////////////////////////////////////
-	//TODO: Convert to bindings
-	baseHref: {
-		get: function() {return this.views.design._baseHref;},
+    //TODO: Convert to bindings
+    baseHref: {
+        get: function() {return this.views.design._baseHref;},
         set: function(value) {this.views.design._baseHref = value;}
-	},
+    },
     ////////////////////////////////////////////////////////////////////
-	//
-	webGlHelper: {
+    //
+    webGlHelper: {
         value: null
     }
     ////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
 
 });
 ////////////////////////////////////////////////////////////////////////

@@ -111,7 +111,7 @@ var ToolHandle = exports.ToolHandle = Montage.create(Component, {
             return true;
         }
     }
-    
+
 });
 
 
@@ -302,7 +302,7 @@ exports.RotateHandle = Montage.create(ToolHandle, {
             this._planeEq[3] = -vecUtils.vecDot(3, this._planeEq, this._origin);
 
             this._dirVecL = MathUtils.transformPoint(this._dirVec, this._matL);
-            
+
             context.beginPath();
 
             var pt = [this._radius, 0.0, 0.0];
@@ -322,7 +322,7 @@ exports.RotateHandle = Montage.create(ToolHandle, {
 
             // Draw the transform handle
             context.beginPath();
-            
+
             pt = [this._transformCenterRadius, 0.0, 0.0];
 
             for (var i=0;  i<this._nTriangles;  i++)
@@ -336,7 +336,7 @@ exports.RotateHandle = Montage.create(ToolHandle, {
             context.stroke();
 
 
-            
+
             context.restore();
         }
     },
@@ -384,7 +384,7 @@ exports.RotateHandle = Montage.create(ToolHandle, {
 
                 return 0;
             }
-            
+
             localPt = MathUtils.transformPoint(localPt, this._matL);
 
             var theta = Math.atan2(localPt[1], localPt[0]);
@@ -398,13 +398,13 @@ exports.RotateHandle = Montage.create(ToolHandle, {
             {
                 return 1;
             }
-            
+
             xC = this._radius*Math.cos(theta);
             yC = this._radius*Math.sin(theta);
             ptOnCircle = [xC, yC, 0];
 
             dist = vecUtils.vecDist( 2, localPt, ptOnCircle );
-            
+
             if ( dist <= 5 )
             {
                 return 2;
@@ -414,7 +414,7 @@ exports.RotateHandle = Montage.create(ToolHandle, {
         }
     },
 
-    
+
     drawShadedAngle: {
         value: function(angle, localPt) {
 
@@ -448,7 +448,7 @@ exports.RotateHandle = Montage.create(ToolHandle, {
             }
 
             context.lineTo(this._origin[0], this._origin[1]);
-            
+
             context.stroke();
             context.fill();
 
@@ -675,7 +675,7 @@ exports.TranslateHandle = Montage.create(ToolHandle, {
             context.stroke();
 
             this._drawArrowHead(this._origin, this._endPt, context);
-            
+
             context.restore();
         }
     },
@@ -734,23 +734,23 @@ exports.TranslateHandle = Montage.create(ToolHandle, {
             context.restore();
         }
     },
-    
-    collidesWithPoint: 
-	{
-        value:function (x, y) 
-		{
+
+    collidesWithPoint:
+    {
+        value:function (x, y)
+        {
             var globalPt = [x, y, this._origin[2]];
 
-			// test for a hit on the origin
-			var dist = vecUtils.vecDist( 2, globalPt, this._origin );
-			if (dist <= 5)  return 1;
+            // test for a hit on the origin
+            var dist = vecUtils.vecDist( 2, globalPt, this._origin );
+            if (dist <= 5)  return 1;
 
             var nearPt = MathUtils.nearestPointOnLine2D( this._origin, this._dirVec,  globalPt );
             if(!nearPt)
             {
                 return 0;
             }
-            
+
             var t = MathUtils.parameterizePointOnLine2D( this._origin, this._dirVec, nearPt );
             dist = vecUtils.vecDist( 2, globalPt, nearPt );
             if (dist <= 5)

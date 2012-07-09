@@ -28,31 +28,31 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
-var Montage = 	require("montage/core/core").Montage,
+var Montage =   require("montage/core/core").Montage,
     ShapeTool = require("js/tools/ShapeTool").ShapeTool,
-    ShapesController = 	require("js/controllers/elements/shapes-controller").ShapesController;
+    ShapesController =  require("js/controllers/elements/shapes-controller").ShapesController;
 
 var Circle = require("js/lib/geom/circle").Circle;
 var MaterialsModel = require("js/models/materials-model").MaterialsModel;
 
 exports.OvalTool = Montage.create(ShapeTool, {
 
-	_toolID: { value: "ovalTool" },
-	_imageID: { value: "ovalToolImg" },
-	_toolImageClass: { value: "ovalToolUp" },
-	_selectedToolImageClass: { value: "ovalToolDown" },
-	_toolTipText: { value: "Oval Tool (O)" },
+    _toolID: { value: "ovalTool" },
+    _imageID: { value: "ovalToolImg" },
+    _toolImageClass: { value: "ovalToolUp" },
+    _selectedToolImageClass: { value: "ovalToolDown" },
+    _toolTipText: { value: "Oval Tool (O)" },
     _selectedToolClass:{value:"ovalToolSpecificProperties"},
     _ovalView : { value: null, writable: true},
 
     RenderShape: {
-		value: function (w, h, planeMat, midPt, canvas)
+        value: function (w, h, planeMat, midPt, canvas)
         {
             if( (Math.floor(w) === 0) || (Math.floor(h) === 0) )
             {
                 return;
             }
-            
+
             var left = Math.round(midPt[0] - 0.5*w);
             var top = Math.round(midPt[1] - 0.5*h);
 

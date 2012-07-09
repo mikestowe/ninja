@@ -66,9 +66,9 @@ var MaterialParser = function MaterialParser(theStr) {
         if (!this._strBuffer) return;
 
         // find the limits
-        var index = this._strBuffer.search(/\S/); 	// first non-whitespace character
+        var index = this._strBuffer.search(/\S/);   // first non-whitespace character
         if (index > 0) this._strBuffer = this._strBuffer.slice(index);
-        index = this._strBuffer.search(/\s/); 	// first whitespace character marking the end of the token
+        index = this._strBuffer.search(/\s/);   // first whitespace character marking the end of the token
 
         var token;
         if (index > 0) {

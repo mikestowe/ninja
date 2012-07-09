@@ -47,24 +47,24 @@ var ZInvertMaterial = function ZInvertMaterial() {
     // array textures indexed by shader uniform name
     this._glTextures = [];
 
-	this.isAnimated			= function()			{  return true;				};
-	this.getShaderDef		= function()			{  return zInvertMaterialDef;	};
+    this.isAnimated         = function()            {  return true;             };
+    this.getShaderDef       = function()            {  return zInvertMaterialDef;   };
 
-	///////////////////////////////////////////////////////////////////////
-	// Properties
-	///////////////////////////////////////////////////////////////////////
-	// all defined in parent PulseMaterial.js
-	// load the local default value
-	this._propNames			= ["u_tex0",		"u_speed"];
-	this._propLabels		= ["Texture map",	"Speed"];
-	this._propTypes			= ["file",			"float"];
+    ///////////////////////////////////////////////////////////////////////
+    // Properties
+    ///////////////////////////////////////////////////////////////////////
+    // all defined in parent PulseMaterial.js
+    // load the local default value
+    this._propNames         = ["u_tex0",        "u_speed"];
+    this._propLabels        = ["Texture map",   "Speed"];
+    this._propTypes         = ["file",          "float"];
 
-	var u_tex_index			= 0,
-		u_speed_index		= 1;
+    var u_tex_index         = 0,
+        u_speed_index       = 1;
 
-	this._propValues		= [];
-	this._propValues[ this._propNames[u_tex_index		] ]	= this._defaultTexMap.slice(0);
-	this._propValues[ this._propNames[u_speed_index		] ]	= 1.0;
+    this._propValues        = [];
+    this._propValues[ this._propNames[u_tex_index       ] ] = this._defaultTexMap.slice(0);
+    this._propValues[ this._propNames[u_speed_index     ] ] = 1.0;
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
@@ -89,7 +89,7 @@ var ZInvertMaterial = function ZInvertMaterial() {
         }
 
         // set the shader values in the shader
-		this.setShaderValues();
+        this.setShaderValues();
         this.setResolution([world.getViewportWidth(), world.getViewportHeight()]);
         this.update(0);
     };
@@ -111,42 +111,42 @@ var ZInvertMaterial = function ZInvertMaterial() {
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var zInvertMaterialDef =
 { 'shaders':
-	{
-	    'defaultVShader': "assets/shaders/Basic.vert.glsl",
-	    'defaultFShader': "assets/shaders/ZInvert.frag.glsl"
-	},
+    {
+        'defaultVShader': "assets/shaders/Basic.vert.glsl",
+        'defaultFShader': "assets/shaders/ZInvert.frag.glsl"
+    },
     'techniques':
-	{
-	    'default':
-		[
-			{
-			    'vshader': 'defaultVShader',
-			    'fshader': 'defaultFShader',
-			    // attributes
-			    'attributes':
-				{
-				    'vert': { 'type': 'vec3' },
-				    'normal': { 'type': 'vec3' },
-				    'texcoord': { 'type': 'vec2' }
-				},
-			    // parameters
-			    'params':
-				{
-				    'u_tex0': { 'type': 'tex2d' },
-				    'u_time': { 'type': 'float' },
-				    'u_speed': { 'type': 'float' },
-				    'u_resolution': { 'type': 'vec2' }
-				},
+    {
+        'default':
+        [
+            {
+                'vshader': 'defaultVShader',
+                'fshader': 'defaultFShader',
+                // attributes
+                'attributes':
+                {
+                    'vert': { 'type': 'vec3' },
+                    'normal': { 'type': 'vec3' },
+                    'texcoord': { 'type': 'vec2' }
+                },
+                // parameters
+                'params':
+                {
+                    'u_tex0': { 'type': 'tex2d' },
+                    'u_time': { 'type': 'float' },
+                    'u_speed': { 'type': 'float' },
+                    'u_resolution': { 'type': 'vec2' }
+                },
 
-			    // render states
-			    'states':
-				{
-				    'depthEnable': true,
-				    'offset': [1.0, 0.1]
-				}
-			}
-		]
-	}
+                // render states
+                'states':
+                {
+                    'depthEnable': true,
+                    'offset': [1.0, 0.1]
+                }
+            }
+        ]
+    }
 };
 
 ZInvertMaterial.prototype = new PulseMaterial();

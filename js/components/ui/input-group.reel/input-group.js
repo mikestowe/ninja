@@ -84,7 +84,7 @@ var InputGroup = exports.InputGroup = Montage.create(Component, {
             this.dispatchEvent(propEvent);
         }
     },
-            
+
     value: {
         enumerable: true,
         serializable: true,
@@ -96,7 +96,7 @@ var InputGroup = exports.InputGroup = Montage.create(Component, {
                 retObject[childControl.label] = childControl._control[childControl._prop];
             }
             return retObject;
-            
+
         }
     },
 

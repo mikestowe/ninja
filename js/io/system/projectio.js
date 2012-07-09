@@ -30,75 +30,75 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 	require("montage/core/core").Montage,
-	FileIo = 	require("js/io/system/fileio").FileIo;
+var Montage =   require("montage/core/core").Montage,
+    FileIo =    require("js/io/system/fileio").FileIo;
 ////////////////////////////////////////////////////////////////////////
 //
 exports.ProjectIo = Montage.create(Object.prototype, {
-	////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
     //
     newProject: {
-    	enumerable: false,
-    	value: function () {
-    		//Checking for API to be available
-    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
-    			//API not available, no IO action taken
-    			return null;
-    		}
-    		//
-    	}
+        enumerable: false,
+        value: function () {
+            //Checking for API to be available
+            if (!this.application.ninja.coreIoApi.cloudAvailable()) {
+                //API not available, no IO action taken
+                return null;
+            }
+            //
+        }
     },
-	////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
     //
     readProject: {
-    	enumerable: false,
-    	value: function(e) {
-    		//Checking for API to be available
-    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
-    			//API not available, no IO action taken
-    			return null;
-    		}
-    		//
-    	}
+        enumerable: false,
+        value: function(e) {
+            //Checking for API to be available
+            if (!this.application.ninja.coreIoApi.cloudAvailable()) {
+                //API not available, no IO action taken
+                return null;
+            }
+            //
+        }
     },
     ////////////////////////////////////////////////////////////////////
     //
     saveProject: {
-    	enumerable: false,
-    	value: function() {
-    		//Checking for API to be available
-    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
-    			//API not available, no IO action taken
-    			return null;
-    		}
-    		//
-    	}
+        enumerable: false,
+        value: function() {
+            //Checking for API to be available
+            if (!this.application.ninja.coreIoApi.cloudAvailable()) {
+                //API not available, no IO action taken
+                return null;
+            }
+            //
+        }
     },
     ////////////////////////////////////////////////////////////////////
     //
     copyProject: {
-    	enumerable: false,
-    	value: function(e) {
-    		//Checking for API to be available
-    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
-    			//API not available, no IO action taken
-    			return null;
-    		}
-    		//
-    	}
+        enumerable: false,
+        value: function(e) {
+            //Checking for API to be available
+            if (!this.application.ninja.coreIoApi.cloudAvailable()) {
+                //API not available, no IO action taken
+                return null;
+            }
+            //
+        }
     },
     ////////////////////////////////////////////////////////////////////
     //
     infoProject: {
-    	enumerable: false,
-    	value: function(e) {
-    		//Checking for API to be available
-    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
-    			//API not available, no IO action taken
-    			return null;
-    		}
-    		//
-    	}
+        enumerable: false,
+        value: function(e) {
+            //Checking for API to be available
+            if (!this.application.ninja.coreIoApi.cloudAvailable()) {
+                //API not available, no IO action taken
+                return null;
+            }
+            //
+        }
     }
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////

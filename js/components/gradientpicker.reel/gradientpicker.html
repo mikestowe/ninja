@@ -1,6 +1,5 @@
-﻿<!DOCTYPE html>
-<!-- 
- <copyright>
+<!doctype html>
+<!-- <copyright>
 Copyright (c) 2012, Motorola Mobility, Inc
 All Rights Reserved.
 BSD License.
@@ -32,57 +31,57 @@ POSSIBILITY OF SUCH DAMAGE.
 -->
 <html>
 
-	<head>
-    	
-    	<link rel="stylesheet" type="text/css" href="css/gradientpicker.css">
+    <head>
 
-		<script type="text/montage-serialization">
-   			{
-            	"owner": {
-                	"prototype": "js/components/gradientpicker.reel[GradientPicker]",
-                	"properties": {
-                    	"element": {"#": "gradientpicker"},
-                    	"radioLinear": {"#": "radio_linear"},
-                    	"radioRadial": {"#": "radio_radial"},
-                    	"trackCover": {"#": "cover"},
-                    	"trackMain": {"#": "track"},
-                    	"trackChips": {"#": "chips"}
+        <link rel="stylesheet" type="text/css" href="css/gradientpicker.css">
 
-                	}
-            	}
-        	}
-		</script>
-		
-	</head>
-	
-	<body>
-    
-    	<div data-montage-id="gradientpicker" class="gradientpicker">
-    		
-    		<div class="type">
-    			
-    			<input data-montage-id="radio_linear" type="radio" class="cp_gp_linear radio" name="gradient" value="linear" id="cp_gp_linear" checked="like a boss"/>
-    			<label for="cp_gp_linear">Linear Gradient</label>
-    			
-    			<input data-montage-id="radio_radial" type="radio" class="cp_gp_radial radio" name="gradient" value="radial" id="cp_gp_radial"/>
-    			<label for="cp_gp_radial">Radial Gradient</label>
-    			
-    		</div>
-    		
-    		<div class="cp_gp_slider">
-    			
-    			<div class="track_container">
-    				<div data-montage-id="track" class="track"></div>
-    			</div>
-    			
-    			<div data-montage-id="cover" class="cover"></div>
-    			
-    			<div data-montage-id="chips" class="chips"></div>
-    			
-    		</div>
-    	
-    	</div>
-    
-	</body>
+        <script type="text/montage-serialization">
+            {
+                "owner": {
+                    "prototype": "js/components/gradientpicker.reel[GradientPicker]",
+                    "properties": {
+                        "element": {"#": "gradientpicker"},
+                        "radioLinear": {"#": "radio_linear"},
+                        "radioRadial": {"#": "radio_radial"},
+                        "trackCover": {"#": "cover"},
+                        "trackMain": {"#": "track"},
+                        "trackChips": {"#": "chips"}
+
+                    }
+                }
+            }
+        </script>
+
+    </head>
+
+    <body>
+
+        <div data-montage-id="gradientpicker" class="gradientpicker">
+
+            <div class="type">
+
+                <input data-montage-id="radio_linear" type="radio" class="cp_gp_linear radio" name="gradient" value="linear" id="cp_gp_linear" checked="like a boss"/>
+                <label for="cp_gp_linear">Linear Gradient</label>
+
+                <input data-montage-id="radio_radial" type="radio" class="cp_gp_radial radio" name="gradient" value="radial" id="cp_gp_radial"/>
+                <label for="cp_gp_radial">Radial Gradient</label>
+
+            </div>
+
+            <div class="cp_gp_slider">
+
+                <div class="track_container">
+                    <div data-montage-id="track" class="track"></div>
+                </div>
+
+                <div data-montage-id="cover" class="cover"></div>
+
+                <div data-montage-id="chips" class="chips"></div>
+
+            </div>
+
+        </div>
+
+    </body>
 
 </html>

@@ -37,327 +37,327 @@ $sprite_stdbtn_spacing: 4;
 
 @mixin sprite_background ($x, $y)
 {
-	background: url(../../../../../images/SpriteSheets/NinjaSpriteSheet.png) transparent no-repeat top left !important;
-	background-position: $x*-1px  $y*-1px !important;
-	border: none !important;
-	display: block;
+    background: url(../../../../../images/SpriteSheets/NinjaSpriteSheet.png) transparent no-repeat top left !important;
+    background-position: $x*-1px  $y*-1px !important;
+    border: none !important;
+    display: block;
 }
 
 .cp_expanded
 {
-	font-size: 12px;
-	text-shadow: 1px 1px 1px #000;
-	color: #FFF;
+    font-size: 12px;
+    text-shadow: 1px 1px 1px #000;
+    color: #FFF;
 }
 
 .cp_expanded a:hover
 {
-	color: #CCC;
+    color: #CCC;
 }
 
 .cp_expanded hr
 {
-	float: left;
-	clear: both;
-	width: 100%;
-	display: block;
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.5, rgb(29,29,29)), color-stop(0.75, rgb(66,66,66)));
-	border: none;
-	height: 2px;
-	margin: 4px 0px 4px 0px;
+    float: left;
+    clear: both;
+    width: 100%;
+    display: block;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.5, rgb(29,29,29)), color-stop(0.75, rgb(66,66,66)));
+    border: none;
+    height: 2px;
+    margin: 4px 0px 4px 0px;
 }
 
 .cp_history
 {
-	float: left;
-	margin: 4px 0px 0px 4px;
-	background: url(../../../../../images/colorpanel/transparent.png) repeat;
+    float: left;
+    margin: 4px 0px 0px 4px;
+    background: url(../../../../../images/colorpanel/transparent.png) repeat;
 }
 
 .cp_history button
 {
-	
-	width: 22px;
-	height: 22px;
-	overflow: hidden;
-	text-indent: -9999px;
-	background: #333;
-	float: left;
-	border: solid 1px #000;
-	cursor: pointer;
-	margin: 0px -1px 0px 0px;
-	padding: 0px 0px 0px 0px;
+
+    width: 22px;
+    height: 22px;
+    overflow: hidden;
+    text-indent: -9999px;
+    background: #333;
+    float: left;
+    border: solid 1px #000;
+    cursor: pointer;
+    margin: 0px -1px 0px 0px;
+    padding: 0px 0px 0px 0px;
 }
 
 .cp_expanded .cp_inputs
 {
-	float: left;
-	margin: 0px 4px 0px 4px;
+    float: left;
+    margin: 0px 4px 0px 4px;
 }
 
 
 .cp_expanded .cp_input_button
 {
-	background: url(../../../../../images/colorpanel/transparent.png) repeat;
-	float: left;
-	clear: left;
-	margin: 0px 0px 6px 0px;
+    background: url(../../../../../images/colorpanel/transparent.png) repeat;
+    float: left;
+    clear: left;
+    margin: 0px 0px 6px 0px;
 }
 
 .cp_expanded .cp_inputs button, .cpe_fill, .cpe_stroke, .cpe_fill_icon, .cpe_stroke_icon
 {
-	
-	width: 22px;
-	height: 22px;
-	overflow: hidden;
-	text-indent: -9999px;
-	padding: 0px 0px 0px 0px;
-	display: block;
-	float: left;
-	cursor: pointer;
+
+    width: 22px;
+    height: 22px;
+    overflow: hidden;
+    text-indent: -9999px;
+    padding: 0px 0px 0px 0px;
+    display: block;
+    float: left;
+    cursor: pointer;
 }
 
 .cpe_fill, .cpe_stroke
 {
-	clear: left;
-	background-color: #333;
-	border: solid 1px #000;
+    clear: left;
+    background-color: #333;
+    border: solid 1px #000;
 }
 
 .cpe_fill_icon, .cpe_fill_icon
-{	
-	@include sprite_background (($sprite_stdbtn_width+$sprite_stdbtn_spacing)*10, 0);
+{
+    @include sprite_background (($sprite_stdbtn_width+$sprite_stdbtn_spacing)*10, 0);
 }
 
 .cpe_fill_icon:hover, .cpe_fill_icon.selected, .cpe_fill_icon:hover, .cpe_fill_icon.selected
-{	
-	@include sprite_background (($sprite_stdbtn_width+$sprite_stdbtn_spacing)*11, 0);
+{
+    @include sprite_background (($sprite_stdbtn_width+$sprite_stdbtn_spacing)*11, 0);
 }
 
 .cpe_stroke_icon, .cpe_stroke_icon
-{	
-	@include sprite_background (($sprite_stdbtn_width+$sprite_stdbtn_spacing)*8, ($sprite_stdbtn_height+$sprite_stdbtn_spacing)*1);
+{
+    @include sprite_background (($sprite_stdbtn_width+$sprite_stdbtn_spacing)*8, ($sprite_stdbtn_height+$sprite_stdbtn_spacing)*1);
 }
 
 .cpe_stroke_icon:hover, .cpe_stroke_icon.selected, .cpe_stroke_icon:hover, .cpe_stroke_icon.selected
-{	
-	@include sprite_background (($sprite_stdbtn_width+$sprite_stdbtn_spacing)*9, ($sprite_stdbtn_height+$sprite_stdbtn_spacing)*1);
+{
+    @include sprite_background (($sprite_stdbtn_width+$sprite_stdbtn_spacing)*9, ($sprite_stdbtn_height+$sprite_stdbtn_spacing)*1);
 }
 
 .cp_modes
 {
-	float: right;
-	margin: 4px 6px 0px 0px;
-	min-width: 73px;
+    float: right;
+    margin: 4px 6px 0px 0px;
+    min-width: 73px;
 }
 
 .cp_modes button
 {
-	font-size: 14px;
-	line-height: 22px;
-	vertical-align: middle;
-	float: left;
-	background: none;
-	border: none;
-	margin: 0px;
-	padding: 0px;
-	color: #FFF;
-	text-shadow: 1px 1px 1px #000;
-	font-family: 'Droid Sans', sans-serif;
+    font-size: 14px;
+    line-height: 22px;
+    vertical-align: middle;
+    float: left;
+    background: none;
+    border: none;
+    margin: 0px;
+    padding: 0px;
+    color: #FFF;
+    text-shadow: 1px 1px 1px #000;
+    font-family: 'Droid Sans', sans-serif;
 }
 
 .cp_modes button:hover
 {
-	cursor: pointer;
-	color: #CCC;
+    cursor: pointer;
+    color: #CCC;
 }
 
 .cp_rgb_mode, .cp_hsl_mode
 {
-	color: #888 !important;
+    color: #888 !important;
 }
 
 .cp_rgb_mode:hover/* , .cp_hsl_mode:hover */
 {
-	color: #CCC !important;
+    color: #CCC !important;
 }
 
 .cp_rgb_mode.selected/* , .cp_hsl_mode.selected */
 {
-	color: #FFF !important;
+    color: #FFF !important;
 }
 
 .cp_modes hr
 {
-	display: block;
-	float: left;
-	width: 2px;
-	height: 14px;
-	border: none;
-	clear: none;
-	background-image: -webkit-gradient(linear, left bottom, right bottom, color-stop(0.5, rgb(29,29,29)), color-stop(0.75, rgb(66,66,66)));
-	margin: 4px 8px 0px 9px
+    display: block;
+    float: left;
+    width: 2px;
+    height: 14px;
+    border: none;
+    clear: none;
+    background-image: -webkit-gradient(linear, left bottom, right bottom, color-stop(0.5, rgb(29,29,29)), color-stop(0.75, rgb(66,66,66)));
+    margin: 4px 8px 0px 9px
 }
 
 .cp_options
 {
-	float: left;
-	margin: 56px 0px 0px -48px;
-	
+    float: left;
+    margin: 56px 0px 0px -48px;
+
 }
 
 .cp_options button
 {
-	width: 14px;
-	height: 15px;
-	overflow: hidden;
-	text-indent: -9999px;
-	float: left;
-	cursor: pointer;
-	margin: 0px 2px 0px 0px;
-	border: none;
-	opacity: .7;
+    width: 14px;
+    height: 15px;
+    overflow: hidden;
+    text-indent: -9999px;
+    float: left;
+    cursor: pointer;
+    margin: 0px 2px 0px 0px;
+    border: none;
+    opacity: .7;
 }
 
 .cp_options button:hover
 {
-	background-position: 0px 1px;
-	opacity: 1;
+    background-position: 0px 1px;
+    opacity: 1;
 }
 
 .cp_reset
 {
-	background: url(../img/icon_default.png) transparent no-repeat 0px 0px;
+    background: url(../img/icon_default.png) transparent no-repeat 0px 0px;
 }
 
 .cp_nocolor
 {
-	background: url(../img/icon_nocolor.png) transparent no-repeat 0px 0px;
+    background: url(../img/icon_nocolor.png) transparent no-repeat 0px 0px;
 }
 
 .cp_swap
 {
-	background: url(../img/icon_swap.png) transparent no-repeat 0px 0px;
+    background: url(../img/icon_swap.png) transparent no-repeat 0px 0px;
 }
 
 .cp_sliders
 {
-	float: left;
-	width: 127px;
-	margin: 0px 0px 0px 0px;
+    float: left;
+    width: 127px;
+    margin: 0px 0px 0px 0px;
 }
 
 .cp_labels
 {
-	float: left;
-	margin: 0px 8px 2px 5px;
-	font-family: 'Droid Sans', sans-serif;
-	font-size: 12px;
+    float: left;
+    margin: 0px 8px 2px 5px;
+    font-family: 'Droid Sans', sans-serif;
+    font-size: 12px;
 }
 
 .cp_labels div
 {
-	float: left;
-	clear: left;
-	width: 12px;
-	margin: 0px 0px 3px 0px;
+    float: left;
+    clear: left;
+    width: 12px;
+    margin: 0px 0px 3px 0px;
 }
 
 .cp_hottext
 {
-	float: left;
-	width: 24px;
-	margin: 0px -8px 0px 10px;
+    float: left;
+    width: 24px;
+    margin: 0px -8px 0px 10px;
 }
 
 .cp_hex
 {
-	float: left;
-	clear: both;
-	margin: 6px 0px 0px 58px;
+    float: left;
+    clear: both;
+    margin: 6px 0px 0px 58px;
 }
 
 .cp_hex input
 {
-	width: 127px;
-	background: #555;
-	border: 1px solid #333;
-	color: #FFF;
-	padding: 1px 0px 1px 0px;
-	margin: 0px 0px 0px 10px;
-	text-transform: uppercase;
-	text-decoration: none !important;
-	text-shadow: 1px 1px 1px #000;
-	font-family: 'Droid Sans', sans-serif;
-	font-size: 11px;
-	letter-spacing: 1px;
+    width: 127px;
+    background: #555;
+    border: 1px solid #333;
+    color: #FFF;
+    padding: 1px 0px 1px 0px;
+    margin: 0px 0px 0px 10px;
+    text-transform: uppercase;
+    text-decoration: none !important;
+    text-shadow: 1px 1px 1px #000;
+    font-family: 'Droid Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
 }
 
 .cp_hex input:focus
 {
-	outline: none;
-	padding: 2px 0px 2px 0px;
-	margin: -1px 0px -1px 11px;
-	background: #FFF;
-	color: #000;
-	text-shadow: none;
-	font-family: 'Droid Sans', sans-serif;
-	font-size: 11px;
-	letter-spacing: 1px;
+    outline: none;
+    padding: 2px 0px 2px 0px;
+    margin: -1px 0px -1px 11px;
+    background: #FFF;
+    color: #000;
+    text-shadow: none;
+    font-family: 'Droid Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
 }
 
 .cp_spectrum
 {
-	float: left;
-	width: 234px;
-	background: #333;
-	height: 20px;
-	clear: both;
-	margin: 12px 4px 0px 4px;
-	border: solid 1px #000;
+    float: left;
+    width: 234px;
+    background: #333;
+    height: 20px;
+    clear: both;
+    margin: 12px 4px 0px 4px;
+    border: solid 1px #000;
 }
 
 .cp_slider1, .cp_slider2, .cp_slider3, .cp_slider4
 {
-	width: 127px;
+    width: 127px;
     height: 12px;
-	float: left;
-	clear: none;
-	margin: 0px 0px 5px 0px;
+    float: left;
+    clear: none;
+    margin: 0px 0px 5px 0px;
 }
 
 .cp_hottext input.hottext
 {
-	background: none;
-	float: right;
-	margin: -1px 0px 4px 0px;
-	padding: 0px;
-	width: 23px;
-	color: #FFF;
-	text-shadow: 1px 1px 1px #000;
-	font-family: 'Droid Sans', sans-serif;
-	font-size: 11px;
-	text-align: center;
+    background: none;
+    float: right;
+    margin: -1px 0px 4px 0px;
+    padding: 0px;
+    width: 23px;
+    color: #FFF;
+    text-shadow: 1px 1px 1px #000;
+    font-family: 'Droid Sans', sans-serif;
+    font-size: 11px;
+    text-align: center;
 }
 
 .cp_hottext input.hottextInput
 {
-	background: #FFF;
-	color: #000;
-	text-shadow: none;
-	border: 1px solid #333;
-	margin: -1px -2px 1px 1px;
-	padding: 1px;
-	text-decoration: none;
-	outline: none;
+    background: #FFF;
+    color: #000;
+    text-shadow: none;
+    border: 1px solid #333;
+    margin: -1px -2px 1px 1px;
+    padding: 1px;
+    text-decoration: none;
+    outline: none;
 }
 
 .cp_sliders .slider-track
 {
-	background: none;
+    background: none;
 }
 
 .cp_sliders .knob
 {
-	background: url(../img/knob.png) no-repeat transparent center center;
+    background: url(../img/knob.png) no-repeat transparent center center;
 }

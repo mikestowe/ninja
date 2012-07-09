@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!doctype html>
 <!-- <copyright>
 Copyright (c) 2012, Motorola Mobility, Inc
 All Rights Reserved.
@@ -29,9 +29,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> -->
 <html lang="en">
-	<head>
-    	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    	<link rel="stylesheet" type="text/css" href="css/TimelineTrack.css">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/TimelineTrack.css">
         <script type="text/montage-serialization">
                {
                    "owner": {
@@ -50,11 +50,11 @@ POSSIBILITY OF SUCH DAMAGE.
                    },
 
                    "tween" : {
-                   		"prototype" : "js/panels/timeline/Tween.reel",
-                   		"properties" : {
-                   			"element":{"#": "track_lane"}
-                   		},
-						"bindings" : {
+                        "prototype" : "js/panels/timeline/Tween.reel",
+                        "properties" : {
+                            "element":{"#": "track_lane"}
+                        },
+                        "bindings" : {
                            "tweenData" : {
                                "boundObject" : {"@": "tweenRepetition"},
                                "boundObjectPropertyPath" : "objectAtCurrentIteration.tweenData",
@@ -65,64 +65,64 @@ POSSIBILITY OF SUCH DAMAGE.
 
                    "tweenRepetition": {
                        "prototype": "montage/ui/repetition.reel",
-                   	   "properties": {
-                   	       "element": {"#": "track_lanes"},
-                   	       "isSelectionEnabled" : false
-                   	   },
-                   	   "bindings": {
-                   	       "objects": {
-                   	           "boundObject": {"@": "owner"},
-                   	           "boundObjectPropertyPath": "tweens",
-                   	           "oneway": false
-                   	       }
-                   	   }
+                       "properties": {
+                           "element": {"#": "track_lanes"},
+                           "isSelectionEnabled" : false
+                       },
+                       "bindings": {
+                           "objects": {
+                               "boundObject": {"@": "owner"},
+                               "boundObjectPropertyPath": "tweens",
+                               "oneway": false
+                           }
+                       }
                    },
                    "styleTrackRepetition": {
                        "prototype": "montage/ui/repetition.reel",
-                   	   "properties": {
-                   	       "element": {"#": "content_style_tracks"},
-                   	       "isSelectionEnabled" : false
-                   	   },
-                   	   "bindings": {
-                   	       "objects": {
-                   	           "boundObject": {"@": "owner"},
-                   	           "boundObjectPropertyPath": "arrStyleTracks",
-                   	           "oneway": false
-                   	       }
-                   	   }
+                       "properties": {
+                           "element": {"#": "content_style_tracks"},
+                           "isSelectionEnabled" : false
+                       },
+                       "bindings": {
+                           "objects": {
+                               "boundObject": {"@": "owner"},
+                               "boundObjectPropertyPath": "arrStyleTracks",
+                               "oneway": false
+                           }
+                       }
                    },
                    "stylePropertyTrack" : {
-               	        "prototype" : "js/panels/Timeline/PropertyTrack.reel",
-               			"properties" : {
-               				"element":{"#": "style-track-base"}
-               			},
+                        "prototype" : "js/panels/Timeline/PropertyTrack.reel",
+                        "properties" : {
+                            "element":{"#": "style-track-base"}
+                        },
                         "bindings" : {
                             "propTrackData" : {
-                           	    "boundObject" : {"@" : "styleTrackRepetition"},
-                           	    "boundObjectPropertyPath" : "objectAtCurrentIteration.propTrackData",
-                           	    "oneway" : false
-                           	}
+                                "boundObject" : {"@" : "styleTrackRepetition"},
+                                "boundObjectPropertyPath" : "objectAtCurrentIteration.propTrackData",
+                                "oneway" : false
+                            }
                         }
-               	   },
+                   },
                    "positionTracksRepetition": {
                        "prototype": "montage/ui/repetition.reel",
-                   	   "properties": {
-                   	       "element": {"#": "content_position_tracks"},
-                   	       "isSelectionEnabled" : false
-                   	   },
-                   	   "bindings": {
-                   	       "objects": {
-                   	           "boundObject": {"@": "owner"},
-                   	           "boundObjectPropertyPath": "arrPositionTracks",
-                   	           "oneway": false
-                   	       }
-                   	   }
+                       "properties": {
+                           "element": {"#": "content_position_tracks"},
+                           "isSelectionEnabled" : false
+                       },
+                       "bindings": {
+                           "objects": {
+                               "boundObject": {"@": "owner"},
+                               "boundObjectPropertyPath": "arrPositionTracks",
+                               "oneway": false
+                           }
+                       }
                    },
-					"positionPropertyTrack" : {
-						"prototype" : "js/panels/Timeline/PropertyTrack.reel",
-						"properties" : {
-							"element":{"#": "position_track_base"}
-						},
+                    "positionPropertyTrack" : {
+                        "prototype" : "js/panels/Timeline/PropertyTrack.reel",
+                        "properties" : {
+                            "element":{"#": "position_track_base"}
+                        },
                         "bindings" : {
                             "propTrackData" : {
                                  "boundObject" : {"@" : "positionTracksRepetition"},
@@ -130,97 +130,97 @@ POSSIBILITY OF SUCH DAMAGE.
                                  "oneway" : false
                             }
                         }
-					},
-					
-					"mainCollapser" : {
-						"prototype" : "js/panels/timeline/Collapser",
-						"properties" : {
-							"element" : {"#" : "content-main"},
-							"myContent" : {"#":"content-main"},
-							"contentHeight" : 60,
-							"isLabelClickable" : false,
-							"clicker" : {"#" : "label-main"},
-							"isCollapsed" : true,
-							"isAnimated" : true	
-						},
-						"bindings" : {
-							"isToggling" : {
-								"boundObject" : {"@" : "owner" },
-								"boundObjectPropertyPath" : "isMainCollapsed",
-								"oneway" : false
-							},
-							"bypassAnimation" : {
-								"boundObject" : {"@": "owner"},
-								"boundObjectPropertyPath" : "bypassAnimation",
-								"oneway" : false
-							}
-						}
-					},
-					
-					"positionCollapser" : {
-						"prototype" : "js/panels/timeline/Collapser",
-						"properties" : {
-							"element" : {"#" : "content_position_collapser"},
-							"myContent" : {"#":"content_position_collapser"},
-							"contentHeight" : 40,
-							"isLabelClickable" : false,
-							"clicker" : {"#" : "label-position"},
-							"isCollapsed" : true,
-							"isAnimated" : true	
-						},
-						"bindings" : {
-							"isToggling" : {
-								"boundObject" : {"@" : "owner" },
-								"boundObjectPropertyPath" : "isPositionCollapsed",
-								"oneway" : false
-							},
-							"bypassAnimation" : {
-								"boundObject" : {"@": "owner"},
-								"boundObjectPropertyPath" : "bypassAnimation",
-								"oneway" : false
-							}
-						}
-					},
-					
-					"styleCollapser" : {
-						"prototype" : "js/panels/timeline/Collapser",
-						"properties" : {
-							"element" : {"#" : "content-styles"},
-							"myContent" : {"#":"content-styles"},
-							"contentHeight" : 0,
-							"isLabelClickable" : false,
-							"clicker" : {"#" : "label-styles"},
-							"isCollapsed" : true,
-							"isAnimated" : true	
-						},
-						"bindings" : {
-							"isToggling" : {
-								"boundObject" : {"@" : "owner" },
-								"boundObjectPropertyPath" : "isStyleCollapsed",
-								"oneway" : false
-							},
-							"bypassAnimation" : {
-								"boundObject" : {"@": "owner"},
-								"boundObjectPropertyPath" : "bypassAnimation",
-								"oneway" : false
-							}
-						}
-					}
-                   
-                   
+                    },
+
+                    "mainCollapser" : {
+                        "prototype" : "js/panels/timeline/Collapser",
+                        "properties" : {
+                            "element" : {"#" : "content-main"},
+                            "myContent" : {"#":"content-main"},
+                            "contentHeight" : 60,
+                            "isLabelClickable" : false,
+                            "clicker" : {"#" : "label-main"},
+                            "isCollapsed" : true,
+                            "isAnimated" : true
+                        },
+                        "bindings" : {
+                            "isToggling" : {
+                                "boundObject" : {"@" : "owner" },
+                                "boundObjectPropertyPath" : "isMainCollapsed",
+                                "oneway" : false
+                            },
+                            "bypassAnimation" : {
+                                "boundObject" : {"@": "owner"},
+                                "boundObjectPropertyPath" : "bypassAnimation",
+                                "oneway" : false
+                            }
+                        }
+                    },
+
+                    "positionCollapser" : {
+                        "prototype" : "js/panels/timeline/Collapser",
+                        "properties" : {
+                            "element" : {"#" : "content_position_collapser"},
+                            "myContent" : {"#":"content_position_collapser"},
+                            "contentHeight" : 40,
+                            "isLabelClickable" : false,
+                            "clicker" : {"#" : "label-position"},
+                            "isCollapsed" : true,
+                            "isAnimated" : true
+                        },
+                        "bindings" : {
+                            "isToggling" : {
+                                "boundObject" : {"@" : "owner" },
+                                "boundObjectPropertyPath" : "isPositionCollapsed",
+                                "oneway" : false
+                            },
+                            "bypassAnimation" : {
+                                "boundObject" : {"@": "owner"},
+                                "boundObjectPropertyPath" : "bypassAnimation",
+                                "oneway" : false
+                            }
+                        }
+                    },
+
+                    "styleCollapser" : {
+                        "prototype" : "js/panels/timeline/Collapser",
+                        "properties" : {
+                            "element" : {"#" : "content-styles"},
+                            "myContent" : {"#":"content-styles"},
+                            "contentHeight" : 0,
+                            "isLabelClickable" : false,
+                            "clicker" : {"#" : "label-styles"},
+                            "isCollapsed" : true,
+                            "isAnimated" : true
+                        },
+                        "bindings" : {
+                            "isToggling" : {
+                                "boundObject" : {"@" : "owner" },
+                                "boundObjectPropertyPath" : "isStyleCollapsed",
+                                "oneway" : false
+                            },
+                            "bypassAnimation" : {
+                                "boundObject" : {"@": "owner"},
+                                "boundObjectPropertyPath" : "bypassAnimation",
+                                "oneway" : false
+                            }
+                        }
+                    }
+
+
                }
            </script>
-	</head>
-	<body>
+    </head>
+    <body>
 
-    	<div data-montage-id="track" class="timeline-track">
+        <div data-montage-id="track" class="timeline-track">
             <div data-montage-id="track_lanes" class="tracklane" style="position: relative;">
                 <div data-montage-id="track_lane"></div>
             </div>
             <div class="label-main collapsible-label collapsible-collapsed" data-montage-id="label-main"></div>
             <div class="collapsible-content collapsible-collapsed content-main" data-montage-id="content-main">
 
-            	<div class="label-position collapsible-label collapsible-collapsed" data-montage-id="label-position"></div>
+                <div class="label-position collapsible-label collapsible-collapsed" data-montage-id="label-position"></div>
 
                 <div class="content-position collapsible-content collapsible-collapsed" data-montage-id="content_position_collapser">
                     <div data-montage-id="content_position_tracks">
@@ -228,16 +228,16 @@ POSSIBILITY OF SUCH DAMAGE.
                     </div>
                 </div>
 
-            	<div class="label-styles collapsible-label collapsible-collapsed" data-montage-id="label-styles"></div>
+                <div class="label-styles collapsible-label collapsible-collapsed" data-montage-id="label-styles"></div>
 
-            	<div class="content-styles collapsible-content collapsible-collapsed" data-montage-id="content-styles">
+                <div class="content-styles collapsible-content collapsible-collapsed" data-montage-id="content-styles">
                     <div data-montage-id="content_style_tracks">
-            		    <div data-montage-id="style-track-base"></div>
+                        <div data-montage-id="style-track-base"></div>
                     </div>
-            	</div>
+                </div>
 
             </div>
-    	</div>
+        </div>
 
     </body>
 </html>

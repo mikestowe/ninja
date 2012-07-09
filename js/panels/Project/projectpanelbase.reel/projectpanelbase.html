@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!doctype html>
 <!-- <copyright>
 Copyright (c) 2012, Motorola Mobility, Inc
 All Rights Reserved.
@@ -29,8 +29,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> -->
 <html lang="en">
-	<head>
-    	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
          <script type="text/montage-serialization">
         {
@@ -41,91 +41,91 @@ POSSIBILITY OF SUCH DAMAGE.
                 }
             }
 
-    	}
-		</script>
+        }
+        </script>
 
-	</head>
-	<body>
-    
-    	<div id="project-panel" class="Project-Panel">
-    		
-    		<div id="pp-container" style="height: 100%;position: relative;">
+    </head>
+    <body>
 
-			<div id="pp-col-buttons">
-				<div class="pp-button button-project active" title="Project" tabindex="0"><div>&nbsp;</div></div>
-				<div class="nj-divider divider-horizontal"></div>
-				<div class="pp-button button-component" title="Montage Components" tabindex="0"><div>&nbsp;</div></div>
-				<div class="pp-button button-script" title="Scripts" tabindex="0"><div>&nbsp;</div></div>
-				<div class="pp-button button-video" title="Video" tabindex="0"><div>&nbsp;</div></div>
-				<div class="pp-button button-audio" title="Audio" tabindex="0"><div>&nbsp;</div></div>
-				<div class="pp-button button-image" title="Images" tabindex="0"><div>&nbsp;</div></div>
-				<div class="pp-button button-tag" title="Tags" tabindex="0"><div>&nbsp;</div></div>
-				<div class="pp-button button-flash" title="Flash" tabindex="0"><div>&nbsp;</div></div>
-				<div class="nj-divider divider-horizontal"></div>
-				<div class="pp-button button-showall" title="Show All" tabindex="0"><div>&nbsp;</div></div>
-			</div>
+        <div id="project-panel" class="Project-Panel">
 
-			<div id="pp-col-files">
+            <div id="pp-container" style="height: 100%;position: relative;">
 
-				<div id="pp-files">
-					<div id="pp-view-project" class="pp-view">
-						<div class="pp-header-container pp-scroll-linked">
-							<div class="pp-header header-file" data-column="0">Files<div class="pp-resize-grip">&nbsp;</div></div>
-							<div class="pp-header header-date" data-column="1">Date<div class="pp-resize-grip">&nbsp;</div></div>
-							<div class="pp-header header-size" data-column="2">Size<div class="pp-resize-grip">&nbsp;</div></div>
-						</div>
-						<div id="pp-container-list" class="pp-scroll-main">
-							<div class="pp-scroll-linked" id="getme">
-								<h3>No project open.</h3>
-							</div>
-						</div>
-					</div>
-					<div id="pp-view-assets" class="pp-view">
-						<div class="pp-header-container pp-scroll-linked">
-							<div class="pp-header header-file pp-sort sort-ascending" data-column="0" data-direction="ascending">Files<div class="pp-sort-arrow"></div><div class="pp-resize-grip">&nbsp;</div></div>
-							<div class="pp-header header-date" data-column="1" data-direction="ascending">Date<div class="pp-sort-arrow"></div><div class="pp-resize-grip">&nbsp;</div></div>
-							<div class="pp-header header-size" data-column="2" data-direction="ascending">Size<div class="pp-sort-arrow"></div><div class="pp-resize-grip">&nbsp;</div></div>
-							<div class="pp-header header-type" data-column="3" data-direction="ascending">Type<div class="pp-sort-arrow"></div><div class="pp-resize-grip">&nbsp;</div></div>
-						</div>
-						<div id="pp-container-assets" class="pp-scroll-main">
-							<div class="pp-scroll-linked">
-								<div class="pp-asset-col pp-col-files"></div>
-								<div class="pp-asset-col pp-col-date"></div>
-								<div class="pp-asset-col pp-col-size"></div>
-								<div class="pp-asset-col pp-col-type"></div>
-								<div class="clear">&nbsp;</div>
-								<h3>No matching files.</h3>
-							</div>
-						</div>
-					</div>
-				</div>
+            <div id="pp-col-buttons">
+                <div class="pp-button button-project active" title="Project" tabindex="0"><div>&nbsp;</div></div>
+                <div class="nj-divider divider-horizontal"></div>
+                <div class="pp-button button-component" title="Montage Components" tabindex="0"><div>&nbsp;</div></div>
+                <div class="pp-button button-script" title="Scripts" tabindex="0"><div>&nbsp;</div></div>
+                <div class="pp-button button-video" title="Video" tabindex="0"><div>&nbsp;</div></div>
+                <div class="pp-button button-audio" title="Audio" tabindex="0"><div>&nbsp;</div></div>
+                <div class="pp-button button-image" title="Images" tabindex="0"><div>&nbsp;</div></div>
+                <div class="pp-button button-tag" title="Tags" tabindex="0"><div>&nbsp;</div></div>
+                <div class="pp-button button-flash" title="Flash" tabindex="0"><div>&nbsp;</div></div>
+                <div class="nj-divider divider-horizontal"></div>
+                <div class="pp-button button-showall" title="Show All" tabindex="0"><div>&nbsp;</div></div>
+            </div>
 
-			</div>
-			<div id="pp-search">
+            <div id="pp-col-files">
 
-				<table style="width: 100%;">
-					<tr>
-						<td>
-							<label for="pp-search-files"></label>
-							<input id="pp-search-files" class="nj-skinned" type="search" disabled="true" value="">
-						</td>
-						<td style="width: 55px;">
-							<div class="pp-button button-delete" tabindex="0"></div>
-							<div class="pp-button button-add" tabindex="0">
-								<div class="pp-popup">
-									<p class="pp-new-file">New File</p>
-									<p class="pp-new-directory">New Directory</p>
-								</div>
-							</div>
-						</td>
-					</tr>
-				</table>
-				
-			</div>
-			
-			</div>
+                <div id="pp-files">
+                    <div id="pp-view-project" class="pp-view">
+                        <div class="pp-header-container pp-scroll-linked">
+                            <div class="pp-header header-file" data-column="0">Files<div class="pp-resize-grip">&nbsp;</div></div>
+                            <div class="pp-header header-date" data-column="1">Date<div class="pp-resize-grip">&nbsp;</div></div>
+                            <div class="pp-header header-size" data-column="2">Size<div class="pp-resize-grip">&nbsp;</div></div>
+                        </div>
+                        <div id="pp-container-list" class="pp-scroll-main">
+                            <div class="pp-scroll-linked" id="getme">
+                                <h3>No project open.</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="pp-view-assets" class="pp-view">
+                        <div class="pp-header-container pp-scroll-linked">
+                            <div class="pp-header header-file pp-sort sort-ascending" data-column="0" data-direction="ascending">Files<div class="pp-sort-arrow"></div><div class="pp-resize-grip">&nbsp;</div></div>
+                            <div class="pp-header header-date" data-column="1" data-direction="ascending">Date<div class="pp-sort-arrow"></div><div class="pp-resize-grip">&nbsp;</div></div>
+                            <div class="pp-header header-size" data-column="2" data-direction="ascending">Size<div class="pp-sort-arrow"></div><div class="pp-resize-grip">&nbsp;</div></div>
+                            <div class="pp-header header-type" data-column="3" data-direction="ascending">Type<div class="pp-sort-arrow"></div><div class="pp-resize-grip">&nbsp;</div></div>
+                        </div>
+                        <div id="pp-container-assets" class="pp-scroll-main">
+                            <div class="pp-scroll-linked">
+                                <div class="pp-asset-col pp-col-files"></div>
+                                <div class="pp-asset-col pp-col-date"></div>
+                                <div class="pp-asset-col pp-col-size"></div>
+                                <div class="pp-asset-col pp-col-type"></div>
+                                <div class="clear">&nbsp;</div>
+                                <h3>No matching files.</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    	</div>
+            </div>
+            <div id="pp-search">
+
+                <table style="width: 100%;">
+                    <tr>
+                        <td>
+                            <label for="pp-search-files"></label>
+                            <input id="pp-search-files" class="nj-skinned" type="search" disabled="true" value="">
+                        </td>
+                        <td style="width: 55px;">
+                            <div class="pp-button button-delete" tabindex="0"></div>
+                            <div class="pp-button button-add" tabindex="0">
+                                <div class="pp-popup">
+                                    <p class="pp-new-file">New File</p>
+                                    <p class="pp-new-directory">New Directory</p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+
+            </div>
+
+        </div>
 
     </body>
 </html>

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!doctype html>
 <!-- <copyright>
 Copyright (c) 2012, Motorola Mobility, Inc
 All Rights Reserved.
@@ -29,9 +29,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> -->
 <html lang="en">
-	<head>
-    	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    	<link rel="stylesheet" type="text/css" href="materials-library-panel.css">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="materials-library-panel.css">
          <script type="text/montage-serialization">
         {
             "duplicateButton": {
@@ -39,7 +39,7 @@ POSSIBILITY OF SUCH DAMAGE.
                 "properties": {
                     "element": {"#": "ml_duplicate_btn"},
  					"enabled": true
-               },
+                },
                 "listeners": [
                     {
                         "type": "action",
@@ -63,7 +63,7 @@ POSSIBILITY OF SUCH DAMAGE.
                 "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "ml_delete_btn"},
- 					"enabled": false
+                    "enabled": false
                },
                 "listeners": [
                     {
@@ -110,13 +110,13 @@ POSSIBILITY OF SUCH DAMAGE.
                     "deleteButton": {"@": "deleteButton"}
                 }
             }
-    	}
-		</script>
-   		
-	</head>
-	<body>
+        }
+        </script>
 
-    	<div data-montage-id="materials_library_panel" class="materials_library_panel">
+    </head>
+    <body>
+
+        <div data-montage-id="materials_library_panel" class="materials_library_panel">
             <section data-montage-id="ml_tree_holder" class="ml_tree_holder">
                 <div data-montage-id="materials_library_tree"></div>
             </section>
@@ -126,7 +126,7 @@ POSSIBILITY OF SUCH DAMAGE.
                 <button data-montage-id="ml_edit_btn" class="nj-skinned ml_edit_btn">Edit</button>
                 <button data-montage-id="ml_delete_btn" class="nj-skinned ml_delete_btn">Delete</button>
             </div>
-    	</div>
+        </div>
 
     </body>
 </html>

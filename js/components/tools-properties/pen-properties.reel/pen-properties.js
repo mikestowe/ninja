@@ -108,7 +108,7 @@ var PenProperties = exports.PenProperties = Montage.create(ToolProperties, {
 
     strokeSize: {
         get: function () {
-            return this._strokeSize; 
+            return this._strokeSize;
         }
     },
 

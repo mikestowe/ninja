@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!doctype html>
 <!-- <copyright>
 Copyright (c) 2012, Motorola Mobility, Inc
 All Rights Reserved.
@@ -29,24 +29,24 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> -->
 <html lang="en">
-	<head>
-    	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    	<link rel="stylesheet" type="text/css" href="css/Layer.css">
-   		<script type="text/montage-serialization">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/Layer.css">
+        <script type="text/montage-serialization">
             {
                 "owner": {
                     "prototype": "js/panels/Timeline/Layer.reel",
                     "properties": {
                         "element": {"#": "layer"},
-						"styleRepetition" : {"@":"repetition1"},
-						"dynamicLayerName" : {"@":"dtext1"},
-						"dynamicLayerTag" : {"@": "dtext2"},
-						"layer_label_text" : {"#": "layer-label-text"},
-						"mainCollapser" : {"@" : "mainCollapser"},
-						"positionCollapser" : {"@" : "positionCollapser"},
-						"styleCollapser" : {"@" : "styleCollapser"},
-						"clickerMain" : {"#" : "clicker-main"},
-						"myLabel" : {"#" : "myLabel"},
+                        "styleRepetition" : {"@":"repetition1"},
+                        "dynamicLayerName" : {"@":"dtext1"},
+                        "dynamicLayerTag" : {"@": "dtext2"},
+                        "layer_label_text" : {"#": "layer-label-text"},
+                        "mainCollapser" : {"@" : "mainCollapser"},
+                        "positionCollapser" : {"@" : "positionCollapser"},
+                        "styleCollapser" : {"@" : "styleCollapser"},
+                        "clickerMain" : {"#" : "clicker-main"},
+                        "myLabel" : {"#" : "myLabel"},
                         "leftControl": {"@" : "dtext_position_x"},
                         "topControl": {"@" : "dtext_position_y"},
                         "widthControl": {"@" : "dtext_scale_x"},
@@ -56,256 +56,256 @@ POSSIBILITY OF SUCH DAMAGE.
                         "visibilityButton":{"#" : "visibilityButton"}
                     }
                 },
-	            "dtext1" : {
-	            	"prototype" : "montage/ui/dynamic-text.reel",
-	            	"properties" : {
-	            		"element" : {"#" : "layer-label-text"}
-	            	},
-	            	"bindings" : {
-	            		"value" : {
-	            			"boundObject" : {"@": "owner"},
-	            			"boundObjectPropertyPath" : "layerName",
-	            			"oneway" : true
-	            		}
-	            	}
-	            },
-	            "dtext2" : {
-	            	"prototype" : "montage/ui/dynamic-text.reel",
-	            	"properties" : {
-	            		"element" : {"#" : "layer-tag"}
-	            	},
-	            	"bindings" : {
-	            		"value" : {
-	            			"boundObject" : {"@": "owner"},
-	            			"boundObjectPropertyPath" : "layerTag",
-	            			"oneway" : false
-	            		}
-	            	}
-	            },
-	            "repetition1": {
-	                "prototype": "montage/ui/repetition.reel",
-	                "properties": {
-	                    "element": {"#": "style-container"},
-	                    "isSelectionEnabled" : true
-	                },
-	                "bindings": {
-	                    "objects": {
-	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "arrLayerStyles",
-	                        "oneway": false
-	                    }
-	                }
-	            },
-	            "style" : {
-	            	"prototype" : "js/panels/Timeline/Style.reel[LayerStyle]",
-	            	"properties" : {
-	            		"element" : {"#" : "layer-style"}
-	            	},
-	            	"bindings" : {
-	            		"styleID" : {
-	            			"boundObject" : {"@": "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.styleID",
-	            			"oneway" : false
-	            		},
-	            		"whichView" : {
-	            			"boundObject" : {"@": "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.whichView",
-	            			"oneway" : false
-	            		},
-	            		"editorProperty" : {
-	            			"boundObject" : {"@": "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.editorProperty",
-	            			"oneway" : false
-	            		},
-	            		"isSelected" : {
-	            			"boundObject" : {"@": "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isSelected",
-	            			"oneway" : false
-	            		},
-	            		"isActive" : {
-	            			"boundObject" : {"@": "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isActive",
-	            			"oneway" : false
-	            		},
-	            		"editorValue" : {
-	            			"boundObject" : {"@": "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.editorValue",
-	            			"oneway" : false
-	            		},
-	            		"ruleTweener" : {
-	            			"boundObject" : {"@": "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.ruleTweener",
-	            			"oneway" : false
-	            		},
+                "dtext1" : {
+                    "prototype" : "montage/ui/dynamic-text.reel",
+                    "properties" : {
+                        "element" : {"#" : "layer-label-text"}
+                    },
+                    "bindings" : {
+                        "value" : {
+                            "boundObject" : {"@": "owner"},
+                            "boundObjectPropertyPath" : "layerName",
+                            "oneway" : true
+                        }
+                    }
+                },
+                "dtext2" : {
+                    "prototype" : "montage/ui/dynamic-text.reel",
+                    "properties" : {
+                        "element" : {"#" : "layer-tag"}
+                    },
+                    "bindings" : {
+                        "value" : {
+                            "boundObject" : {"@": "owner"},
+                            "boundObjectPropertyPath" : "layerTag",
+                            "oneway" : false
+                        }
+                    }
+                },
+                "repetition1": {
+                    "prototype": "montage/ui/repetition.reel",
+                    "properties": {
+                        "element": {"#": "style-container"},
+                        "isSelectionEnabled" : true
+                    },
+                    "bindings": {
+                        "objects": {
+                            "boundObject": {"@": "owner"},
+                            "boundObjectPropertyPath": "arrLayerStyles",
+                            "oneway": false
+                        }
+                    }
+                },
+                "style" : {
+                    "prototype" : "js/panels/Timeline/Style.reel[LayerStyle]",
+                    "properties" : {
+                        "element" : {"#" : "layer-style"}
+                    },
+                    "bindings" : {
+                        "styleID" : {
+                            "boundObject" : {"@": "repetition1"},
+                            "boundObjectPropertyPath" : "objectAtCurrentIteration.styleID",
+                            "oneway" : false
+                        },
+                        "whichView" : {
+                            "boundObject" : {"@": "repetition1"},
+                            "boundObjectPropertyPath" : "objectAtCurrentIteration.whichView",
+                            "oneway" : false
+                        },
+                        "editorProperty" : {
+                            "boundObject" : {"@": "repetition1"},
+                            "boundObjectPropertyPath" : "objectAtCurrentIteration.editorProperty",
+                            "oneway" : false
+                        },
+                        "isSelected" : {
+                            "boundObject" : {"@": "repetition1"},
+                            "boundObjectPropertyPath" : "objectAtCurrentIteration.isSelected",
+                            "oneway" : false
+                        },
+                        "isActive" : {
+                            "boundObject" : {"@": "repetition1"},
+                            "boundObjectPropertyPath" : "objectAtCurrentIteration.isActive",
+                            "oneway" : false
+                        },
+                        "editorValue" : {
+                            "boundObject" : {"@": "repetition1"},
+                            "boundObjectPropertyPath" : "objectAtCurrentIteration.editorValue",
+                            "oneway" : false
+                        },
+                        "ruleTweener" : {
+                            "boundObject" : {"@": "repetition1"},
+                            "boundObjectPropertyPath" : "objectAtCurrentIteration.ruleTweener",
+                            "oneway" : false
+                        },
                         "colorelement" : {
                             "boundObject" : {"@": "repetition1"},
                             "boundObjectPropertyPath" : "objectAtCurrentIteration.colorelement",
                             "oneway" : false
                         }
-	            	}
-	            },
-				"dtext_position_x" : {
+                    }
+                },
+                "dtext_position_x" : {
                     "prototype": "js/components/hottextunit.reel[HotTextUnit]",
-            	    "properties": {
-            	        "element": {"#": "position-x"},
-            	        "maxValue" : 100000,
+                    "properties": {
+                        "element": {"#": "position-x"},
+                        "maxValue" : 100000,
                         "minValue" : -100000,
                         "acceptableUnits" : "px",
                         "units" : "px",
                         "value" : 0
-            	    },
-	                "bindings": {
-	                    "value": {
-	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "dtextPositionX",
-	                        "oneway": false
-	                    }
-	                }
-				},
-				"dtext_position_y" : {
+                    },
+                    "bindings": {
+                        "value": {
+                            "boundObject": {"@": "owner"},
+                            "boundObjectPropertyPath": "dtextPositionX",
+                            "oneway": false
+                        }
+                    }
+                },
+                "dtext_position_y" : {
                     "prototype": "js/components/hottextunit.reel[HotTextUnit]",
-            	    "properties": {
-            	        "element": {"#": "position-y"},
-            	        "maxValue" : 100000,
+                    "properties": {
+                        "element": {"#": "position-y"},
+                        "maxValue" : 100000,
                         "minValue" : -100000,
                         "acceptableUnits" : "px",
                         "units" : "px",
                         "value" : 0
-            	    },
-	                "bindings": {
-	                    "value": {
-	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "dtextPositionY",
-	                        "oneway": false
-	                    }
-	                }
-				},
-				"dtext_scale_x" : {
+                    },
+                    "bindings": {
+                        "value": {
+                            "boundObject": {"@": "owner"},
+                            "boundObjectPropertyPath": "dtextPositionY",
+                            "oneway": false
+                        }
+                    }
+                },
+                "dtext_scale_x" : {
                     "prototype": "js/components/hottextunit.reel[HotTextUnit]",
-            	    "properties": {
-            	        "element": {"#": "scale-x"},
-            	        "maxValue" : 100000,
+                    "properties": {
+                        "element": {"#": "scale-x"},
+                        "maxValue" : 100000,
                         "minValue" : -100000,
                         "acceptableUnits" : "px",
                         "units" : "px",
                         "value" : 0
-            	    },
-	                "bindings": {
-	                    "value": {
-	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "dtextScaleX",
-	                        "oneway": false
-	                    }
-	                }
-				},
-				"dtext_scale_y" : {
+                    },
+                    "bindings": {
+                        "value": {
+                            "boundObject": {"@": "owner"},
+                            "boundObjectPropertyPath": "dtextScaleX",
+                            "oneway": false
+                        }
+                    }
+                },
+                "dtext_scale_y" : {
                     "prototype": "js/components/hottextunit.reel[HotTextUnit]",
-            	    "properties": {
-            	        "element": {"#": "scale-y"},
-            	        "maxValue" : 100000,
+                    "properties": {
+                        "element": {"#": "scale-y"},
+                        "maxValue" : 100000,
                         "minValue" : -100000,
                         "acceptableUnits" : "px",
                         "units" : "px",
                         "value" : 0
-            	    },
-	                "bindings": {
-	                    "value": {
-	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "dtextScaleY",
-	                        "oneway": false
-	                    }
-	                }
-				},
-					
-				"mainCollapser" : {
-					"prototype" : "js/panels/timeline/Collapser",
-					"properties" : {
-						"element" : {"#" : "content-main"},
-						"myContent" : {"#" : "content-main"},
-						"contentHeight" : 60,
-						"isLabelClickable" : true,
-						"clicker" : {"#" : "clicker-main"},
-						"isCollapsed" : true,
-						"isAnimated" : true	
-					},
-					"bindings" : {
-						"isToggling" : {
-							"boundObject" : {"@" : "owner" },
-							"boundObjectPropertyPath" : "isMainCollapsed",
-							"oneway" : false
-						}
-					}
-				},
-					
-				"positionCollapser" : {
-					"prototype" : "js/panels/timeline/Collapser",
-					"properties" : {
-						"element" : {"#" : "content-position"},
-						"myContent" : {"#":"content-position"},
-						"contentHeight" : 60,
-						"isLabelClickable" : true,
-						"clicker" : {"#" : "clicker-position"},
-						"isCollapsed" : true,
-						"isAnimated" : true	
-					},
-					"bindings" : {
-						"isToggling" : {
-							"boundObject" : {"@" : "owner" },
-							"boundObjectPropertyPath" : "isPositionCollapsed",
-							"oneway" : false
-						}
-					}
-				},
-					
-				"styleCollapser" : {
-					"prototype" : "js/panels/timeline/Collapser",
-					"properties" : {
-						"element" : {"#" : "content-style"},
-						"myContent" : {"#":"content-style"},
-						"contentHeight" : 0,
-						"isLabelClickable" : true,
-						"clicker" : {"#" : "clicker-style"},
-						"isCollapsed" : true,
-						"isAnimated" : true	
-					},
-					"bindings" : {
-						"isToggling" : {
-							"boundObject" : {"@" : "owner" },
-							"boundObjectPropertyPath" : "isStyleCollapsed",
-							"oneway" : false
-						}
-					}
-				}
-				
-				
+                    },
+                    "bindings": {
+                        "value": {
+                            "boundObject": {"@": "owner"},
+                            "boundObjectPropertyPath": "dtextScaleY",
+                            "oneway": false
+                        }
+                    }
+                },
+
+                "mainCollapser" : {
+                    "prototype" : "js/panels/timeline/Collapser",
+                    "properties" : {
+                        "element" : {"#" : "content-main"},
+                        "myContent" : {"#" : "content-main"},
+                        "contentHeight" : 60,
+                        "isLabelClickable" : true,
+                        "clicker" : {"#" : "clicker-main"},
+                        "isCollapsed" : true,
+                        "isAnimated" : true
+                    },
+                    "bindings" : {
+                        "isToggling" : {
+                            "boundObject" : {"@" : "owner" },
+                            "boundObjectPropertyPath" : "isMainCollapsed",
+                            "oneway" : false
+                        }
+                    }
+                },
+
+                "positionCollapser" : {
+                    "prototype" : "js/panels/timeline/Collapser",
+                    "properties" : {
+                        "element" : {"#" : "content-position"},
+                        "myContent" : {"#":"content-position"},
+                        "contentHeight" : 60,
+                        "isLabelClickable" : true,
+                        "clicker" : {"#" : "clicker-position"},
+                        "isCollapsed" : true,
+                        "isAnimated" : true
+                    },
+                    "bindings" : {
+                        "isToggling" : {
+                            "boundObject" : {"@" : "owner" },
+                            "boundObjectPropertyPath" : "isPositionCollapsed",
+                            "oneway" : false
+                        }
+                    }
+                },
+
+                "styleCollapser" : {
+                    "prototype" : "js/panels/timeline/Collapser",
+                    "properties" : {
+                        "element" : {"#" : "content-style"},
+                        "myContent" : {"#":"content-style"},
+                        "contentHeight" : 0,
+                        "isLabelClickable" : true,
+                        "clicker" : {"#" : "clicker-style"},
+                        "isCollapsed" : true,
+                        "isAnimated" : true
+                    },
+                    "bindings" : {
+                        "isToggling" : {
+                            "boundObject" : {"@" : "owner" },
+                            "boundObjectPropertyPath" : "isStyleCollapsed",
+                            "oneway" : false
+                        }
+                    }
+                }
+
+
             }
         </script>
-	</head>
-	<body>
-    
-		<div data-montage-id="layer" class="container-layer">
-			<div class="label-layer" data-montage-id="myLabel">
-				<span data-montage-id="layer-tag" class="layer-tag"></span>
-				<span class="collapsible-label" data-montage-id="layer-label-text" spellcheck="false">Label</span>
-				<span class="collapsible-clicker collapsible-collapsed" data-montage-id="clicker-main"></span>
+    </head>
+    <body>
+
+        <div data-montage-id="layer" class="container-layer">
+            <div class="label-layer" data-montage-id="myLabel">
+                <span data-montage-id="layer-tag" class="layer-tag"></span>
+                <span class="collapsible-label" data-montage-id="layer-label-text" spellcheck="false">Label</span>
+                <span class="collapsible-clicker collapsible-collapsed" data-montage-id="clicker-main"></span>
                 <div class="cssbutton button-lock" data-montage-id="layerLock"></div>
                 <div class="cssbutton button-visible" data-montage-id="visibilityButton"></div>
-			</div>
-			<div class="collapsible-content content-layer collapsible-collapsed" data-montage-id="content-main">
-				<div class="label-position">
-					<span class="collapsible-label">Position and Size</span>
-					<span class="collapsible-clicker clicker-position collapsible-collapsed" data-montage-id="clicker-position"></span>
-				</div>
-				<div class="content-position collapsible-content collapsible-collapsed" data-montage-id="content-position">
-					<div class="layout-tablew">
-						<div class="container-row">
-							<div class="cell-property">Left</div>
-							<div class="cell-value"><div data-montage-id="position-x"></div></div>
-						</div>
-						<div class="container-row">
-							<div class="cell-property">Top</div>
-							<div class="cell-value"><div data-montage-id="position-y"></div></div>
-						</div>
+            </div>
+            <div class="collapsible-content content-layer collapsible-collapsed" data-montage-id="content-main">
+                <div class="label-position">
+                    <span class="collapsible-label">Position and Size</span>
+                    <span class="collapsible-clicker clicker-position collapsible-collapsed" data-montage-id="clicker-position"></span>
+                </div>
+                <div class="content-position collapsible-content collapsible-collapsed" data-montage-id="content-position">
+                    <div class="layout-tablew">
+                        <div class="container-row">
+                            <div class="cell-property">Left</div>
+                            <div class="cell-value"><div data-montage-id="position-x"></div></div>
+                        </div>
+                        <div class="container-row">
+                            <div class="cell-property">Top</div>
+                            <div class="cell-value"><div data-montage-id="position-y"></div></div>
+                        </div>
                         <div class="container-row">
                             <div class="cell-property">Width</div>
                             <div class="cell-value"><div data-montage-id="scale-x"></div></div>
@@ -314,21 +314,21 @@ POSSIBILITY OF SUCH DAMAGE.
                             <div class="cell-property">Height</div>
                             <div class="cell-value"><div data-montage-id="scale-y"></div></div>
                         </div>
-					</div>
-				</div>
-				<div class="label-style">
-					<span class="collapsible-label">Style</span>
-					<span class="clicker-style collapsible-clicker collapsible-collapsed" data-montage-id="clicker-style"></span>
-					<div class="cssbutton button-delete disabled"></div>
-					<div class="cssbutton button-add"></div>
-				</div>
-				<div class="content-style collapsible-content collapsible-collapsed" data-montage-id="content-style">
-					<div class="" data-montage-id="style-container">
-						<div class="style-row" data-montage-id="layer-style">
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+                    </div>
+                </div>
+                <div class="label-style">
+                    <span class="collapsible-label">Style</span>
+                    <span class="clicker-style collapsible-clicker collapsible-collapsed" data-montage-id="clicker-style"></span>
+                    <div class="cssbutton button-delete disabled"></div>
+                    <div class="cssbutton button-add"></div>
+                </div>
+                <div class="content-style collapsible-content collapsible-collapsed" data-montage-id="content-style">
+                    <div class="" data-montage-id="style-container">
+                        <div class="style-row" data-montage-id="layer-style">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

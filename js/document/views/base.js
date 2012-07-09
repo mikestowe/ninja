@@ -30,66 +30,66 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 	require("montage/core/core").Montage,
-	Component = require("montage/ui/component").Component,
-	UrlParser = require("js/document/helpers/url-parser").UrlParser;
+var Montage =   require("montage/core/core").Montage,
+    Component = require("montage/ui/component").Component,
+    UrlParser = require("js/document/helpers/url-parser").UrlParser;
 ////////////////////////////////////////////////////////////////////////
-//	
+//
 exports.BaseDocumentView = Montage.create(Component, {
-	////////////////////////////////////////////////////////////////////
-	//
-	hasTemplate: {
+    ////////////////////////////////////////////////////////////////////
+    //
+    hasTemplate: {
         value: false
     },
     ////////////////////////////////////////////////////////////////////
-	//
-	urlParser: {
+    //
+    urlParser: {
         value: UrlParser
     },
-	////////////////////////////////////////////////////////////////////
-	//
-	_iframe: {
+    ////////////////////////////////////////////////////////////////////
+    //
+    _iframe: {
         value: null
     },
     ////////////////////////////////////////////////////////////////////
-	//TODO: This should be renamed to better illustrate it's a container (iframe for design, div for code view)
-	iframe: {
-		get: function() {return this._iframe;},
+    //TODO: This should be renamed to better illustrate it's a container (iframe for design, div for code view)
+    iframe: {
+        get: function() {return this._iframe;},
         set: function(value) {this._iframe= value;}
     },
-   	////////////////////////////////////////////////////////////////////
-	//
-	show: {
+    ////////////////////////////////////////////////////////////////////
+    //
+    show: {
         value: function (callback) {
-        	if (this.iframe) {
-        		this.iframe.style.display = 'block';
+            if (this.iframe) {
+                this.iframe.style.display = 'block';
                 this.iframe.style.opacity = 1;
                 this.toggleWebGlAnimation(true);
-        	} else {
-        		console.log('Error: View has no iframe to show!');
-        	}
-        	//
-        	if (callback) callback();
+            } else {
+                console.log('Error: View has no iframe to show!');
+            }
+            //
+            if (callback) callback();
         }
     },
     ////////////////////////////////////////////////////////////////////
-	//
-	hide: {
+    //
+    hide: {
         value: function (callback) {
-        	if (this.iframe) {
-        		this.iframe.style.display = 'none';
+            if (this.iframe) {
+                this.iframe.style.display = 'none';
                 this.iframe.style.opacity = 0;
                 this.pauseVideos();
                 this.toggleWebGlAnimation(false);
-        	} else {
-        		console.log('Error: View has no iframe to hide!');
-        	}
-        	//
-        	if (callback) callback();
+            } else {
+                console.log('Error: View has no iframe to hide!');
+            }
+            //
+            if (callback) callback();
         }
     }
-	////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
 });
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////

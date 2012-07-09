@@ -94,9 +94,9 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 .saveAsDialog .buttons button {
-	float: left;
-	width: 100px;
-	margin-top: 3px;
+    float: left;
+    width: 100px;
+    margin-top: 3px;
 }
 
 .saveAsDialog .okButton{

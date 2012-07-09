@@ -29,8 +29,8 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-	PanelBase = require("js/panels/PanelBase").PanelBase,
-    MaterialsLibraryPanel =	require("js/panels/Materials/materials-library-panel.reel").MaterialsLibraryPanel;
+    PanelBase = require("js/panels/PanelBase").PanelBase,
+    MaterialsLibraryPanel = require("js/panels/Materials/materials-library-panel.reel").MaterialsLibraryPanel;
 
 exports.MaterialsPanel = Montage.create(PanelBase, {
     id : {value : "materialsPanel", writable:true, enumerable:true, configurable:true},

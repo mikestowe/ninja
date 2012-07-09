@@ -89,7 +89,7 @@ exports.toolBase = Montage.create(Component, {
     HandleShiftKeyUp:   { value : function () {} },
     HandleAltKeyDown:   { value : function () {} },
     HandleAltKeyUp:     { value : function () {} },
-    
+
     HandleSpaceDown:    { value: function() { this._isSpace = true; } },
     HandleSpaceUp:      { value: function() { this._isSpace = false; } },
 
@@ -137,7 +137,7 @@ exports.toolBase = Montage.create(Component, {
 
             previousZoomValue = this.application.ninja.documentBar.zoomFactor;
             upperBoundary = previousZoomValue *1.2 ;
-            
+
             if(upperBoundary > 2000)
                 this.application.ninja.documentBar.zoomFactor = 2000;
             else
@@ -149,7 +149,7 @@ exports.toolBase = Montage.create(Component, {
     zoomOut:{
         value:function(){
             var lowerBoundary ,previousZoomValue;
-            
+
             previousZoomValue = this.application.ninja.documentBar.zoomFactor ;
             lowerBoundary = previousZoomValue/1.2 ;
 
@@ -178,7 +178,7 @@ exports.toolBase = Montage.create(Component, {
 
 //            if (drawUtils.isDrawingGrid())
 //            {
-//			    snapManager.updateWorkingPlaneFromView();
+//              snapManager.updateWorkingPlaneFromView();
 //            }
         }
     },

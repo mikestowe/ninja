@@ -33,8 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 var RDGE = RDGE || {};
 
 /*
-*	jpass geometry set - determines the category(s) of geometry that a pass will render
-*	can be OR'ed together
+*   jpass geometry set - determines the category(s) of geometry that a pass will render
+*   can be OR'ed together
 */
 RDGE.jpassGeoSet =
 {
@@ -52,8 +52,8 @@ RDGE.jpassGeoSet =
 
 
 /*
-*	The abstract base class that defines a jpass
-*	a jpass represents a single render pass of the scene graph
+*   The abstract base class that defines a jpass
+*   a jpass represents a single render pass of the scene graph
 */
 RDGE._jpassBaseClass = function () {
     this.context = RDGE.globals.engine.getContext();
@@ -73,19 +73,19 @@ RDGE._jpassBaseClass = function () {
     // the name of this pass
     this.name = "renderPass_" + RDGE.nodeIdGen.getId();
 
-    /* 
-    *	if 0 this pass and children are culled from rendering
+    /*
+    *   if 0 this pass and children are culled from rendering
     */
     this.visibility = 1;
 
     /*
-    *	called when the pass is hidden - override for customication
+    *   called when the pass is hidden - override for customication
     */
     this.onHide = function () {
     };
 
     /*
-    *	Called by the system to hide the pass and its children
+    *   Called by the system to hide the pass and its children
     */
     this.hidePass = function () {
         this.onHide();
@@ -96,7 +96,7 @@ RDGE._jpassBaseClass = function () {
     };
 
     /*
-    *	the default output render targets that this pass will create
+    *   the default output render targets that this pass will create
     */
     this.defaultTargetOut = {};
 
@@ -104,87 +104,87 @@ RDGE._jpassBaseClass = function () {
     * All the outputs required by the pass
     */
     this.outputs =
-	[
+    [
     // example
     // {'name':"u_mainRT", 'type':"target", 'width':1024, 'height':1024, 'mips':false}
-	];
+    ];
 
     /*
-    *	notifies the the renderer that the viewport was modified and needs to be reset
+    *   notifies the the renderer that the viewport was modified and needs to be reset
     */
     this.dirty = false;
 
     /*
-    *	Index of the currently selected output target
+    *   Index of the currently selected output target
     */
     this.outputIndex = 0;
 
     /*
-    *	outputs from the previous pass are set as inputs for this pass
+    *   outputs from the previous pass are set as inputs for this pass
     */
     this.inputs = [];
 
     /*
-    *	other textures requested for this pass
+    *   other textures requested for this pass
     */
     this.textures = [];
 
     /*
-    *	the flags that control how the pass is rendered
+    *   the flags that control how the pass is rendered
     */
-    this.frustum_culling = "enable"; 		// disable/enable frustum culling during the pass
-    this.clear = null; 						// flags to clear the output target with before rendering
+    this.frustum_culling = "enable";        // disable/enable frustum culling during the pass
+    this.clear = null;                      // flags to clear the output target with before rendering
     this.clearColor = null;
 
     /*
-    *	Contains a list of geometry to be rendered, during a post process render pass this will usually by a screen quad
+    *   Contains a list of geometry to be rendered, during a post process render pass this will usually by a screen quad
     */
     this.renderList =
-	[
+    [
     // example
     // { 'name':'opaqeobjects', 'geo'{ 'OPAQUE':[ new renderObject(meshNode, transformNode, RenderContext)]} }
-	];
+    ];
 
     /*
-    *	The passes that will render after this pass
+    *   The passes that will render after this pass
     */
     this.children = [];
 
     /*
-    *	This shader will override all other shaders
+    *   This shader will override all other shaders
     */
     this.shader = null;
 
     /*
-    *	Technique of from shader to use, if null currently set technique is used
+    *   Technique of from shader to use, if null currently set technique is used
     */
     this.technique = null;
 
     /*
-    *	determines the geometry that will be rendered during the pass
+    *   determines the geometry that will be rendered during the pass
     */
     this.geometrySet = "SCREEN_QUAD";
 
     /*
-    *	A camera set here will override any camera active in the scene
+    *   A camera set here will override any camera active in the scene
     */
     this.camera = null;
 
     /*
-    *	Initialize the pass
+    *   Initialize the pass
     */
     this.init = function () {
     };
 
     /*
-    *	inserts a node into the child map using the pass name as the key
+    *   inserts a node into the child map using the pass name as the key
     */
     this.insertChildPass = function (jpassObj) {
         this.children[jpassObj.name] = jpassObj;
     };
 
     /*
-    *	the scene-graph to process
+    *   the scene-graph to process
     */
     this.process = function () {
         // pre-defined local variables to prevent allocation
@@ -227,7 +227,7 @@ RDGE._jpassBaseClass = function () {
         RDGE.rdgeGlobalParameters.u_projMatrix.set(renderer.projectionMatrix);
 
         for (var bucketIdx = 0, bckCnt = this.renderList.length; bucketIdx < bckCnt; ++bucketIdx) {
-            //var curList		= this.renderList[bucketIdx];
+            //var curList       = this.renderList[bucketIdx];
             listCount = this.renderList[bucketIdx].length;
 
             for (nodeIdx = 0; nodeIdx < listCount; ++nodeIdx) {
@@ -293,22 +293,22 @@ RDGE._jpassBaseClass = function () {
     };
 
     /*
-    *	handle any setup 'before' processing the geo/scenegraph
-    *	the first step in the pass
+    *   handle any setup 'before' processing the geo/scenegraph
+    *   the first step in the pass
     */
     this.preRender = function () {
     };
 
     /*
-    *	handle any setup 'after' processing the geo/scenegraph
-    *	the last step in the pass
+    *   handle any setup 'after' processing the geo/scenegraph
+    *   the last step in the pass
     */
     this.postRender = function () {
     };
 
 
     /*
-    *	Custom function to handle any processing in between jshader passes
+    *   Custom function to handle any processing in between jshader passes
     */
     this.onPassEnd = function () {
         if (this.outputIndex + 1 < this.outputs.length)
@@ -316,22 +316,22 @@ RDGE._jpassBaseClass = function () {
     };
 
     /*
-    *	Set the list of objects to render
+    *   Set the list of objects to render
     */
     this.setRenderList = function (contextList) {
         this.renderList = contextList;
     };
 
     /*
-    *	Set the render targets to use as input for the next pass
+    *   Set the render targets to use as input for the next pass
     */
     this.setInputs = function (inputsArr) {
         this.inputs = inputsArr.slice();
     };
 
     /*
-    *	Augment the textureList passed in with the input textures
-    *	this will cause the textures to be bound to the jshader
+    *   Augment the textureList passed in with the input textures
+    *   this will cause the textures to be bound to the jshader
     */
     this.updateTextureContext = function (textureList) {
         var inputs = this.inputs.slice();
@@ -346,7 +346,7 @@ RDGE._jpassBaseClass = function () {
     };
 
     /*
-    *	If there is an output surface this will bind it
+    *   If there is an output surface this will bind it
     */
     this.bindOutput = function () {
         this.outputIndex = 0;
@@ -373,7 +373,7 @@ RDGE._jpassBaseClass = function () {
     };
 
     /*
-    *	If an output surface was bound this will unbind it
+    *   If an output surface was bound this will unbind it
     */
     this.unbindOutput = function () {
         if (this.dirty) {
@@ -385,7 +385,7 @@ RDGE._jpassBaseClass = function () {
 };
 
 /*
-*	The concrete class to be used when creating a scene pass
+*   The concrete class to be used when creating a scene pass
 */
 RDGE.jpass = function (def) {
     // inherit from the base class
@@ -431,8 +431,8 @@ RDGE.jpass = function (def) {
         else if ("renderList" == obj) {
             // put the items listed into their  buckets
             var renderList = new Array(RDGE.rdgeConstants.categoryEnumeration.MAX_CAT);
-            renderList[RDGE.rdgeConstants.categoryEnumeration.BACKGROUND] = []; //BACKGROUND	
-            renderList[RDGE.rdgeConstants.categoryEnumeration.OPAQUE] = []; //OPAQUE		
+            renderList[RDGE.rdgeConstants.categoryEnumeration.BACKGROUND] = []; //BACKGROUND
+            renderList[RDGE.rdgeConstants.categoryEnumeration.OPAQUE] = []; //OPAQUE
             renderList[RDGE.rdgeConstants.categoryEnumeration.TRANSPARENT] = []; //TRANSPARENT
             renderList[RDGE.rdgeConstants.categoryEnumeration.ADDITIVE] = []; //ADDITIVE
             renderList[RDGE.rdgeConstants.categoryEnumeration.TRANSLUCENT] = []; //TRANSLUCENT
@@ -504,7 +504,7 @@ RDGE.jpass = function (def) {
 };
 
 /*
-*	a graph describing the hierarchy of scene pass objects to create the final composition
+*   a graph describing the hierarchy of scene pass objects to create the final composition
 */
 RDGE.jpassGraph = function (def) {
     // the root pass
@@ -532,7 +532,7 @@ RDGE.jpassGraph = function (def) {
     };
 
     /*
-    *	Helper function to generate the references to passes available as passGraph."passName"
+    *   Helper function to generate the references to passes available as passGraph."passName"
     */
     this._initHelper = function (node) {
         if (!node)
@@ -547,8 +547,8 @@ RDGE.jpassGraph = function (def) {
     this._initHelper(this.root);
 
     /*
-    *	@param parentName - the name of the parent object to insert under
-    *	@param jpassObj - the jpass object to insert
+    *   @param parentName - the name of the parent object to insert under
+    *   @param jpassObj - the jpass object to insert
     */
     this.insertAsChild = function (parentName, jpassObj) {
         this.find = parentName;
@@ -564,7 +564,7 @@ RDGE.jpassGraph = function (def) {
     };
 
     /*
-    *	Recursive helper function for traversing the graph and insterting the node
+    *   Recursive helper function for traversing the graph and insterting the node
     */
     this._insertHelper = function (node) {
         if (!node)
@@ -592,9 +592,9 @@ RDGE.jpassGraph = function (def) {
     }
 
     /*
-    *	Traverse the render graph, breadth first to produce the final render output
-    *	note: breadth first is used to allow generation of an entire level at once, 
-    *	the peers in one level could, in theory, be processed in parallel
+    *   Traverse the render graph, breadth first to produce the final render output
+    *   note: breadth first is used to allow generation of an entire level at once,
+    *   the peers in one level could, in theory, be processed in parallel
     */
     this.render = function (sceneGraph) {
 

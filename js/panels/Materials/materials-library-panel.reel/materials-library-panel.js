@@ -62,8 +62,8 @@ exports.MaterialsLibraryPanel = Montage.create(Component, {
     },
 
     _hasFocus: {
-    	enumerable: false,
-    	value: false
+        enumerable: false,
+        value: false
     },
 
     didCreate: {
@@ -128,12 +128,12 @@ exports.MaterialsLibraryPanel = Montage.create(Component, {
         enumerable:true,
         serializable: true
     },
-    
-    _showMaterialPopup: {
-    	enumerable: false,
-    	value: function (materialObj) {
 
-			if(!this._materialPopup)
+    _showMaterialPopup: {
+        enumerable: false,
+        value: function (materialObj) {
+
+            if(!this._materialPopup)
             {
                 this._materialPopup = Popup.create();
                 this._materialInfo.materialsLibraryRef = this;
@@ -146,18 +146,18 @@ exports.MaterialsLibraryPanel = Montage.create(Component, {
             this._materialPopup.show();
 
             this._materialInfo.loadMaterials(materialObj.materialId,  materialObj.useSelection, materialObj.whichMaterial);
-    	}
+        }
     },
 
     handleHideMaterialPopup: {
-    	enumerable: false,
-    	value: function (event) {
+        enumerable: false,
+        value: function (event) {
             if(this._materialPopup){
 //                console.log("hiding material popup");
                 this._materialInfo.destroy();
                 this._materialPopup.hide();
             }
-    	}
+        }
     },
 
     duplicateMaterial: {
@@ -169,7 +169,7 @@ exports.MaterialsLibraryPanel = Montage.create(Component, {
                 var matCopy = mat.dup();
                 if(!matCopyName) {
                     matCopyName = this.materialId + "_" + this.customMaterialsCounter++;
-                }
+    }
                 matCopy.setName(matCopyName);
                 MaterialsModel.addMaterial(matCopy);
 

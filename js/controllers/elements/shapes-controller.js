@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
-var Montage = 			require("montage/core/core").Montage,
+var Montage =           require("montage/core/core").Montage,
     CanvasController = require("js/controllers/elements/canvas-controller").CanvasController,
     njModule = require("js/lib/NJUtils"),
     World = require("js/lib/drawing/world").World,
@@ -300,7 +300,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                         return null;
                     }
                     break;
-                
+
 
                 case "strokeMaterial":
                     var sm = el.elementModel.shapeModel.GLGeomObj.getStrokeMaterial();

@@ -141,7 +141,7 @@ RDGE.renderInitProcDepthMap = function (renderObj) {
     //    renderObj.addUniform("u_WTF2",  g_lightMat[1], RDGE.UNIFORMTYPE.FLOAT4);
     //    renderObj.addUniform("u_WTF3",  g_lightMat[2], RDGE.UNIFORMTYPE.FLOAT4);
     //    renderObj.addUniform("u_WTF4",  g_lightMat[3], RDGE.UNIFORMTYPE.FLOAT4);
-    //    
+    //
     // since the uniform data references should not change we can just bind one time
     renderObj.bindUniforms();
 
@@ -227,7 +227,7 @@ RDGE.renderInitShadowProjection = function (primSet, vertexData) {
     arrayPeek(material.renderObj).addBuffers(vertexData.indexObject, gl.ELEMENT_ARRAY_BUFFER);
 
 
-    gl.useProgram(null);    
+    gl.useProgram(null);
 };
 
 RDGE.renderInitRadialBlur = function(quad, shader) {

@@ -30,19 +30,19 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 			require("montage/core/core").Montage,
-	Component = 		require("montage/ui/component").Component,
+var Montage =           require("montage/core/core").Montage,
+    Component =         require("montage/ui/component").Component,
     TextDocumentModel = require("js/document/models/text").TextDocumentModel,
-    CodeDocumentView = 	require("js/document/views/code").CodeDocumentView;
+    CodeDocumentView =  require("js/document/views/code").CodeDocumentView;
 ////////////////////////////////////////////////////////////////////////
-//	
+//
 exports.TextDocument = Montage.create(Component, {
-	////////////////////////////////////////////////////////////////////
-	//
-	hasTemplate: {
+    ////////////////////////////////////////////////////////////////////
+    //
+    hasTemplate: {
         value: false
     },
-	////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
     //
     model: {
         value: null
@@ -51,7 +51,7 @@ exports.TextDocument = Montage.create(Component, {
     //
     init:{
         value: function(file, context, callback, view){
-        	//
+            //
             var codeDocumentView = CodeDocumentView.create(), container = null; //TODO: Why is this initilzied to null?
             //Creating instance of Text Document Model
             this.model = Montage.create(TextDocumentModel,{
@@ -72,22 +72,22 @@ exports.TextDocument = Montage.create(Component, {
                 codeDocumentView.textArea.value = file.content;
                 codeDocumentView.initializeTextView(file, this);
             } else {
-	            //Other view(s) logic goes here
+                //Other view(s) logic goes here
             }
             //Checking if callback is needed
             if (callback) callback.call(context, this);
         }
     },
     ////////////////////////////////////////////////////////////////////
-	//
-	closeDocument: {
-		value: function (context, callback) {
-			//Closing document and getting outcome
-			var closed = this.model.close(null);
-			//Making callback if specified
-			if (callback) callback.call(context, this);
-		}
-	}
+    //
+    closeDocument: {
+        value: function (context, callback) {
+            //Closing document and getting outcome
+            var closed = this.model.close(null);
+            //Making callback if specified
+            if (callback) callback.call(context, this);
+        }
+    }
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
 });

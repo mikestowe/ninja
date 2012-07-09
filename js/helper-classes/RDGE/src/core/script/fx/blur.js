@@ -38,7 +38,7 @@ RDGE.fx = RDGE.fx || {};
 * See http://prideout.net/archive/bloom/
 * @param mipSizes - up to three pow2 mip sizes to be separately blurred
 *          and combined with the src image, e.g. [256,128,64]
-* @param enAuxTexture - true to enable an extra texture to be added to 
+* @param enAuxTexture - true to enable an extra texture to be added to
 *          the weighted blur mips (see doBlur)
 */
 RDGE.fx.fxBlur = function (mipSizes, enAuxTexture) {
@@ -140,10 +140,10 @@ RDGE.fx.fxBlur = function (mipSizes, enAuxTexture) {
 * See http://prideout.net/archive/bloom/
 * @param srcTexture - source image to blur
 * @param dstRenderTarget - where to put the result of the blur
-* @param weights - array of 4 blend weights for the blurred mip levels 
-*          levels in the form [srcTexture-weight, mip0-weight, 
+* @param weights - array of 4 blend weights for the blurred mip levels
+*          levels in the form [srcTexture-weight, mip0-weight,
 *          mip1-weight, mip2-weight]
-* @param auxTexture - null, else an extra texture to be added to the 
+* @param auxTexture - null, else an extra texture to be added to the
 *          weighted blur mips
 */
 RDGE.fx.fxBlur.prototype.doBlur = function (srcTexture, dstRenderTarget, weights, auxTexture) {

@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 /* Layer.scss
  * Main SCSS file for Layer component, compiled by SASS into the file css/Layer.css.
  */
- 
+
 // Import theme settings
 @import "../../../../../scss/imports/themes/default/colors";
 @import "../../../../../scss/imports/themes/default/mixins";
@@ -40,29 +40,29 @@ POSSIBILITY OF SUCH DAMAGE.
 @import "../../../../../scss/imports/scss/mixins";
 
 .hidden {
-	display: none;
+    display: none;
 }
 .row-editor {
-	position: relative;
-	height: 14px;
+    position: relative;
+    height: 14px;
 }
 .style-padding {
-	padding-left: 5px;
-	padding-top: 3px;
-	padding-right: 5px;
+    padding-left: 5px;
+    padding-top: 3px;
+    padding-right: 5px;
 }
 .style-row {
-	height: 20px;
-	border-bottom: 1px solid $color-menu-divider;
+    height: 20px;
+    border-bottom: 1px solid $color-menu-divider;
 }
 
 div.content-style div.editable2 {
-	height: 14px;
-	background-color: $color-panel-hilite-text !IMPORTANT;
-	color: $color-panel-hilite-bg !IMPORTANT;
-	border-width: 0px;
-	font-size: 11px;
-	overflow: hidden;
+    height: 14px;
+    background-color: $color-panel-hilite-text !IMPORTANT;
+    color: $color-panel-hilite-bg !IMPORTANT;
+    border-width: 0px;
+    font-size: 11px;
+    overflow: hidden;
     -webkit-user-select: text;
     white-space: nowrap;
     text-overflow: clip;
@@ -71,34 +71,34 @@ div.content-style div.editable2 {
 .content-style.collapsible-content,
 .content-style.collapsible-content div,
 .content-style.collapsible-content span {
-	overflow: visible;
-	text-overflow: visible;
+    overflow: visible;
+    text-overflow: visible;
 }
 div.content-style div.cell-property,
 div.content-style div.cell-value {
-	width: 45%;
-	float: left;
-	height: 18px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	line-height: 18px;
+    width: 45%;
+    float: left;
+    height: 18px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 18px;
 }
 div.content-style div.cell-property div {
-	min-width: 90%;
-	height: 100%;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+    min-width: 90%;
+    height: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 div.content-style input.nj-skinned {
-	height: 10px;
-	font-size: 12px;
-	top: -3px;
+    height: 10px;
+    font-size: 12px;
+    top: -3px;
 }
 div.style-row .container-propvals {
-	overflow: hidden;
+    overflow: hidden;
 }
 
 .content-style .style-row.selected {

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <!-- <copyright>
 Copyright (c) 2012, Motorola Mobility, Inc
 All Rights Reserved.
@@ -28,61 +28,61 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> -->
- 
+
 <html>
 
-	<head>
-        
-       	<style type="text/css">
-       		
-       		html, body {
-       			width: 100%;
-       			height: 100%;
-       			margin: 0;
-       			padding: 0;
-       			background: #333;
-       		}
-       		
-       		.preview {
-       			position: absolute;
-       			top: 50%;
-       			left: 50%;
-       			margin: 0;
-       			padding: 0;
-       			border: 1px solid #000;
-       			background: #FFF;
-       			-webkit-box-shadow: 0 0 16px #000;
-       		}
-       		
+    <head>
+
+        <style type="text/css">
+
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                background: #333;
+            }
+
+            .preview {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin: 0;
+                padding: 0;
+                border: 1px solid #000;
+                background: #FFF;
+                -webkit-box-shadow: 0 0 16px #000;
+            }
+
         </style>
-        
+
         <script type="text/javascript">
-        	//
-        	window.addEventListener('load', loadBanner, false);
-        	//
-        	function loadBanner (e) {
-        		var iframe = document.getElementsByTagName('iframe')[0];
-        		iframe.src = qs('url');
-        		iframe.style.width = qs('width')+'px';
-        		iframe.style.height = qs('height')+'px';
-        		iframe.style.marginLeft = -1*qs('width')/2+'px';
-        		iframe.style.marginTop = -1*qs('height')/2+'px';
-        	}
-        	/*
-        	Taken from:
-        	http://stackoverflow.com/questions/7731778/jquery-get-query-string-parameters
-        	*/
-        	function qs(key) {
-    			key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
-    			var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
-		    	return match && decodeURIComponent(match[1]);
-			}
+            //
+            window.addEventListener('load', loadBanner, false);
+            //
+            function loadBanner (e) {
+                var iframe = document.getElementsByTagName('iframe')[0];
+                iframe.src = qs('url');
+                iframe.style.width = qs('width')+'px';
+                iframe.style.height = qs('height')+'px';
+                iframe.style.marginLeft = -1*qs('width')/2+'px';
+                iframe.style.marginTop = -1*qs('height')/2+'px';
+            }
+            /*
+            Taken from:
+            http://stackoverflow.com/questions/7731778/jquery-get-query-string-parameters
+            */
+            function qs(key) {
+                key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
+                var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
+                return match && decodeURIComponent(match[1]);
+            }
         </script>
 
-	</head>
+    </head>
 
-	<body>
-		<iframe class="preview"></iframe>
-	</body>
+    <body>
+        <iframe class="preview"></iframe>
+    </body>
 
 </html>

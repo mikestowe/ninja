@@ -74,7 +74,7 @@ var TagProperties = exports.TagProperties = Montage.create(ToolProperties, {
         value: function() {
             this.customName.style["display"] = "none";
             this.customLabel.style["display"] = "none";
-            
+
             this.divElement.addEventListener("click", this, false);
             this.imageElement.addEventListener("click", this, false);
             this.videoElement.addEventListener("click", this, false);

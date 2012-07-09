@@ -36,22 +36,22 @@ exports.ElementController = Montage.create(Component, {
 
     addElement: {
         value: function(el, styles) {
-        
-        	if (el.getAttribute) el.setAttribute('data-ninja-node', 'true');
-        	
-        	// Updated to use new methods in TimelinePanel. JR.
-        	var insertionIndex = this.application.ninja.timeline.getInsertionIndex();
-        	if (insertionIndex === false) {
-        		this.application.ninja.currentDocument.model.domContainer.appendChild(el);
-        	} else {
-	        	if (insertionIndex === 0) {
-	        		this.application.ninja.currentDocument.model.domContainer.appendChild(el);
-	        	} else {
+
+            if (el.getAttribute) el.setAttribute('data-ninja-node', 'true');
+
+            // Updated to use new methods in TimelinePanel. JR.
+            var insertionIndex = this.application.ninja.timeline.getInsertionIndex();
+            if (insertionIndex === false) {
+                this.application.ninja.currentDocument.model.domContainer.appendChild(el);
+            } else {
+                if (insertionIndex === 0) {
+                    this.application.ninja.currentDocument.model.domContainer.appendChild(el);
+                } else {
                     var element = this.application.ninja.timeline.arrLayers[insertionIndex].layerData.stageElement;
                     element.parentNode.insertBefore(el, element.nextSibling);
-	        	}
-        	}
-        	
+                }
+            }
+
             if(styles) {
                 this.application.ninja.stylesController.setElementStyles(el, styles);
             }
@@ -67,7 +67,7 @@ exports.ElementController = Montage.create(Component, {
             el.parentNode.removeChild(el);
         }
     },
-    
+
     getProperty: {
         value: function(el, prop, fallbackOnComputed, isStageElement) {
             if(el.nodeType !== 3){

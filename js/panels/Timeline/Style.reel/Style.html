@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!doctype html>
 <!-- <copyright>
 Copyright (c) 2012, Motorola Mobility, Inc
 All Rights Reserved.
@@ -29,10 +29,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> -->
 <html lang="en">
-	<head>
-    	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    	<link rel="stylesheet" type="text/css" href="css/Style.css">
-   		<script type="text/montage-serialization">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/Style.css">
+        <script type="text/montage-serialization">
             {
                 "owner": {
                     "prototype": "js/panels/Timeline/Style.reel",
@@ -47,73 +47,73 @@ POSSIBILITY OF SUCH DAMAGE.
                         "_fillColorCtrl": {"#": "fillColorCtrl"}
                     }
                 },
-	            "dtext1" : {
-	            	"prototype" : "montage/ui/dynamic-text.reel",
-	            	"properties" : {
-	            		"element" : {"#" : "container-property"}
-	            	},
-	            	"bindings" : {
-	            		"value" : {
-	            			"boundObject" : {"@" : "owner"},
-	            			"boundObjectPropertyPath" : "editorProperty",
-	            			"oneway" : false
-	            		}
-	            	}
-	            },
-	            "hottextunit" : {
-	            	"prototype" : "js/components/hottextunit.reel[HotTextUnit]",
-	            	"properties" : {
-	            		"element" : {"#":"value-editor-hottext"}
-	            	},
-	            	"bindings" : {
-	            		"value" : {
-	            			"boundObject" : {"@" : "owner"},
-	            			"boundObjectPropertyPath" : "editorValue",
-	            			"oneway" : false
-	            		}
-	            	}
-	            },
-	            "hintable" : {
-	            	"prototype" : "js/components/hintable.reel",
-	            	"properties" : {
-	            		"element" : {"#":"style-hintable"}
-	            	},
-	            	"bindings" : {
-	            		"value" : {
-	            			"boundObject" : {"@" : "owner"},
-	            			"boundObjectPropertyPath" : "editorProperty",
-	            			"oneway" : true
-	            		}
-	            	}
-	            }
+                "dtext1" : {
+                    "prototype" : "montage/ui/dynamic-text.reel",
+                    "properties" : {
+                        "element" : {"#" : "container-property"}
+                    },
+                    "bindings" : {
+                        "value" : {
+                            "boundObject" : {"@" : "owner"},
+                            "boundObjectPropertyPath" : "editorProperty",
+                            "oneway" : false
+                        }
+                    }
+                },
+                "hottextunit" : {
+                    "prototype" : "js/components/hottextunit.reel[HotTextUnit]",
+                    "properties" : {
+                        "element" : {"#":"value-editor-hottext"}
+                    },
+                    "bindings" : {
+                        "value" : {
+                            "boundObject" : {"@" : "owner"},
+                            "boundObjectPropertyPath" : "editorValue",
+                            "oneway" : false
+                        }
+                    }
+                },
+                "hintable" : {
+                    "prototype" : "js/components/hintable.reel",
+                    "properties" : {
+                        "element" : {"#":"style-hintable"}
+                    },
+                    "bindings" : {
+                        "value" : {
+                            "boundObject" : {"@" : "owner"},
+                            "boundObjectPropertyPath" : "editorProperty",
+                            "oneway" : true
+                        }
+                    }
+                }
             }
         </script>
-	</head>
-	<body>
-		<div data-montage-id="style-container">
-			<div class="style-padding">
-				<div class="row-hintable hidden">
-					<div data-montage-id="style-hintable"></div>
-				</div>
-				<div class="container-propvals hidden">
-					<div class="cell-property">
-						<div data-montage-id="container-property">property</div>
-					</div>
-					<div class="cell-value value-editor editor-hottext hidden">
-						<div data-montage-id="value-editor-hottext"></div>
-					</div>
-					<div class="cell-value value-editor editor-color hidden">
-						<div data-montage-id="value-editor-color">
+    </head>
+    <body>
+        <div data-montage-id="style-container">
+            <div class="style-padding">
+                <div class="row-hintable hidden">
+                    <div data-montage-id="style-hintable"></div>
+                </div>
+                <div class="container-propvals hidden">
+                    <div class="cell-property">
+                        <div data-montage-id="container-property">property</div>
+                    </div>
+                    <div class="cell-value value-editor editor-hottext hidden">
+                        <div data-montage-id="value-editor-hottext"></div>
+                    </div>
+                    <div class="cell-value value-editor editor-color hidden">
+                        <div data-montage-id="value-editor-color">
                             <div data-montage-id="fillColorCtrl" class="toolColorChipCtrl color-chip-position"></div>
-						</div>
-					</div>
-					<div class="cell-value value-editor editor-input hidden">
-						<!-- <div data-montage-id="value-editor-input"></div> -->
-						<input type="text" class="nj-skinned" value="" />
-					</div>
-				</div>
+                        </div>
+                    </div>
+                    <div class="cell-value value-editor editor-input hidden">
+                        <!-- <div data-montage-id="value-editor-input"></div> -->
+                        <input type="text" class="nj-skinned" value="" />
+                    </div>
+                </div>
 
-			</div>
-		</div>
+            </div>
+        </div>
     </body>
 </html>

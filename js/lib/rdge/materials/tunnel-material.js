@@ -50,19 +50,19 @@ var TunnelMaterial = function TunnelMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	var u_tex0_index	= 0,  u_speed_index = 1;
-	this._propNames			= ["u_tex0",		"u_speed" ];
-	this._propLabels		= ["Texture map",	"Speed" ];
-	this._propTypes			= ["file",			"float" ];
-	this._propValues		= [];
+    var u_tex0_index    = 0,  u_speed_index = 1;
+    this._propNames         = ["u_tex0",        "u_speed" ];
+    this._propLabels        = ["Texture map",   "Speed" ];
+    this._propTypes         = ["file",          "float" ];
+    this._propValues        = [];
     this._propValues[this._propNames[u_tex0_index]] = this._defaultTexMap.slice(0);
     this._propValues[this._propNames[u_speed_index]] = 1.0;
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this.isAnimated		= function()	{  return true;					};
-	this.getShaderDef	= function()	{  return tunnelMaterialDef;	};
+    this.isAnimated     = function()    {  return true;                 };
+    this.getShaderDef   = function()    {  return tunnelMaterialDef;    };
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
@@ -104,46 +104,46 @@ var TunnelMaterial = function TunnelMaterial() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var tunnelMaterialDef =
-{'shaders': 
-	{
-		'defaultVShader':"assets/shaders/Basic.vert.glsl",
-		'defaultFShader':"assets/shaders/Tunnel.frag.glsl"
-	},
-	'techniques':
-	{ 
-		'default':
-		[
-			{
-				'vshader' : 'defaultVShader',
-				'fshader' : 'defaultFShader',
-				// attributes
-				'attributes' :
-				{
-					'vert'  :   { 'type' : 'vec3' },
-					'normal' :  { 'type' : 'vec3' },
-					'texcoord'  :   { 'type' : 'vec2' }
-				},
-				// parameters
-				'params' : 
-				{
-					'u_tex0': { 'type' : 'tex2d' },
-					'u_time' : { 'type' : 'float' },
-					'u_speed' : { 'type' : 'float' },
-					'u_resolution'  :   { 'type' : 'vec2' }
-				},
+{'shaders':
+    {
+        'defaultVShader':"assets/shaders/Basic.vert.glsl",
+        'defaultFShader':"assets/shaders/Tunnel.frag.glsl"
+    },
+    'techniques':
+    {
+        'default':
+        [
+            {
+                'vshader' : 'defaultVShader',
+                'fshader' : 'defaultFShader',
+                // attributes
+                'attributes' :
+                {
+                    'vert'  :   { 'type' : 'vec3' },
+                    'normal' :  { 'type' : 'vec3' },
+                    'texcoord'  :   { 'type' : 'vec2' }
+                },
+                // parameters
+                'params' :
+                {
+                    'u_tex0': { 'type' : 'tex2d' },
+                    'u_time' : { 'type' : 'float' },
+                    'u_speed' : { 'type' : 'float' },
+                    'u_resolution'  :   { 'type' : 'vec2' }
+                },
 
-				// render states
-				'states' : 
-				{
-					'depthEnable' : true,
-					'offset':[1.0, 0.1]
-				}
-			}
-		]
-	}
+                // render states
+                'states' :
+                {
+                    'depthEnable' : true,
+                    'offset':[1.0, 0.1]
+                }
+            }
+        ]
+    }
 };
 
 TunnelMaterial.prototype = new PulseMaterial();

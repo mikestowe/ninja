@@ -30,13 +30,13 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /**
 * RDGE.vec4 = {}
-* This library contains functions for operating on 4D vectors. Any JS array 
-* containing at least 4 numeric components can represent a 4D vector. 
+* This library contains functions for operating on 4D vectors. Any JS array
+* containing at least 4 numeric components can represent a 4D vector.
 *
 * For example, all of these are valid RDGE.vec4 declarations:
-*		var a = [0, 0, 0, 1];
-*		var b = RDGE.RDGE.vec4.identity();
-*		var c = RDGE.RDGE.vec4.zero();
+*       var a = [0, 0, 0, 1];
+*       var b = RDGE.RDGE.vec4.identity();
+*       var c = RDGE.RDGE.vec4.zero();
 *
 */
 var RDGE = RDGE || {};
@@ -139,9 +139,9 @@ RDGE.vec4.random = function (min, max) {
 */
 RDGE.vec4.add = function (a, b) {
     return [a[0] + b[0],
-				a[1] + b[1],
-				a[2] + b[2],
-				a[3] + b[3]];
+                a[1] + b[1],
+                a[2] + b[2],
+                a[3] + b[3]];
 };
 
 /**
@@ -149,9 +149,9 @@ RDGE.vec4.add = function (a, b) {
 */
 RDGE.vec4.sub = function (a, b) {
     return [a[0] - b[0],
-				a[1] - b[1],
-				a[2] - b[2],
-				a[3] - b[3]];
+                a[1] - b[1],
+                a[2] - b[2],
+                a[3] - b[3]];
 };
 
 /**
@@ -159,9 +159,9 @@ RDGE.vec4.sub = function (a, b) {
 */
 RDGE.vec4.mul = function (a, b) {
     return [a[0] * b[0],
-				a[1] * b[1],
-				a[2] * b[2],
-				a[3] * b[3]];
+                a[1] * b[1],
+                a[2] * b[2],
+                a[3] * b[3]];
 };
 
 /**
@@ -217,9 +217,9 @@ RDGE.vec4.normalize = function (v) {
 */
 RDGE.vec4.lengthSq = function (v) {
     return v[0] * v[0] +
-			v[1] * v[1] +
-			v[2] * v[2] +
-			v[3] * v[3];
+            v[1] * v[1] +
+            v[2] * v[2] +
+            v[3] * v[3];
 };
 
 /**
@@ -227,9 +227,9 @@ RDGE.vec4.lengthSq = function (v) {
 */
 RDGE.vec4.length = function (v) {
     return Math.sqrt(v[0] * v[0] +
-						v[1] * v[1] +
-						v[2] * v[2] +
-						v[3] * v[3]);
+                        v[1] * v[1] +
+                        v[2] * v[2] +
+                        v[3] * v[3]);
 };
 
 /**
@@ -275,9 +275,9 @@ RDGE.vec4.equal = function (a, b, t) {
 */
 RDGE.vec4.lerp = function (a, b, t) {
     return [
-		a[0] + (b[0] - a[0]) * t,
-		a[1] + (b[1] - a[1]) * t,
-		a[2] + (b[2] - a[2]) * t,
-		a[3] + (b[3] - a[3]) * t
-	];
+        a[0] + (b[0] - a[0]) * t,
+        a[1] + (b[1] - a[1]) * t,
+        a[2] + (b[2] - a[2]) * t,
+        a[3] + (b[3] - a[3]) * t
+    ];
 };

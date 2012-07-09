@@ -30,9 +30,9 @@ POSSIBILITY OF SUCH DAMAGE.
 
 // MenuUI.scss
 // Styles governing the main dropdown menu.
-// Note that colors and font definitions go in 
+// Note that colors and font definitions go in
 // _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
-  
+
 .menuBar {
     width:100%;
     border-style: solid;
@@ -73,7 +73,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 // Styles for positioning and display
-Supports fly-out of sub-menus two levels deep only  
+Supports fly-out of sub-menus two levels deep only
 
 .menuBar ul ul {
     position: absolute;

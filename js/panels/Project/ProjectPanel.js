@@ -29,12 +29,12 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-	PanelBase = 		require("js/panels/PanelBase").PanelBase,
-	ProjectPanelBase =	require("js/panels/Project/ProjectPanelBase.reel").ProjectPanelBase;
+    PanelBase =         require("js/panels/PanelBase").PanelBase,
+    ProjectPanelBase =  require("js/panels/Project/ProjectPanelBase.reel").ProjectPanelBase;
 
 exports.ProjectPanel = Montage.create(PanelBase, {
-   
-	id: {value: "projectPanel", writable: true, enumerable: true, configurable: true},
+
+    id: {value: "projectPanel", writable: true, enumerable: true, configurable: true},
     panelName: {value: "Project/Assets", writable: true, enumerable: true, configurable: true},
     panelHeaderID: {value: "projectPanelHeader", writable: true, enumerable: true, configurable: true},
     disclosureIconID: {value: "projectPanelDisclosureIcon", writable: true, enumerable: true, configurable: true},
@@ -42,9 +42,9 @@ exports.ProjectPanel = Montage.create(PanelBase, {
     panelContentID: {value: "projectPanelContent", writable: true, enumerable: true, configurable: true},
 
     init: {
-    	enumerable: true,
-    	value: function() {
-			//Creating panel container and panel
+        enumerable: true,
+        value: function() {
+            //Creating panel container and panel
             this.minHeight = 350;
             this.defaultHeight = 350;
             this.contentHeight = 395;
@@ -57,7 +57,7 @@ exports.ProjectPanel = Montage.create(PanelBase, {
             this._projectPanelBase.element = ppContainer;
             //Adding container to the parent
             this.content = this._projectPanelBase;
-           	//Drawing panel
+            //Drawing panel
             this._projectPanelBase.needsDraw = true;
             */
 

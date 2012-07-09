@@ -73,11 +73,11 @@ var objectsController = exports.ObjectsController = Montage.create(Montage, {
             }
         }
     },
-    
+
     /* --------------------------
           Binding Methods
     ----------------------------- */
-    
+
     addBinding : {
         value: function(bindingArgs) {
             if(!bindingArgs.sourceObject || !bindingArgs.sourceObjectPropertyPath || !bindingArgs) { return; }
@@ -122,7 +122,7 @@ var objectsController = exports.ObjectsController = Montage.create(Montage, {
 
         }
     },
-    
+
     getObjectBindings : {
         value: function(object) {
             var descriptors = object._bindingDescriptors,

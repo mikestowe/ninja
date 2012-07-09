@@ -37,7 +37,7 @@ exports.DragDropMediator = Montage.create(Component, {
         value: null,
         writable: true
     },
-    
+
     dropDelegate: {
         value: null
     },
@@ -80,8 +80,8 @@ exports.DragDropMediator = Montage.create(Component, {
 
     handleDropEvent: {
         value: function(e){
-        	//
-        	var i, files = e.dataTransfer.files, position = {x: e.offsetX, y: e.offsetY}, self = this;
+            //
+            var i, files = e.dataTransfer.files, position = {x: e.offsetX, y: e.offsetY}, self = this;
 
             var xferString = e.dataTransfer.getData("text/plain");
             if(xferString) {
@@ -93,17 +93,17 @@ exports.DragDropMediator = Montage.create(Component, {
                     }
                 }
             }
-        	//
-        	for (i=0; files[i]; i++) {
-        		if (files[i].type.indexOf('image') !== -1) {
+            //
+            for (i=0; files[i]; i++) {
+                if (files[i].type.indexOf('image') !== -1) {
                         this.application.ninja.ioMediator.createFileFromBinary(files[i], {"addFileToStage" : self.addImageElement.bind(self), "position": position});
 
-        		} else {
-        			//TODO: NOT AN IMAGE, HANDLE SPECIAL CASE
-        		}
-        	}
-        	//Not sure why return value should be, seemed as false to work
-        	return false;
+                } else {
+                    //TODO: NOT AN IMAGE, HANDLE SPECIAL CASE
+                }
+            }
+            //Not sure why return value should be, seemed as false to work
+            return false;
         }
     },
 

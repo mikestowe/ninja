@@ -41,7 +41,7 @@ var Montage = require("montage/core/core").Montage,
     ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
-	_canSnap: { value: false },
+    _canSnap: { value: false },
 
     _inLocalMode: { value: true, enumerable: true },
 
@@ -59,20 +59,20 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 selectedElements = [this.application.ninja.currentDocument.model.documentRoot];
             }
 
-			this._mouseDownHitRec = null;
-			this._mouseUpHitRec   = null;
+            this._mouseDownHitRec = null;
+            this._mouseUpHitRec   = null;
 
-			snapManager.clearAvoidList();
-			snapManager.clearDragPlane();
+            snapManager.clearAvoidList();
+            snapManager.clearDragPlane();
 
-			// the translate tool does snap align to the bounds of the object only.
-			// turn off snap align to the cursor.  This needs to be re-enabled in the mouse up method
-			snapManager.enableSnapAlign( false );
+            // the translate tool does snap align to the bounds of the object only.
+            // turn off snap align to the cursor.  This needs to be re-enabled in the mouse up method
+            snapManager.enableSnapAlign( false );
 
-			// snap to element and snap to grid are conditionally enabled based
-			// on the snap results of the mouse down.  enable everything for the first snap
-			this._snapToElements = snapManager.elementSnapEnabledAppLevel();
-			this._snapToGrid = snapManager.gridSnapEnabledAppLevel();
+            // snap to element and snap to grid are conditionally enabled based
+            // on the snap results of the mouse down.  enable everything for the first snap
+            this._snapToElements = snapManager.elementSnapEnabledAppLevel();
+            this._snapToGrid = snapManager.gridSnapEnabledAppLevel();
 
             this._dragPlane = null;
             this._clickedOnStage = false;
@@ -80,8 +80,8 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 
             if(this._handleMode === null)
             {
-                snapManager.enableElementSnap	( true	);
-				snapManager.enableGridSnap		( true	);
+                snapManager.enableElementSnap   ( true  );
+                snapManager.enableGridSnap      ( true  );
             }
 //            else
 //            {
@@ -93,8 +93,8 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 //                    snapManager.setupDragPlaneFromPlane(this._dragPlane);
 //                    do3DSnap = false;
 
-//                    snapManager.enableElementSnap	( false	);
-//                    snapManager.enableGridSnap		( false );
+//                    snapManager.enableElementSnap ( false );
+//                    snapManager.enableGridSnap        ( false );
 //                }
 //            }
 
@@ -103,9 +103,9 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
                                                                 new WebKitPoint(event.pageX, event.pageY));
 
-				// do the snap before setting up the avoid list to allow
-				// a snap on the mouse down
-				var hitRec = snapManager.snap(point.x, point.y, do3DSnap);
+                // do the snap before setting up the avoid list to allow
+                // a snap on the mouse down
+                var hitRec = snapManager.snap(point.x, point.y, do3DSnap);
 
 //                if(this._handleMode === 2)
 //                {
@@ -134,18 +134,18 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 //                {
 //                    snapManager.addToAvoidList( this._targets[i].elt );
 //                }
-				if (hitRec)
-				{
-					// disable snap attributes
-					if (hitRec.getType() == hitRec.SNAP_TYPE_ELEMENT)
-					{
-						this._snapToElements = false;
-						this._snapToGrid = false;
-					}
-					else if (hitRec.getType() == hitRec.SNAP_TYPE_ELEMENT_CENTER)
-					{
-						snapManager.enableSnapAlign( snapManager.snapAlignEnabledAppLevel() );
-					}
+                if (hitRec)
+                {
+                    // disable snap attributes
+                    if (hitRec.getType() == hitRec.SNAP_TYPE_ELEMENT)
+                    {
+                        this._snapToElements = false;
+                        this._snapToGrid = false;
+                    }
+                    else if (hitRec.getType() == hitRec.SNAP_TYPE_ELEMENT_CENTER)
+                    {
+                        snapManager.enableSnapAlign( snapManager.snapAlignEnabledAppLevel() );
+                    }
 
                     if(this._handleMode === 0)
                         this.clickedObject = this._target;
@@ -170,20 +170,20 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                     // no quadrant snapping for the rotate tool
                     this._shouldUseQuadPt = false;
 
-					var wpHitRec = hitRec.convertToWorkingPlane( this._dragPlane );
-					this._mouseDownHitRec = wpHitRec;
-					this._mouseUpHitRec = null;
+                    var wpHitRec = hitRec.convertToWorkingPlane( this._dragPlane );
+                    this._mouseDownHitRec = wpHitRec;
+                    this._mouseUpHitRec = null;
 
-					var pt = hitRec.getScreenPoint();
-					this.downPoint.x = pt[0];
-					this.downPoint.y = pt[1];
-					this.downPoint.z = pt[2];
+                    var pt = hitRec.getScreenPoint();
+                    this.downPoint.x = pt[0];
+                    this.downPoint.y = pt[1];
+                    this.downPoint.z = pt[2];
 
                     // TODO - need to figure out snapManager dependency by drawUtils.
                     // For now, bypassing by calling snapManager.drawLastHit();
-//					drawUtils.refreshDisplay();
+//                  drawUtils.refreshDisplay();
 //                    snapManager.drawLastHit();
-				}
+                }
             }
             else
             {
@@ -231,9 +231,9 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 }
             }
 
-			this.DrawHandles(this._delta);
-            
-			if(this._canSnap)
+            this.DrawHandles(this._delta);
+
+            if(this._canSnap)
             {
                 snapManager.drawLastHit();
             }
@@ -261,23 +261,23 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                     this._origin[1] = pt1.y;
                     this._origin[2] = pt1.z;
 
-					var sw2gMat = viewUtils.getStageWorldToGlobalMatrix();
-					var g2swMat = glmat4.inverse( sw2gMat, [] );
-					var swOrigin = MathUtils.transformAndDivideHomogeneousPoint( this._origin, g2swMat );
-					//console.log( "modifyElements, _origin: " + this._origin + ", in stageWorld: " + swOrigin );
+                    var sw2gMat = viewUtils.getStageWorldToGlobalMatrix();
+                    var g2swMat = glmat4.inverse( sw2gMat, [] );
+                    var swOrigin = MathUtils.transformAndDivideHomogeneousPoint( this._origin, g2swMat );
+                    //console.log( "modifyElements, _origin: " + this._origin + ", in stageWorld: " + swOrigin );
 
                     var len = selectedElements.length;
                     if(len === 1)
                     {
                         var elt = selectedElements[0];
-						var g2lMat = elt.elementModel.getProperty("g2l");
-						var localOrigin = MathUtils.transformAndDivideHomogeneousPoint( this._origin, g2lMat );
+                        var g2lMat = elt.elementModel.getProperty("g2l");
+                        var localOrigin = MathUtils.transformAndDivideHomogeneousPoint( this._origin, g2lMat );
 
-						viewUtils.pushViewportObj( elt );
-						var viewOrigin = viewUtils.screenToView( localOrigin[0], localOrigin[1], localOrigin[2] );
-						viewUtils.popViewportObj();
-						this._startOriginArray[0] = viewOrigin;
-						//console.log( "Rotate3DToolBase.modifyElements, _startOriginArray[0]: " + this._startOriginArray[0] );
+                        viewUtils.pushViewportObj( elt );
+                        var viewOrigin = viewUtils.screenToView( localOrigin[0], localOrigin[1], localOrigin[2] );
+                        viewUtils.popViewportObj();
+                        this._startOriginArray[0] = viewOrigin;
+                        //console.log( "Rotate3DToolBase.modifyElements, _startOriginArray[0]: " + this._startOriginArray[0] );
                     }
 
                     this.downPoint.x = pt1.x;
@@ -351,7 +351,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 
             if(this._inLocalMode && (this.application.ninja.selectedElements.length === 1 || this.rotateStage) )
             {
-//				console.log( "modifyElements: rotateLocally " );
+//              console.log( "modifyElements: rotateLocally " );
                 this._rotateLocally(mat);
             }
             else
@@ -379,8 +379,8 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 // pre-translate by the transformation center
                 var tMat = Matrix.I(4);
 
-				// _startOriginArray is the location of the center of rotation
-				// in view space of the element.  
+                // _startOriginArray is the location of the center of rotation
+                // in view space of the element.
                 var transformCtr = this._startOriginArray[i];
 
                 tMat[12] = transformCtr[0];
@@ -418,7 +418,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 var transformCtr = this._startOriginArray[i].slice(0);
                 transformCtr = MathUtils.transformPoint(transformCtr, curMat);
 
-//				console.log( "modifyElements: rotateGlobally, ctr: " + transformCtr );
+//              console.log( "modifyElements: rotateGlobally, ctr: " + transformCtr );
 
                 tMat[12] = transformCtr[0];
                 tMat[13] = transformCtr[1];
@@ -488,7 +488,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 
                     viewUtils.pushViewportObj( this.target );
                     var eltCtr = viewUtils.getCenterOfProjection();
-					eltCtr[2] = 0;
+                    eltCtr[2] = 0;
                     viewUtils.popViewportObj();
 
                     var ctrOffset = this.target.elementModel.props3D.m_transformCtr;
@@ -497,9 +497,9 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                         eltCtr[2] = 0;
                         eltCtr = vecUtils.vecAdd(3, eltCtr, ctrOffset);
                     }
-                    
+
                     this._origin = viewUtils.localToGlobal(eltCtr, this.target);
-					//console.log( "Rotate3DToolBase.captureSelectionDrawn _origin: " + this._origin );
+                    //console.log( "Rotate3DToolBase.captureSelectionDrawn _origin: " + this._origin );
                     this._updateTargets();
                     this._setTransformOrigin(false);
                 }
@@ -510,7 +510,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                     //this._origin[0] += this.application.ninja.stage.userContentLeft;
                     //this._origin[1] += this.application.ninja.stage.userContentTop;
                     this._updateTargets();
- 					this._origin = this.calculateMultiSelOrigin();
+                    this._origin = this.calculateMultiSelOrigin();
                     this._setTransformOrigin(true);
                 }
             }
@@ -527,16 +527,16 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
         }
     },
 
-	/*
-	_updateHandlesOrigin: {
-		value: function () { }
-	},
-	*/
+    /*
+    _updateHandlesOrigin: {
+        value: function () { }
+    },
+    */
 
     _updateTargets: {
         value: function(addToUndo) {
             var mod3dObject = [],
-				self = this;
+                self = this;
 
             this.application.ninja.selectedElements.forEach(function(element) {
                 var curMat = viewUtils.getMatrixFromElement(element);
@@ -546,16 +546,16 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 var eltCtr = viewUtils.getCenterOfProjection();
                 viewUtils.popViewportObj();
 
-				// cache the local to global and global to local matrices
-				var l2gMat = viewUtils.getLocalToGlobalMatrix( element );
-				var g2lMat = glmat4.inverse( l2gMat, [] );
-				eltCtr = MathUtils.transformAndDivideHomogeneousPoint( eltCtr, l2gMat );
+                // cache the local to global and global to local matrices
+                var l2gMat = viewUtils.getLocalToGlobalMatrix( element );
+                var g2lMat = glmat4.inverse( l2gMat, [] );
+                eltCtr = MathUtils.transformAndDivideHomogeneousPoint( eltCtr, l2gMat );
 
                 element.elementModel.setProperty("ctr", eltCtr);
-				element.elementModel.setProperty("mat", curMat);
-				element.elementModel.setProperty("matInv", curMatInv);
-				element.elementModel.setProperty("l2g", l2gMat);
-				element.elementModel.setProperty("g2l", g2lMat);
+                element.elementModel.setProperty("mat", curMat);
+                element.elementModel.setProperty("matInv", curMatInv);
+                element.elementModel.setProperty("l2g", l2gMat);
+                element.elementModel.setProperty("g2l", g2lMat);
 
                 if(addToUndo) {
                     var previousMat = element.elementModel.getProperty("mat").slice(0);
@@ -579,45 +579,45 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
         }
     },
 
-	calculateMultiSelOrigin: 
-	{
-		value: function()
-		{
-			var minPt,  maxPt, i,j;
-			this._startOriginArray = [];
-			var len = this.application.ninja.selectedElements.length;
-			for (i = 0; i < len; i++)
-			{
-				// get the next element and localToGlobal matrix
-				var elt = this.application.ninja.selectedElements[i];
-				var l2g = elt.elementModel.getProperty("l2g");
+    calculateMultiSelOrigin:
+    {
+        value: function()
+        {
+            var minPt,  maxPt, i,j;
+            this._startOriginArray = [];
+            var len = this.application.ninja.selectedElements.length;
+            for (i = 0; i < len; i++)
+            {
+                // get the next element and localToGlobal matrix
+                var elt = this.application.ninja.selectedElements[i];
+                var l2g = elt.elementModel.getProperty("l2g");
 
-				// get the element bounds in 'plane' space
-				var bounds = viewUtils.getElementViewBounds3D( elt );
-				for (j=0;  j<4;  j++)
-				{
-					var localPt = bounds[j];
-					//var pt = MathUtils.transformAndDivideHomogeneousPoint( localPt, l2g );
-					var pt = viewUtils.localToStageWorld( localPt, elt );
-					if (!minPt)
-					{
-						minPt = pt.slice();
-						maxPt = pt.slice();
-					}
-					else
-					{
-						minPt[0] = Math.min(minPt[0],pt[0]);  minPt[1] = Math.min(minPt[1],pt[1]);  minPt[2] = Math.min(minPt[2],pt[2]);
-						maxPt[0] = Math.max(maxPt[0],pt[0]);  maxPt[1] = Math.max(maxPt[1],pt[1]);  maxPt[2] = Math.max(maxPt[2],pt[2]);
-					}
-				}
-			}
-			var stageWorldCtr = [ 0.5*(minPt[0] + maxPt[0]),  0.5*(minPt[1] + maxPt[1]), 0.5*(minPt[2] + maxPt[2]) ];
-			var globalCtr = MathUtils.transformAndDivideHomogeneousPoint( stageWorldCtr, viewUtils.getStageWorldToGlobalMatrix() );
-//			console.log( "resetting _origin to: " + this._origin );
+                // get the element bounds in 'plane' space
+                var bounds = viewUtils.getElementViewBounds3D( elt );
+                for (j=0;  j<4;  j++)
+                {
+                    var localPt = bounds[j];
+                    //var pt = MathUtils.transformAndDivideHomogeneousPoint( localPt, l2g );
+                    var pt = viewUtils.localToStageWorld( localPt, elt );
+                    if (!minPt)
+                    {
+                        minPt = pt.slice();
+                        maxPt = pt.slice();
+                    }
+                    else
+                    {
+                        minPt[0] = Math.min(minPt[0],pt[0]);  minPt[1] = Math.min(minPt[1],pt[1]);  minPt[2] = Math.min(minPt[2],pt[2]);
+                        maxPt[0] = Math.max(maxPt[0],pt[0]);  maxPt[1] = Math.max(maxPt[1],pt[1]);  maxPt[2] = Math.max(maxPt[2],pt[2]);
+                    }
+                }
+            }
+            var stageWorldCtr = [ 0.5*(minPt[0] + maxPt[0]),  0.5*(minPt[1] + maxPt[1]), 0.5*(minPt[2] + maxPt[2]) ];
+            var globalCtr = MathUtils.transformAndDivideHomogeneousPoint( stageWorldCtr, viewUtils.getStageWorldToGlobalMatrix() );
+//          console.log( "resetting _origin to: " + this._origin );
 
-			return globalCtr;
-		}
-	},
+            return globalCtr;
+        }
+    },
 
     _setTransformOrigin: {
         value: function(shouldUpdateCenter) {
@@ -626,20 +626,20 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
             }
 
             var elt,
-				element,
-				eltCtr,
-				ctrOffset,
-				matInv;
+                element,
+                eltCtr,
+                ctrOffset,
+                matInv;
 
             if(this.rotateStage || (this.application.ninja.selectedElements.length === 1)) {
-				if(this.rotateStage) {
-                	element = this.application.ninja.currentDocument.model.documentRoot;
+                if(this.rotateStage) {
+                    element = this.application.ninja.currentDocument.model.documentRoot;
                 } else {
                     element = this.application.ninja.selectedElements[0];
                 }
-                
-				if(shouldUpdateCenter) {
-                    
+
+                if(shouldUpdateCenter) {
+
 //                    eltCtr = element.elementModel.getProperty("ctr");
 //                    ctrOffset = vecUtils.vecSubtract(3, this._origin, eltCtr);
 
@@ -653,8 +653,8 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                     if(!ctrOffset) {
                         ctrOffset = [0,0,0];
                     }
-                	this._startOriginArray[0] = ctrOffset;
-				}
+                    this._startOriginArray[0] = ctrOffset;
+                }
             } else {
                /*
                 this._startOriginArray = [];
@@ -666,25 +666,25 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                     ctrOffset = MathUtils.transformVector(ctrOffset, matInv);
                     this._startOriginArray[i] = ctrOffset;
                 }
-				*/
-				
-				// Update transform ctr for all elements if transform origin was modified
-				if (!this._origin)  this._origin = this.calculateMultiSelOrigin();
-				var globalCtr = this._origin;
-                var len = this.application.ninja.selectedElements.length;
-				for (var i=0;  i<len;  i++)
-				{
-					// get the next element and localToGlobal matrix
-                    elt = this.application.ninja.selectedElements[i];
-					var l2g = viewUtils.getLocalToGlobalMatrix( elt );
-					var g2l = glmat4.inverse( l2g, [] );
-					elt.elementModel.setProperty("g2l", g2l);
-					elt.elementModel.setProperty("l2g", l2g);
+                */
 
-					var localCtr = MathUtils.transformAndDivideHomogeneousPoint(globalCtr,  g2l);
-					viewUtils.pushViewportObj( elt );
-					localCtr = viewUtils.screenToView( localCtr[0],  localCtr[1],  localCtr[2] );
-					viewUtils.popViewportObj();
+                // Update transform ctr for all elements if transform origin was modified
+                if (!this._origin)  this._origin = this.calculateMultiSelOrigin();
+                var globalCtr = this._origin;
+                var len = this.application.ninja.selectedElements.length;
+                for (var i=0;  i<len;  i++)
+                {
+                    // get the next element and localToGlobal matrix
+                    elt = this.application.ninja.selectedElements[i];
+                    var l2g = viewUtils.getLocalToGlobalMatrix( elt );
+                    var g2l = glmat4.inverse( l2g, [] );
+                    elt.elementModel.setProperty("g2l", g2l);
+                    elt.elementModel.setProperty("l2g", l2g);
+
+                    var localCtr = MathUtils.transformAndDivideHomogeneousPoint(globalCtr,  g2l);
+                    viewUtils.pushViewportObj( elt );
+                    localCtr = viewUtils.screenToView( localCtr[0],  localCtr[1],  localCtr[2] );
+                    viewUtils.popViewportObj();
 
                     this._startOriginArray[i] = localCtr;
             }
@@ -692,8 +692,8 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
         }
     },
 
-	HandleDoubleClick: {
-		value: function () {
+    HandleDoubleClick: {
+        value: function () {
 
             if(!this._target)
             {
@@ -714,16 +714,16 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 
                 this.captureSelectionDrawn(null);
             }
-		}
-	},
+        }
+    },
 
     Reset: {
         value: function() {
             var mat,
-				iMat,
-				dist,
-				mod3dObject = [],
-				self = this;
+                iMat,
+                dist,
+                mod3dObject = [],
+                self = this;
 
             this.application.ninja.selectedElements.forEach(function(element) {
                 // Reset to the identity matrix
@@ -777,18 +777,18 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
     },
 
     HandleAltKeyDown: {
-		value: function(event) {
+        value: function(event) {
             this._inLocalMode = !this._inLocalMode;
             this.DrawHandles();
-		}
-	},
+        }
+    },
 
-	HandleAltKeyUp: {
-		value: function(event) {
-			this._inLocalMode = !this._inLocalMode;
+    HandleAltKeyUp: {
+        value: function(event) {
+            this._inLocalMode = !this._inLocalMode;
             this.DrawHandles();
-		}
-	},
+        }
+    },
 
     handleScroll: {
         value: function(event) {
@@ -805,7 +805,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
      */
     _showFeedbackOnMouseMove : {
         value: function (event) {
-			this._canSnap = false;
+            this._canSnap = false;
             if(this._target && this._handles)
             {
                 var len = this._handles.length;
@@ -878,7 +878,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 viewUtils.pushViewportObj( this.application.ninja.currentDocument.model.documentRoot );
             }
             var base = this._origin;
-			//console.log( "Rotate3DToolBase.DrawHandles, base: " + base );
+            //console.log( "Rotate3DToolBase.DrawHandles, base: " + base );
 
             if( (this._handleMode !== null) && !this._activateOriginHandle )
             {

@@ -47,15 +47,15 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
     this._colorStop2 = 0.3;
     this._colorStop3 = 0.6;
     this._colorStop4 = 1.0;
-    //	this._colorCount	= 4;
+    //  this._colorCount    = 4;
     this._angle = 0.0; // the shader takes [cos(a), sin(a)]
 
-	this._textureTransform = [1,0,0, 0,1,0, 0,0,1];
+    this._textureTransform = [1,0,0, 0,1,0, 0,0,1];
 
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this.getShaderDef		= function()			{  return linearGradientMaterialDef;	}
+    this.getShaderDef       = function()            {  return linearGradientMaterialDef;    }
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
@@ -95,13 +95,13 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
         this._materialNode.setShader(this._shader);
 
 
-		if (this._shader && this._shader['default'])
-			this._shader['default'].u_texTransform.set( this._textureTransform );
+        if (this._shader && this._shader['default'])
+            this._shader['default'].u_texTransform.set( this._textureTransform );
 
 
         // send the current values to the shader
         this.setShaderValues();
-		this.update( 0 );
+        this.update( 0 );
     };
 
 	this.resetToDefault = function()
@@ -177,111 +177,111 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var linearGradientMaterialDef =
-{'shaders': 
-	{
-			// shader file
-			'defaultVShader':"assets/shaders/linearGradient.vert.glsl",
-			'defaultFShader':"assets/shaders/linearGradient.frag.glsl",
-				        
-			// this shader is inline
-			'dirLightVShader': "\
-				uniform mat4 u_mvMatrix;\
-				uniform mat4 u_normalMatrix;\
-				uniform mat4 u_projMatrix;\
-				uniform mat4 u_worldMatrix;\
-				attribute vec3	a_pos;\
-				attribute vec3	a_nrm;\
-				varying vec3 vNormal;\
-				varying vec3 vPos;\
-				void main() {\
-					vNormal.xyz = (u_normalMatrix*vec4(a_nrm, 0.0)).xyz;\
-					gl_Position = u_projMatrix * u_mvMatrix * vec4(a_pos,1.0);\
-					vPos = (u_worldMatrix * vec4(a_pos,1.0)).xyz;\
-				}",				
-			'dirLightFShader': "\
-				precision highp float;\
-				uniform vec4 u_light1Diff;\
-				uniform vec3 u_light1Pos;\
-				uniform vec4 u_light2Diff;\
-				uniform vec3 u_light2Pos;\
-				varying vec3 vNormal;\
-				varying vec3 vPos;\
-				void main() {\
-					vec3 light1 = vec3(u_light1Pos.x - vPos.x, u_light1Pos.y - vPos.y, u_light1Pos.z - vPos.z);\
-					vec3 light2 = vec3(u_light2Pos.x - vPos.x, u_light2Pos.y - vPos.y, u_light2Pos.z - vPos.z);\
-					float t = 0.75;\
-					float range = t*t;\
-					float alpha1 = max(0.0, 1.0 - ( (light1.x*light1.x)/range + (light1.y*light1.y)/range + (light1.z*light1.z)/range));\
-					float alpha2 = max(0.0, 1.0 - ( (light2.x*light2.x)/range + (light2.y*light2.y)/range + (light2.z*light2.z)/range));\
-					gl_FragColor = vec4((u_light2Diff*alpha2 + u_light1Diff*alpha1).rgb, 1.0);\
-				}"
-		},
-		'techniques':
-		{ 
-			'default':
-			[
-				{
-					'vshader' : 'defaultVShader',
-					'fshader' : 'defaultFShader',
-					// attributes
-					'attributes' :
-					{
-						'vert'	:	{ 'type' : 'vec3' },
-						'normal' :	{ 'type' : 'vec3' },
-						'texcoord'	:	{ 'type' : 'vec2' }
-					},
-					// parameters
-					'params' : 
-					{
-						'u_color1' :		{ 'type' : 'vec4' },									
-						'u_color2' :		{ 'type' : 'vec4' },									
-						'u_color3' :		{ 'type' : 'vec4' },									
-						'u_color4' :		{ 'type' : 'vec4' },
-						'u_colorStop1':		{ 'type' : 'float' },									
-						'u_colorStop2':		{ 'type' : 'float' },									
-						'u_colorStop3':		{ 'type' : 'float' },									
-						'u_colorStop4':		{ 'type' : 'float' },									
-						'u_cos_sin_angle':  { 'type' : 'vec2' },
-						'u_texTransform':   { 'type' : 'mat3' }
-						//'u_colorCount':		{'type' : 'int' }
+{'shaders':
+    {
+            // shader file
+            'defaultVShader':"assets/shaders/linearGradient.vert.glsl",
+            'defaultFShader':"assets/shaders/linearGradient.frag.glsl",
 
-					},
+            // this shader is inline
+            'dirLightVShader': "\
+                uniform mat4 u_mvMatrix;\
+                uniform mat4 u_normalMatrix;\
+                uniform mat4 u_projMatrix;\
+                uniform mat4 u_worldMatrix;\
+                attribute vec3  a_pos;\
+                attribute vec3  a_nrm;\
+                varying vec3 vNormal;\
+                varying vec3 vPos;\
+                void main() {\
+                    vNormal.xyz = (u_normalMatrix*vec4(a_nrm, 0.0)).xyz;\
+                    gl_Position = u_projMatrix * u_mvMatrix * vec4(a_pos,1.0);\
+                    vPos = (u_worldMatrix * vec4(a_pos,1.0)).xyz;\
+                }",
+            'dirLightFShader': "\
+                precision highp float;\
+                uniform vec4 u_light1Diff;\
+                uniform vec3 u_light1Pos;\
+                uniform vec4 u_light2Diff;\
+                uniform vec3 u_light2Pos;\
+                varying vec3 vNormal;\
+                varying vec3 vPos;\
+                void main() {\
+                    vec3 light1 = vec3(u_light1Pos.x - vPos.x, u_light1Pos.y - vPos.y, u_light1Pos.z - vPos.z);\
+                    vec3 light2 = vec3(u_light2Pos.x - vPos.x, u_light2Pos.y - vPos.y, u_light2Pos.z - vPos.z);\
+                    float t = 0.75;\
+                    float range = t*t;\
+                    float alpha1 = max(0.0, 1.0 - ( (light1.x*light1.x)/range + (light1.y*light1.y)/range + (light1.z*light1.z)/range));\
+                    float alpha2 = max(0.0, 1.0 - ( (light2.x*light2.x)/range + (light2.y*light2.y)/range + (light2.z*light2.z)/range));\
+                    gl_FragColor = vec4((u_light2Diff*alpha2 + u_light1Diff*alpha1).rgb, 1.0);\
+                }"
+        },
+        'techniques':
+        {
+            'default':
+            [
+                {
+                    'vshader' : 'defaultVShader',
+                    'fshader' : 'defaultFShader',
+                    // attributes
+                    'attributes' :
+                    {
+                        'vert'  :   { 'type' : 'vec3' },
+                        'normal' :  { 'type' : 'vec3' },
+                        'texcoord'  :   { 'type' : 'vec2' }
+                    },
+                    // parameters
+                    'params' :
+                    {
+                        'u_color1' :        { 'type' : 'vec4' },
+                        'u_color2' :        { 'type' : 'vec4' },
+                        'u_color3' :        { 'type' : 'vec4' },
+                        'u_color4' :        { 'type' : 'vec4' },
+                        'u_colorStop1':     { 'type' : 'float' },
+                        'u_colorStop2':     { 'type' : 'float' },
+                        'u_colorStop3':     { 'type' : 'float' },
+                        'u_colorStop4':     { 'type' : 'float' },
+                        'u_cos_sin_angle':  { 'type' : 'vec2' },
+                        'u_texTransform':   { 'type' : 'mat3' }
+                        //'u_colorCount':       {'type' : 'int' }
 
-					// render states
-					'states' : 
-					{
-						'depthEnable' : true,
-						'offset':[1.0, 0.1]
-					}
-				},
-				{	// light pass
-					'vshader' : 'dirLightVShader',
-					'fshader' : 'dirLightFShader',
-					// attributes
-					'attributes' :
-					{
-						'a_pos'	:	{ 'type' : 'vec3' },
-						'a_nrm'	:	{ 'type' : 'vec3' }
-					},
-					// parameters
-					'params' : 
-					{
-					},
+                    },
 
-					// render states
-					'states' : 
-					{
-						'depthEnable' : true,
-						"blendEnable" : true,
-						"srcBlend" : "SRC_ALPHA",
-						"dstBlend" : "DST_ALPHA"
-					}
-				}
-			]
-		}
+                    // render states
+                    'states' :
+                    {
+                        'depthEnable' : true,
+                        'offset':[1.0, 0.1]
+                    }
+                },
+                {   // light pass
+                    'vshader' : 'dirLightVShader',
+                    'fshader' : 'dirLightFShader',
+                    // attributes
+                    'attributes' :
+                    {
+                        'a_pos' :   { 'type' : 'vec3' },
+                        'a_nrm' :   { 'type' : 'vec3' }
+                    },
+                    // parameters
+                    'params' :
+                    {
+                    },
+
+                    // render states
+                    'states' :
+                    {
+                        'depthEnable' : true,
+                        "blendEnable" : true,
+                        "srcBlend" : "SRC_ALPHA",
+                        "dstBlend" : "DST_ALPHA"
+                    }
+                }
+            ]
+        }
 };
 
 LinearGradientMaterial.prototype = new Material();

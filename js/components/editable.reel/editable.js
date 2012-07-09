@@ -39,7 +39,7 @@ EDITABLE - Methods
 - startEdit
 - stopEdit
 - value
-- 
+-
 - _suggest
 - _suggestNext
 - _suggestPrev
@@ -70,7 +70,7 @@ exports.Editable = Montage.create(Component, {
             if(this.startOnEvent) {
                 this._element.addEventListener(this.startOnEvent, this, false);
             }
-            
+
         }
     },
     _readOnly : {
@@ -80,9 +80,9 @@ exports.Editable = Montage.create(Component, {
         get : function() { return this._readOnly; },
         set : function(makeReadOnly) {
             var action = makeReadOnly ? 'add' : 'remove';
-            
+
             this._element.classList[action](this.readOnlyClass);
-            
+
             if(this.isEditable) {
                 this.stop();
             }
@@ -160,7 +160,7 @@ exports.Editable = Montage.create(Component, {
     ///// Pre Edit Value
     ///// Value stored when editing starts
     ///// Useful for reverting to previous value
-    
+
     _preEditValue : {
         value : null
     },
@@ -169,26 +169,26 @@ exports.Editable = Montage.create(Component, {
             if(!this._readOnly) {
                 this._isEditable = this._element.contentEditable = true;
                 this._element.classList.add(this.editingClass);
-                
+
                 ///// Save the preEditValue
                 this._preEditValue = this.value;
-                
+
                 // Initialize enteredValue with current value
                 this.enteredValue = this.value;
-                
+
                 if(this.selectOnStart) {
                     this.selectAll();
                 }
-                
+
                 if(this.stopOnBlur) {
                     //console.log('adding mousedown event listener');
                     ///// Simulate blur on editable node by listening to the doc
                     document.addEventListener('mousedown', this, false);
                 }
-                
+
                 this._sendEvent('start');
             }
-            
+
         }
     },
     stop : {
@@ -209,7 +209,7 @@ exports.Editable = Montage.create(Component, {
         value : function() {
             var range = document.createRange(),
                 sel   = window.getSelection();
-                
+
             sel.removeAllRanges();
             range.selectNodeContents(this._element);
             sel.addRange(range);
@@ -244,15 +244,15 @@ exports.Editable = Montage.create(Component, {
             this._sendEvent('blur');
         }
     },
-    
+
     /* -------------------- User Event Handling -------------------- */
-    
+
     handleKeydown : {
         value : function(e) {
             var k = e.keyCode;
         }
     },
-    
+
     handleKeyup : {
         value : function(e) {
             // Record change in value
@@ -267,7 +267,7 @@ exports.Editable = Montage.create(Component, {
             if(!this.isDirty) {
                  this.isDirty = true;
              }
-            
+
             this._sendEvent('input');
         }
     },
@@ -310,7 +310,7 @@ exports.Editable = Montage.create(Component, {
     },
 
     /* -------------------- CONFIG -------------------- */
-    
+
     editingClass : {
         value : 'editable'
     },
@@ -326,7 +326,7 @@ exports.Editable = Montage.create(Component, {
     stopOnBlur : {
         value : true
     },
-    keyActions : { 
+    keyActions : {
         value : {
             stop   : [27,9,13],
             revert : [27],
@@ -334,5 +334,5 @@ exports.Editable = Montage.create(Component, {
         },
         distinct: true
     }
-    
+
 });

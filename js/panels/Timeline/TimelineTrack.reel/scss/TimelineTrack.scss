@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 /* TimelineTrack.scss
  * Main SCSS file for TimelineTrack component, compiled by SASS into the file css/TimelineTrack.css.
  */
- 
+
 // Import theme settings
 @import "../../../../../scss/imports/themes/default/colors";
 // @import "../../../../../scss/imports/themes/default/fonts";
@@ -73,21 +73,21 @@ POSSIBILITY OF SUCH DAMAGE.
 
 
 .tl_layertracks .content-position {
-	height: 63px;
+    height: 63px;
 }
 .tl_layertracks .content-transform {
-	height: 106px;
+    height: 106px;
 }
 
 .tl_layertracks .collapsible-content.collapsible-collapsed {
-	overflow: hidden;
-	height: 0px;
+    overflow: hidden;
+    height: 0px;
 }
 
 .tl_layertracks .collapsible-content .collapsible-label {
-	height: 21px;
-	background-color: $color-panel-bg;
-	color: $color-panel-text;
+    height: 21px;
+    background-color: $color-panel-bg;
+    color: $color-panel-text;
 
 }
 

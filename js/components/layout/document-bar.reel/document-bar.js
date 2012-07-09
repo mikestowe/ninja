@@ -127,21 +127,21 @@ exports.DocumentBar = Montage.create(Component, {
         value: 100
     },
 
-	zoomFactor: {
-		get: function()	{ return this._zoomFactor; },
+    zoomFactor: {
+        get: function() { return this._zoomFactor; },
 
-		set: function(value)
-		{
-			if(value !== this._zoomFactor)
-			{
-				this._zoomFactor = value;
-				if (!this._firstDraw)
-				{
-					this.application.ninja.stage.setZoom(value);
-				}
-			}
-		}
-	},
+        set: function(value)
+        {
+            if(value !== this._zoomFactor)
+            {
+                this._zoomFactor = value;
+                if (!this._firstDraw)
+                {
+                    this.application.ninja.stage.setZoom(value);
+                }
+            }
+        }
+    },
 
     draw: {
         value: function() {
@@ -157,7 +157,7 @@ exports.DocumentBar = Montage.create(Component, {
                     this.codeView.classList.add("selected");
                     if(this.designView.classList.contains("selected")) this.designView.classList.toggle("selected");
                 }
-                
+
             } else if(this.type) {
                 this.designView.classList.remove("active");
             }

@@ -27,18 +27,18 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
- 
+
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage =			require("montage/core/core").Montage,
-	Component =			require("montage/ui/component").Component;
+var Montage =           require("montage/core/core").Montage,
+    Component =         require("montage/ui/component").Component;
 ////////////////////////////////////////////////////////////////////////
 //Exporting as ColorPopupManager
 exports.ColorButtonManager = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     hasTemplate: {
-    	value: false
+        value: false
     },
     ////////////////////////////////////////////////////////////////////
     //Storing color manager
@@ -49,19 +49,19 @@ exports.ColorButtonManager = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     colorManager: {
-    	enumerable: true,
+        enumerable: true,
         get: function() {
             return this._colorManager;
         },
         set: function(value) {
-        	this._colorManager = value;
+            this._colorManager = value;
         }
     },
     ////////////////////////////////////////////////////////////////////
     //
     _buttons: {
-    	enumerable: false,
-    	value: {chip: [], fill: [], stroke: [], current: [], previous: [], rgbmode: [], hslmode: [], hexinput: [], nocolor: [], reset: [], swap: [], mlabel1: [], mlabel2: [], mlabel3: []}
+        enumerable: false,
+        value: {chip: [], fill: [], stroke: [], current: [], previous: [], rgbmode: [], hslmode: [], hexinput: [], nocolor: [], reset: [], swap: [], mlabel1: [], mlabel2: [], mlabel3: []}
     }
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////

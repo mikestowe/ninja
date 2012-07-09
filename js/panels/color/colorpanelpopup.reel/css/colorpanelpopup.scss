@@ -34,62 +34,62 @@ $grey_light: #494949;
 
 .cpp_popup
 {
-	overflow: hidden;
-	font-size: 12px;
-  	text-shadow: 1px 1px 1px #000;
-  	font-family: 'Droid Sans', sans-serif;
+    overflow: hidden;
+    font-size: 12px;
+    text-shadow: 1px 1px 1px #000;
+    font-family: 'Droid Sans', sans-serif;
 }
 
 .cp_pu_options
 {
-	float: left;
-	clear: both;
-	width: 100%;
+    float: left;
+    clear: both;
+    width: 100%;
 }
 
 .cp_pu_options button
 {
-	display: block;
-	width: 16px;
-	height: 16px;
-	margin: 4px 0px 2px 2px;
-	text-indent: -9999px;
-	overflow: hidden;
-	float: right;
-	padding: 0;
-	cursor: pointer;
-	border: 1px solid transparent;
+    display: block;
+    width: 16px;
+    height: 16px;
+    margin: 4px 0px 2px 2px;
+    text-indent: -9999px;
+    overflow: hidden;
+    float: right;
+    padding: 0;
+    cursor: pointer;
+    border: 1px solid transparent;
 }
 
 .cp_pu_options button:hover
 {
-	border: 1px solid #FFF;
-	box-shadow: 0px 0px 4px #000;
+    border: 1px solid #FFF;
+    box-shadow: 0px 0px 4px #000;
 }
 
 .cp_pu_wheel
 {
-	background: url(../img/icon_colorwheel.png) no-repeat transparent top left;
+    background: url(../img/icon_colorwheel.png) no-repeat transparent top left;
 }
 
 .cp_pu_images
 {
-	background: url(../img/icon_bitmap.png) no-repeat #000 top left;
+    background: url(../img/icon_bitmap.png) no-repeat #000 top left;
 }
 
 .cp_pu_gradients
 {
-	background: url(../img/icon_gradient.png) no-repeat #000 top left;
+    background: url(../img/icon_gradient.png) no-repeat #000 top left;
 }
 
 .cp_pu_palettes
 {
-	background: url(../img/icon_palette.jpg) no-repeat #000 -1px -1px;
+    background: url(../img/icon_palette.jpg) no-repeat #000 -1px -1px;
 }
 
 .cp_pu_nocolor
 {
-	background: url(../img/icon_nofill.png) no-repeat #000 top left;
+    background: url(../img/icon_nofill.png) no-repeat #000 top left;
 }
 
 .cp_pu_history {
@@ -113,14 +113,14 @@ $grey_light: #494949;
 
 .cp_pu_history button:hover
 {
-	border: solid 1px #000 !important;
-	box-shadow: none !important;
+    border: solid 1px #000 !important;
+    box-shadow: none !important;
 }
 
 .cp_pu_hex
 {
-	float: left;
-	margin: 3px 2px 0px 6px;
+    float: left;
+    margin: 3px 2px 0px 6px;
 }
 
 .cp_pu_hex input {
@@ -150,115 +150,115 @@ $grey_light: #494949;
 
 .cp_pu_content
 {
-	float: left;
-	clear: both;
-	width: 100%;
-	margin: 6px 0px;
+    float: left;
+    clear: both;
+    width: 100%;
+    margin: 6px 0px;
 }
 
 .cp_pu_content div.cp_pu_content_container
 {
-	display: none;
+    display: none;
 }
 
 .cp_pu_alpha
 {
-	float: left;
-	clear: both;
-	width: 100%;
-	margin: 0px;
+    float: left;
+    clear: both;
+    width: 100%;
+    margin: 0px;
 }
 
 .cp_pu_alpha .slider-track
 {
-	background: none;
+    background: none;
 }
 
 .cp_pu_alpha .knob
 {
-	background: url(../img/knob.png) no-repeat transparent center center;
+    background: url(../img/knob.png) no-repeat transparent center center;
 }
 
 .cp_pu_a_label, .cp_pu_a_label2
 {
-	float: left;
-	width: auto;
-	font-size: 11px;
+    float: left;
+    width: auto;
+    font-size: 11px;
 }
 
 .cp_pu_a_slider
 {
-	width: 120px;
+    width: 120px;
     height: 12px;
-	float: left;
-	clear: none;
-	margin: 0px 10px 5px 10px;
+    float: left;
+    clear: none;
+    margin: 0px 10px 5px 10px;
 }
 
 .cp_pu_a_hottext.hottext
 {
-	background: none;
-	float: left;
-	margin: -1px 2px 0px 0px;
-	padding: 0px;
-	width: 23px;
-	color: #FFF;
-	text-shadow: 1px 1px 1px #000;
-	font-family: 'Droid Sans', sans-serif;
-	font-size: 11px;
-	text-align: center;
+    background: none;
+    float: left;
+    margin: -1px 2px 0px 0px;
+    padding: 0px;
+    width: 23px;
+    color: #FFF;
+    text-shadow: 1px 1px 1px #000;
+    font-family: 'Droid Sans', sans-serif;
+    font-size: 11px;
+    text-align: center;
 }
 
 .cp_pu_a_hottext.hottextInput
 {
-	background: #FFF;
-	color: #000;
-	text-shadow: none;
-	border: 1px solid #333;
-	margin: -3px 1px 0px 0px;
-	padding: 1px;
-	text-decoration: none;
-	font-family: 'Droid Sans', sans-serif;
-	font-size: 11px;
-	outline: none;
-	float: left;
+    background: #FFF;
+    color: #000;
+    text-shadow: none;
+    border: 1px solid #333;
+    margin: -3px 1px 0px 0px;
+    padding: 1px;
+    text-decoration: none;
+    font-family: 'Droid Sans', sans-serif;
+    font-size: 11px;
+    outline: none;
+    float: left;
 }
 
 .cp_pu_wheel_container
 {
-	width: 202px;
-	height: 202px;
-	
+    width: 202px;
+    height: 202px;
+
 }
 
 .cp_pu_palette_container
 {
-	overflow: hidden;
-	clear: both;
-	width: 200px;
-	padding: 0px 1px 1px 0px;
-	margin: 0px 0px 0px 1px;
+    overflow: hidden;
+    clear: both;
+    width: 200px;
+    padding: 0px 1px 1px 0px;
+    margin: 0px 0px 0px 1px;
 }
 
 .cp_pu_palette_container button
 {
-	display: block;
-	float: left;
-	border: 1px solid #333;
-	margin: 0px -1px -1px 0px;
-	padding: 0px;
-	width: 11px;
-	height: 11px;
-	cursor: pointer;
+    display: block;
+    float: left;
+    border: 1px solid #333;
+    margin: 0px -1px -1px 0px;
+    padding: 0px;
+    width: 11px;
+    height: 11px;
+    cursor: pointer;
 }
 
 .cp_pu_gradient_container button.chip
 {
-	display: block;
-	width: 16px;
-	height: 16px;
-	padding: 0px;
-	margin: 0px;
-	cursor: pointer;
-	border: 1px solid black;
+    display: block;
+    width: 16px;
+    height: 16px;
+    padding: 0px;
+    margin: 0px;
+    cursor: pointer;
+    border: 1px solid black;
 }

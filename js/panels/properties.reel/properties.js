@@ -163,12 +163,12 @@ exports.Properties = Montage.create(Component, {
             NJevent("updatedID",this.application.ninja.selectedElements[0]);
         }
     },
-    
+
     handleKeyup: {
         value: function(event) {
             if(event.keyCode === 13) {
                 event.target.blur();
-            }      
+            }
         }
     },
 
@@ -320,18 +320,18 @@ exports.Properties = Montage.create(Component, {
 
                 // Root element color chip
                 if(isRoot) {
-                	//
+                    //
                     var rootBackgroundColor, backgroundChip = this.customSections[0].content.controls["background"];
                     //
                     if (ElementsMediator.getProperty(el, "background-image")) {
-	                    rootBackgroundColor = ElementsMediator.getProperty(el, "background-image");
-	                    if (!rootBackgroundColor.mode) rootBackgroundColor = null;
+                        rootBackgroundColor = ElementsMediator.getProperty(el, "background-image");
+                        if (!rootBackgroundColor.mode) rootBackgroundColor = null;
                     } else if (ElementsMediator.getProperty(el, "background-color")){
-	                    rootBackgroundColor = ElementsMediator.getProperty(el, "background-color");
-	                    if (!rootBackgroundColor.mode) rootBackgroundColor = null;
+                        rootBackgroundColor = ElementsMediator.getProperty(el, "background-color");
+                        if (!rootBackgroundColor.mode) rootBackgroundColor = null;
                     } else if (ElementsMediator.getProperty(el, "background")){
-	                    rootBackgroundColor = ElementsMediator.getProperty(el, "background");
-	                    if (!rootBackgroundColor.mode) rootBackgroundColor = null;
+                        rootBackgroundColor = ElementsMediator.getProperty(el, "background");
+                        if (!rootBackgroundColor.mode) rootBackgroundColor = null;
                     }
                     //
                     if(rootBackgroundColor) {
@@ -344,7 +344,7 @@ exports.Properties = Montage.create(Component, {
 
 
 
-			var previousInput = this.application.ninja.colorController.colorModel.input;
+            var previousInput = this.application.ninja.colorController.colorModel.input;
             customPI = PiData[this.customPi];
             // Get all the custom section for the custom PI
             for(var i = 0, customSec; customSec = customPI[i]; i++) {
@@ -411,31 +411,31 @@ exports.Properties = Montage.create(Component, {
                 if (previousInput === 'chip') return;
                 this.application.ninja.colorController.colorModel.input =  previousInput;
                 var color = this.application.ninja.colorController.colorModel.colorHistory[previousInput][this.application.ninja.colorController.colorModel.colorHistory[previousInput].length-1];
-    			color.c.wasSetByCode = true;
-    			color.c.type = 'change';
-    			switch (color.m) {
-    				case 'rgb':
-    					this.application.ninja.colorController.colorModel.alpha = {value: color.a, wasSetByCode: true, type: 'change'};
-    					this.application.ninja.colorController.colorModel.rgb = color.c;
-    					break;
-    				case 'hsl':
-    					this.application.ninja.colorController.colorModel.alpha = {value: color.a, wasSetByCode: true, type: 'change'};
-    					this.application.ninja.colorController.colorModel.hsl = color.c;
-    					break;
-    				case 'hex':
-    					//TODO: Check if anything needed here
-    					break;
-    				case 'gradient':
-    					this.application.ninja.colorController.colorModel.gradient = color.c;
-    					break;
-    				case 'hsv':
-    					this.application.ninja.colorController.colorModel.alpha = {value: color.a, wasSetByCode: true, type: 'change'};
-    					this.application.ninja.colorController.colorModel.hsv = color.c;
-    					break;
-    				default:
-    					this.application.ninja.colorController.colorModel.applyNoColor(true);
-    					break;
-    			}
+                color.c.wasSetByCode = true;
+                color.c.type = 'change';
+                switch (color.m) {
+                    case 'rgb':
+                        this.application.ninja.colorController.colorModel.alpha = {value: color.a, wasSetByCode: true, type: 'change'};
+                        this.application.ninja.colorController.colorModel.rgb = color.c;
+                        break;
+                    case 'hsl':
+                        this.application.ninja.colorController.colorModel.alpha = {value: color.a, wasSetByCode: true, type: 'change'};
+                        this.application.ninja.colorController.colorModel.hsl = color.c;
+                        break;
+                    case 'hex':
+                        //TODO: Check if anything needed here
+                        break;
+                    case 'gradient':
+                        this.application.ninja.colorController.colorModel.gradient = color.c;
+                        break;
+                    case 'hsv':
+                        this.application.ninja.colorController.colorModel.alpha = {value: color.a, wasSetByCode: true, type: 'change'};
+                        this.application.ninja.colorController.colorModel.hsv = color.c;
+                        break;
+                    default:
+                        this.application.ninja.colorController.colorModel.applyNoColor(true);
+                        break;
+                }
             }
         }
     },

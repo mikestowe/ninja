@@ -121,7 +121,7 @@ padding-right:6px;
 .propertiesPanel .fieldRow.twoCol label {
     width:74px;
     display: inline-block;
-    
+
 }
 
 .propertiesPanel .fieldRow.oneCol label {
@@ -276,10 +276,10 @@ padding-right:6px;
 }
 
 .propertiesPanel .colortoolbar .chipContainer {
-	margin-top: 2px;
-	background: url(../../../../../images/colorpanel/transparent.png) repeat;
-	width: 40px;
-	height: 20px;
+    margin-top: 2px;
+    background: url(../../../../../images/colorpanel/transparent.png) repeat;
+    width: 40px;
+    height: 20px;
 }
 
 .propertiesPanel .button:active {

@@ -45,11 +45,11 @@ var UberMaterial = function UberMaterial() {
     this._diffuseColor = [1.0, 1.0, 1.0, 1.0];
     this._specularColor = [1.0, 1.0, 1.0, 1.0];
     this._specularPower = 32.0;
-    this._environmentAmount = 0.2; 	// 0 .. 1
+    this._environmentAmount = 0.2;  // 0 .. 1
 
     // set the default maps
-	this._diffuseMapOb = { 'texture' : 'assets/images/rocky-diffuse.jpg', 'wrap' : 'REPEAT' };
-	//this._diffuseMapOb = { 'texture' : 'texture', 'wrap' : 'REPEAT' };
+    this._diffuseMapOb = { 'texture' : 'assets/images/rocky-diffuse.jpg', 'wrap' : 'REPEAT' };
+    //this._diffuseMapOb = { 'texture' : 'texture', 'wrap' : 'REPEAT' };
     this._normalMapOb = { 'texture': 'assets/images/rocky-normal.jpg', 'wrap': 'REPEAT' };
     this._specularMapOb = { 'texture': 'assets/images/rocky-spec.jpg', 'wrap': 'REPEAT' };
     this._environmentMapOb = { 'texture': 'assets/images/silver.png', 'wrap': 'CLAMP', 'envReflection': this._environmentAmount };
@@ -157,86 +157,86 @@ var UberMaterial = function UberMaterial() {
     // define the 4 lights
     this._lights = [
 
-		{
-		    'type': 'point',                           // can be 'directional', 'point' or 'spot'
-		    'spotInnerCutoff': 14.0,                   // fragments in the inner cutoff 'cone' are full intensity.
-		    'spotOuterCutoff': 15.0,                   // fragments outside the outer cutoff 'cone' are unlit.
-		    'position': [8.0, 2.0, 8.0],             // light position; ignored for directional lights
-		    'direction': [-1.0, -1.0, -1.0],         // light direction; ignored for point lights
-		    'attenuation': [1.0, 0.025, 0.00125],    // light attenuation; constant, linear, quadratic 
-		    'diffuseColor': [1.0, 0.5, 0.5, 1.0],    // diffuse light color
-		    'specularColor': [1.0, 1.0, 1.0, 1.0]    // specular light color  
-		},
-		{
-		    'type': 'point',
-		    'spotInnerCutoff': 9.0,
-		    'spotOuterCutoff': 20.0,
-		    'position': [-8.0, 2.0, 8.0],
-		    'direction': [1.0, -1.0, -1.0],
-		    'attenuation': [1.0, 0.025, 0.00125],
-		    'diffuseColor': [0.5, 1.0, 0.5, 1.0],
-		    'specularColor': [1.0, 1.0, 1.0, 1.0]
-		},
-		{
-		    'type': 'point',
-		    'spotInnerCutoff': 9.0,
-		    'spotOuterCutoff': 20.0,
-		    'position': [-8.0, 2.0, -8.0],
-		    'direction': [1.0, -1.0, 1.0],
-		    'attenuation': [1.0, 0.25, 0.0125],
-		    'diffuseColor': [0.5, 0.5, 1.0, 1.0],
-		    'specularColor': [1.0, 1.0, 1.0, 1.0]
-		},
-		{
-		    'type': 'point',
-		    'spotInnerCutoff': 9.0,
-		    'spotOuterCutoff': 20.0,
-		    'position': [8.0, 4.0, -8.0],
-		    'direction': [-1.0, -1.0, 1.0],
-		    'attenuation': [1.0, 0.25, 0.0125],
-		    'diffuseColor': [1.0, 1.0, 0.5, 1.0],
-		    'specularColor': [1.0, 1.0, 1.0, 1.0]
-		}
-	];
+        {
+            'type': 'point',                           // can be 'directional', 'point' or 'spot'
+            'spotInnerCutoff': 14.0,                   // fragments in the inner cutoff 'cone' are full intensity.
+            'spotOuterCutoff': 15.0,                   // fragments outside the outer cutoff 'cone' are unlit.
+            'position': [8.0, 2.0, 8.0],             // light position; ignored for directional lights
+            'direction': [-1.0, -1.0, -1.0],         // light direction; ignored for point lights
+            'attenuation': [1.0, 0.025, 0.00125],    // light attenuation; constant, linear, quadratic
+            'diffuseColor': [1.0, 0.5, 0.5, 1.0],    // diffuse light color
+            'specularColor': [1.0, 1.0, 1.0, 1.0]    // specular light color
+        },
+        {
+            'type': 'point',
+            'spotInnerCutoff': 9.0,
+            'spotOuterCutoff': 20.0,
+            'position': [-8.0, 2.0, 8.0],
+            'direction': [1.0, -1.0, -1.0],
+            'attenuation': [1.0, 0.025, 0.00125],
+            'diffuseColor': [0.5, 1.0, 0.5, 1.0],
+            'specularColor': [1.0, 1.0, 1.0, 1.0]
+        },
+        {
+            'type': 'point',
+            'spotInnerCutoff': 9.0,
+            'spotOuterCutoff': 20.0,
+            'position': [-8.0, 2.0, -8.0],
+            'direction': [1.0, -1.0, 1.0],
+            'attenuation': [1.0, 0.25, 0.0125],
+            'diffuseColor': [0.5, 0.5, 1.0, 1.0],
+            'specularColor': [1.0, 1.0, 1.0, 1.0]
+        },
+        {
+            'type': 'point',
+            'spotInnerCutoff': 9.0,
+            'spotOuterCutoff': 20.0,
+            'position': [8.0, 4.0, -8.0],
+            'direction': [-1.0, -1.0, 1.0],
+            'attenuation': [1.0, 0.25, 0.0125],
+            'diffuseColor': [1.0, 1.0, 0.5, 1.0],
+            'specularColor': [1.0, 1.0, 1.0, 1.0]
+        }
+    ];
 
     this._ubershaderCaps =
-	{
-	    // ubershader material properties. 
-	    'material': {
-	        'ambientColor': this._ambientColor,    // material ambient color
-	        'diffuseColor': this._diffuseColor,    // material diffuse color
-	        'specularColor': this._specularColor,   // material specular color
-	        'specularPower': this._specularPower    // material specular power (shininess)
-	    },
+    {
+        // ubershader material properties.
+        'material': {
+            'ambientColor': this._ambientColor,    // material ambient color
+            'diffuseColor': this._diffuseColor,    // material diffuse color
+            'specularColor': this._specularColor,   // material specular color
+            'specularPower': this._specularPower    // material specular power (shininess)
+        },
 
-	    // ubershader supports up to four lights. 
-	    'lighting': {
-	        'light0': this._lights[0],
-	        'light1': this._lights[1],
-	        'light2': this._lights[2],
-	        'light3': this._lights[3]
-	    },
+        // ubershader supports up to four lights.
+        'lighting': {
+            'light0': this._lights[0],
+            'light1': this._lights[1],
+            'light2': this._lights[2],
+            'light3': this._lights[3]
+        },
 
-	    // uvTransform can be used to scale or offset the texture coordinates.
-	    'uvTransform': [2.0, 0, 0, 0, 0, 2.0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1],
+        // uvTransform can be used to scale or offset the texture coordinates.
+        'uvTransform': [2.0, 0, 0, 0, 0, 2.0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1],
 
-	    // optional diffuse map
-	    'diffuseMap': this._diffuseMapOb,
+        // optional diffuse map
+        'diffuseMap': this._diffuseMapOb,
 
-	    // optional normal map
-	    'normalMap': this._normalMapOb,
+        // optional normal map
+        'normalMap': this._normalMapOb,
 
-	    // optional specular map
-	    'specularMap': this._specularMapOb,
+        // optional specular map
+        'specularMap': this._specularMapOb,
 
-	    // optional environment map
-	    'environmentMap': this._environmentMapOb
-	};
+        // optional environment map
+        'environmentMap': this._environmentMapOb
+    };
 
     this.updateAmbientColor = function () {
         this._ambientColor = this._propValues['ambientColor'].slice(0);
         var material = this._materialNode;
-		//console.log( "ambient color: " + this._ambientColor );
+        //console.log( "ambient color: " + this._ambientColor );
         if (material) {
             var technique = material.shaderProgram.defaultTechnique;
             technique.u_ambientColor.set(this._ambientColor);
@@ -312,34 +312,34 @@ var UberMaterial = function UberMaterial() {
         }
     };
 
- 	this.updateDiffuseMap = function(value) {
-		var value = this._propValues[ "diffuseMap" ];
-		this._diffuseMapOb.texture = value;
+    this.updateDiffuseMap = function(value) {
+        var value = this._propValues[ "diffuseMap" ];
+        this._diffuseMapOb.texture = value;
 
-		if ((value == null) || (value.length == 0)) {
-			if (this._useDiffuseMap) {
-				this._useDiffuseMap = false;
+        if ((value == null) || (value.length == 0)) {
+            if (this._useDiffuseMap) {
+                this._useDiffuseMap = false;
                 this._diffuseTexture = undefined;
-				this.rebuildShader();
-			}
-		} else {
-			if (!this._useDiffuseMap) {
-				this._useDiffuseMap = true;
-				this.rebuildShader();
-			} else {
-				var material = this._materialNode;
-				if (material) {
-					var technique = material.shaderProgram.defaultTechnique;
-					var renderer = RDGE.globals.engine.getContext().renderer;
-					if (renderer && technique) {
+                this.rebuildShader();
+            }
+        } else {
+            if (!this._useDiffuseMap) {
+                this._useDiffuseMap = true;
+                this.rebuildShader();
+            } else {
+                var material = this._materialNode;
+                if (material) {
+                    var technique = material.shaderProgram.defaultTechnique;
+                    var renderer = RDGE.globals.engine.getContext().renderer;
+                    if (renderer && technique) {
                         this._diffuseTexture = new Texture( this.getWorld(), value,  this._ubershaderCaps.diffuseMap.wrap );
                         var tex = this._diffuseTexture.getTexture();
-						technique.s_diffuseMap.set( tex );
-					}
-				}
-			}
-		}
-	};
+                        technique.s_diffuseMap.set( tex );
+                    }
+                }
+            }
+        }
+    };
 
     this.updateSpecularMap = function () {
         var value = this._propValues["specularMap"];
@@ -403,7 +403,7 @@ var UberMaterial = function UberMaterial() {
         // get the current values;
         var propNames = [], propValues = [], propTypes = [], propLabels = [];
         this.getAllProperties(propNames, propValues, propTypes, propLabels);
-        
+
         // allocate a new material
         var newMat = new UberMaterial();
         newMat._useDiffuseMap = this._useDiffuseMap;
@@ -412,7 +412,7 @@ var UberMaterial = function UberMaterial() {
         newMat._useNormalMap = this._useNormalMap;
         newMat._useSpecularMap = this._useSpecularMap;
 
-		// copy over the current values;
+        // copy over the current values;
         var n = propNames.length;
         for (var i = 0; i < n; i++)
             newMat.setProperty(propNames[i], propValues[i]);
@@ -436,30 +436,30 @@ var UberMaterial = function UberMaterial() {
 
    this.update = function()
     {
-		var material = this._materialNode;
-		if (material)
+        var material = this._materialNode;
+        if (material)
         {
-		    var technique = material.shaderProgram.defaultTechnique;
-		    var renderer = RDGE.globals.engine.getContext().renderer;
-		    if (renderer && technique)
+            var technique = material.shaderProgram.defaultTechnique;
+            var renderer = RDGE.globals.engine.getContext().renderer;
+            if (renderer && technique)
             {
                 if (this._diffuseTexture && this._diffuseTexture.isAnimated())
                 {
                     this._diffuseTexture.render();
-				    technique.s_diffuseMap.set( this._diffuseTexture.getTexture() );
+                    technique.s_diffuseMap.set( this._diffuseTexture.getTexture() );
                 }
             }
         }
     }
-	
-    this.isAnimated	= function()
+
+    this.isAnimated = function()
     {
         var anim = (this._diffuseTexture && this._diffuseTexture.isAnimated());
         return anim;
     }
 
     this.importJSON = function (jObj)
-	{
+    {
         if (this.getShaderName() != jObj.material) throw new Error("ill-formed material");
         this.setName(jObj.name);
 
@@ -514,12 +514,12 @@ var UberMaterial = function UberMaterial() {
 
             if (this._lights.length > 0) {
                 this._ubershaderCaps.lighting =
-				{
-				    'light0': this._lights[0],
-				    'light1': this._lights[1],
-				    'light2': this._lights[2],
-				    'light3': this._lights[3]
-				}
+                {
+                    'light0': this._lights[0],
+                    'light1': this._lights[1],
+                    'light2': this._lights[2],
+                    'light3': this._lights[3]
+                }
             }
         }
 
@@ -551,20 +551,20 @@ var UberMaterial = function UberMaterial() {
         // every material needs the base type and instance name
         var caps = this._ubershaderCaps;
         var jObj =
-		{
-		    'material': this.getShaderName(),
-		    'name': this.getName()
-		};
+        {
+            'material': this.getShaderName(),
+            'name': this.getName()
+        };
 
         // export the material properties
         if (typeof caps.material != 'undefined') {
             jObj.materialProps =
-			{
-			    'ambientColor': this._ambientColor,
-			    'diffuseColor': this._diffuseColor,
-			    'specularColor': this._specularColor,
-			    'specularPower': this._specularPower
-			};
+            {
+                'ambientColor': this._ambientColor,
+                'diffuseColor': this._diffuseColor,
+                'specularColor': this._specularColor,
+                'specularPower': this._specularPower
+            };
 
         }
 
@@ -585,7 +585,7 @@ var UberMaterial = function UberMaterial() {
                         lightObj['light' + i + 'SpotInnerCutoff'] = light['spotInnerCutoff'];
                         lightObj['light' + i + 'SpotOuterCutoff'] = light['spotOuterCutoff'];
                     }
-                    else		// light.type === 'point'
+                    else        // light.type === 'point'
                     {
                         lightObj['light' + i + 'Pos'] = (light['position'] || [0, 0, 0]);
                         lightObj['light' + i + 'Attenuation'] = (light['attenuation'] || [1, 0, 0]);
@@ -704,7 +704,7 @@ var UberMaterial = function UberMaterial() {
         var vshader = preproc + uberVShader;
         var fshader = preproc + uberFShader;
 
-        // build output jshader  
+        // build output jshader
         var uberJShader = new RDGE.jshader();
         uberJShader.def = {
             'shaders': {
@@ -759,7 +759,7 @@ var UberMaterial = function UberMaterial() {
                         technique['u_light' + i + 'Pos'].set(light['position'] || [0, 0, 0]);
                         var deg2Rad = Math.PI / 180;
                         technique['u_light' + i + 'Spot'].set([Math.cos((light['spotInnerCutoff'] || 45.0) * deg2Rad),
-															Math.cos((light['spotOuterCutoff'] || 90.0) * deg2Rad)]);
+                                                            Math.cos((light['spotOuterCutoff'] || 90.0) * deg2Rad)]);
                         technique['u_light' + i + 'Atten'].set(light['attenuation'] || [1, 0, 0]);
                     } else {
                         technique['u_light' + i + 'Pos'].set(light['position'] || [0, 0, 0]);
@@ -774,9 +774,9 @@ var UberMaterial = function UberMaterial() {
 
         var renderer = RDGE.globals.engine.getContext().renderer;
         if (this._useDiffuseMap) {
-			this._diffuseTexture = new Texture( this.getWorld(), caps.diffuseMap.texture,  caps.diffuseMap.wrap, caps.diffuseMap.mips );
+            this._diffuseTexture = new Texture( this.getWorld(), caps.diffuseMap.texture,  caps.diffuseMap.wrap, caps.diffuseMap.mips );
             var tex = this._diffuseTexture.getTexture();
-			technique.s_diffuseMap.set( tex );
+            technique.s_diffuseMap.set( tex );
         }
 
         if (this._useNormalMap) {

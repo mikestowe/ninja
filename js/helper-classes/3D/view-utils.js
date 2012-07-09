@@ -140,15 +140,15 @@ exports.ViewUtils = Montage.create(Component, {
     },
 
     /*
-	 *  This method will return a normal to a plane containing the Z axis and either the
-	 *  x or y axis of the element.
-	 */
-	getNormalToUnprojectedElementPlane:
-	{
+     *  This method will return a normal to a plane containing the Z axis and either the
+     *  x or y axis of the element.
+     */
+    getNormalToUnprojectedElementPlane:
+    {
         value: function( elt, axis,  localMode )
-		{
+        {
             var objMat = this.getMatrixFromElement(elt);
-			var objMatInv = glmat4.inverse( objMat, [] );
+            var objMatInv = glmat4.inverse( objMat, [] );
 
             var xVec = [1,0,0];
             var yVec = [0,1,0];
@@ -157,55 +157,55 @@ exports.ViewUtils = Montage.create(Component, {
             var stage = this.application.ninja.currentDocument.model.documentRoot;
             var stageMat = this.getMatrixFromElement(stage);
 
-			var mat = glmat4.multiply( stageMat, objMat, [] );
-			
-			var viewDir;
-			if (localMode)
-			{
-				var matInv = glmat4.inverse( mat, [] );
-				viewDir = MathUtils.transformVector( [0,0,1], matInv );
-			}
-			else
-			{
-				var stageInv = glmat4.inverse( stageMat, [] );
-				viewDir = MathUtils.transformVector( [0,0,1],  stageInv );
-			}
+            var mat = glmat4.multiply( stageMat, objMat, [] );
 
-			var plane;
-			var xDot, yDot, zDot;
-			switch (axis)
-			{
-				case 0:
-					yDot = Math.abs(vecUtils.vecDot(3, yVec, viewDir));
-					zDot = Math.abs(vecUtils.vecDot(3, zVec, viewDir));
-					if(yDot > zDot)
-						plane = vecUtils.vecCross( 3, zVec, xVec );
-					else
-						plane = vecUtils.vecCross( 3, yVec, xVec );
-					break;
-					
-				case 1:
-					xDot = Math.abs(vecUtils.vecDot(3, yVec, viewDir));
-					zDot = Math.abs(vecUtils.vecDot(3, zVec, viewDir));
-					if(xDot > zDot)
-						plane = vecUtils.vecCross( 3, zVec, yVec );
-					else
-						plane = vecUtils.vecCross( 3, xVec, yVec );
-					break;
-					break;
+            var viewDir;
+            if (localMode)
+            {
+                var matInv = glmat4.inverse( mat, [] );
+                viewDir = MathUtils.transformVector( [0,0,1], matInv );
+            }
+            else
+            {
+                var stageInv = glmat4.inverse( stageMat, [] );
+                viewDir = MathUtils.transformVector( [0,0,1],  stageInv );
+            }
 
-				case 2:
-					xDot = Math.abs(vecUtils.vecDot(3, xVec, viewDir));
-					yDot = Math.abs(vecUtils.vecDot(3, yVec, viewDir));
+            var plane;
+            var xDot, yDot, zDot;
+            switch (axis)
+            {
+                case 0:
+                    yDot = Math.abs(vecUtils.vecDot(3, yVec, viewDir));
+                    zDot = Math.abs(vecUtils.vecDot(3, zVec, viewDir));
+                    if(yDot > zDot)
+                        plane = vecUtils.vecCross( 3, zVec, xVec );
+                    else
+                        plane = vecUtils.vecCross( 3, yVec, xVec );
+                    break;
 
-					if(xDot > yDot)
-						plane = vecUtils.vecCross( 3, yVec, zVec );
-					else
-						plane = vecUtils.vecCross( 3, xVec, zVec );
-					break;
-			}
+                case 1:
+                    xDot = Math.abs(vecUtils.vecDot(3, yVec, viewDir));
+                    zDot = Math.abs(vecUtils.vecDot(3, zVec, viewDir));
+                    if(xDot > zDot)
+                        plane = vecUtils.vecCross( 3, zVec, yVec );
+                    else
+                        plane = vecUtils.vecCross( 3, xVec, yVec );
+                    break;
+                    break;
 
-			if (localMode)  plane = MathUtils.transformVector( plane, objMat );
+                case 2:
+                    xDot = Math.abs(vecUtils.vecDot(3, xVec, viewDir));
+                    yDot = Math.abs(vecUtils.vecDot(3, yVec, viewDir));
+
+                    if(xDot > yDot)
+                        plane = vecUtils.vecCross( 3, yVec, zVec );
+                    else
+                        plane = vecUtils.vecCross( 3, xVec, zVec );
+                    break;
+            }
+
+            if (localMode)  plane = MathUtils.transformVector( plane, objMat );
 
             // The translation value is a point on the plane
             this.pushViewportObj( elt );
@@ -332,11 +332,11 @@ exports.ViewUtils = Montage.create(Component, {
         value: function( localPt,  elt ) {
             this.pushViewportObj( elt );
             var viewPt = this.screenToView( localPt[0], localPt[1], localPt[2] );
-			if ((elt == null) || (elt === this._stageElement))
-			{
-				this.popViewportObj();
-				return viewPt;
-			}
+            if ((elt == null) || (elt === this._stageElement))
+            {
+                this.popViewportObj();
+                return viewPt;
+            }
             var mat = this.getMatrixFromElement( elt );
             var worldPt = MathUtils.transformPoint( viewPt, mat );
             var stageWorldPt = this.postViewToStageWorld( worldPt, elt );
@@ -571,7 +571,7 @@ exports.ViewUtils = Montage.create(Component, {
             return localPlane;
         }
     },
-    
+
     parentToChild: {
         value: function( parentPt, child,  passthrough ) {
             var pt = parentPt.slice(0);
@@ -620,7 +620,7 @@ exports.ViewUtils = Montage.create(Component, {
             return childPt;
         }
     },
-    
+
     parentToChildWorld: {
         value: function( parentPt, child ) {
             var pt = parentPt.slice(0);
@@ -694,7 +694,7 @@ exports.ViewUtils = Montage.create(Component, {
             return vec;
         }
     },
-    
+
     getElementBounds: {
         value: function( elt, localSpace ) {
             // optional argument localSpace, if true, puts the top left at (0,0).
@@ -876,7 +876,7 @@ exports.ViewUtils = Montage.create(Component, {
         }
     },
 
-    
+
     unproject: {
         value: function( pt ) {
             if(!this._perspectiveDist)
@@ -968,7 +968,7 @@ exports.ViewUtils = Montage.create(Component, {
             return viewPt;
         }
     },
-    
+
     globalScreenToLocalWorld: {
         value: function( globalPt,  elt ) {
             var objPt = this.globalToLocal( globalPt, elt );
@@ -1336,40 +1336,40 @@ exports.ViewUtils = Montage.create(Component, {
 ///////////////////////////////////////////////////////////////////////////////////
 // Montage update map
 //
-//	NO LONGER SUPPORTED:
-//		stageManagerModule
-//		drawLayoutModule
+//  NO LONGER SUPPORTED:
+//      stageManagerModule
+//      drawLayoutModule
 //
-//	STAGE ACCESSORS:
-//	activeDocument:					this.application.ninja.currentDocument				
-//	userContent (stage):			this.application.ninja.currentDocument.model.documentRoot
-//	stageManager:					this.application.ninja.stage								// MainApp\js\stage\stage.reel\stage.js
-//	stageManager._canvas:			this.application.ninja.stage.canvas
-//	stageManager.layoutCanvas:		this.application.ninja.stage.layoutCanvas
-//	stageManager.drawingCanvas:		this.application.ninja.stage.drawingCanvas
-//	viewUtils:						stage.viewUtils;
-//	snapManager						stage.snapManager;
+//  STAGE ACCESSORS:
+//  activeDocument:                 this.application.ninja.currentDocument
+//  userContent (stage):            this.application.ninja.currentDocument.model.documentRoot
+//  stageManager:                   this.application.ninja.stage                                // MainApp\js\stage\stage.reel\stage.js
+//  stageManager._canvas:           this.application.ninja.stage.canvas
+//  stageManager.layoutCanvas:      this.application.ninja.stage.layoutCanvas
+//  stageManager.drawingCanvas:     this.application.ninja.stage.drawingCanvas
+//  viewUtils:                      stage.viewUtils;
+//  snapManager                     stage.snapManager;
 //
-//	REDRAW FUNCTIONS
-//	window.stageManager.drawSelectionRec(true):			this.application.ninja.stage.updateStage = true;
-//	drawLayoutModule.drawLayout.redrawDocument()							OR
-//	window.stageManager.drawSelectionRec(true)			this.getStage().draw();
-//	drawLayoutModule.drawLayout.redrawDocument();
+//  REDRAW FUNCTIONS
+//  window.stageManager.drawSelectionRec(true):         this.application.ninja.stage.updateStage = true;
+//  drawLayoutModule.drawLayout.redrawDocument()                            OR
+//  window.stageManager.drawSelectionRec(true)          this.getStage().draw();
+//  drawLayoutModule.drawLayout.redrawDocument();
 
-//	SELECTION MANAGER
-//	selected elements:				this.application.ninja.selectedElements
-//	selectionManager				this.application.ninja.selectionController
-//	selected elements:				this.application.ninja.selectionController.selectElements
+//  SELECTION MANAGER
+//  selected elements:              this.application.ninja.selectedElements
+//  selectionManager                this.application.ninja.selectionController
+//  selected elements:              this.application.ninja.selectionController.selectElements
 //
-//	MISCELLANEOUS
-//	event.layerX/Y:					var pt = viewUtils.getMousePoint(event);
+//  MISCELLANEOUS
+//  event.layerX/Y:                 var pt = viewUtils.getMousePoint(event);
 
     getStage: {
         value: function()
-		{
-			return this.application.ninja.stage.snapManager.getStage();
-		}
-	},
+        {
+            return this.application.ninja.stage.snapManager.getStage();
+        }
+    },
 
     clearStageTranslation: {
         value: function() {
@@ -1388,10 +1388,10 @@ exports.ViewUtils = Montage.create(Component, {
                 var deltaMat = glmat4.multiply( targetMat, ucMatInv, [] );
                 this.setMatrixForElement(userContent, targetMat );
             }
-	    }
+        }
     },
 
-	setStageZoom: {
+    setStageZoom: {
         value:function( globalPt,  zoomFactor ) {
             var localPt;
             var tmp1, tmp2, tmp3;
@@ -1417,79 +1417,79 @@ exports.ViewUtils = Montage.create(Component, {
                     console.log( "**** non-uniform scale in view matrix **** " + sx + ", " + sy + ", " + sz );
                 var newZoomFactor = zoomFactor/sx;
 //                console.log( "old zoom: " + zoomFactor + ", new zoom: " + newZoomFactor );
-				if (MathUtils.fpCmp(newZoomFactor,1.0) == 0)
-					console.log( "no zoom applied" );
-				else
-				{
-					var zoomMat=[newZoomFactor,0,0,0,0,newZoomFactor,0,0,0,0,newZoomFactor,0,0,0,0,1];
+                if (MathUtils.fpCmp(newZoomFactor,1.0) == 0)
+                    console.log( "no zoom applied" );
+                else
+                {
+                    var zoomMat=[newZoomFactor,0,0,0,0,newZoomFactor,0,0,0,0,newZoomFactor,0,0,0,0,1];
 
-					// get  a point in local userContent space
-					localPt  = this.globalToLocal( globalPt, userContent );
-					var scrPt = this.screenToView( localPt[0], localPt[1], localPt[2] );
-					var worldPt  = MathUtils.transformPoint( scrPt, userContentMat );
-					tmp1 = this.localToGlobal( localPt,  userContent );	// DEBUG - remove this line
+                    // get  a point in local userContent space
+                    localPt  = this.globalToLocal( globalPt, userContent );
+                    var scrPt = this.screenToView( localPt[0], localPt[1], localPt[2] );
+                    var worldPt  = MathUtils.transformPoint( scrPt, userContentMat );
+                    tmp1 = this.localToGlobal( localPt,  userContent ); // DEBUG - remove this line
 
-					// set the viewport object
-					this.setViewportObj( userContent );
+                    // set the viewport object
+                    this.setViewportObj( userContent );
 
-					// scale around the world point to give the same screen location
-					var transPt = worldPt.slice();
-					var transPtNeg = transPt.slice();
-					vecUtils.vecNegate( 3, transPtNeg );
-					var trans1 = Matrix.Translation( transPtNeg ),
-						trans2 = Matrix.Translation( transPt );
-					var mat = glmat4.multiply( zoomMat, trans1, [] );
-					glmat4.multiply( trans2, mat, mat );
-					var newUCMat = glmat4.multiply( mat, userContentMat, []);
+                    // scale around the world point to give the same screen location
+                    var transPt = worldPt.slice();
+                    var transPtNeg = transPt.slice();
+                    vecUtils.vecNegate( 3, transPtNeg );
+                    var trans1 = Matrix.Translation( transPtNeg ),
+                        trans2 = Matrix.Translation( transPt );
+                    var mat = glmat4.multiply( zoomMat, trans1, [] );
+                    glmat4.multiply( trans2, mat, mat );
+                    var newUCMat = glmat4.multiply( mat, userContentMat, []);
 
-					this.setMatrixForElement(userContent, newUCMat );
-					tmp2 = this.localToGlobal( localPt,  userContent );	// DEBUG - remove this line
+                    this.setMatrixForElement(userContent, newUCMat );
+                    tmp2 = this.localToGlobal( localPt,  userContent ); // DEBUG - remove this line
 
-					// apply to the stage background
-//					var stageBG = this.application.ninja.currentDocument.stageBG;
-//					var stageBGMat = this.getMatrixFromElement(stageBG);
-//					var newStageBGMat = glmat4.multiply( mat, stageBGMat, []);
-//					this.setMatrixForElement(stageBG, newStageBGMat );
-				}
+                    // apply to the stage background
+//                  var stageBG = this.application.ninja.currentDocument.stageBG;
+//                  var stageBGMat = this.getMatrixFromElement(stageBG);
+//                  var newStageBGMat = glmat4.multiply( mat, stageBGMat, []);
+//                  this.setMatrixForElement(stageBG, newStageBGMat );
+                }
             }
         }
     },
 
-	getCanvas:
-	{
-		value: function()
-		{
-			return this.application.ninja.stage.canvas;
-		}
-	},
+    getCanvas:
+    {
+        value: function()
+        {
+            return this.application.ninja.stage.canvas;
+        }
+    },
 
-	getSelectionManager:
-	{
-		value: function()
-		{
-			return this.application.ninja.selectionController;
-		}
+    getSelectionManager:
+    {
+        value: function()
+        {
+            return this.application.ninja.selectionController;
+        }
 
-	},
+    },
 
-	getSelectedElements:
-	{
-		value: function()
-		{
-			return this.application.ninja.selectedElements.slice();
-		}
-	},
+    getSelectedElements:
+    {
+        value: function()
+        {
+            return this.application.ninja.selectedElements.slice();
+        }
+    },
 
-	getMousePoint:
-	{
-		value: function(event)
-		{
-			var point = webkitConvertPointFromPageToNode(this.getCanvas(), new WebKitPoint(event.pageX, event.pageY));
-			return [point.x, point.y];
-		}
-	}
+    getMousePoint:
+    {
+        value: function(event)
+        {
+            var point = webkitConvertPointFromPageToNode(this.getCanvas(), new WebKitPoint(event.pageX, event.pageY));
+            return [point.x, point.y];
+        }
+    }
 
 ///////////////////////////////////////////////////////////////////////////////////
-	
+
 });
 

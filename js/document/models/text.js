@@ -30,19 +30,19 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 	require("montage/core/core").Montage,
-	BaseDocumentModel = require("js/document/models/base").BaseDocumentModel;
+var Montage =   require("montage/core/core").Montage,
+    BaseDocumentModel = require("js/document/models/base").BaseDocumentModel;
 ////////////////////////////////////////////////////////////////////////
-//	
+//
 exports.TextDocumentModel = Montage.create(BaseDocumentModel, {
-	////////////////////////////////////////////////////////////////////
-	//
-	hasTemplate: {
-		enumerable: false,
+    ////////////////////////////////////////////////////////////////////
+    //
+    hasTemplate: {
+        enumerable: false,
         value: false
     },
 ////////////////////////////////////////////////////////////////////
-	//
+    //
     save: {
         enumerable: false,
         value: function (callback) {
@@ -58,37 +58,37 @@ exports.TextDocumentModel = Montage.create(BaseDocumentModel, {
         }
     },
 ////////////////////////////////////////////////////////////////////
-	//
+    //
     handleSaved: {
-    		value: function (result) {
-    			//
-    			if (result.status === 204) {
-    				this.model.needsSave = false;
-    			}
-    			//
-    			if (this.callback) this.callback(result);
-    		}
-    	},
+            value: function (result) {
+                //
+                if (result.status === 204) {
+                    this.model.needsSave = false;
+                }
+                //
+                if (this.callback) this.callback(result);
+            }
+        },
     ////////////////////////////////////////////////////////////////////
-    	//
+        //
     close: {
             value: function (view, callback) {
-            	//Outcome of close (pending on save logic)
-            	var success;
-            	//
-            	if (this.needsSave) {
-            		//Prompt user to save of lose data
-            	} else {
-            		//Close file
-            		success = true;
-            	}
-            	//
+                //Outcome of close (pending on save logic)
+                var success;
+                //
+                if (this.needsSave) {
+                    //Prompt user to save of lose data
+                } else {
+                    //Close file
+                    success = true;
+                }
+                //
                 this.parentContainer.removeChild(this.views.code.textViewContainer);
                 this.application.ninja.stage.restoreAllPanels();
                 this.views.code = null;
 
-            	//
-            	return success;
+                //
+                return success;
             }
         }
 });

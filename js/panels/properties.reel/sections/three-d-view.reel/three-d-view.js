@@ -49,7 +49,7 @@ exports.ThreeD = Montage.create(Component, {
         },
         set: function(value) {
             this._axisMode = value;
-            
+
             if(value === 0) {
                 this.inGlobalMode = false;
                 this.x3D = 0;

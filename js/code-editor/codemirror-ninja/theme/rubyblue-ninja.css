@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 /* adopted from CodeMirror 2.23 (http://codemirror.net/) */
 
 .cm-s-rubyblue {
-    font:Trebuchet, Verdana, sans-serif; }	/* - customized editor font - */
+    font:Trebuchet, Verdana, sans-serif; }  /* - customized editor font - */
 
 .cm-s-rubyblue { background: #112435; color: white; }
 .cm-s-rubyblue div.CodeMirror-selected { background: #38566F !important; }

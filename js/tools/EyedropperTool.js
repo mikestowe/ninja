@@ -49,20 +49,20 @@ exports.EyedropperTool = Montage.create(toolBase, {
 
     Configure: {
         value: function ( doActivate )
-		{
-			if (doActivate)
-			{
+        {
+            if (doActivate)
+            {
                 NJevent("enableStageMove");
-			}
-			else
-			{
+            }
+            else
+            {
                 NJevent("disableStageMove");
                 this._deleteImageDataCanvas();
                 this._isMouseDown = false;
                 this._elementUnderMouse = null;
                 this._previousColor = null;
                 this._color = null;
-			}
+            }
         }
     },
 
@@ -78,7 +78,7 @@ exports.EyedropperTool = Montage.create(toolBase, {
 
     HandleMouseMove: {
         value : function (event)
-		{
+        {
             if(this._escape)
             {
                 this._isMouseDown = false;
@@ -90,12 +90,12 @@ exports.EyedropperTool = Montage.create(toolBase, {
             {
                 this._updateColorFromPoint(event);
             }
-		}
-	},
+        }
+    },
 
     HandleLeftButtonUp: {
         value : function (event) {
-			{
+            {
                 this._isMouseDown = false;
 
                 if(this._escape)

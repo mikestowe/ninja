@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 /* PropertyTrack.scss
  * Main SCSS file for PropertyTrack component, compiled by SASS into the file css/PropertyTrack.css.
  */
- 
+
 // Import theme settings
 @import "../../../../../scss/imports/themes/default/colors";
 @import "../../../../../scss/imports/themes/default/mixins";
@@ -41,18 +41,18 @@ POSSIBILITY OF SUCH DAMAGE.
 
 
 .content-main .collapsible-content .timeline-track {
- 	height: 18px;
+    height: 18px;
     padding-top: 2px;
-	border-bottom: 1px solid $color-menu-divider;
+    border-bottom: 1px solid $color-menu-divider;
     background-image: url("../images/gridline.jpg");
  }
 
 
 .timeline-track .content-main {
-	background-color: $color-menu-bg;
+    background-color: $color-menu-bg;
 }
 
 .prop-track .collapsible-content.collapsible-collapsed {
-	overflow: hidden;
-	height: 0px;
+    overflow: hidden;
+    height: 0px;
 }

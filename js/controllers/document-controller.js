@@ -30,14 +30,14 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 		require("montage/core/core").Montage,
-    Component = 	require("montage/ui/component").Component,
+var Montage =       require("montage/core/core").Montage,
+    Component =     require("montage/ui/component").Component,
     HTMLDocument =  require("js/document/document-html").HtmlDocument,
     TextDocument =  require("js/document/document-text").TextDocument;
 ////////////////////////////////////////////////////////////////////////
 //
 exports.DocumentController = Montage.create(Component, {
-	//
+    //
     hasTemplate: {
         value: false
     },
@@ -110,45 +110,45 @@ exports.DocumentController = Montage.create(Component, {
         }
     },
 
-	//TODO: Ensure these APIs are not needed
-	redirectRequests: {
-    	value: false
-    },
-	////////////////////////////////////////////////////////////////////
-	//
-    handleWebRequest: {
-    	value: function (request) {
-    		//TODO: Check if frameId is proper
-    		if (this.redirectRequests && request.parentFrameId !== -1) {
-    			//Checking for proper URL redirect (from different directories)
-    			if (request.url.indexOf('js/document/templates/banner') !== -1) {
-					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/banner/'))[1]};
-				} else if (request.url.indexOf('js/document/templates/html')  !== -1) {
-					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/html/'))[1]};
-				} else if (request.url.indexOf('js/document/templates/app')  !== -1) {
-					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/app/'))[1]};
-				} else {
-					//Error, not a valid folder
-				}
-			}
-		}
+    //TODO: Ensure these APIs are not needed
+    redirectRequests: {
+        value: false
     },
     ////////////////////////////////////////////////////////////////////
-	//
+    //
+    handleWebRequest: {
+        value: function (request) {
+            //TODO: Check if frameId is proper
+            if (this.redirectRequests && request.parentFrameId !== -1) {
+                //Checking for proper URL redirect (from different directories)
+                if (request.url.indexOf('js/document/templates/banner') !== -1) {
+                    return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/banner/'))[1]};
+                } else if (request.url.indexOf('js/document/templates/html')  !== -1) {
+                    return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/html/'))[1]};
+                } else if (request.url.indexOf('js/document/templates/app')  !== -1) {
+                    return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/app/'))[1]};
+                } else {
+                    //Error, not a valid folder
+                }
+            }
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
     handleAppLoaded: {
         value: function() {
             //Checking for app to be loaded through extension
             var check;
             if (chrome && chrome.app) {
-            	check = chrome.app.getDetails();
+                check = chrome.app.getDetails();
             }
             if (check !== null) {
-            	//Adding an intercept to resources loaded to ensure user assets load from cloud simulator
-            	chrome.webRequest.onBeforeRequest.addListener(this.handleWebRequest.bind(this), {urls: ["<all_urls>"]}, ["blocking"]);
+                //Adding an intercept to resources loaded to ensure user assets load from cloud simulator
+                chrome.webRequest.onBeforeRequest.addListener(this.handleWebRequest.bind(this), {urls: ["<all_urls>"]}, ["blocking"]);
             }
         }
     },
-	////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
 
 
     handleExecuteFileOpen: {
@@ -172,39 +172,39 @@ exports.DocumentController = Montage.create(Component, {
             }
         }
     },
-	////////////////////////////////////////////////////////////////////
-	//
+    ////////////////////////////////////////////////////////////////////
+    //
     handleExecuteSave: {
-    	value: function(event) {
-    		//
-    		if((typeof this.currentDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
-    			//Currently we don't need a callback handler
-    			//this.activeDocument.model.save(this.saveExecuted.bind(this));
-    			this.currentDocument.model.save();
-    		} else {
-    			//Error: cloud not available and/or no active document
-    		}
-		}
+        value: function(event) {
+            //
+            if((typeof this.currentDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+                //Currently we don't need a callback handler
+                //this.activeDocument.model.save(this.saveExecuted.bind(this));
+                this.currentDocument.model.save();
+            } else {
+                //Error: cloud not available and/or no active document
+            }
+        }
     },
     ////////////////////////////////////////////////////////////////////
-	//
+    //
     saveExecuted: {
-    	value: function (value) {
-    		//File saved, any callbacks or events should go here (must be added in handleExecuteSave passed as callback)
-    	}
+        value: function (value) {
+            //File saved, any callbacks or events should go here (must be added in handleExecuteSave passed as callback)
+        }
     },
     ////////////////////////////////////////////////////////////////////
-	//TODO: Check for appropiate structures
+    //TODO: Check for appropiate structures
     handleExecuteSaveAll: {
-    	value: function(event) {
+        value: function(event) {
            //
-    		if((typeof this.currentDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
-    			//
-    			this.currentDocument.model.saveAll();
-    		} else {
-    			//TODO: Add error handling
-    		}
-		}
+            if((typeof this.currentDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+                //
+                this.currentDocument.model.saveAll();
+            } else {
+                //TODO: Add error handling
+            }
+        }
     },
     ////////////////////////////////////////////////////////////////////
     handleExecuteSaveAs: {
@@ -227,16 +227,16 @@ exports.DocumentController = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //TODO: Is this used, should be cleaned up
     handleExecuteFileCloseAll:{
-		value: function(event) {
-			if(this.currentDocument && this.application.ninja.coreIoApi.cloudAvailable()){
-				while(this.currentDocument.length > 0){
-					this.closeDocument(this.currentDocument[this.currentDocument.length -1].uuid);
-				}
-			}
-		}
-	},
-	////////////////////////////////////////////////////////////////////
-	//
+        value: function(event) {
+            if(this.currentDocument && this.application.ninja.coreIoApi.cloudAvailable()){
+                while(this.currentDocument.length > 0){
+                    this.closeDocument(this.currentDocument[this.currentDocument.length -1].uuid);
+                }
+            }
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
     createNewFile:{
         value:function(newFileObj){
             //
@@ -245,8 +245,8 @@ exports.DocumentController = Montage.create(Component, {
             this.application.ninja.ioMediator.fileNew(newFileObj.newFilePath, newFileObj.fileTemplateUri, this.openNewFileCallback.bind(this), newFileObj.template);
         }
     },
-	////////////////////////////////////////////////////////////////////
-	
+    ////////////////////////////////////////////////////////////////////
+
     /**
      * Public method
      * doc contains:
@@ -296,7 +296,7 @@ exports.DocumentController = Montage.create(Component, {
                 }
                 this.isNewFilePath = false;//reset path identifier flag
 
-            	//Sending full response object
+                //Sending full response object
                 this.openDocument(response);
 
             } else if (!!response && (response.status === 404)){
@@ -309,8 +309,8 @@ exports.DocumentController = Montage.create(Component, {
 
         }
     },
-	////////////////////////////////////////////////////////////////////
-	//
+    ////////////////////////////////////////////////////////////////////
+    //
     saveAsCallback:{
         value:function(saveAsDetails){
             var fileUri = null, filename = saveAsDetails.filename, destination = saveAsDetails.destination;
@@ -334,14 +334,14 @@ exports.DocumentController = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     openDocument: {
         value: function(file) {
-        	var template, dimensions;
+            var template, dimensions;
 
             // TODO: HACKS to remove
-			this.documentHackReference = file;
+            this.documentHackReference = file;
             document.getElementById("iframeContainer").style.overflow = "hidden";
-			//
-			switch (file.extension) {
-				case 'html':
+            //
+            switch (file.extension) {
+                case 'html':
 
                     if (file.content.body.indexOf('Ninja-Banner Dimensions@@@') !== -1) {
                         dimensions = (file.content.body.split('Ninja-Banner Dimensions@@@'))[1].split('-->')[0].split('x');
@@ -349,20 +349,20 @@ exports.DocumentController = Montage.create(Component, {
                         template = {type: 'banner', size: dimensions};
                     }
 
-					//Open in designer view
+                    //Open in designer view
                     this.redirectRequests = false;
                     Montage.create(HTMLDocument).init(file, this.application.ninja, this.application.ninja.openDocument, 'design', template);
-					break;
-				default:
+                    break;
+                default:
                     //Open in code view
                     Montage.create(TextDocument).init(file, this.application.ninja, this.application.ninja.openDocument, 'code');
                     break;
-			}
+            }
         }
     },
-	////////////////////////////////////////////////////////////////////
-	
-	openProjectWithURI: {
+    ////////////////////////////////////////////////////////////////////
+
+    openProjectWithURI: {
         value: function(uri) {
             console.log("URI is: ", uri);
         }

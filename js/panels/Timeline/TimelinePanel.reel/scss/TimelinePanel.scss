@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 /* TimelinePanel.scss
  * Main SCSS file for TimelinePanel component, compiled by SASS into the file css/TimelinePanel.css.
  */
- 
+
 // Import theme settings
 @import "../../../../../scss/imports/themes/default/colors";
 // @import "../../../../../scss/imports/themes/default/fonts";
@@ -85,16 +85,16 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 #bottomPanelContainer {
-	overflow: hidden !IMPORTANT;
+    overflow: hidden !IMPORTANT;
 }
 
 .layout-tracks {
-	width: 100%;
-	height: 100%;
-	padding-bottom: 6px;
-	box-sizing: border-box;
-	overflow: auto;
-	position: relative;
+    width: 100%;
+    height: 100%;
+    padding-bottom: 6px;
+    box-sizing: border-box;
+    overflow: auto;
+    position: relative;
 }
 .tl_layertracks{
     background-color: $color-tool-bg;
@@ -102,7 +102,7 @@ POSSIBILITY OF SUCH DAMAGE.
     width: 100%;
     -webkit-box-flex: 1;
     padding-top: 21px;
-	box-sizing: border-box;
+    box-sizing: border-box;
 }
 .layerresizer{
     height: auto;
@@ -183,12 +183,12 @@ POSSIBILITY OF SUCH DAMAGE.
     overflow: visible;
 }
 .layout_markers {
-	position: absolute;
-	overflow: hidden;
-	top: 0px;
-	left: 0px;
-	height: 20px;
-	width: 100%;
+    position: absolute;
+    overflow: hidden;
+    top: 0px;
+    left: 0px;
+    height: 20px;
+    width: 100%;
     border-bottom-style: solid;
 }
 
@@ -220,7 +220,7 @@ POSSIBILITY OF SUCH DAMAGE.
 .container-tracks,
 .timelinemarkers,
 .mastertrack {
-	width: 2000px;
+    width: 2000px;
 }
 .userlayers{
     width: 100%;
@@ -316,18 +316,18 @@ POSSIBILITY OF SUCH DAMAGE.
     margin-top: 0%;
 }
 .timeline-disabled {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(30,30,30, 0.796);
-	z-index: 100;
-	display: none;
-	box-shadow: rgb(17, 17, 17) 0px 0px 14px inset;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(30,30,30, 0.796);
+    z-index: 100;
+    display: none;
+    box-shadow: rgb(17, 17, 17) 0px 0px 14px inset;
 }
 .timeline-dnd-helper {
-	-webkit-transform: scale(.9, .9);
+    -webkit-transform: scale(.9, .9);
 }
 .tl_slider{
     width: 65px;
@@ -340,60 +340,60 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* Configuration menu */
 .layer-master {
-	position: relative;
+    position: relative;
 }
 .tl-configbutton {
-	position: absolute;
-	top: 0px;
-	right: 2px;
-	width: 20px;
-	height: 20px;
-	background-image: url(../images/icon-gear.png);
-	background-repeat: no-repeat;
-	cursor: pointer;
-	z-index: 100;
-	background-position: 100% 0px;
+    position: absolute;
+    top: 0px;
+    right: 2px;
+    width: 20px;
+    height: 20px;
+    background-image: url(../images/icon-gear.png);
+    background-repeat: no-repeat;
+    cursor: pointer;
+    z-index: 100;
+    background-position: 100% 0px;
 }
 .tl-configbutton:hover {
-	width: 180px;
+    width: 180px;
 }
 
 .tl-configbutton .tl-dropdown {
-	position: absolute;
-	border: 1px solid $color-panel-border;
-	top: 16px;
-	right: 2px;
-	width: 180px;
-	padding-bottom: 7px;
-	background-color: $color-menu-bg;
-	box-shadow: 2px 2px 2px $color-app-shadow;
-	display: none;
+    position: absolute;
+    border: 1px solid $color-panel-border;
+    top: 16px;
+    right: 2px;
+    width: 180px;
+    padding-bottom: 7px;
+    background-color: $color-menu-bg;
+    box-shadow: 2px 2px 2px $color-app-shadow;
+    display: none;
 }
 .tl-configbutton.checked .tl-dropdown {
-	display: block;
+    display: block;
 }
 
 .tl-configbutton .checkable {
-	padding-left: 20px;
-	height: 20px;
-	line-height: 20px;
-	margin-top: 3px;
+    padding-left: 20px;
+    height: 20px;
+    line-height: 20px;
+    margin-top: 3px;
 }
 .tl-configbutton .checkable:hover {
-	background-color: $color-panel-hilite-bg;
-	color: $color-panel-hilite-text;
-	text-shadow: none;
+    background-color: $color-panel-hilite-bg;
+    color: $color-panel-hilite-text;
+    text-shadow: none;
 }
 .tl-configbutton .checkable.checked {
-	background-image: url(../images/icon-checkmark.png);
-	background-repeat: no-repeat;
-	background-position: 6px 4px;
+    background-image: url(../images/icon-checkmark.png);
+    background-repeat: no-repeat;
+    background-position: 6px 4px;
 }
 
 .tl-configbutton .nj-divider {
-	margin-top: 7px;
+    margin-top: 7px;
 }
 
 .layer-hidden {
-	display: none;
+    display: none;
 }

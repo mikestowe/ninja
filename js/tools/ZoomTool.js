@@ -65,21 +65,21 @@ exports.ZoomTool = Montage.create(DrawingTool, {
     },
 
     HandleAltKeyDown: {
-		value: function(event) {
+        value: function(event) {
 
          this.setCursor();
          this._altKeyDown=true;
 
-		}
-	},
+        }
+    },
 
-	HandleAltKeyUp: {
-		value: function(event) {
+    HandleAltKeyUp: {
+        value: function(event) {
 
          this.setCursor();
          this._altKeyDown=false;
-		}
-	},
+        }
+    },
 
     HandleEscape: {
         value: function(event) {
@@ -98,23 +98,23 @@ exports.ZoomTool = Montage.create(DrawingTool, {
            if(wasSelected) {
                 this.AddCustomFeedback();
                 this.eventManager.addEventListener( "toolDoubleClick", this, false);
-				this.application.ninja.stage.drawingCanvas.addEventListener("mousewheel", this, false);
+                this.application.ninja.stage.drawingCanvas.addEventListener("mousewheel", this, false);
 
            } else {
                 this.RemoveCustomFeedback();
                 this.eventManager.removeEventListener( "toolDoubleClick", this, false);
-				this.application.ninja.stage.drawingCanvas.removeEventListener("mousewheel", this, false);
+                this.application.ninja.stage.drawingCanvas.removeEventListener("mousewheel", this, false);
            }
         }
     },
 
     AddCustomFeedback: {
-		value: function (event) {
+        value: function (event) {
 
             this.application.ninja.stage.canvas.addEventListener("mousewheel", this, false);
 
-		}
-	},
+        }
+    },
 
     handleScrollValue:{
        value:function(){
@@ -160,167 +160,167 @@ exports.ZoomTool = Montage.create(DrawingTool, {
         }
     },
 
-	HandleMouseMove:
-	{
-		value : function (event)
-		{
+    HandleMouseMove:
+    {
+        value : function (event)
+        {
             var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
                                                                     new WebKitPoint(event.pageX, event.pageY));
             // check for some reasonable amount of mouse movement
-			var dx = Math.abs(point.x - this.downPoint.x),
-				dy = Math.abs(point.y - this.downPoint.y);
+            var dx = Math.abs(point.x - this.downPoint.x),
+                dy = Math.abs(point.y - this.downPoint.y);
 
-			if ((dx >= 10) || (dy >= 10))
-			{
-				// Drawing the Marquee
-				if(this.options.selectedElement==="zoomInTool")
-				{
-					if(this._altKeyDown)
-						this._hasDraw=false;
-					else
-						this._hasDraw = true;
-				}
-				else
-				{
-					if(this._altKeyDown)
-						this._hasDraw=true;
-					else
-						this._hasDraw=false;
-				}
+            if ((dx >= 10) || (dy >= 10))
+            {
+                // Drawing the Marquee
+                if(this.options.selectedElement==="zoomInTool")
+                {
+                    if(this._altKeyDown)
+                        this._hasDraw=false;
+                    else
+                        this._hasDraw = true;
+                }
+                else
+                {
+                    if(this._altKeyDown)
+                        this._hasDraw=true;
+                    else
+                        this._hasDraw=false;
+                }
 
-				if(this._hasDraw)
-				{
-					this.doDraw(event);
-					this._x = this.downPoint.x;
-					this._y = this.downPoint.y;
-				}
-			}
-		}
-	},
+                if(this._hasDraw)
+                {
+                    this.doDraw(event);
+                    this._x = this.downPoint.x;
+                    this._y = this.downPoint.y;
+                }
+            }
+        }
+    },
 
-	handleZoomChange:
-	{
-		value: function(event)
-		{
-		}
-	},
+    handleZoomChange:
+    {
+        value: function(event)
+        {
+        }
+    },
 
     _setZoom:{
         value:function(mode,zoomFactor)
-		{
+        {
             var userContent = this.application.ninja.currentDocument.model.documentRoot;
             this._oldValue = this.application.ninja.documentBar.zoomFactor;
 
-			var globalPt;
+            var globalPt;
             if(this._mode==="mouseClickZoom")
-			{
-				if(this.options.selectedElement==="zoomInTool")
-				{
-					if(this._altKeyDown)
-						this._factor = this._oldValue/(zoomFactor*100);
-					else
-						this._factor = (zoomFactor*100)/this._oldValue;
-				}
-				else
-				{
-					if(this._altKeyDown)
-						this._factor = (zoomFactor*100)/this._oldValue;
-					else
-						this._factor = this._oldValue/(zoomFactor*100);
-				}
+            {
+                if(this.options.selectedElement==="zoomInTool")
+                {
+                    if(this._altKeyDown)
+                        this._factor = this._oldValue/(zoomFactor*100);
+                    else
+                        this._factor = (zoomFactor*100)/this._oldValue;
+                }
+                else
+                {
+                    if(this._altKeyDown)
+                        this._factor = (zoomFactor*100)/this._oldValue;
+                    else
+                        this._factor = this._oldValue/(zoomFactor*100);
+                }
 
-				var hitRec = snapManager.snap( this._layerX, this._layerY, true );
-				if (hitRec)
-				{
-					var elt = hitRec.getElement();
-					if (elt)
-					{
-//						console.log( "hit: " + hitRec.getElement().id );
-						var localToGlobalMat = viewUtils.getLocalToGlobalMatrix( elt );
-						var localPt;
-						if (elt != userContent)
-							localPt = hitRec.calculateElementPreTransformScreenPoint();
-						else
-						{
-							localPt = hitRec.calculateElementWorldPoint();
-							viewUtils.pushViewportObj( userContent );
-							var cop = viewUtils.getCenterOfProjection();
-							this._localPt = [cop[0] + localPt[0],  cop[1] + localPt[1],  localPt[2]];
-							localPt = this._localPt.slice();
-							viewUtils.popViewportObj();
-						}
+                var hitRec = snapManager.snap( this._layerX, this._layerY, true );
+                if (hitRec)
+                {
+                    var elt = hitRec.getElement();
+                    if (elt)
+                    {
+//                      console.log( "hit: " + hitRec.getElement().id );
+                        var localToGlobalMat = viewUtils.getLocalToGlobalMatrix( elt );
+                        var localPt;
+                        if (elt != userContent)
+                            localPt = hitRec.calculateElementPreTransformScreenPoint();
+                        else
+                        {
+                            localPt = hitRec.calculateElementWorldPoint();
+                            viewUtils.pushViewportObj( userContent );
+                            var cop = viewUtils.getCenterOfProjection();
+                            this._localPt = [cop[0] + localPt[0],  cop[1] + localPt[1],  localPt[2]];
+                            localPt = this._localPt.slice();
+                            viewUtils.popViewportObj();
+                        }
 
-						globalPt = MathUtils.transformAndDivideHomogeneousPoint( localPt,  localToGlobalMat );
-					}
-					else
-						globalPt = [this._layerX, this._layerY, 0];
-				}
-				else
-					globalPt = [this._layerX, this._layerY, 0];
-			}
-			else if (this._mode==="marqueeZoom")
-			{
-				this._factor = (zoomFactor*100)/this._oldValue;
+                        globalPt = MathUtils.transformAndDivideHomogeneousPoint( localPt,  localToGlobalMat );
+                    }
+                    else
+                        globalPt = [this._layerX, this._layerY, 0];
+                }
+                else
+                    globalPt = [this._layerX, this._layerY, 0];
+            }
+            else if (this._mode==="marqueeZoom")
+            {
+                this._factor = (zoomFactor*100)/this._oldValue;
 
-				var p0 = [this._x, this._y, 0];
-				var p1 = [this._layerX, this._layerY, 0];
-				globalPt = vecUtils.vecAdd(3, p0, p1);
-				vecUtils.vecScale(3, globalPt, 0.5);
-			}
-			else if (this._mode === "doubleClickReset")
-			{
-				if (userContent)
-				{
-					var w = userContent.offsetWidth,
-						h = userContent.offsetHeight;
-					if(userContent.width)
-						w = userContent.width;
-					if(userContent.height)
-						h = userContent.height;
-					globalPt = [ w/2,  h/2, 0];
-				}
-				else
-					globalPt = [0,0,0];
-				zoomFactor = 1;
-			}
-			else if (this._mode === "mouseWheelZoom")
-			{
+                var p0 = [this._x, this._y, 0];
+                var p1 = [this._layerX, this._layerY, 0];
+                globalPt = vecUtils.vecAdd(3, p0, p1);
+                vecUtils.vecScale(3, globalPt, 0.5);
+            }
+            else if (this._mode === "doubleClickReset")
+            {
+                if (userContent)
+                {
+                    var w = userContent.offsetWidth,
+                        h = userContent.offsetHeight;
+                    if(userContent.width)
+                        w = userContent.width;
+                    if(userContent.height)
+                        h = userContent.height;
+                    globalPt = [ w/2,  h/2, 0];
+                }
+                else
+                    globalPt = [0,0,0];
+                zoomFactor = 1;
+            }
+            else if (this._mode === "mouseWheelZoom")
+            {
                 var w = this.application.ninja.stage._canvas.width,
                     h = this.application.ninja.stage._canvas.height;
-				globalPt = [w/2, h/2, 0];
-			}
-			else
-			{
-				console.log( "unhandled zoom mode: " + this._mode );
-				return;
-			}
+                globalPt = [w/2, h/2, 0];
+            }
+            else
+            {
+                console.log( "unhandled zoom mode: " + this._mode );
+                return;
+            }
 
-			// apply the scale to the matrices
-			var localPt = viewUtils.globalToLocal( globalPt, userContent );
-			viewUtils.setStageZoom( globalPt,  zoomFactor );
+            // apply the scale to the matrices
+            var localPt = viewUtils.globalToLocal( globalPt, userContent );
+            viewUtils.setStageZoom( globalPt,  zoomFactor );
 
-			// let the document and stage manager know about the zoom change
-			this.application.ninja.stage._firstDraw = true;
-			this.application.ninja.documentBar.zoomFactor = zoomFactor*100;
+            // let the document and stage manager know about the zoom change
+            this.application.ninja.stage._firstDraw = true;
+            this.application.ninja.documentBar.zoomFactor = zoomFactor*100;
             //this.application.ninja.stage.zoomFactor = zoomFactor;
-			if (zoomFactor >= 1)
+            if (zoomFactor >= 1)
             {
                 this.application.ninja.currentDocument.model.views.design.iframe.style.zoom = zoomFactor;
             }
-			this.application.ninja.stage._firstDraw = false;
-			//tmp3 = viewUtils.localToGlobal( localPt,  userContent );	// DEBUG - remove this line
+            this.application.ninja.stage._firstDraw = false;
+            //tmp3 = viewUtils.localToGlobal( localPt,  userContent );  // DEBUG - remove this line
 
-			// if we are resetting the zoom, clear out the translation from the matrices
-			if (this._mode === "doubleClickReset")
-			{
-				viewUtils.clearStageTranslation();
+            // if we are resetting the zoom, clear out the translation from the matrices
+            if (this._mode === "doubleClickReset")
+            {
+                viewUtils.clearStageTranslation();
                 this.application.ninja.stage.centerStage();
-			}
+            }
 
-			// we need to redraw the entire stage after a zoom
+            // we need to redraw the entire stage after a zoom
             this.application.ninja.stage.updatedStage = true;
-		}
-	},
+        }
+    },
 
     handleToolDoubleClick: {
         value: function () {
@@ -333,12 +333,12 @@ exports.ZoomTool = Montage.create(DrawingTool, {
     },
 
     RemoveCustomFeedback: {
-		value: function (event) {
+        value: function (event) {
 
             this.application.ninja.stage.canvas.removeEventListener("mousewheel", this, false);
 
-		}
-	},
+        }
+    },
 
     HandleLeftButtonUp : {
         value : function(event) {
@@ -410,7 +410,7 @@ exports.ZoomTool = Montage.create(DrawingTool, {
             if(zoomFactor < .25)
                 zoomFactor = .25;
 
-			return zoomFactor;
+            return zoomFactor;
         }
     },
 

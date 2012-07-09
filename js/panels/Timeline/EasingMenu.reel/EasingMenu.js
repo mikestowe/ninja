@@ -29,8 +29,8 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-	Component = require("montage/ui/component").Component,
-	Popup = require("montage/ui/popup/popup.reel").Popup;
+    Component = require("montage/ui/component").Component,
+    Popup = require("montage/ui/popup/popup.reel").Popup;
 
 var EasingMenu = exports.EasingMenu = Montage.create(Component, {
 
@@ -38,127 +38,127 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
         value: true
     },
 
-	/* Begin: Models */
-	
-	// popup: the initialized component.
+    /* Begin: Models */
+
+    // popup: the initialized component.
     _popup: {
-		value: null
+        value: null
     },
     popup: {
-    	get: function() {
-    		return this._popup;
-    	},
-    	set: function(newVal) {
-    		this._popup = newVal
-    	}
+        get: function() {
+            return this._popup;
+        },
+        set: function(newVal) {
+            this._popup = newVal
+        }
     },
-    
+
     // callingComponent: pointer to the span that called for the menu
     _callingComponent: {
-    	value: null
+        value: null
     },
     callingComponent: {
-    	get: function() {
-    		return this._callingComponent;
-    	},
-    	set: function(newVal) {
-    		this._callingComponent = newVal;
-    	}
+        get: function() {
+            return this._callingComponent;
+        },
+        set: function(newVal) {
+            this._callingComponent = newVal;
+        }
     },
-    
+
     // anchor: pointer to the anchoring element
     _anchor: {
-    	value: null
+        value: null
     },
     anchor: {
-    	get: function() {
-    		return this._anchor;
-    	},
-    	set: function(newVal) {
-    		this._anchor = newVal;
-    	}
+        get: function() {
+            return this._anchor;
+        },
+        set: function(newVal) {
+            this._anchor = newVal;
+        }
     },
-    
-    
+
+
     _top: {
-    	value: null
+        value: null
     },
     top: {
-    	get: function() {
-    		return this._top;
-    	},
-    	set: function(newVal) {
-    		this._top = newVal;
-    	}
+        get: function() {
+            return this._top;
+        },
+        set: function(newVal) {
+            this._top = newVal;
+        }
     },
     _left: {
-    	value: null
+        value: null
     },
     left: {
-    	get: function() {
-    		return this._left;
-    	},
-    	set: function(newVal) {
-    		this._left = newVal;
-    	}
+        get: function() {
+            return this._left;
+        },
+        set: function(newVal) {
+            this._left = newVal;
+        }
     },
-    
+
     // currentChoice: The data attribute of the current choice
     _currentChoice: {
-    	value: "none"
+        value: "none"
     },
     currentChoice: {
-    	get: function() {
-    		return this._currentChoice;
-    	},
-    	set: function(newVal) {
-    		this._currentChoice = newVal;
-    	}
+        get: function() {
+            return this._currentChoice;
+        },
+        set: function(newVal) {
+            this._currentChoice = newVal;
+        }
     },
-    
+
     _isShown: {
-    	value: false
+        value: false
     },
-    
+
     /* End: Models */
-    
+
     /* Begin: Draw Cycle */
     willDraw: {
-    	value: function() {
-    		this.element.addEventListener("click", this.handleEasingChoicesClick.bind(this), false);
-    		document.addEventListener("scroll", this.handleDocumentScroll.bind(this), false);
-    	}
+        value: function() {
+            this.element.addEventListener("click", this.handleEasingChoicesClick.bind(this), false);
+            document.addEventListener("scroll", this.handleDocumentScroll.bind(this), false);
+        }
     },
-    
+
     draw: {
-    	value: function() {
-    		// Update the selection classes.
-			var easingSelected = this.element.querySelector(".easing-selected");
-			if (easingSelected !== null) {
-				easingSelected.classList.remove("easing-selected");
-			}
+        value: function() {
+            // Update the selection classes.
+            var easingSelected = this.element.querySelector(".easing-selected");
+            if (easingSelected !== null) {
+                easingSelected.classList.remove("easing-selected");
+            }
             var dataEl = this.element.querySelector('[data-ninja-ease="'+this.currentChoice+'"]');
             if (dataEl !== null) {
-            	dataEl.classList.add("easing-selected");
+                dataEl.classList.add("easing-selected");
             }
-    	}
+        }
     },
     didDraw: {
-    	value: function() {
-    	}
+        value: function() {
+        }
     },
-	/* End Draw Cycle */
-    
+    /* End Draw Cycle */
+
     /* Begin: Controllers */
-	show: {
-		value: function() {
-			// Initialize the popup if it hasn't already been done
+    show: {
+        value: function() {
+            // Initialize the popup if it hasn't already been done
             if (this.popup == null) {
-            	this.popup = Popup.create();
-	            this.popup.modal = false;
-	            this.popup.content = EasingMenu.create();
+                this.popup = Popup.create();
+                this.popup.modal = false;
+                this.popup.content = EasingMenu.create();
             }
-            
+
             // Show the popup
             this.popup.anchor = this.anchor;
             var position = {};
@@ -170,35 +170,35 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
 
             // Redraw the content (needed to reflect probable changes in selection from the last time we showed it)
             this.popup.content.needsDraw = true;
-		}
-	},
-	handleEasingChoicesClick: {
-    	value: function(event) {
-    		event.stopPropagation();
+        }
+    },
+    handleEasingChoicesClick: {
+        value: function(event) {
+            event.stopPropagation();
 
-			// Un-highlight the old choice and highlight the new choice
-			var easingSelected = this.element.querySelector(".easing-selected");
-			if (easingSelected !== null) {
-				easingSelected.classList.remove("easing-selected");
-			}
-    		event.target.classList.add("easing-selected");
-    		
-    		// Set the easing in the span that called us
-    		this.callingComponent.easing = event.target.dataset.ninjaEase;
-    		
-    		// Hide the menu.
-    		this.popup.hide();
-    		this._isShow = false;
-    	}
+            // Un-highlight the old choice and highlight the new choice
+            var easingSelected = this.element.querySelector(".easing-selected");
+            if (easingSelected !== null) {
+                easingSelected.classList.remove("easing-selected");
+            }
+            event.target.classList.add("easing-selected");
+
+            // Set the easing in the span that called us
+            this.callingComponent.easing = event.target.dataset.ninjaEase;
+
+            // Hide the menu.
+            this.popup.hide();
+            this._isShow = false;
+        }
    },
-	handleDocumentScroll: {
-		value: function(event) {
-			if (this._isShow = true) {
-				this.popup.hide();
-			}
-		}
-	}
-    
+    handleDocumentScroll: {
+        value: function(event) {
+            if (this._isShow = true) {
+                this.popup.hide();
+            }
+        }
+    }
+
     /* End: Controllers */
-    
+
 });

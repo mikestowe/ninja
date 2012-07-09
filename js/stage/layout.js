@@ -221,7 +221,7 @@ exports.Layout = Montage.create(Component, {
 
             var zoomFactor = 1;
             if (this.stage._viewport && this.stage._viewport.style && this.stage._viewport.style.zoom) {
-				zoomFactor = Number(this.stage._viewport.style.zoom);
+                zoomFactor = Number(this.stage._viewport.style.zoom);
             }
 
             var sSL = this.stage._scrollLeft;
@@ -309,7 +309,7 @@ exports.Layout = Montage.create(Component, {
             {
                 return;
             }
-            
+
             try {
                 if(element.nodeType == 1 && this.application.ninja.currentDocument.inExclusion(element) === -1 ) {
 
@@ -393,5 +393,5 @@ exports.Layout = Montage.create(Component, {
         }
     }
 
-    
+
 });

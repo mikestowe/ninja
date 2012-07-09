@@ -90,10 +90,10 @@ RDGE.fx.fxSSAO = function (enHRDepth) {
 * @param srcTexColor - color surface of rendered scene
 * @param srcTexNormDepth - screenspace normal+depth surface for scene; {nx, ny, nz, depth}
 * @param dstRenderTarget - where to put the result of SSAO
-* @param sampleRadius - 
-* @param intensity - 
-* @param distScale - 
-* @param bias - 
+* @param sampleRadius -
+* @param intensity -
+* @param distScale -
+* @param bias -
 */
 RDGE.fx.fxSSAO.prototype.doSSAO = function (srcTexColor, srcTexNormDepth, srcTexHRDepth, dstRenderTarget, sampleRadius, intensity, distScale, bias) {
     // Set art params and other uniforms

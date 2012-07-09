@@ -88,7 +88,7 @@ var SliderBase = exports.SliderBase = Montage.create(Component, {
                 if(this._enabled)
                 {
                     this.element.classList.remove("disabled");
-                    
+
                     this.element.addEventListener("blur", this);
                     this.element.addEventListener("focus", this);
 

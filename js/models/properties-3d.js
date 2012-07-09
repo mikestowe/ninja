@@ -43,7 +43,7 @@ exports.Properties3D = Montage.create(Component, {
     m_endAzimuth :      {value : 0, enumerable: true},
     m_endAltitude :     {value : 0, enumerable: true},
 
-	_world :            {value : null, enumerable:true}, // keep a referenceto the GLWorld (if any)
+    _world :            {value : null, enumerable:true}, // keep a referenceto the GLWorld (if any)
 
     // Keep track of 3d properties
     matrix3d : {value : null, enumerable: true},
@@ -66,8 +66,8 @@ exports.Properties3D = Montage.create(Component, {
         value : function(elt, isStage) {
 
 //          this.m_upVector = [0,1,0];
-//			this.m_viewDir  = [0,0,1];
-//			this.m_endUpVector = [0,1,0];
+//          this.m_viewDir  = [0,0,1];
+//          this.m_endUpVector = [0,1,0];
 
 //          this.m_targetPos = [0,0,0];
 //          this.m_objStartPos = [0,0,0];

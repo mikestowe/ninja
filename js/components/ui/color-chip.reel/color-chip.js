@@ -107,9 +107,9 @@ var ColorChip = exports.ColorChip = Montage.create(Component, {
                 var mode = "rgb", r = 0, g = 0, b = 0, a = 1, css = "rgb(0,0,0)";
 
                 if(this.color && this.color.color) {
-                	var g =  this.color.color;
-                	g.wasSetByCode = true;
-	                this.chipBtn.color(this.color.mode, g);
+                    var g =  this.color.color;
+                    g.wasSetByCode = true;
+                    this.chipBtn.color(this.color.mode, g);
                 } else if (this.color) {
                     var colorObj = this.application.ninja.colorController.getColorObjFromCss(this.color.css);
                     mode = colorObj.mode;

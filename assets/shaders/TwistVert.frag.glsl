@@ -46,10 +46,10 @@ varying vec2 v_texcoord;
 void main()
 {
     vec3 col;
-	if (v_zNormal >= 0.0)
-		col = texture2D(u_tex0, v_texcoord).xyz;
-	else
-		col = texture2D(u_tex1, v_texcoord).xyz;
+    if (v_zNormal >= 0.0)
+        col = texture2D(u_tex0, v_texcoord).xyz;
+    else
+        col = texture2D(u_tex1, v_texcoord).xyz;
 
     gl_FragColor = vec4(col, 1.0);
 }

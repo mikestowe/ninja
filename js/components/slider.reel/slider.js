@@ -150,7 +150,7 @@ var Slider = exports.Slider = Montage.create(SliderBase, {
                 clickPoint = webkitConvertPointFromPageToNode(this.element, new WebKitPoint(offset,pageY)).y;
             }
             this.value = (clickPoint*this._valueCoef)+this._minValue;
-            
+
             if(!this._isMouseDown && (this._previousValue !== this._value))
             {
                 this._dispatchActionEvent();
@@ -197,7 +197,7 @@ var Slider = exports.Slider = Montage.create(SliderBase, {
     draw: {
         value: function() {
             this.setPercentValueFromValue();
-            
+
             if(this._direction === "horizontal")
             {
                 this.knob.style.left = this._percentValue +"%";
@@ -265,7 +265,7 @@ var Slider = exports.Slider = Montage.create(SliderBase, {
             }
 
 
-            
+
 
             if(this._enabled)
             {
@@ -282,8 +282,8 @@ var Slider = exports.Slider = Montage.create(SliderBase, {
                     this.value = this._minValue;
                 }
             }
-            
+
         }
     }
-    
+
 });
