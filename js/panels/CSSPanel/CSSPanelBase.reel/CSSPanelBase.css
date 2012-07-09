@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -29,9 +30,9 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
 .css_panel {
-	background-color: #FFF;
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
+    background-color: #FFF;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
     height:100%;
 }
 .css_panel .resizer {
@@ -40,18 +41,18 @@ POSSIBILITY OF SUCH DAMAGE.
     height: 1px;
 }
 .nj-section-header {
-	background-color: #333;
-	border-top: 1px solid #3D3D3D;
-	color: #FFF;
-	cursor: default;
-	font-size: 12px;
-	font-weight: normal;
-	height: 16px;
-	margin: 0;
-	padding: 4px 0 2px 10px;
-	vertical-align: top;
-	-webkit-box-flex: 0;
-	-webkit-user-select: none;
+    background-color: #333;
+    border-top: 1px solid #3D3D3D;
+    color: #FFF;
+    cursor: default;
+    font-size: 12px;
+    font-weight: normal;
+    height: 16px;
+    margin: 0;
+    padding: 4px 0 2px 10px;
+    vertical-align: top;
+    -webkit-box-flex: 0;
+    -webkit-user-select: none;
 }
 #nj-status-heading {
     color: #CCC;
@@ -75,11 +76,11 @@ POSSIBILITY OF SUCH DAMAGE.
     -webkit-box-orient: vertical;
 }
 .nj-sub-panel {
-	color: #333;
-	padding: 0;
-	overflow: hidden;
-	opacity: 1;
-	-webkit-box-flex: 1;
+    color: #333;
+    padding: 0;
+    overflow: hidden;
+    opacity: 1;
+    -webkit-box-flex: 1;
 }
 .nj-sub-panel.closed {
     opacity: 0;
@@ -92,9 +93,9 @@ POSSIBILITY OF SUCH DAMAGE.
     -webkit-transform: rotate(-90deg);
 }
 .nj-sub-panel ul {
-	list-style-type: none;
-	margin: 4px 0 5px;
-	padding: 0;
+    list-style-type: none;
+    margin: 4px 0 5px;
+    padding: 0;
 }
 /* ----------------------------------------
           CSS Stylesheet List
@@ -171,16 +172,16 @@ POSSIBILITY OF SUCH DAMAGE.
     -webkit-box-flex: 1;
 }
 .nj-css-rule-list li {
-	border-top: 1px solid #CCC;
-	padding: 6px;
+    border-top: 1px solid #CCC;
+    padding: 6px;
 }
 .nj-css-rule-list li:first-child {
-	padding-top: 0;
-	border-style: none;
+    padding-top: 0;
+    border-style: none;
 }
 
 .nj-css-rule-list li:after {
-	content: "}";
+    content: "}";
 }
 .nj-css-rule-list li.nj-css-rule-unapplied {
     background-color: #F4F4F4;
@@ -202,8 +203,8 @@ POSSIBILITY OF SUCH DAMAGE.
           CSS Style List
 ---------------------------------------- */
 .nj-css-style-list {
-	padding: 0;
-	margin: 0;
+    padding: 0;
+    margin: 0;
 }
 .nj-css-style-list > div {
     overflow: hidden;
@@ -212,21 +213,21 @@ POSSIBILITY OF SUCH DAMAGE.
     white-space: nowrap;
 }
 .nj-css-style-list dt, .nj-css-style-list dd {
-	border: 1px solid rgba(0,0,0,0);
+    border: 1px solid rgba(0,0,0,0);
     border-radius: 2px;
-	margin: 0;
-	outline: none;
-	padding: 0 2px;
+    margin: 0;
+    outline: none;
+    padding: 0 2px;
 }
 .nj-css-style-list dt {
-	display: inline-block;
-	color: rgb(200,0,0);
+    display: inline-block;
+    color: rgb(200,0,0);
     max-width: 68%;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 .nj-css-style-list dd {
-	display: inline;    
+    display: inline;
 }
 
 /* ----------------------------------------
@@ -234,13 +235,13 @@ POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------- */
 .nj-css-selector {
     display: inline-block;
-	font-weight: bold;
-	padding: 0 2px;
-	outline: none;
+    font-weight: bold;
+    padding: 0 2px;
+    outline: none;
 }
 .nj-css-selector:after {
-	content: " {";
-	font-weight: normal;
+    content: " {";
+    font-weight: normal;
 }
 .nj-css-selector.nj-editable-focus {
     position: relative;
@@ -251,21 +252,21 @@ POSSIBILITY OF SUCH DAMAGE.
 
 
 #nj-section-styles dt:after {
-	color: #333;
-	content: ":";
+    color: #333;
+    content: ":";
 }
 #nj-section-styles dd:after {
-	content: ";";
+    content: ";";
 }
 .nj-sheet-link {
-	color: #333;
-	float: right;
-	margin-left: 15px;
-	position: relative;
-	top: -2px;
+    color: #333;
+    float: right;
+    margin-left: 15px;
+    position: relative;
+    top: -2px;
 }
 .nj-sheet-link:hover {
-	color: #666;
+    color: #666;
 }
 .nj-css-rule-list input[type="checkbox"], #nj-sheet-list input[type="checkbox"] {
     float: left;
@@ -401,14 +402,14 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 #nj-section-styles .nj-editable-focus {
     border: 1px solid #999;
-	box-shadow: 1px 1px 1px #CCC;
+    box-shadow: 1px 1px 1px #CCC;
     color: #333;
     display: inline-block;
-	margin-right: 7px;
-	/*margin-bottom: -1px;*/
-	max-width: none;
-	overflow: visible;
-	-webkit-user-select: text;
+    margin-right: 7px;
+    /*margin-bottom: -1px;*/
+    max-width: none;
+    overflow: visible;
+    -webkit-user-select: text;
 }
 .nj-css-rule-list .nj-editable-focus:after {
     position: relative;

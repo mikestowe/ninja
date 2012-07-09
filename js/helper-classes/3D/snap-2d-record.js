@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -36,45 +37,45 @@ var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
 var snapManager = require("js/helper-classes/3D/snap-manager");
 var Snap2DRecord = exports.Snap2DRecord = Object.create(Object.prototype,
 {
-	///////////////////////////////////////////////////////////////////////
-	// Constant definitions
-	///////////////////////////////////////////////////////////////////////
-	
-	///////////////////////////////////////////////////////////////////////
-	// Instance variables
-	///////////////////////////////////////////////////////////////////////
-	_elt : { value: null , writable: true},				// the four boundary points for the element in global screen space
-	_screenPtArray : { value: null , writable: true},	// snap point in global screen space
-	_alignPtArray : { value: null , writable: true},		// points for snap-align.  Kept in working plane space
-	
-	_localToGlobalMat : { value: null, writable: true },
-	_globalToLocalMat : { value: null, writable: true },
+    ///////////////////////////////////////////////////////////////////////
+    // Constant definitions
+    ///////////////////////////////////////////////////////////////////////
 
-	// indices to the extremal align points
-	_xMinArray : { value: [], writable: true },
-	_xMaxArray : { value: [] , writable: true},
-	_yMinArray : { value: [] , writable: true},
-	_yMaxArray : { value: [] , writable: true},
+    ///////////////////////////////////////////////////////////////////////
+    // Instance variables
+    ///////////////////////////////////////////////////////////////////////
+    _elt : { value: null , writable: true},             // the four boundary points for the element in global screen space
+    _screenPtArray : { value: null , writable: true},   // snap point in global screen space
+    _alignPtArray : { value: null , writable: true},        // points for snap-align.  Kept in working plane space
 
-	///////////////////////////////////////////////////////////////////////
-	// Property accessors
-	///////////////////////////////////////////////////////////////////////
-	getElement: { value: function()			{  return this._elt;					}},
-	setElement: { value: function()			{  this._elt = e;						}},
+    _localToGlobalMat : { value: null, writable: true },
+    _globalToLocalMat : { value: null, writable: true },
 
-	getScreenPointArray: { value: function()			{  return this._screenPtArray;			}},
-	getAlignPointArray: { value: function()			{  return this._alignPtArray;			}},
+    // indices to the extremal align points
+    _xMinArray : { value: [], writable: true },
+    _xMaxArray : { value: [] , writable: true},
+    _yMinArray : { value: [] , writable: true},
+    _yMaxArray : { value: [] , writable: true},
 
-	getLocalToGlobalMatrix: { value: function()			{  return this._localToGlobalMat;		}},
-	setLocalToGlobalMatrix: { value: function()			{  this._localToGlobalMat = l2g.slice(0);	}},
+    ///////////////////////////////////////////////////////////////////////
+    // Property accessors
+    ///////////////////////////////////////////////////////////////////////
+    getElement: { value: function()         {  return this._elt;                    }},
+    setElement: { value: function()         {  this._elt = e;                       }},
 
-	getGlobalToLocalMatrix: { value: function()			{  return this._globalToLocalMat;		}},
-	setGlobalToLocalMatrix: { value: function()			{  this._globalToLocalMat = g2l.slice(0);	}},
+    getScreenPointArray: { value: function()            {  return this._screenPtArray;          }},
+    getAlignPointArray: { value: function()         {  return this._alignPtArray;           }},
 
-	///////////////////////////////////////////////////////////////////////
-	// Methods
-	///////////////////////////////////////////////////////////////////////
-	init: {
+    getLocalToGlobalMatrix: { value: function()         {  return this._localToGlobalMat;       }},
+    setLocalToGlobalMatrix: { value: function()         {  this._localToGlobalMat = l2g.slice(0);   }},
+
+    getGlobalToLocalMatrix: { value: function()         {  return this._globalToLocalMat;       }},
+    setGlobalToLocalMatrix: { value: function()         {  this._globalToLocalMat = g2l.slice(0);   }},
+
+    ///////////////////////////////////////////////////////////////////////
+    // Methods
+    ///////////////////////////////////////////////////////////////////////
+    init: {
         value: function( elt ) {
             this._elt = elt;
             var bounds = viewUtils.getElementViewBounds3D( elt );
@@ -112,7 +113,7 @@ var Snap2DRecord = exports.Snap2DRecord = Object.create(Object.prototype,
         }
     },
 
-	initAlignExtremalPoints: {
+    initAlignExtremalPoints: {
         value: function() {
             var xMinArray = [0],  xMaxArray = [0],
                 yMinArray = [0],  yMaxArray = [0];
@@ -135,7 +136,7 @@ var Snap2DRecord = exports.Snap2DRecord = Object.create(Object.prototype,
         }
     },
 
-	getScreenPoint: {
+    getScreenPoint: {
         value: function( index ) {
             var rtnPt;
             if ((index >= 0) && (index < 4) && (this._screenPtArray != null))
@@ -145,7 +146,7 @@ var Snap2DRecord = exports.Snap2DRecord = Object.create(Object.prototype,
         }
     },
 
-	addAlignPoint: {
+    addAlignPoint: {
         value: function( pt ) {
             this._alignPtArray.push( pt );
         }

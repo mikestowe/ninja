@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -201,9 +202,9 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                     selectedItems = [];
 
                     box[0] = this.downPoint.x;
-					box[1] = this.downPoint.y;
-					box[2] = point.x;
-					box[3] = point.y;
+                    box[1] = this.downPoint.y;
+                    box[2] = point.x;
+                    box[3] = point.y;
 
                     //selectionManagerModule.selectionManager.marqueeSelection(box);
                     var childNodes = this.application.ninja.currentDocument.model.documentRoot.childNodes,
@@ -403,11 +404,11 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
     },
 
     _moveElements: {
-		value: function (transMat) {
+        value: function (transMat) {
             var elt, curMat, targets = [];
 
-//			var matInv = glmat4.inverse(this._startMat, []);
-//			var qMat = glmat4.multiply(matInv, nMat, []);
+//          var matInv = glmat4.inverse(this._startMat, []);
+//          var qMat = glmat4.multiply(matInv, nMat, []);
             this._startMat = glmat4.multiply(transMat, this._startMat, [] );
 
             var self = this;
@@ -434,8 +435,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             } else {
                 ElementsMediator.setProperties(targets, "Changing", "SelectionTool" );
             }
-		}
-	},
+        }
+    },
 
     //-------------------------------------------------------------------------
     //Routines to modify the selected objects
@@ -630,17 +631,17 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
     },
 
     /*
- 	 *  The parameterization is based on the position of the
- 	 *  snap point in pre-transformed element screen space
- 	 */
- 	parameterizeSnap:
- 	{
- 		value: function( hitRec )
- 		{
- 			var paramPt = [0,0,0];
+     *  The parameterization is based on the position of the
+     *  snap point in pre-transformed element screen space
+     */
+    parameterizeSnap:
+    {
+        value: function( hitRec )
+        {
+            var paramPt = [0,0,0];
              var elt = this._getObjectBeingTracked(hitRec);
- 			if (elt)
- 			{
+            if (elt)
+            {
                 this.clickedObject = elt;
                 if(this._handleMode === null)
                 {
@@ -701,11 +702,11 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                             break;
                     }
                 }
- 			}
+            }
 
- 			return paramPt;
- 		}
- 	},
+            return paramPt;
+        }
+    },
 
     /**
      * This function is for specifying custom feedback routine
@@ -987,23 +988,23 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
     // TODO : Use the new element mediator to get element offsets
     _complicatedCollisionDetection: {
         value: function(elt, box)
-		{
+        {
             var left, top, width, height;
 
             left = box[0];
-			width = box[2] - left;
-			if (width < 0)
-			{
-				left = box[2];
-				width = -width;
-			}
+            width = box[2] - left;
+            if (width < 0)
+            {
+                left = box[2];
+                width = -width;
+            }
             top = box[1];
-			height = box[3] - top;
-			if (height < 0)
-			{
-				top = box[3];
-				height = -height;
-			}
+            height = box[3] - top;
+            if (height < 0)
+            {
+                top = box[3];
+                height = -height;
+            }
 
             var rtnVal = MathUtils.rectsOverlap( [left,top], width, height,  elt );
 

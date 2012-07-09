@@ -22,6 +22,7 @@ void main(void)
     float cLength = length(cPos);
 
     vec2 uv = gl_FragCoord.xy/u_resolution.xy+(cPos/cLength)*sin(cLength/30.0-time*10.0)/25.0;
+	uv.y = 1.0 - uv.y;
     vec3 col = texture2D(u_tex0,uv).xyz*50.0/cLength;
 
     gl_FragColor = vec4(col,1.0);

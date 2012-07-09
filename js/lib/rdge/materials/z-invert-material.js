@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -47,24 +48,24 @@ var ZInvertMaterial = function ZInvertMaterial() {
     // array textures indexed by shader uniform name
     this._glTextures = [];
 
-	this.isAnimated			= function()			{  return true;				};
-	this.getShaderDef		= function()			{  return zInvertMaterialDef;	};
+    this.isAnimated         = function()            {  return true;             };
+    this.getShaderDef       = function()            {  return zInvertMaterialDef;   };
 
-	///////////////////////////////////////////////////////////////////////
-	// Properties
-	///////////////////////////////////////////////////////////////////////
-	// all defined in parent PulseMaterial.js
-	// load the local default value
-	this._propNames			= ["u_tex0",		"u_speed"];
-	this._propLabels		= ["Texture map",	"Speed"];
-	this._propTypes			= ["file",			"float"];
+    ///////////////////////////////////////////////////////////////////////
+    // Properties
+    ///////////////////////////////////////////////////////////////////////
+    // all defined in parent PulseMaterial.js
+    // load the local default value
+    this._propNames         = ["u_tex0",        "u_speed"];
+    this._propLabels        = ["Texture map",   "Speed"];
+    this._propTypes         = ["file",          "float"];
 
-	var u_tex_index			= 0,
-		u_speed_index		= 1;
+    var u_tex_index         = 0,
+        u_speed_index       = 1;
 
-	this._propValues		= [];
-	this._propValues[ this._propNames[u_tex_index		] ]	= this._defaultTexMap.slice(0);
-	this._propValues[ this._propNames[u_speed_index		] ]	= 1.0;
+    this._propValues        = [];
+    this._propValues[ this._propNames[u_tex_index       ] ] = this._defaultTexMap.slice(0);
+    this._propValues[ this._propNames[u_speed_index     ] ] = 1.0;
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
@@ -89,10 +90,20 @@ var ZInvertMaterial = function ZInvertMaterial() {
         }
 
         // set the shader values in the shader
-		this.setShaderValues();
+        this.setShaderValues();
         this.setResolution([world.getViewportWidth(), world.getViewportHeight()]);
         this.update(0);
     };
+
+	this.resetToDefault = function()
+	{
+		this._propValues[ this._propNames[u_tex_index		] ]	= this._defaultTexMap.slice(0);
+		this._propValues[ this._propNames[u_speed_index		] ]	= 1.0;
+
+		var nProps = this._propNames.length;
+		for (var i=0; i<nProps;  i++)
+			this.setProperty( this._propNames[i],  this._propValues[this._propNames[i]]  );
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -101,42 +112,42 @@ var ZInvertMaterial = function ZInvertMaterial() {
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var zInvertMaterialDef =
 { 'shaders':
-	{
-	    'defaultVShader': "assets/shaders/Basic.vert.glsl",
-	    'defaultFShader': "assets/shaders/ZInvert.frag.glsl"
-	},
+    {
+        'defaultVShader': "assets/shaders/Basic.vert.glsl",
+        'defaultFShader': "assets/shaders/ZInvert.frag.glsl"
+    },
     'techniques':
-	{
-	    'default':
-		[
-			{
-			    'vshader': 'defaultVShader',
-			    'fshader': 'defaultFShader',
-			    // attributes
-			    'attributes':
-				{
-				    'vert': { 'type': 'vec3' },
-				    'normal': { 'type': 'vec3' },
-				    'texcoord': { 'type': 'vec2' }
-				},
-			    // parameters
-			    'params':
-				{
-				    'u_tex0': { 'type': 'tex2d' },
-				    'u_time': { 'type': 'float' },
-				    'u_speed': { 'type': 'float' },
-				    'u_resolution': { 'type': 'vec2' }
-				},
+    {
+        'default':
+        [
+            {
+                'vshader': 'defaultVShader',
+                'fshader': 'defaultFShader',
+                // attributes
+                'attributes':
+                {
+                    'vert': { 'type': 'vec3' },
+                    'normal': { 'type': 'vec3' },
+                    'texcoord': { 'type': 'vec2' }
+                },
+                // parameters
+                'params':
+                {
+                    'u_tex0': { 'type': 'tex2d' },
+                    'u_time': { 'type': 'float' },
+                    'u_speed': { 'type': 'float' },
+                    'u_resolution': { 'type': 'vec2' }
+                },
 
-			    // render states
-			    'states':
-				{
-				    'depthEnable': true,
-				    'offset': [1.0, 0.1]
-				}
-			}
-		]
-	}
+                // render states
+                'states':
+                {
+                    'depthEnable': true,
+                    'offset': [1.0, 0.1]
+                }
+            }
+        ]
+    }
 };
 
 ZInvertMaterial.prototype = new PulseMaterial();

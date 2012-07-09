@@ -1,25 +1,26 @@
-﻿<!DOCTYPE html>
+<!doctype html>
 <!-- <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -29,16 +30,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> -->
 <html lang="en">
-	<head>
-    	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    	<link rel="stylesheet" type="text/css" href="materials-library-panel.css">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="materials-library-panel.css">
          <script type="text/montage-serialization">
         {
-            "addButton": {
+            "duplicateButton": {
                 "prototype": "montage/ui/button.reel",
                 "properties": {
-                    "element": {"#": "ml_add_btn"},
-					"enabled": false
+                    "element": {"#": "ml_duplicate_btn"},
+ 					"enabled": true
                 },
                 "listeners": [
                     {
@@ -47,11 +48,10 @@ POSSIBILITY OF SUCH DAMAGE.
                     }
                 ]
              },
-            "copyButton": {
+            "editButton": {
                 "prototype": "montage/ui/button.reel",
                 "properties": {
-                    "element": {"#": "ml_copy_btn"},
- 					"enabled": false
+                    "element": {"#": "ml_edit_btn"}
                },
                 "listeners": [
                     {
@@ -64,7 +64,7 @@ POSSIBILITY OF SUCH DAMAGE.
                 "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "ml_delete_btn"},
- 					"enabled": false
+                    "enabled": false
                },
                 "listeners": [
                     {
@@ -106,26 +106,28 @@ POSSIBILITY OF SUCH DAMAGE.
                 "prototype": "js/panels/Materials/materials-library-panel.reel[MaterialsLibraryPanels]",
                 "properties": {
                     "element": {"#": "materials_library_panel"},
-                    "_materialInfo": {"@": "materialInfo"}
+                    "_materialInfo": {"@": "materialInfo"},
+                    "materialsController": {"@": "materialsController"},
+                    "deleteButton": {"@": "deleteButton"}
                 }
             }
-    	}
-		</script>
-   		
-	</head>
-	<body>
+        }
+        </script>
 
-    	<div data-montage-id="materials_library_panel" class="materials_library_panel">
-            <section data-montage-id="ml_tree_holder" class="animationsLibrary">
+    </head>
+    <body>
+
+        <div data-montage-id="materials_library_panel" class="materials_library_panel">
+            <section data-montage-id="ml_tree_holder" class="ml_tree_holder">
                 <div data-montage-id="materials_library_tree"></div>
             </section>
             <hr />
             <div data-montage-id="ml_buttons" class="ml_buttons">
-                <button data-montage-id="ml_add_btn" class="nj-skinned">Add</button>
-                <button data-montage-id="ml_copy_btn" class="nj-skinned">Copy</button>
-                <button data-montage-id="ml_delete_btn" class="nj-skinned">Delete</button>
+                <button data-montage-id="ml_duplicate_btn" class="nj-skinned ml_duplicate_btn">Duplicate</button>
+                <button data-montage-id="ml_edit_btn" class="nj-skinned ml_edit_btn">Edit</button>
+                <button data-montage-id="ml_delete_btn" class="nj-skinned ml_delete_btn">Delete</button>
             </div>
-    	</div>
+        </div>
 
     </body>
 </html>

@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -115,48 +116,48 @@ RDGE.box.prototype.transform = function (mat) {
 
 /*
 RDGE.box.prototype.transform = function(mat) {
-	var newBox = new RDGE.box();
-	var e, f;
+    var newBox = new RDGE.box();
+    var e, f;
 
-	newBox.b[0] = mat[12]; newBox.b[1] = mat[13]; newBox.b[2] = mat[14];
-	newBox.t[0] = mat[12]; newBox.t[1] = mat[13]; newBox.t[2] = mat[14];
+    newBox.b[0] = mat[12]; newBox.b[1] = mat[13]; newBox.b[2] = mat[14];
+    newBox.t[0] = mat[12]; newBox.t[1] = mat[13]; newBox.t[2] = mat[14];
 
-	e = mat[0] * this.min[0]; f = mat[0] * this.max[0];
-	newBox.b[0] += (e < f) ? e : f;
-	newBox.t[0] += (e < f) ? f : e;
+    e = mat[0] * this.min[0]; f = mat[0] * this.max[0];
+    newBox.b[0] += (e < f) ? e : f;
+    newBox.t[0] += (e < f) ? f : e;
 
-	e = mat[4] * this.min[1]; f = mat[4] * this.max[1];
-	newBox.b[0] += (e < f) ? e : f;
-	newBox.t[0] += (e < f) ? f : e;
+    e = mat[4] * this.min[1]; f = mat[4] * this.max[1];
+    newBox.b[0] += (e < f) ? e : f;
+    newBox.t[0] += (e < f) ? f : e;
 
-	e = mat[8] * this.min[2]; f = mat[8] * this.max[2];
-	newBox.b[0] += (e < f) ? e : f;
-	newBox.t[0] += (e < f) ? f : e;
+    e = mat[8] * this.min[2]; f = mat[8] * this.max[2];
+    newBox.b[0] += (e < f) ? e : f;
+    newBox.t[0] += (e < f) ? f : e;
 
-	e = mat[1] * this.min[0]; f = mat[1] * this.max[0];
-	newBox.b[1] += (e < f) ? e : f;
-	newBox.t[1] += (e < f) ? f : e;
+    e = mat[1] * this.min[0]; f = mat[1] * this.max[0];
+    newBox.b[1] += (e < f) ? e : f;
+    newBox.t[1] += (e < f) ? f : e;
 
-	e = mat[5] * this.min[1]; f = mat[5] * this.max[1];
-	newBox.b[1] += (e < f) ? e : f;
-	newBox.t[1] += (e < f) ? f : e;
+    e = mat[5] * this.min[1]; f = mat[5] * this.max[1];
+    newBox.b[1] += (e < f) ? e : f;
+    newBox.t[1] += (e < f) ? f : e;
 
-	e = mat[9] * this.min[2]; f = mat[9] * this.max[2];
-	newBox.b[1] += (e < f) ? e : f;
-	newBox.t[1] += (e < f) ? f : e;
+    e = mat[9] * this.min[2]; f = mat[9] * this.max[2];
+    newBox.b[1] += (e < f) ? e : f;
+    newBox.t[1] += (e < f) ? f : e;
 
-	e = mat[2] * this.min[0]; f = mat[2] * this.max[0];
-	newBox.b[2] += (e < f) ? e : f;
-	newBox.t[2] += (e < f) ? f : e;
+    e = mat[2] * this.min[0]; f = mat[2] * this.max[0];
+    newBox.b[2] += (e < f) ? e : f;
+    newBox.t[2] += (e < f) ? f : e;
 
-	e = mat[6] * this.min[1]; f = mat[6] * this.max[1];
-	newBox.b[2] += (e < f) ? e : f;
-	newBox.t[2] += (e < f) ? f : e;
+    e = mat[6] * this.min[1]; f = mat[6] * this.max[1];
+    newBox.b[2] += (e < f) ? e : f;
+    newBox.t[2] += (e < f) ? f : e;
 
-	e = mat[10] * this.min[2]; f = mat[10] * this.max[2];
-	newBox.b[2] += (e < f) ? e : f;
-	newBox.t[2] += (e < f) ? f : e;
+    e = mat[10] * this.min[2]; f = mat[10] * this.max[2];
+    newBox.b[2] += (e < f) ? e : f;
+    newBox.t[2] += (e < f) ? f : e;
 
-	return newBox;
+    return newBox;
 };
 */

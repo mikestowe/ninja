@@ -1,25 +1,26 @@
 @charset "UTF-8";
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -34,75 +35,75 @@ $grey_light: #494949;
 
 .cloud_popup
 {
-	font-size: 12px;
-  	text-shadow: 1px 1px 1px #000;
-  	font-family: 'Droid Sans', sans-serif;
+    font-size: 12px;
+    text-shadow: 1px 1px 1px #000;
+    font-family: 'Droid Sans', sans-serif;
 }
 
 .cloud_popup .content
 {
-	width: 360px;
+    width: 360px;
 }
 
 .cloud_popup .content h3
 {
-	text-transform: uppercase;
-	font-weight: normal;
-	font-size: 14px;
-  	text-shadow: 1px 1px 1px #000;
-  	font-family: 'Droid Sans', sans-serif;
-  	display: block;
-  	float: left;
-  	clear: both;
-  	margin: 4px 0px 8px 0px;
-  	padding: 0px;
-  	width: 100%;
-  	text-align: center;
+    text-transform: uppercase;
+    font-weight: normal;
+    font-size: 14px;
+    text-shadow: 1px 1px 1px #000;
+    font-family: 'Droid Sans', sans-serif;
+    display: block;
+    float: left;
+    clear: both;
+    margin: 4px 0px 8px 0px;
+    padding: 0px;
+    width: 100%;
+    text-align: center;
 }
 
 .cloud_popup .content p
 {
-  	text-shadow: 1px 1px 1px #222;
-  	margin: 0px 0px 12px 0px;
-  	color: #EEE;
+    text-shadow: 1px 1px 1px #222;
+    margin: 0px 0px 12px 0px;
+    color: #EEE;
 }
 
 .cloud_popup .content .btn_test
 {
-	float: right;
-	clear: right;
-	margin: 1px 2px 0px 8px;
-	width: 60px;
+    float: right;
+    clear: right;
+    margin: 1px 2px 0px 8px;
+    width: 60px;
 }
 
 .cloud_popup .content label
 {
-	float: left;
-	margin: 5px 8px 0px 0px;
-	display: block;
-	width: 96px;
-	text-align: right;
+    float: left;
+    margin: 5px 8px 0px 0px;
+    display: block;
+    width: 96px;
+    text-align: right;
 }
 
 .cloud_popup .content input
 {
-	display: block;
-	float: left;
-	color: #FFF;
-	border: 0px;
-	padding: 4px;
-	margin: 0px;
-	width: 176px;
-	border-radius: 4px;
-	text-shadow: 1px 1px 1px #222;
-	font-family: 'Droid Sans', sans-serif;
-	border: 1px lighten($grey_dark, 20%) solid;
-	background: $grey_dark -webkit-gradient(linear, left top, left bottom, color-stop(45%, lighten($grey_dark, 10%)), color-stop(100%, $grey_dark));
+    display: block;
+    float: left;
+    color: #FFF;
+    border: 0px;
+    padding: 4px;
+    margin: 0px;
+    width: 176px;
+    border-radius: 4px;
+    text-shadow: 1px 1px 1px #222;
+    font-family: 'Droid Sans', sans-serif;
+    border: 1px lighten($grey_dark, 20%) solid;
+    background: $grey_dark -webkit-gradient(linear, left top, left bottom, color-stop(45%, lighten($grey_dark, 10%)), color-stop(100%, $grey_dark));
 }
 
 .cloud_popup .content input:focus
 {
-	text-shadow: none;
+    text-shadow: none;
     background: #FFF;
     border: 1px $grey_dark solid;
     color: $grey_dark;
@@ -110,63 +111,63 @@ $grey_light: #494949;
 
 .cloud_popup .content .status
 {
-	float: left;
-	clear: right;
-	margin: 5px 0px 0px 6px;
-	text-shadow: 1px 1px 1px #333;
-	width: 240px;
+    float: left;
+    clear: right;
+    margin: 5px 0px 0px 6px;
+    text-shadow: 1px 1px 1px #333;
+    width: 240px;
 }
 
 .cloud_popup .content .btn_ok, .cloud_popup .content .btn_cancel
 {
-	width: 80px;
-	text-align: center;
-	float: right;
-	margin: 8px 2px 2px 8px;
+    width: 80px;
+    text-align: center;
+    float: right;
+    margin: 8px 2px 2px 8px;
 }
 
 .cloud_popup section
 {
-	float: left;
-	clear: both;
-	margin: 16px 0px 0px 0px;
-	background: #333 -webkit-linear-gradient(top, rgb(50, 50, 50) 0%, rgb(60, 60, 60) 100%);
-	border: 1px solid #333;
-	padding: 8px;
-	border-radius: 6px;
+    float: left;
+    clear: both;
+    margin: 16px 0px 0px 0px;
+    background: #333 -webkit-linear-gradient(top, rgb(50, 50, 50) 0%, rgb(60, 60, 60) 100%);
+    border: 1px solid #333;
+    padding: 8px;
+    border-radius: 6px;
 }
 
 .cloud_popup section h4
 {
-	text-transform: uppercase;
-	font-weight: normal;
-	font-size: 12px;
-  	text-shadow: 1px 1px 1px #000;
-  	font-family: 'Droid Sans', sans-serif;
-  	display: block;
-  	float: left;
-  	clear: both;
-  	margin: 2px 0px 6px 0px;
-  	padding: 0px;
-  	width: 100%;
-  	text-align: center;
+    text-transform: uppercase;
+    font-weight: normal;
+    font-size: 12px;
+    text-shadow: 1px 1px 1px #000;
+    font-family: 'Droid Sans', sans-serif;
+    display: block;
+    float: left;
+    clear: both;
+    margin: 2px 0px 6px 0px;
+    padding: 0px;
+    width: 100%;
+    text-align: center;
 }
 
 .cloud_popup section .btn_download
 {
-	width: 120px;
-	text-align: center;
-	margin: 10px 0px 2px 4px;
-	float: left;
-	font-size: 11px;
+    width: 120px;
+    text-align: center;
+    margin: 10px 0px 2px 4px;
+    float: left;
+    font-size: 11px;
 }
 
 .cloud_popup section .cloud_icon
 {
-	background-image: url(../../../../../ninja_icon_128.png);
-	background-size: 100% 100%;
-	width: 60px;
-	height: 60px;
-	float: left;
-	margin: -10px 0px -6px 56px;
+    background-image: url(../../../../../ninja_icon_128.png);
+    background-size: 100% 100%;
+    width: 60px;
+    height: 60px;
+    float: left;
+    margin: -10px 0px -6px 56px;
 }

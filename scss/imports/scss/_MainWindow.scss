@@ -1,24 +1,25 @@
 // <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -33,7 +34,7 @@ POSSIBILITY OF SUCH DAMAGE.
 // Styles governing the main window and overall layout of the application.
 // Note that colors and font definitions go in
 // _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
-  
+
 
  body {
     position: absolute;
@@ -289,7 +290,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 .resizeBar { -webkit-transition: all 0.15s linear; }
 
-// Splitters Collapsed  
+// Splitters Collapsed
 .panelContainer.collapsed { -webkit-transition: all 0.15s ease-in;  }
 .panel.disableTransition { -webkit-transition: none !important; -webkit-box-flex:0.1 !important; }
 .disableTransition { -webkit-transition: none !important; -webkit-box-flex:0 !important; }
@@ -310,7 +311,7 @@ POSSIBILITY OF SUCH DAMAGE.
     box-shadow: 3px 5px 4px $color-app-shadow;
 }
 
- 
+
 //
 .baseBox {
     display:-webkit-box;
@@ -318,7 +319,7 @@ POSSIBILITY OF SUCH DAMAGE.
     display: box;
 }
 
-// Generic style to make any element unselectable  
+// Generic style to make any element unselectable
 .unselectable {
     -webkit-user-select: none;
 }
@@ -330,47 +331,47 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 .openDocumentsTab {
-	height: 25px;
+    height: 25px;
     position: relative;
     overflow: hidden;
     color: white;
 }
-	
+
 #openDocuments {
-   	float: left;
-	height: 25px;
-	width: 100%;
-	font-size: 12px;
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	position: relative;
-	text-decoration: none;
+    float: left;
+    height: 25px;
+    width: 100%;
+    font-size: 12px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    text-decoration: none;
 }
 
 #openDocuments li {
-	border-right: 1px solid black;
-	cursor: pointer;
-	display: inline;
-	float: left;
-	padding: 0.5em 1em;
-	text-shadow: 1px 1px 1px #000000;
-	vertical-align: middle;
+    border-right: 1px solid black;
+    cursor: pointer;
+    display: inline;
+    float: left;
+    padding: 0.5em 1em;
+    text-shadow: 1px 1px 1px #000000;
+    vertical-align: middle;
 }
 
 #openDocuments li:hover, #openDocuments li:active, #openDocuments li.activeTab {
-	background-color: #7f7f7f;
+    background-color: #7f7f7f;
 }
 
 .documentBar {
-	height: 25px;
-	position: relative;
-	overflow: hidden;
-	color: white;
+    height: 25px;
+    position: relative;
+    overflow: hidden;
+    color: white;
 }
 
 .montage-popup-modal-mask
 {
-	opacity: 1;
-	background: -webkit-radial-gradient(center, ellipse cover, rgba(0,0,0,.65) 0%, rgba(0,0,0,0.8) 80%);
+    opacity: 1;
+    background: -webkit-radial-gradient(center, ellipse cover, rgba(0,0,0,.65) 0%, rgba(0,0,0,0.8) 80%);
 }

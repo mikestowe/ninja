@@ -1,25 +1,26 @@
-﻿<!DOCTYPE HTML>
+<!doctype html>
 <!-- <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -35,79 +36,87 @@ POSSIBILITY OF SUCH DAMAGE.
 
         <script type="text/montage-serialization">
         {
-
             "owner": {
                 "prototype": "js/components/tools-properties/text-properties.reel",
                 "properties": {
                     "element": {"#": "textProperties"},
-                    "className": {"@": "className"},
-                    "tagType": {"@": "tagType"},
-                    "fontSelection": {"@": "fontSelection"},
-                    "fontSettings": {"@": "fontSettings"},
-                    "fontSize": {"@": "fontSize"},
+
+                    "fontName": {"@": "fontname"},
+                    "fontSize": {"@": "fontsize"},
                     "fontColor": {"#": "fontColorCtrl"},
+
                     "btnBold": {"@": "btnBold"},
                     "btnItalic": {"@": "btnItalic"},
                     "btnUnderline": {"@": "btnUnderline"},
                     "btnStrikethrough": {"@": "btnStrikethrough"},
+
                     "alignLeft": {"@": "alignLeft"},
                     "alignCenter": {"@": "alignCenter"},
                     "alignRight": {"@": "alignRight"},
                     "alignJustify": {"@": "alignJustify"},
+
                     "indent": {"@": "indent"},
                     "outdent": {"@": "outdent"},
+
                     "numberedList": {"@": "numberedList"},
                     "bulletedList": {"@": "bulletedList"}
                 }
             },
-            "className": {
-                "prototype": "js/components/textfield.reel[TextField]",
-                "properties": {
-                    "element": {"#": "className"}
-                }
-            },
-            "tagType": {
-                "prototype": "js/components/combobox.reel",
-                "properties": {
-                    "element": {"#": "tagType"}
-                }
-            },
-            "fontSelection": {
-                "prototype": "js/components/combobox.reel",
-                "properties": {
-                    "element": {"#": "fontSelection"},
-                    "identifier": "fontSelection"
-                },
-                "listeners": [
-                    {
-                        "type": "change",
-                        "listener": {"@": "owner"}
-                    }
-                ]
 
-            },
-            "fontSettings": {
-                "prototype": "montage/ui/button.reel",
+            "fontname": {
+                "prototype": "montage/ui/native/select.reel",
                 "properties": {
-                    "element": {"#": "fontSettings"}
+                    "element": {"#": "fontname"},
+                    "preventFocus": true,
+                    "contentController": {"@": "fontnameController"}
                 }
             },
 
-            "fontSize": {
-                "prototype": "js/components/combobox.reel",
+            "fontnameController": {
+                "prototype": "montage/ui/controller/array-controller",
+                "properties": {
+                    "selectObjectsOnAddition": false,
+                    "content": [
+                        {"text" : "Arial", "value": "Arial"},
+                        {"text" : "Arial Black", "value": "Arial Black"},
+                        {"text" : "Courier New", "value": "Courier New"},
+                        {"text" : "Garamond", "value": "Garamond"},
+                        {"text" : "Georgia", "value": "Georgia"},
+                        {"text" : "Open Sans", "value": "Open Sans"},
+                        {"text" : "Tahoma", "value": "Tahoma"},
+                        {"text" : "Times New Roman", "value": "Times New Roman"},
+                        {"text" : "Times", "value": "Times"},
+                        {"text" : "Trebuchet", "value": "Trebuchet MS"},
+                        {"text" : "Verdana", "value": "Verdana"}
+                    ]
+                }
+            },
+
+            "fontsize": {
+                "prototype": "montage/ui/native/select.reel",
                 "properties": {
                     "element": {"#": "fontSize"},
-                    "identifier": "fontSize"
-                },
-                "listeners": [
-                    {
-                        "type": "change",
-                        "listener": {"@": "owner"}
-                    }
-                ]
-
+                    "preventFocus" : true,
+                    "contentController" : {"@": "fontsizeController"}
+                }
             },
-        
+
+            "fontsizeController": {
+                "prototype": "montage/ui/controller/array-controller",
+                "properties": {
+                    "selectObjectsOnAddition": false,
+                    "content": [
+                        {"text" : "8pt", "value": "1"},
+                        {"text" : "10pt", "value": "2"},
+                        {"text" : "12pt", "value": "3"},
+                        {"text" : "14pt", "value": "4"},
+                        {"text" : "18pt", "value": "5"},
+                        {"text" : "24pt", "value": "6"},
+                        {"text" : "36pt", "value": "7"}
+                    ]
+                }
+            },
+
             "btnBold": {
                 "prototype": "montage/ui/toggle-button.reel",
                 "properties": {
@@ -127,13 +136,7 @@ POSSIBILITY OF SUCH DAMAGE.
                     "identifier": "btnItalic",
                     "pressedLabel": "I",
                     "unpressedLabel": "I"
-                },
-                "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
-                ]
+                }
             },
             "btnUnderline": {
                 "prototype": "montage/ui/toggle-button.reel",
@@ -143,13 +146,7 @@ POSSIBILITY OF SUCH DAMAGE.
                     "identifier": "btnUnderline",
                     "pressedLabel": "U",
                     "unpressedLabel": "U"
-                },
-                "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
-                ]
+                }
             },
             "btnStrikethrough": {
                 "prototype": "montage/ui/toggle-button.reel",
@@ -159,45 +156,36 @@ POSSIBILITY OF SUCH DAMAGE.
                     "identifier": "btnStrikethrough",
                     "pressedLabel": "S",
                     "unpressedLabel": "S"
-                },
-                "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
-                ]
+                }
             },
-            
+
             "alignLeft": {
                 "prototype": "montage/ui/toggle-button.reel",
                 "properties": {
                     "element": {"#": "alignLeft"},
                     "pressedClass": "active",
-                    "identifier": "alignLeft",
+                    "identifier": "justifyLeft",
                     "pressedLabel": "",
-                    "unpressedLabel": ""
+                    "unpressedLabel": "",
+                    "pressed": false
                 },
                 "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
+                    { "type": "action", "listener": {"@": "owner"} }
                 ]
             },
+
             "alignCenter": {
                 "prototype": "montage/ui/toggle-button.reel",
                 "properties": {
                     "element": {"#": "alignCenter"},
                     "pressedClass": "active",
-                    "identifier": "alignCenter",
+                    "identifier": "justifyCenter",
                     "pressedLabel": "",
-                    "unpressedLabel": ""
+                    "unpressedLabel": "",
+                    "pressed": false
                 },
                 "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
+                    { "type": "action", "listener": {"@": "owner"} }
                 ]
             },
             "alignRight": {
@@ -205,15 +193,13 @@ POSSIBILITY OF SUCH DAMAGE.
                 "properties": {
                     "element": {"#": "alignRight"},
                     "pressedClass": "active",
-                    "identifier": "alignRight",
+                    "identifier": "justifyRight",
                     "pressedLabel": "",
-                    "unpressedLabel": ""
+                    "unpressedLabel": "",
+                    "pressed": false
                 },
                 "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
+                    { "type": "action", "listener": {"@": "owner"} }
                 ]
             },
             "alignJustify": {
@@ -221,43 +207,33 @@ POSSIBILITY OF SUCH DAMAGE.
                 "properties": {
                     "element": {"#": "alignJustify"},
                     "pressedClass": "active",
-                    "identifier": "alignJustify",
+                    "identifier": "justify",
                     "pressedLabel": "",
-                    "unpressedLabel": ""
+                    "unpressedLabel": "",
+                    "pressed": false
                 },
                 "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
+                    { "type": "action", "listener": {"@": "owner"} }
                 ]
             },
             "indent": {
                 "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "indent"},
-                    "identifier": "indent",
-                    "value": ">>"
+                    "identifier": "indent"
                 },
                 "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
+                    { "type": "action", "listener": {"@": "owner"} }
                 ]
             },
             "outdent": {
                 "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "outdent"},
-                    "identifier": "outdent",
-                    "value": "<<"
+                    "identifier": "outdent"
                 },
                 "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
+                    { "type": "action", "listener": {"@": "owner"} }
                 ]
             },
             "bulletedList": {
@@ -270,10 +246,7 @@ POSSIBILITY OF SUCH DAMAGE.
                     "unpressedLabel": "• • •"
                 },
                 "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
+                    { "type": "action", "listener": {"@": "owner"} }
                 ]
             },
             "numberedList": {
@@ -285,27 +258,18 @@ POSSIBILITY OF SUCH DAMAGE.
                     "pressedLabel": "1 2 3",
                     "unpressedLabel": "1 2 3"
                 },
-                "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
-                ]
+                "listeners": [ { "type": "action", "listener": {"@": "owner"} } ]
             }
 
-    	}
-	    </script>
+        }
+        </script>
 
     </head>
 
     <body>
         <div data-montage-id="textProperties" class="subToolHolderPanel optionsTextTool toolOptionsFloatChildren">
-            <label class="label" style="display: none">Class:</label>
-            <input data-montage-id="className" style="display: none" />
-            <label class="label" style="display: none">Tag:</label>
-            <select data-montage-id="tagType" style="display: none"></select>
             <label class="label overrideMargin">Font:</label>
-            <select data-montage-id="fontSelection" class="nj-skinned fontSelection"></select>
+            <select data-montage-id="fontname" class="nj-skinned fontSelection"></select>
             <button data-montage-id="fontSettings" style="display: none"></button>
             <label class="label">Size:</label>
             <select data-montage-id="fontSize" class="nj-skinned"></select>
@@ -323,8 +287,8 @@ POSSIBILITY OF SUCH DAMAGE.
                 <button data-montage-id="alignJustify" class="nj-skinned imageButton"><img src="../../../../images/optionsbar/text/AlignJustified.png"  class="unselectable"/></button>
             </div>
             <div class="btnGroup toolOptionsFloatChildren">
-                <button data-montage-id="indent" class="nj-skinned textButton"></button>
-                <button data-montage-id="outdent" class="nj-skinned textButton"></button>
+                <button data-montage-id="indent" class="nj-skinned textButton"><img src="../../../../images/optionsbar/text/IndentMore.png" class="unselectable" style="height:16px" /></button>
+                <button data-montage-id="outdent" class="nj-skinned textButton"><img src="../../../../images/optionsbar/text/IndentLess.png" class="unselectable" style="height:16px" /></button>
             </div>
             <div class="btnGroup toolOptionsFloatChildren">
                 <button data-montage-id="bulletedList" class="nj-skinned imageButton"><img src="../../../../images/optionsbar/text/BulletedList.png" /></button>
