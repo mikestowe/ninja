@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -107,15 +108,15 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var linearGradientMaterialDef =
-{'shaders': 
+{'shaders':
 	{
 			// shader file
 			'defaultVShader':"assets/shaders/linearGradient.vert.glsl",
 			'defaultFShader':"assets/shaders/linearGradient.frag.glsl",
-				        
+
 			// this shader is inline
 			'dirLightVShader': "\
 				uniform mat4 u_mvMatrix;\
@@ -130,7 +131,7 @@ var linearGradientMaterialDef =
 					vNormal.xyz = (u_normalMatrix*vec4(a_nrm, 0.0)).xyz;\
 					gl_Position = u_projMatrix * u_mvMatrix * vec4(a_pos,1.0);\
 					vPos = (u_worldMatrix * vec4(a_pos,1.0)).xyz;\
-				}",				
+				}",
 			'dirLightFShader': "\
 				precision highp float;\
 				uniform vec4 u_light1Diff;\
@@ -150,7 +151,7 @@ var linearGradientMaterialDef =
 				}"
 		},
 		'techniques':
-		{ 
+		{
 			'default':
 			[
 				{
@@ -164,16 +165,16 @@ var linearGradientMaterialDef =
 						'texcoord'	:	{ 'type' : 'vec2' }
 					},
 					// parameters
-					'params' : 
+					'params' :
 					{
-						'u_color1' :		{ 'type' : 'vec4' },									
-						'u_color2' :		{ 'type' : 'vec4' },									
-						'u_color3' :		{ 'type' : 'vec4' },									
+						'u_color1' :		{ 'type' : 'vec4' },
+						'u_color2' :		{ 'type' : 'vec4' },
+						'u_color3' :		{ 'type' : 'vec4' },
 						'u_color4' :		{ 'type' : 'vec4' },
-						'u_colorStop1':		{ 'type' : 'float' },									
-						'u_colorStop2':		{ 'type' : 'float' },									
-						'u_colorStop3':		{ 'type' : 'float' },									
-						'u_colorStop4':		{ 'type' : 'float' },									
+						'u_colorStop1':		{ 'type' : 'float' },
+						'u_colorStop2':		{ 'type' : 'float' },
+						'u_colorStop3':		{ 'type' : 'float' },
+						'u_colorStop4':		{ 'type' : 'float' },
 						'u_cos_sin_angle':  { 'type' : 'vec2' },
 						'u_texTransform':   { 'type' : 'mat3' }
 						//'u_colorCount':		{'type' : 'int' }
@@ -181,7 +182,7 @@ var linearGradientMaterialDef =
 					},
 
 					// render states
-					'states' : 
+					'states' :
 					{
 						'depthEnable' : true,
 						'offset':[1.0, 0.1]
@@ -197,12 +198,12 @@ var linearGradientMaterialDef =
 						'a_nrm'	:	{ 'type' : 'vec3' }
 					},
 					// parameters
-					'params' : 
+					'params' :
 					{
 					},
 
 					// render states
-					'states' : 
+					'states' :
 					{
 						'depthEnable' : true,
 						"blendEnable" : true,

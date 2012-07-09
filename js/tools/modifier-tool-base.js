@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -81,7 +82,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 			}
 		}
 	},
-    
+
     _getObjectBeingTracked :
     {
         value: function(hitRec)
@@ -103,7 +104,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             // override in subclasses
         }
     },
-    
+
     initializeSnapping:
     {
         value: function(event)
@@ -222,7 +223,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             }
         }
     },
-    
+
   	/*
 	 *  The parameterization is based on the position of the
 	 *  snap point in pre-transformed element screen space
@@ -313,7 +314,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 				var localPt = [x,y,z];
 
 				globalPt = viewUtils.localToGlobal( localPt,  elt );
- 
+
 				// add in the delta
 				var hitPt = this.GetObjectHitPoint();
 				var scrPt = viewUtils.localToGlobal( hitPt, this._clickedObject );
@@ -375,7 +376,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 			viewUtils.pushViewportObj( elt );
 			var viewPt = viewUtils.screenToView( scrPt[0], scrPt[1], scrPt[2] );
 			viewUtils.popViewportObj();
-            
+
 			if(useViewPoint)
 			{
 				return viewPt;
@@ -405,7 +406,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 			viewUtils.pushViewportObj( elt );
 			var viewPt = viewUtils.screenToView( scrPt[0], scrPt[1], scrPt[2] );
 			viewUtils.popViewportObj();
-            
+
 			if(useViewPoint)
 			{
 				return viewPt;
@@ -593,7 +594,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 			}
         }
     },
-        
+
     doDraw: {
         value: function(event)
         {
@@ -627,12 +628,12 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             this._mode = 0;
         }
     },
-    
+
     cleanupSnap: {
         value: function() {
             this.mouseDownHitRec = null;
             this.mouseUpHitRec = null;
-            
+
             this._dragPlane = null;
 			this._useQuadPt = false;
 
@@ -742,7 +743,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
         }
     },
     //-------------------------------------------------------------------------
-    
+
     //-------------------------------------------------------------------------
     // Routines to run when tool is selected/deselected
     Configure: {
@@ -867,7 +868,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 
 			if (!this._isDrawing || (this.application.ninja.selectedElements.length == 1))
             this.DrawHandles(this._delta);
-            
+
             if(this._canSnap)
             {
                 snapManager.drawLastHit();

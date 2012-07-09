@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -73,7 +74,7 @@ RDGE._jpassBaseClass = function () {
     // the name of this pass
     this.name = "renderPass_" + RDGE.nodeIdGen.getId();
 
-    /* 
+    /*
     *	if 0 this pass and children are culled from rendering
     */
     this.visibility = 1;
@@ -431,8 +432,8 @@ RDGE.jpass = function (def) {
         else if ("renderList" == obj) {
             // put the items listed into their  buckets
             var renderList = new Array(RDGE.rdgeConstants.categoryEnumeration.MAX_CAT);
-            renderList[RDGE.rdgeConstants.categoryEnumeration.BACKGROUND] = []; //BACKGROUND	
-            renderList[RDGE.rdgeConstants.categoryEnumeration.OPAQUE] = []; //OPAQUE		
+            renderList[RDGE.rdgeConstants.categoryEnumeration.BACKGROUND] = []; //BACKGROUND
+            renderList[RDGE.rdgeConstants.categoryEnumeration.OPAQUE] = []; //OPAQUE
             renderList[RDGE.rdgeConstants.categoryEnumeration.TRANSPARENT] = []; //TRANSPARENT
             renderList[RDGE.rdgeConstants.categoryEnumeration.ADDITIVE] = []; //ADDITIVE
             renderList[RDGE.rdgeConstants.categoryEnumeration.TRANSLUCENT] = []; //TRANSLUCENT
@@ -593,7 +594,7 @@ RDGE.jpassGraph = function (def) {
 
     /*
     *	Traverse the render graph, breadth first to produce the final render output
-    *	note: breadth first is used to allow generation of an entire level at once, 
+    *	note: breadth first is used to allow generation of an entire level at once,
     *	the peers in one level could, in theory, be processed in parallel
     */
     this.render = function (sceneGraph) {

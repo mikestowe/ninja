@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -35,7 +36,7 @@ var Montage = 			require("montage/core/core").Montage,
 	TemplateCreator = 	require("node_modules/tools/template/template-creator").TemplateCreator,
 	ClassUuid = 		require("js/components/core/class-uuid").ClassUuid;
 ////////////////////////////////////////////////////////////////////////
-//	
+//
 exports.TemplateDocumentMediator = Montage.create(Component, {
 	////////////////////////////////////////////////////////////////////
 	//
@@ -167,7 +168,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
 			for (var n in template.body.attributes) {
 				if (template.body.attributes[n].value) {
 					template.file.content.document.body.setAttribute(template.body.attributes[n].name, template.body.attributes[n].value);
-				}				
+				}
 			}
 			//
             if(template.template) {
@@ -233,7 +234,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             for (var n in presentNodes) {
 	    		//
 	    		if (presentNodes[n].getAttribute && presentNodes[n].getAttribute('data-ninja-node') === null) {
-		    	 	toremovetags.push(presentNodes[n]);	
+		    	 	toremovetags.push(presentNodes[n]);
 	    		} else if (presentNodes[n].getAttribute && presentNodes[n].getAttribute('data-ninja-node') !== null) {
 	    			//Removing attribute
 		    		presentNodes[n].removeAttribute('data-ninja-node');
@@ -243,7 +244,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             var styletags = template.file.content.document.getElementsByTagName('style'),
     			linktags = template.file.content.document.getElementsByTagName('link'),
     			njtemplatetags = template.file.content.document.querySelectorAll('[data-ninja-template]');
-    		
+
     		//Adding to tags to be removed form template
     		for (var f in njtemplatetags) {
     			if (njtemplatetags[f].getAttribute) toremovetags.push(njtemplatetags[f]);
@@ -266,7 +267,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     //Checking head first
                     template.file.content.document.head.removeChild(toremovetags[h]);
                 } catch (e) {
-                    
+
                 }
                 try {
                         //Checking body if not in head
@@ -287,23 +288,23 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     }
                 }
             }
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
+
+
+
+
+
+
+
+
+
+
+
+
+
             //TODO: Make proper CSS method
-            
-            
-            
+
+
+
             //Checking for type of save: styles = <style> only | css = <style> and <link> (all CSS)
             if (template.styles) {
                 //Getting all style tags
@@ -400,24 +401,24 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     }
                 }
             }
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             //
             var webgltag, webgllibtag, webglrdgetag, mjstag, mjslibtag, matchingtags = [],
             	scripts = template.file.content.document.getElementsByTagName('script'),
@@ -445,33 +446,33 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     }
                 }
             }
-            
-            
-            
-            
+
+
+
+
             //TODO: Make proper webGL/Canvas method
-            
-            
+
+
             //Checking for webGL elements in document
             if (template.webgl && template.webgl.length > 1) {//TODO: Should be length 0, hack for a temp fix
                 var rdgeDirName, rdgeVersion, cvsDataDir = this.getCanvasDirectory(template.file.root), fileCvsDir, fileCvsDirAppend, cvsDirCounter = 1, fileOrgDataSrc;
                 //
                 if (cvsDataDir && !matchingtags.length && !webgllibtag) {
-                
+
                 	if (template.libs.canvasId) {
 	                	libsobserver.canvasId = template.libs.canvasId;
                 	} else {
 	                	libsobserver.canvasId = ClassUuid.generate();
                 	}
-                	
+
                 	//Creating data directory, will include materials at a later time
                 	fileCvsDir = cvsDataDir+template.file.name.split('.'+template.file.extension)[0]+'_'+libsobserver.canvasId;
-                	
+
                 	if (!this._getUserDirectory(fileCvsDir)) {
                 		//TODO: create proper logic not to overwrite files
                 		console.log('error');
                 	}
-                	
+
                 	fileCvsDir += '/';
                 } else if (webgllibtag && webgllibtag.getAttribute && webgllibtag.getAttribute('data-ninja-canvas-json') !== null) {
                 	fileOrgDataSrc = template.file.root+webgllibtag.getAttribute('data-ninja-canvas-json');
@@ -530,10 +531,10 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
 	                    template.file.content.document.head.appendChild(webgltag);
 	                }
                 }
-                
+
                 //TODO: Decide if this should be over-writter or only written on creation
                 var rootElement = 'document.body'; //TODO: Set actual root element
-                
+
                 //TODO: This data should be saved to a JSON file eventually
                 var json = '\n({\n\t"version": "' + rdgeVersion + '",\n\t"directory": "' + rdgeDirName + '/",\n\t"data": [';
                 //Looping through data to create escaped array
@@ -569,29 +570,29 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                 	} else {
                 		//Error
                 	}
-                	
-                	
+
+
                 } else {
                 	webgllibtag.setAttribute('data-ninja-canvas-libpath', rdgeDirName);
                 	webgltag.innerHTML = json;
                 }
             }
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             //TODO: Make proper Montage method
-            
+
 			//Checking for Montage
 			if (mJsSerialization) {
 				//Copy Montage library if needed
@@ -601,9 +602,9 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                         mjsDirName = (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name + this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase();
                         mjsVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
                         this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.file.root, mjsDirName, function(result) {libsobserver.montageCopied = result; this.libCopied(libsobserver);}.bind(this));
-                        
-                        
-                        
+
+
+
                         //TODO: Fix to allow no overwrite and nested locations
                         var mjsCheck, mjsPath = template.file.root + 'package.json';
                         mjsCheck = this.application.ninja.coreIoApi.fileExists({uri: mjsPath});
@@ -613,9 +614,9 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                         } else {
                         	//Already exists
                         }
-                        
-                        
-                        
+
+
+
                     } else {
                         //TODO: Error handle no available library to copy
                     }
@@ -632,7 +633,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     } else {
                     	template.file.content.document.head.appendChild(mjslibtag);
                     }
-                    
+
                 }
                 //
                 if (!mjstag) {
@@ -643,25 +644,25 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     } else {
                     	template.file.content.document.head.appendChild(mjstag);
                     }
-                    
+
                 }
                 //
                 mjstag.innerHTML = mJsSerialization;
                 mjsCreator = null;
 			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+
+
+
+
+
+
+
+
+
+
+
+
+
             //Cleaning URLs from HTML
             var cleanHTML;
             if (ninjaWrapper) {
@@ -843,7 +844,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
     Code from https://github.com/einars/js-beautify
     License https://github.com/einars/js-beautify/blob/master/license.txt
     Used with author's permission, as stated below
-		
+
     Copyright (c) 2009 - 2011, Einar Lielmanis
     Permission is hereby granted, free of charge, to any person
     obtaining a copy of this software and associated documentation

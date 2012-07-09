@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -225,7 +226,7 @@ var CloudMaterial = function CloudMaterial()
 		}
 
 		var technique, renderer, tex;
-		
+
 		// update the cloud map material
 		var material = this._materialNode;
 		if (material)
@@ -261,7 +262,7 @@ var CloudMaterial = function CloudMaterial()
 	{
 		// save the current RDGE context so we can reset it later
 		var saveContext = RDGE.globals.engine.getContext();
-		this.getWorld().stop();	
+		this.getWorld().stop();
 
 		// build a world to do the rendering
 		if (!GLWorld)  GLWorld = require("js/lib/drawing/world").World;
@@ -349,7 +350,7 @@ var CloudMaterial = function CloudMaterial()
 		var hWidth = -z*(r-l)/(2.0*zn)*xFillNDC,
 			hHeight = -z*(t-b)/(2.0*zn)*yFillNDC;
 
-		
+
 		//this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial);
 		var ctr = [x,y],  width = 2*hWidth,  height = 2*hHeight;
 		var cloudSize = width > height ? 0.25*width : 0.25*height;
@@ -377,12 +378,12 @@ var CloudMaterial = function CloudMaterial()
 		this._adjustedZMin = zMin;
 		this._adjustedZMax = zMax;
 
-		
+
 		// build the polygons
 		var verts	= [],
 			normals	= [ [0,0,1], [0,0,1], [0,0,1], [0,0,1] ],
 			uvs		= [ [0,0], [1,0], [1,1], [0,1] ];
-	
+
 		for ( i = 0; i < 20; i++ )
 		{
 //			var x = hWidth*2*(Math.random() - 0.5),
@@ -496,17 +497,17 @@ var cloudMaterialDef =
 		]
 	}
 };
- 
+
 // the cloud map material def is used to map the cloud image onto
 // the destination geometry
 var cloudMapMaterialDef =
-{'shaders': 
+{'shaders':
 	{
 		'defaultVShader':"assets/shaders/Basic.vert.glsl",
 		'defaultFShader':"assets/shaders/BasicTex.frag.glsl"
 	},
 	'techniques':
-	{ 
+	{
 		'default':
 		[
 			{
@@ -520,13 +521,13 @@ var cloudMapMaterialDef =
 					'texcoord'  :   { 'type' : 'vec2' }
 				},
 				// parameters
-				'params' : 
+				'params' :
 				{
 					'u_tex0'			: { 'type' : 'tex2d' },
 				},
 
 				// render states
-				'states' : 
+				'states' :
 				{
 					'depthEnable' : true,
 					'offset':[1.0, 0.1]

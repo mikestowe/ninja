@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -30,14 +31,14 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /////////////////////////////////////////////
 // Class GLAnchorPoint
-//      GL representation of a point clicked 
+//      GL representation of a point clicked
 //          and dragged during pen tool
-//      
-//    
+//
+//
 /////////////////////////////////////////////
 var GLAnchorPoint = function GLAnchorPoint() {
     /////////////////////////////////////////
-    // Instance variables 
+    // Instance variables
     /////////////////////////////////////////
     this._x = 0.0;
     this._y = 0.0;
@@ -99,7 +100,7 @@ GLAnchorPoint.prototype.translateNextFromPrev = function (tx, ty, tz) {
     if (totalTransSq < 0.0000001) {
         return;
     }
-    
+
     // *** compute the rotation of the prev vector ***
     var oldP = [this._prevX + tx - this._x, this._prevY + ty - this._y, this._prevZ + tz - this._z];
     var newP = [this._prevX - this._x, this._prevY - this._y, this._prevZ - this._z];
@@ -133,7 +134,7 @@ GLAnchorPoint.prototype.translatePrevFromNext = function (tx, ty, tz) {
     if (totalTransSq < 0.0000001) {
         return;
     }
-        
+
     // *** compute the rotation of the next vector ***
     var oldN = [this._nextX + tx - this._x, this._nextY + ty - this._y, this._nextZ + tz - this._z];
     var newN = [this._nextX - this._x, this._nextY - this._y, this._nextZ - this._z];

@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -44,7 +45,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 	this._texture;
 
    // the canvas generating the texture map (if there is one)
-	this._srcCanvas;	
+	this._srcCanvas;
 	this._srcWorld;
 
 	// texture attributes
@@ -52,7 +53,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		this._texMapName = texMapName.slice();
 	else
 		this._srcCanvas = texMapName;
-		
+
 
 	// set default values for wrap and mips
 	if (wrap === undefined)
@@ -64,7 +65,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 
 	// cache whether or not the source is animated
 	this._isAnimated = false;
-	
+
 	// the destination world that will use the texture map
 	this._dstWorld = dstWorld;
 
@@ -121,7 +122,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		}
 		else
 		{
-			this.loadFromFile();  
+			this.loadFromFile();
 		}
 	}
 
@@ -218,7 +219,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 	this.loadFromCanvas = function()
 	{
 		var NJUtils = require("js/lib/NJUtils").NJUtils;
-		
+
 		var srcCanvas = this._srcCanvas;
 		var wrap = this._wrap;
 		var mips = this._mips;
@@ -308,12 +309,12 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 
 		return tex;
 	}
- 
+
 	this.isPowerOfTwo = function(x)
 	{
 		return (x & (x - 1)) == 0;
 	}
- 
+
 	this.nextHighestPowerOfTwo = function(x)
 	{
 		--x;
@@ -322,7 +323,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		}
 		return x + 1;
 	}
- 
+
 	this.nextLowerPowerOfTwo = function(x)
 	{
 		return this.nextHighestPowerOfTwo(x) >> 1;
@@ -332,7 +333,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 	{
 		if (elt.id && elt.id === id)
 			return elt;
- 
+
 		if (elt.children)
 		{
 			var nKids = elt.children.length;

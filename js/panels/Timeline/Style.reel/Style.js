@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -32,11 +33,11 @@ POSSIBILITY OF SUCH DAMAGE.
  * Style component:  Edits and manages a single style rule for a Layer in the Timeline.
  * Public Properties:
  * 		editorProperty:  The CSS property for the style.
- * 		editorValue: 	The value for the editorProperty. 
+ * 		editorValue: 	The value for the editorProperty.
  * 		whichView:  Which view to show, the hintable view (where a new property can be typed in)
  * 					or the propval view (where the property's value can be set with the tweener).
  * 					Valid values are "hintable" and "propval", defaults to "hintable".
- * 
+ *
  */
 
 var Montage = require("montage/core/core").Montage;
@@ -89,7 +90,7 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 			}
 		}
 	},
-	
+
     /* isActive:  Whether or not the user is actively clicking within the style; used to communicate state with
      * parent Layer.
      */
@@ -104,7 +105,7 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     		this._isActive = newVal;
     	}
     },
-   
+
    // Property for this editor
     _editorProperty: {
     	value: ""
@@ -119,7 +120,7 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     		this.needsDraw = true;
     	}
     },
-    
+
     // Value for the property for this editor.
     _editorValue: {
     	value: ""
@@ -134,8 +135,8 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     		this.needsDraw = true;
     	}
     },
-    
-	// The tweener used to change the value for this property. 
+
+	// The tweener used to change the value for this property.
     _ruleTweener: {
     	value: false
     },
@@ -149,7 +150,7 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     		this.needsDraw = true;
     	}
     },
-    
+
     // The hintable we use to change the Property
     _myHintable: {
     	value: ""
@@ -174,12 +175,12 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     		this._myHintableValue = newVal;
     	}
     },
-    
+
     // swapViews: Is a view swap happening?
     _swapViews : {
     	value: true
     },
-    
+
     // whichView: which view should we show: hintable or propval
     _whichView : {
     	value: "hintable"
@@ -201,7 +202,7 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     		}
     	}
     },
- 
+
  	// styleID: the id for this style;
  	// Used to publish events
  	_styleID : {
@@ -259,9 +260,9 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
  			this.isActive = true;
  		}
  	},
-    
+
     /* === END: Models === */
-    
+
 	/* === BEGIN : Draw cycle === */
     prepareForDraw: {
         value: function() {
@@ -270,7 +271,7 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     },
     draw: {
     	value: function() {
-    		
+
     		if (this._swapViews === true) {
     			// Show the right thing
     			this._showView();
@@ -293,16 +294,16 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     	}
     },
 	/* === END: Draw cycle === */
-	
+
 	/* === BEGIN: controllers === */
-	
+
 	// handleStylePropertyDblClick: What happens when the user double-clicks on the style property
 	handleStylePropertyDblclick: {
 		value: function(event) {
 			this.whichView = "hintable";
 		}
 	},
-	
+
 	// handleHintableStop: What happens when the hintable issues its stop event
 	handleHintableStop: {
 		value: function(event) {
@@ -312,14 +313,14 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 		    this.whichView = "propval";
 		}
 	},
-	
+
 	// Init: Initialize the component with some useful selectors and other defaults.
 	init : {
 		value: function() {
 
         	var arrHints = [],
         		i = 0;
-        	
+
         	// Get the array of hints from _myTweenables:
         	for (i = 0; i < this._myTweenables.length; i++) {
         		arrHints.push(this._myTweenables[i].property)
@@ -328,15 +329,15 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 			// Set useful information for the hintable
         	this.myHintable.editingClass = "editable2";
         	this.myHintable.hints = arrHints;
-        	
+
         	// Bind a handler to the Hintable's change event
         	this.myHintable.identifier = "hintable";
         	this.myHintable.addEventListener("stop", this, false);
-        	
+
         	// Add the click handler to the styleProperty: When the user double-clicks on it, we want to start the editor.
         	this.styleProperty.identifier = "styleProperty";
         	this.styleProperty.addEventListener("dblclick", this, false);
-        	
+
         	// Get some selectors that we'll be using
 			this.editorHottextContainer = this.element.querySelector(".editor-hottext");
 			this.editorInputContainer = this.element.querySelector(".editor-input");
@@ -344,12 +345,12 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 			this.containerHintable = this.element.querySelector(".row-hintable");
 			this.containerPropvals = this.element.querySelector(".container-propvals");
 			this.valueEditorInput = this.element.querySelector(".editor-input input");
-        	
-        	// mousedown listener to handle 
+
+        	// mousedown listener to handle
         	this.element.addEventListener("mousedown", this, false);
 		}
 	},
-	
+
 	// showView: Show the appropriate view
 	_showView : {
 		value: function() {
@@ -364,7 +365,7 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 			}
 		}
 	},
-	
+
 	// showTweener: show the appropriate tweener
 	_showTweener : {
 		value: function() {
@@ -378,7 +379,7 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
             } else {
                this.ruleTweener = true;
             }
-				
+
 			tweenable.tweener = "input";
 
 			for (i = 0; i < this._myTweenables.length; i++) {
@@ -441,9 +442,9 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 			}
 		}
 	},
-	
+
 	/* === END: Controllers === */
-    
+
     _myTweenables: {
         value: [
             {
@@ -786,7 +787,7 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
         }
     },
 
-	
+
 	/* Begin: Logging routines */
     _boolDebug: {
     	enumerable: false,

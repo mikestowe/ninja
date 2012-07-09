@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -69,9 +70,9 @@ var Layer = exports.Layer = Montage.create(Component, {
         value: null,
         serializable: true
     },
-    
+
     /* Begin: Models */
-   
+
 	/* Main collapser model: the main collapser for the layer */
     _mainCollapser : {
     	value: false
@@ -85,7 +86,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	},
         serializable: true
     },
-    
+
     /* Style models: the array of styles, and the repetition that uses them */
     _arrLayerStyles : {
 	    value: []
@@ -148,7 +149,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     _layerName:{
     	value: ""
     },
-    
+
     layerName:{
     	serializable: true,
         get:function(){
@@ -190,7 +191,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     _layerTag:{
     	value: "tag"
     },
-    
+
     layerTag:{
     	serializable: true,
         get:function(){
@@ -213,11 +214,11 @@ var Layer = exports.Layer = Montage.create(Component, {
     		this._docUUID = newVal;
     	}
     },
-    
+
     _stageElement: {
     	value: null
     },
-    
+
     stageElement: {
     	get: function() {
     		return this._stageElement;
@@ -227,8 +228,8 @@ var Layer = exports.Layer = Montage.create(Component, {
     		this.layerData.stageElement = newVal;
     	}
     },
-    
-    
+
+
     _elementsList : {
     	value: []
     },
@@ -241,7 +242,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     		this._elementsList = newVal;
     	}
     },
-    
+
     /* Position and Size hottext values */
     _dtextPositionX : {
         value:null
@@ -259,7 +260,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         	}
         }
     },
-    
+
     _dtextPositionY : {
         value:null
     },
@@ -274,10 +275,10 @@ var Layer = exports.Layer = Montage.create(Component, {
         		this._dtextPositionY = value;
         		this.layerData.dtextPositionY = value;
         	}
-            
+
         }
     },
-    
+
     _dtextScaleX : {
         value:null
     },
@@ -292,10 +293,10 @@ var Layer = exports.Layer = Montage.create(Component, {
         		this._dtextScaleX = value;
         		this.layerData.dtextScaleX = value;
         	}
-            
+
         }
     },
-    
+
     _dtextScaleY : {
         value:null
     },
@@ -310,10 +311,10 @@ var Layer = exports.Layer = Montage.create(Component, {
         		this._dtextScaleY = value;
         		this.layerData.dtextScaleY = value;
         	}
-            
+
         }
     },
-    
+
     /* isSelected: whether or not the layer is currently selected. */
     _isSelected:{
         value: false
@@ -338,10 +339,10 @@ var Layer = exports.Layer = Montage.create(Component, {
         		this.layerData.isSelected = value;
         		this.needsDraw = true;
         	}
-            
+
         }
     },
-    
+
     /* isActive:  Whether or not the user is actively clicking within the layer; used to communicate state with
      * TimelinePanel.
      */
@@ -358,8 +359,8 @@ var Layer = exports.Layer = Montage.create(Component, {
     		this.layerData.isActive = newVal;
     	}
     },
-    
-    
+
+
     _isAnimated:{
         value: false
     },
@@ -428,7 +429,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         }
     },
 
-    
+
     _justAdded: {
     	value: false
     },
@@ -448,7 +449,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             this._dynamicLayerName = newVal;
         }
     },
-    
+
     // Are the various collapsers collapsed or not
     _isMainCollapsed : {
     	value: true
@@ -464,7 +465,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 
     	}
     },
-    
+
     _isPositionCollapsed : {
     	value: true
     },
@@ -478,7 +479,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.layerData.isPositionCollapsed = newVal;
     	}
     },
-    
+
     _isStyleCollapsed : {
     	value: true
     },
@@ -503,11 +504,11 @@ var Layer = exports.Layer = Montage.create(Component, {
     	set: function(newVal) {
     		if (typeof(this.layerData) !== "undefined") {
 	    		this._bypassAnimation = newVal;
-	    		this.layerData.bypassAnimation = newVal;	
+	    		this.layerData.bypassAnimation = newVal;
     		}
     	}
     },
-    
+
     // Is this the first draw?
     _isFirstDraw : {
     	value: true
@@ -534,16 +535,16 @@ var Layer = exports.Layer = Montage.create(Component, {
         value:function(boolNeedsDraw){
         	if (typeof(this._layerData) === "undefined")  {
         		return;
-        	} 
-        	
+        	}
+
         	if (typeof(this._layerData.layerName) === "undefined") {
         		return;
         	}
-        	
+
         	if (typeof(boolNeedsDraw) === "undefined") {
         		boolNeedsDraw = false;
         	}
-        	
+
             this.layerName = this.layerData.layerName;
             this.layerID = this.layerData.layerID;
             this.stageElement = this.layerData.stageElement
@@ -572,7 +573,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.isHidden = this.layerData.isHidden;
         }
     },
-    
+
     /* Data binding point and outgoing binding trigger method */
     _bindingPoint : {
     	value : {}
@@ -588,7 +589,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     		}
     	}
     },
-    
+
     triggerOutgoingBinding : {
     	value: function() {
             this.layerData.triggerBinding = !this.layerData.triggerBinding;
@@ -599,10 +600,10 @@ var Layer = exports.Layer = Montage.create(Component, {
 	/* Begin: Draw cycle */
     prepareForDraw: {
         value: function() {
-        	
+
         	// Initialize myself
 			this.init();
-			
+
         	// Make it editable!
         	this._layerEditable = Hintable.create();
         	this._layerEditable.element = this.titleSelector;
@@ -612,7 +613,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         	this._layerEditable.addEventListener("change", this.handleLayerNameChange.bind(this), false);
         	this._layerEditable.editingClass = "editable2";
         	this._layerEditable.value = this.layerName;
-        	
+
         	// Collapser event handlers.
             this.mainCollapser.clicker.addEventListener("click", this.handleMainCollapserClick.bind(this), false);
             this.positionCollapser.clicker.addEventListener("click", this.handlePositionCollapserClick.bind(this), false);
@@ -623,11 +624,11 @@ var Layer = exports.Layer = Montage.create(Component, {
             // Add event listeners to add and delete style buttons
             this.buttonAddStyle.addEventListener("click", this.handleAddStyleClick.bind(this), false);
             this.buttonDeleteStyle.addEventListener("click", this.handleDeleteStyleClick.bind(this), false);
-            
+
             // Add mousedown listener to set isActive
             this.element.addEventListener("mousedown", this, false);
             this.element.addEventListener("click", this, false);
-            
+
 			// Drag and drop event handlers
 			this.myLabel.addEventListener("mouseover", this.handleMouseover.bind(this), false);
 			this.myLabel.addEventListener("mouseout", this.handleMouseout.bind(this), false);
@@ -668,7 +669,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             if (this.isSelected && !boolHasClass) {
             	//console.log('Layer.draw, adding selection for layer ', this.layerName)
             	this.element.classList.add("layerSelected");
-            	
+
             }
 			if (!this.isSelected && boolHasClass) {
             	//console.log('Layer.draw, removing selection for layer ', this.layerName)
@@ -683,7 +684,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             } else {
             	this.buttonDeleteStyle.classList.add("disabled");
             }
-            
+
             // Update layer name?
             if (this.layerName !== this.layer_label_text.innerText) {
             	this.layer_label_text.innerText = this.layerName;
@@ -696,7 +697,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     		if (this._isFirstDraw === true) {
     			this._isFirstDraw = false;
     			this.layerData._isFirstDraw = false;
-	    		
+
 	    		if (this.isMainCollapsed === false) {
 					this.mainCollapser.myContent.style.height = "auto";
 					this.mainCollapser.myContent.classList.remove(this.mainCollapser.collapsedClass);
@@ -712,14 +713,14 @@ var Layer = exports.Layer = Montage.create(Component, {
 					this.styleCollapser.myContent.classList.remove(this.styleCollapser.collapsedClass);
 					this.styleCollapser.clicker.classList.remove(this.styleCollapser.collapsedClass);
 	    		}
-    			
+
     		}
     	}
     },
 	/* End: Draw cycle */
-	
+
 	/* Begin: Controllers */
-	
+
 	// Initialize a just-created layer
 	init: {
 		value: function() {
@@ -732,10 +733,10 @@ var Layer = exports.Layer = Montage.create(Component, {
 	},
 	addStyle : {
 		value: function(styleProperty, existingRule) {
-			// Add a new style rule.  It should be added above the currently selected rule, 
+			// Add a new style rule.  It should be added above the currently selected rule,
 			// Or at the end, if no rule is selected.
 
-			var newLength = 0, 
+			var newLength = 0,
 				// mySelection = 0,
 				// newStyle = LayerStyle.create(),
 				newStyle = {},
@@ -745,14 +746,14 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.layerData.isStyleCollapsed = false;
 			this.triggerOutgoingBinding();
 			*/
-			
+
 			newEvent.initCustomEvent("layerEvent", false, true);
 			newEvent.layerEventLocale = "styles";
 			newEvent.layerEventType = "newStyle";
 			newEvent.layerID = this.layerID;
             newEvent.styleIndex = this.styleCounter;
 			newEvent.styleID = this.layerID + "@" + this.styleCounter; // is this property needed?
-			
+
 			newStyle.styleID = newEvent.styleID;
 			newStyle.whichView = "hintable";
             newStyle.editorProperty = "";
@@ -775,28 +776,28 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.styleCounter += 1;
 			// newEvent.styleSelection = mySelection;
 			//defaultEventManager.dispatchEvent(newEvent);
-			
+
 			// Dispatch the event to the TimelineTrack component associated with this Layer.
 			var myIndex = false,
-				i = 0, 
+				i = 0,
 				arrLayersLength = this.parentComponent.parentComponent.arrLayers.length,
 				arrTracks = document.querySelectorAll('[data-montage-id="track"]');
-			
+
 			for (i = 0; i < arrLayersLength; i++) {
 				if (this.stageElement == this.parentComponent.parentComponent.arrLayers[i].layerData.stageElement) {
 					myIndex = i;
 				}
 			}
-			
+
 			if (myIndex !== false) {
 				arrTracks[myIndex].dispatchEvent(newEvent);
-			} 
+			}
 		}
 	},
 
 	deleteStyle : {
 		value: function() {
-		
+
 			// Only delete a style if we have one or more styles, and one of them is selected
 			if ((this.arrLayerStyles.length > 0) && (this.selectedStyleIndex !== false)) {
 				var newEvent = document.createEvent("CustomEvent");
@@ -812,20 +813,20 @@ var Layer = exports.Layer = Montage.create(Component, {
 				// Dispatch the event to the TimelineTrack component associated with this Layer.
 				var myIndex = this.application.ninja.timeline.getActiveLayerIndex(),
 					arrTracks = document.querySelectorAll('[data-montage-id="track"]');
-	
+
 				if (myIndex !== false) {
 					arrTracks[myIndex].dispatchEvent(newEvent);
 				}
-					
+
 				// Delete the style from the view
 				this.arrLayerStyles.splice(this.selectedStyleIndex, 1);
-				
+
 				// Set selection to none
 				this.selectedStyleIndex = false;
-				
+
 				// Disable the delete style button, because now nothing is selected
 				this.buttonDeleteStyle.classList.add("disabled");
-			}	
+			}
 		}
 	},
 	selectStyle : {
@@ -834,7 +835,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     		// use layerIndex = false to deselect all styles.
     		var i = 0,
     			arrLayerStylesLength = this.arrLayerStyles.length;
-    			
+
             if (styleIndex === false) {
                 if (arrLayerStylesLength === 0) {
                     // No styles selected, so do nothing.
@@ -858,9 +859,9 @@ var Layer = exports.Layer = Montage.create(Component, {
                 this.selectedStyleIndex = styleIndex;
                 this._storedStyleIndex = styleIndex;
             }
-            
-            
-            
+
+
+
     		/*
     		// Next, update this.styleRepetition.selectedIndexes.
     		if (styleIndex !== false) {
@@ -873,17 +874,17 @@ var Layer = exports.Layer = Montage.create(Component, {
     			}
     		}
     		*/
-			
+
 		}
 	},
     getActiveStyleIndex : {
     	value: function() {
     		// Searches through the styles and looks for one that has
     		// set its isActive flag to true.
-    		var i = 0, 
+    		var i = 0,
     			returnVal = false,
     			arrLayerStylesLength = this.arrLayerStyles.length;
-    		
+
     		for (i = 0; i < arrLayerStylesLength; i++) {
     			if (this.arrLayerStyles[i].isActive === true) {
     				returnVal = i;
@@ -895,11 +896,11 @@ var Layer = exports.Layer = Montage.create(Component, {
     	}
     },
 	/* End: Controllers */
-    
+
 	/* Begin: Event handlers */
 	handleLayerNameChange: {
 		value: function(event) {
-			
+
 			if (this._layerEditable.value !== this.layerName) {
 				this.layerName = this._layerEditable.value;
 				this.application.ninja.currentDocument.model.needsSave = true;
@@ -1053,7 +1054,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			return false;
 		}
 	},
-	
+
 	handleDrop : {
 		value: function(event) {
 			if (this.parentComponent.parentComponent.draggingType !== "layer") {
@@ -1374,7 +1375,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 
 
 	/* End: Event handlers */
-	
+
 	/* Begin: Logging routines */
     _boolDebug: {
     	enumerable: false,

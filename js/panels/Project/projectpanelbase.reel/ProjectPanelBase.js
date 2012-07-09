@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -40,7 +41,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
     	numerable: false,
     	value: false
     },
-    
+
     /* The current project that we have in memory */
 	_activeProject: {
 		value: false
@@ -53,7 +54,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 			this._activeProject = objNewProject;
 		}
 	},
-    
+
     /* Is the panel initialized? Helps keep us from re-initializing things when a project switches */
     _isPanelInitialized: {
     	value: false
@@ -66,7 +67,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
     		this._isPanelInitialized = boolValue;
     	}
     },
-    
+
     /* Project models: is there an active project, did the user just swap the project, etc. */
 	_swapProject: {
 		value: false
@@ -122,7 +123,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 			this.hasActiveProject = myVal;
 		}
 	},
-	
+
 	/* Focus monitor: needed to modify keyboard navigation through panels. */
 	_hasFocus: {
 		value: false
@@ -168,7 +169,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
     			}
     		}
     	}
-    }, 
+    },
 
     /* resizeColumn: Method to resize a column */
     resizeColumn: {
@@ -186,7 +187,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
     			strNewWidth = "",
     			boolProjectView = true,
     			arrStoredWidths = this.panelState.projectColumnWidths;
-    		
+
     		if (strSelectorBase.indexOf("assets") > -1) {
     			boolProjectView = false;
     			arrStoredWidths = this.panelState.assetColumnWidths;
@@ -211,12 +212,12 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
     		if ((this.activeColumn === 3) && boolProjectView) {
     			return;
     		}
-    		
+
     		// Adjust intAdjust: for the asset view it needs to be 0.
     		if (strSelectorBase.indexOf("assets") >0) {
     			intAdjust = 0;
     		}
-    		
+
     		// Get the total width of the headers and set the container to that width.
     		for (i = 0; i < arrHeadersLength; i++) {
     			intTotalWidth = intTotalWidth + parseInt(arrHeaders[i].offsetWidth);
@@ -235,14 +236,14 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 				intNewWidth = arrStoredWidths[this.activeColumn];
 			}
 			strNewWidth = (intNewWidth - intAdjust) + "px";
-			
+
     		// Get the array of column elements to change, and change them
     		arrToChange = document.querySelectorAll(strSelector);
     		arrToChangeLength = arrToChange.length;
     		for (i = 0; i < arrToChangeLength; i++) {
     			arrToChange[i].style.width = strNewWidth;
     		}
-    		
+
     		// Once resize has been completed, we need to update the panelState object:
     		if (!boolProjectView) {
     			this.panelState.assetColumnWidths[this.activeColumn] = intNewWidth;
@@ -254,13 +255,13 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 
 	/* checkForResize: Check if the columns in the active view are being resized */
     checkForResize: {
-    	value: function() { 
+    	value: function() {
     		var arrHeaders = document.querySelectorAll("#pp-view-" + this.panelState.activeView + " .pp-header"),
     			arrHeadersLength = arrHeaders.length,
     			i=0,
     			colWidth = 0,
     			arrCols = this.panelState.projectColumnWidths;
-    		
+
     		if (this.panelState.activeView === "assets") {
     			arrCols = this.panelState.assetColumnWidths;
     		}
@@ -274,7 +275,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
     		}
     	}
     },
-    
+
     /* Shift key status: is the shift key pressed (used for keyboard navigation and multiselect) */
 	_isShiftKeyDown: {
 		value: false
@@ -287,7 +288,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 			this._isShiftKeyDown = boolValue;
 		}
 	},
-    
+
     /* Inline editor models: is the inline editor active, and a pointer to the current one */
 	_activeInlineEditor: {
 		value: false
@@ -327,7 +328,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 			}
 		}
 	},
-	
+
 	/* Active filter: If the user is actively filtering the asset view */
 	_isFilterActive: {
 		value: false
@@ -379,7 +380,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
     			i =0,
     			cssProp = "";
     		for (i = 0; i < arrAssetsLength; i++) {
-    			cssProp = window.getComputedStyle(arrAssets[i],null).getPropertyValue("display"); 
+    			cssProp = window.getComputedStyle(arrAssets[i],null).getPropertyValue("display");
     			if (cssProp == "block") {
     				return arrAssets[i];
     			}
@@ -394,7 +395,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
     			cssProp = "";
     		for (i = arrAssetsLength; i >0; i--) {
     			if (arrAssets[i] != null) {
-    				cssProp = window.getComputedStyle(arrAssets[i],null).getPropertyValue("display"); 
+    				cssProp = window.getComputedStyle(arrAssets[i],null).getPropertyValue("display");
     			}
     			if (cssProp == "block") {
     				return arrAssets[i];
@@ -415,7 +416,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
     					boolContinue = true;
     				}
     			} else {
-	    			cssProp = window.getComputedStyle(arrAssets[i],null).getPropertyValue("display"); 
+	    			cssProp = window.getComputedStyle(arrAssets[i],null).getPropertyValue("display");
 	    			if (cssProp == "block") {
 	    				return arrAssets[i];
 	    			}
@@ -438,7 +439,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
     					boolContinue = true;
     				}
     			} else {
-	    			cssProp = window.getComputedStyle(arrAssets[i],null).getPropertyValue("display"); 
+	    			cssProp = window.getComputedStyle(arrAssets[i],null).getPropertyValue("display");
 	    			if (cssProp == "block") {
 	    				return arrAssets[i];
 	    			}
@@ -469,11 +470,11 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 
 			if ((inlineEditor !== null) && (ptrElement.classList.contains("nj-skinned"))) {
 				// An inline edit is currently happening
-				// (sometimes the click event listeners might get fired in that process) 
+				// (sometimes the click event listeners might get fired in that process)
 				// So do nothing
 				return;
 			}
-			
+
 			if (ptrParent.classList.contains("pp-col-files")) {
 				for (i = 0; i < arrFilesLength; i++) {
 					if(arrFiles[i].isSameNode(ptrElement)) {
@@ -512,7 +513,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 			arrFiles[currIndex].classList.add("focused");
 			arrSizes[currIndex].classList.add("focused");
 			arrTypes[currIndex].classList.add("focused");
-			
+
 			// Turn the file name in into an inline editable element
 			// To avoid getting caught in the current click event, we'll delay the
 			// component initialization for a few milliseconds.
@@ -520,7 +521,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 			setTimeout(function() {
 	            that.activeInlineEditor = InlineEditor.create();
 	            that.activeInlineEditor.element = arrFiles[currIndex];
-	            
+
 	            that.activeInlineEditor.onChange = function() {
 					that.updateTree = true;
 					that.isSortActive = true;
@@ -528,7 +529,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 	            }
 	            that.activeInlineEditor.init();
 	            that.isInlineEditorActive = true;
-	
+
 				// Bind the editor to the property in the data structure, so that when the change happens
 				// it will propagate.
 				Object.defineBinding(that.activeInlineEditor, "value", {
@@ -555,7 +556,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
             		//Object.deleteBinding(this.activeInlineEditor, "value");
             		this.activeInlineEditor.destroy();
             		this.isInlineEditorActive = false;
-					
+
 				}
 			}
     	}
@@ -581,12 +582,12 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 
     		//this.log(newErr, "Test message " + newErr)
     		//this.log("willDraw: hasActiveProject: " + this.hasActiveProject + "\nthis.swapProject: " + this.swapProject + "\nthis.firstTimeDraw: " + this.firstTimeDraw);
-			var projectTree, 
-				testDirectory, 
+			var projectTree,
+				testDirectory,
 				treeContainer,
 				scroller = document.getElementById("pp-col-files"),
-				panelContainer = document.getElementById("pp-container"), 
-				arrButtons = document.querySelectorAll("#pp-col-buttons .pp-button"), 
+				panelContainer = document.getElementById("pp-container"),
+				arrButtons = document.querySelectorAll("#pp-col-buttons .pp-button"),
 				listContainer = document.querySelector("#pp-container-list .pp-scroll-linked"),
 	            assetContainer = document.querySelector("#pp-container-assets .pp-scroll-linked"),
 				arrButtonsLength = arrButtons.length,
@@ -621,9 +622,9 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 
 
     		if (this.firstTimeDraw) {
-    			
 
-    			
+
+
 	    		// Make headers resizable.
 	            for (i = 0; i < arrAllHeadersLength; i++) {
 	            	tempResizer = ResizerControl.create();
@@ -652,7 +653,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 	            	*/
 	            	tempResizer.needsDraw = true;
 	            }
-	            
+
 	            // Add event handlers to buttons
 	            for (i = 0; i < arrButtonsLength; i++) {
 	            	arrButtons[i].identifier="assetButton";
@@ -660,7 +661,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 	            	arrButtons[i].addEventListener("keydown", this, false);
 	            	arrButtons[i].addEventListener("keyup", this, false);
 	            }
-	            
+
 	            // Add the click event listeners to the Asset View headers so they can be sorted
 	            for (i = 0; i < arrHeadersLength; i++) {
 	            	arrHeaders[i].identifier="assetHeader";
@@ -670,7 +671,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 	            	arrSortArrows[i].identifier="assetHeader";
 	            	arrSortArrows[i].addEventListener("click", this, false);
 	            }
-	            
+
 	            // Add the event listener to the filter input so that when the user starts typing
 	            // we will start filtering the list
 	            var mySearch = document.getElementById("pp-search-files"),
@@ -681,23 +682,23 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 	            mySearchContainer.addEventListener("mousedown", this, false);
 	            mySearchContainer.addEventListener("keydown", this, false);
 	            mySearchContainer.addEventListener("keyup", this, false);
-	            
+
 	            // FYI when a search field is cleared using the built-in clearing method it fires a search event?
 	            mySearch.addEventListener("search", this, false);
-	            
+
 	            // Add keyboard event listeners for the asset container
 	            assetContainer.identifier = "assetContainer";
 	            assetContainer.addEventListener("keydown", this, false);
 	            assetContainer.addEventListener("mousedown", this, false);
 	            assetContainer.addEventListener("keyup", this, false);
-	            
-	            // Add scroller 
+
+	            // Add scroller
 	            for (i = 0; i < arrLinkedScrollersLength; i++) {
 	            	arrLinkedScrollers[i].identifier = "linkedScroller";
 	            	arrLinkedScrollers[i].addEventListener("scroll", this, false);
 	            }
-	            
-	            // Add treeClickEvent handler 
+
+	            // Add treeClickEvent handler
 	            document.addEventListener("treeClickEvent", function() {
 	            	var arrDirs = document.querySelectorAll("#pp-view-project li.directory.open"),
 	            		arrDirsLength = arrDirs.length,
@@ -711,7 +712,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 	            });
     		}
 
-    		
+
     		if (this.swapProject) {
 	    		var arrCurrIcons = document.querySelectorAll(".pp-button.active"),
 					arrCurrIconsLength = arrCurrIcons.length,
@@ -724,13 +725,13 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 					testDirectory = this.getDirectoryData(true);
 				}
 
-	            
+
 	            // Clear the buttons.
 	            for (i = 0; i < arrCurrIconsLength; i++) {
 	            	arrCurrIcons[i].classList.toggle("active");
 	            }
 	            document.getElementById("pp-container-assets").removeAttribute("class");
-	            
+
 				// Set default view
 				if (this.panelState.activeView === "project") {
 					document.querySelector("#pp-view-assets").style.display = "none";
@@ -742,28 +743,28 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 
 	            // Now build the asset view.  First, get the flattened directory array
 	            this.getFlatDirectory();
-	            
+
 	            // Set for active sort so that the view gets drawn
 	            this.isSortActive = true;
-	            
+
 	            // Set the tree update flag
 	            this.updateTree = true;
     		}
-    		
+
     		if (this.updateTree) {
     			var myTree = document.getElementById("pp-container-tree");
-					
+
 				// TODO: Make this better.
 	    		if (myTree !== null) {
 	    			var myGetme = document.getElementById("getme");
 	    			myGetme.removeChild(myTree);
 	    		}
-	    		
+
 				// Insert the base element for the tree.
 	            treeContainer = document.createElement("ul");
 	            treeContainer.setAttribute("id", "tree");
 	            listContainer.appendChild(treeContainer);
-	            
+
 	            // Create the tree using the TreeControl
 	            projectTree = TreeControl.create();
 	            projectTree.element = treeContainer;
@@ -792,17 +793,17 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 				i = 0,
 				j=0,
 				that = this;
-							
+
 			// Okay, so...what do we need to change?
-			
-			// Do we maybe need to resize the columns in a view? 
+
+			// Do we maybe need to resize the columns in a view?
 			if (!this.firstTimeDraw) {
 				if (this.activeColumn !== false) {
 					this.resizeColumn("#pp-view-" + this.panelState.activeView);
 					this.activeColumn = false;
 				}
 			}
-			
+
 			// Is there a sort event active?
 			if (this.isSortActive) {
 				// A sort is active, so we need to rebuild the asset view.
@@ -826,7 +827,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
             		newType,
             		newTypeDiv,
             		newTypeDivContent,
-            		newClass = "pp-type-other", 
+            		newClass = "pp-type-other",
             		typeScript = "css,scss,sass,htm,html,xhtm,xhtml,js,jscript,php",
             		typeVideo = "mpeg,avi,qt,wmv",
             		typeAudio = "mp3,mp4,wav",
@@ -835,12 +836,12 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 					sortHandler = function(thisObject, thatObject) {
 						var returnMultiplier = 1,
 							thisThing, thatThing;
-							
+
 						// Ascending or Descending sort?
 						if (sortDirection === "descending") {
 							returnMultiplier = -1;
 						}
-						
+
 						// Targets of size and modifiedDate need to be compared as integers,
 						// otherwise we're doing string compares.
 						if ((sortTarget === "size") || (sortTarget === "modifiedDate")) {
@@ -853,7 +854,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 							thisThing = thisObject[sortTarget];
 							thatThing = thatObject[sortTarget];
 						}
-						
+
 						// Run the comparison.
 	            		if (thisThing > thatThing) {
 	            			return (1 * returnMultiplier);
@@ -873,13 +874,13 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 						// TODO: Localization.
 						var myDate = new Date(intSeconds),
 							strDate = "";
-						strDate = (myDate.getMonth() + 1) + "/" 
-								  + myDate.getDate() + "/" 
+						strDate = (myDate.getMonth() + 1) + "/"
+								  + myDate.getDate() + "/"
 								  + myDate.getFullYear() + " "
 								  + myDate.toLocaleTimeString();
 						return strDate;
 					};
-				
+
 				// Set the sort target
 				if (myColNumber === 0) {
 					sortTarget = "name";
@@ -895,13 +896,13 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 
 				// Sort the files object
 	            myFiles.sort(sortHandler);
-	            
-	            // Clear the columns and rebuild 
+
+	            // Clear the columns and rebuild
 	            nj.empty(aFileCol);
 	            nj.empty(aSizeCol);
 	            nj.empty(aDateCol);
 	            nj.empty(aTypeCol);
-	            
+
 	            for (i = 0; i < myFilesLength; i ++) {
 	            	newSpan = document.createElement("span"),
 	            	newSpanContent = document.createTextNode(myFiles[i].name),
@@ -940,14 +941,14 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 	        		newTypeDiv.appendChild(newTypeDivContent);
 	        		aFileCol.appendChild(newFile);
 	        		aSizeCol.appendChild(newSize);
-	        		aDateCol.appendChild(newDate);	
+	        		aDateCol.appendChild(newDate);
 	        		aTypeCol.appendChild(newTypeDiv);
-	        		
-	        		
+
+
 	            }
-	            
+
 	            this.isSortActive = false;
-	            
+
 	            // Is there a filter we need to apply?
 	            if (filterValue != "") {
 					this.filteredAssets = this.filterAssets(filterValue);
@@ -966,7 +967,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 					i = 0,
 					filteredAssets = this.filteredAssets,
 					filteredAssetsLength = filteredAssets.length;
-					
+
 				// First, hide everything.
 				for (i = 0; i < arrAllAssetsLength; i++) {
 					arrAllAssets[i].classList.add("pp-filter-hidden");
@@ -980,7 +981,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 					arrDates[currentIndex].classList.remove("pp-filter-hidden");
 					arrTypes[currentIndex].classList.remove("pp-filter-hidden");
 				}
-				
+
 				this.isFilterActive = false;
 			}
 
@@ -1010,9 +1011,9 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 				myFolder,
 				that = this,
 				treeClickEvent = document.createEvent("UIEvents");
-				
+
 			//this.log("didDraw: hasActiveProject: " + this.hasActiveProject + "\nthis.swapProject: " + this.swapProject + "\nthis.firstTimeDraw: " + this.firstTimeDraw);
-			
+
 			if (this.hasActiveProject) {
 				for (i = 0; i < arrHeaderContainersLength; i++) {
 					//this.log("showing headers");
@@ -1030,25 +1031,25 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 					return;
 				}
 			}
-	
+
 			// On first draw or project swap we need to copy over the UI settings stored in panelState
 			// First, load the panel state from storage, but only on first draw or swap.
 			if (this.swapProject || this.firstDraw) {
 				this.loadPanelState();
 			}
-            
+
 			arrOpenFolders = this.panelState.openFolders;
 			arrOpenFoldersLength = arrOpenFolders.length;
-            
+
 			// Set up the project view.
-			// Expand the folders				
+			// Expand the folders
 			var arrDefaultFolders = document.querySelectorAll("#pp-view-project li.directory.open"),
 				arrDefaultFoldersLength = arrDefaultFolders.length;
 			for (i = 0; i < arrDefaultFoldersLength; i ++) {
 				arrDefaultFolders[i].classList.remove("open");
 				arrDefaultFolders[i].classList.add("closed");
 			}
-			
+
 			if (arrOpenFolders[0] === "none") {
 				var arrFoldersToOpen = document.querySelectorAll(".level1"),
 					arrFoldersToOpenLength = arrFoldersToOpen.length;
@@ -1064,11 +1065,11 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 					myFolder.classList.add("open");
 				}
 			}
-			
+
 			treeClickEvent.initEvent("treeClickEvent", false, false);
 			document.dispatchEvent(treeClickEvent);
 
-			
+
 			// Set up the views if we are swapping projects.
 			if (this.swapProject) {
 				if (this.panelState.activeView === "assets") {
@@ -1082,10 +1083,10 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 					for (i = 0; i < arrFiltersLength; i++) {
 						// We will make the switch by displatching a click event through the showall button.
 						myEvent.initMouseEvent("click", false, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-						myTarget = document.querySelector(arrFilters[i]); 
+						myTarget = document.querySelector(arrFilters[i]);
 						myTarget.dispatchEvent(myEvent);
 					}
-					
+
 					// Next, set the sort information.
 					currSort = document.querySelector("#pp-view-assets .pp-sort");
 					currSort.classList.remove("pp-sort");
@@ -1111,29 +1112,29 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 			for (i = 0; i < arrHeadersLength; i++) {
 				arrHeaders[i].style.width = (this.panelState.assetColumnWidths[i] - 7) + "px";
 			}
-			
+
 			for (i = 0; i < this.panelState.assetColumnWidths.length; i++) {
 				this.activeColumn = i;
 				this.resizeColumn("#pp-view-assets");
 			}
-			
+
 			// Resize columns to match headers in project view.
 			arrHeaders = document.querySelectorAll("#pp-view-project .pp-header");
 			arrHeadersLength = arrHeaders.length;
 			for (i = 0; i < arrHeadersLength; i++) {
 				arrHeaders[i].style.width = (this.panelState.projectColumnWidths[i] -7) + "px";
 			}
-			
+
 			setTimeout(function() {
 				for (i = 0; i < that.panelState.projectColumnWidths.length; i++) {
-					that.activeColumn = i; 
+					that.activeColumn = i;
 					that.resizeColumn("#pp-view-project");
 				}
 				that.activeColumn = false;
 			}, 300)
-			
 
-			// If this is a first time draw or a draw because of a project swap, 
+
+			// If this is a first time draw or a draw because of a project swap,
 			// we need to set the state of the model and redraw.
     		this.firstTimeDraw = false;
     		this.swapProject = false;
@@ -1144,7 +1145,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
     	}
     },
 	/* End: Draw Cycle */
- 
+
     /* Begin: Event handlers */
 	handleLinkedScrollerScroll: {
 		value: function(event) {
@@ -1168,11 +1169,11 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 				i = 0,
 				ptrElement = event.target,
 				ptrParent = nj.queryParentSelector(ptrElement, ".pp-asset-col");
-				
-			
+
+
 			// Shift focus
 			this.hasFocus = "assets";
-			
+
 			if (ptrParent.classList.contains("pp-col-files")) {
 				// highlight the entire row based on the file element that has focus.
 				if (event.target.classList.contains("inline-editable")){
@@ -1206,7 +1207,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 					}
 				}
 			}
-			
+
 			// Focus the element in arrFiles and then call the hilightAssetRow method,
 			// which will highlight the entire row based on the file element that has focus.
 			arrFiles[currIndex].focus();
@@ -1215,7 +1216,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 	},
 	handleAssetContainerKeydown: {
 		value: function(event) {
-			var nextElement, 
+			var nextElement,
 				currentFocusElement = event.currentTarget.querySelector(":focus");
 			// Down Arrow
         	if (event.keyCode === 40) {
@@ -1257,7 +1258,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 	        		nextElement.focus();
             	}
             }
-            
+
 			// Right Arrow
             if (event.keyCode === 39) {
             	if (!this.activeInlineEditor.isActive) {
@@ -1270,7 +1271,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 			if (event.keyCode === 13) {
 				event.preventDefault();
         	}
-        	
+
         	// Tab Key
         	if (event.keyCode === 9) {
             	if (!this.activeInlineEditor.isActive) {
@@ -1304,12 +1305,12 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
         			event.preventDefault();
         		}
         	}
-        	
+
         	// Shift key has been pressed.
         	if (event.keyCode === 16) {
         		this.isShiftKeyDown = true;
         	}
-        	
+
 		}
 	},
 	handleAssetContainerKeyup : {
@@ -1326,16 +1327,16 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 				return;
 			}
 			var myEvent, myTarget, strFilter;
-			
+
 			// Activate the filtering mechanism
 			this.isFilterActive = true;
-			
+
 			// If we are not showing the Assets view already, we need to.
 			if (document.querySelector("#pp-view-project").style.display === "block") {
 				// We will make the switch by displatching a click event through the showall button.
 				myEvent = document.createEvent("MouseEvents");
 				myEvent.initMouseEvent("click", false, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-				myTarget = document.querySelector("#pp-col-buttons .button-showall"); 
+				myTarget = document.querySelector("#pp-col-buttons .button-showall");
 				myTarget.dispatchEvent(myEvent);
 			}
 
@@ -1361,7 +1362,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 	},
 	handleSearchContainerKeydown: {
 		value: function(event) {
-            // Tab key 
+            // Tab key
             if (event.keyCode === 9) {
             	// Tabbing through the ui.  Focus between search widget and asset container happens on the input field.
             	if ((this.isShiftKeyDown) && (event.target.classList.contains("nj-skinned"))) {
@@ -1373,13 +1374,13 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
             		this.hasFocus = "search";
             	}
             }
-            
-            
+
+
         	// Shift key has been pressed.
         	if (event.keyCode === 16) {
         		this.isShiftKeyDown = true;
         	}
-			
+
 		}
 	},
 	handleSearchContainerKeyup: {
@@ -1391,7 +1392,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 	},
 	handleSearchContainerMousedown: {
 		value: function(event) {
-			
+
 		}
 	},
 	handleAssetHeaderClick: {
@@ -1430,7 +1431,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 			} else {
 				return;
 			}
-			
+
 			// Get the previous active sort
 			for (i = 0; i < arrHeadersLength; i++) {
 				if (arrHeaders[i].classList.contains("pp-sort")) {
@@ -1466,7 +1467,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 	},
     handleAssetButtonKeydown: {
     	value: function(event) {
-    		var myTarget = event.currentTarget, 
+    		var myTarget = event.currentTarget,
 				myColumn = document.getElementById("pp-col-buttons"),
 				fileColumn = document.getElementById("pp-col-files"),
 				assetView = document.getElementById("pp-view-assets"),
@@ -1509,13 +1510,13 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 						}
 					}
 				};
-			
+
 			// Return key
 			if (event.keyCode === 13) {
         		this.handleAssetButtonClick(event);
         		myTarget.focus();
         	}
-        	
+
         	// Down Arrow
         	if (event.keyCode === 40) {
 				// Prevent scroll.
@@ -1532,7 +1533,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
             	}
             	nextButton.focus();
             }
-            
+
             // Up Arrow
         	if (event.keyCode === 38) {
 				// Prevent scroll.
@@ -1548,18 +1549,18 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
             	}
             	nextButton.focus();
             }
-            
+
             // Left Arrow
             if (event.keyCode === 37) {
             	// Prevent scroll.
             	event.preventDefault();
             }
-            
+
             // Right Arrow
             if (event.keyCode === 39) {
             	// Prevent scroll.
             	event.preventDefault();
-            	
+
             	if (projectView.style.display === "block") {
             		nextButton = fileColumn.querySelector(".pp-span-all");
             	} else {
@@ -1568,8 +1569,8 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
             	}
             	nextButton.focus();
             }
-            
-            // Tab key 
+
+            // Tab key
             if (event.keyCode === 9) {
             	// Tabbing through the buttons.  Focus between button column and asset container happens on the show all button.
             	if ((myTarget.classList.contains("button-showall")) && (this.isShiftKeyDown)) {
@@ -1580,13 +1581,13 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
             		this.hilightAssetRow(nextButton);
             	}
             }
-            
-            
+
+
         	// Shift key has been pressed.
         	if (event.keyCode === 16) {
         		this.isShiftKeyDown = true;
         	}
-            
+
     	}
     },
 	handleAssetButtonKeyup : {
@@ -1598,12 +1599,12 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 	},
     handleAssetButtonClick: {
     	value: function(event) {
-    		
+
     		if (!this.hasActiveProject) {
     			return;
     		}
-    		
-			var myTarget = event.currentTarget, 
+
+			var myTarget = event.currentTarget,
 				myColumn = document.getElementById("pp-col-buttons"),
 				fileColumn = document.getElementById("pp-col-files"),
 				viewProject = document.getElementById("pp-view-project"),
@@ -1614,11 +1615,11 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 				searchInput = document.getElementById("pp-search-files");
 				i = 0,
 				arrButtons = [];
-			
+
 			// Shift focus
 			this.hasFocus = "buttons";
-			
-			// If we are in Asset View and there is currently a filter active, 
+
+			// If we are in Asset View and there is currently a filter active,
 			// we need to clear it.
 			if (viewAssets.style.display === "block") {
 				if ((searchInput.value != "") && (!this.isFilterActive)) {
@@ -1629,7 +1630,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 					this.handleFilterSearch(myEvent);
 				}
 			}
-			
+
 			if ((myTarget.classList.contains("button-showall")) || (myTarget.classList.contains("button-project"))) {
 				if (myTarget.classList.contains ("active")) {
 					// The user has clicked on an already-active icon, so do nothing.
@@ -1652,7 +1653,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 					return;
 				}
 			}
-			
+
 			myTarget.classList.toggle("active");
 			//myTarget.blur();
 			arrCurrIcons = myColumn.querySelectorAll(".pp-button.active");
@@ -1663,32 +1664,32 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 					containerAssets.classList.add("pp-show-components");
 					arrButtons.push("#pp-col-buttons .button-component");
 				}
-				
+
 				if (arrCurrIcons[i].classList.contains("button-script")) {
 					containerAssets.classList.add("pp-show-scripts");
 					arrButtons.push("#pp-col-buttons .button-script");
 				}
-				
+
 				if (arrCurrIcons[i].classList.contains("button-video")) {
 					containerAssets.classList.add("pp-show-videos");
 					arrButtons.push("#pp-col-buttons .button-video");
 				}
-				
+
 				if (arrCurrIcons[i].classList.contains("button-audio")) {
 					containerAssets.classList.add("pp-show-audio");
 					arrButtons.push("#pp-col-buttons .button-audio");
 				}
-				
+
 				if (arrCurrIcons[i].classList.contains("button-image")) {
 					containerAssets.classList.add("pp-show-images");
 					arrButtons.push("#pp-col-buttons .button-image");
 				}
-				
+
 				if (arrCurrIcons[i].classList.contains("button-tag")) {
 					containerAssets.classList.add("pp-show-tags");
 					arrButtons.push("#pp-col-buttons .button-tag");
 				}
-				
+
 				if (arrCurrIcons[i].classList.contains("button-flash")) {
 					containerAssets.classList.add("pp-show-flash");
 					arrButtons.push("#pp-col-buttons .button-flash");
@@ -1706,16 +1707,16 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 				viewAssets.style.display = "none";
 				this.panelState.activeView = "project";
 			} else {
-				// show the Asset View 
+				// show the Asset View
 				viewAssets.style.display = "block";
 				viewProject.style.display = "none";
 				this.needsDraw = true;
 				this.panelState.activeView = "assets";
 			}
-			
+
 			// Store the current state.
 			this.savePanelState();
-			
+
     	}
 	},
 	/* End: Interaction event handlers */
@@ -1781,9 +1782,9 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 					objState = tempState[intState];
 					//this.log("objstate is " + JSON.stringify(objState) + "\n\n")
 				}
-				
+
 			}
-			
+
 			// After we go through all of that, it's possible we might still have a null objState.
 			if (objState === null) {
 				objState = {
@@ -1809,7 +1810,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 				intState = 1;
 			}
 			if (strState === null) {
-				arrStates = [];	
+				arrStates = [];
 			} else {
 				arrStates = JSON.parse(strState);
 			}
@@ -1830,7 +1831,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
    						// strPath = strPath + ""  + "children[" + intCounter+ "]";
    						strPath = strPath + "" + "children." + intCounter;
    					}
-	   				
+
 	   				if (jsonObject.type === "file") {
 	   					//jsonObject.type = jsonObject.name.split(".").pop();
 	   					jsonObject.extension = jsonObject.name.split(".").pop();
@@ -1867,16 +1868,16 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 			} else {
 				this.activeProject = this.getDirectory;
 			}
-			
+
 			/*
 			var file = {uri: ShellApi.openShellDialog({type: 'file', action: 'new'})}, type;
 			var check = ShellApi.fileExists(file);
 			*/
-			
+
 			return this.activeProject;
 		}
 	},
-   
+
 	getSmallDirectory: {
 		value: {
 "type":"directory",
@@ -1914,12 +1915,12 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
                "size":"134035",
                "creationDate":"1311901492054",
                "modifiedDate":"1310613500112"
-            }            
+            }
          ]
       }]
 		}
 	},
-   
+
 	/* getDirectory: Get the directory information from the data source */
 	getDirectory: {
    		value: {
@@ -1955,7 +1956,7 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
 }
   },
 	/* End: file handlers */
-	
+
 
 	/* Begin: Logging routines */
     _boolDebug: {
@@ -1987,6 +1988,6 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
     	}
     }
 	/* End: Logging routines */
-	
+
 
 });
