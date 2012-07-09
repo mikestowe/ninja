@@ -74,7 +74,6 @@ var ExternalAppsClipboardAgent = exports.ExternalAppsClipboardAgent = Montage.cr
         }
     },
 
-    //todo: this will be moved to a seperate api
     pasteImageBinary:{
         value: function(imageBlob){
             var element, self = this,
@@ -98,7 +97,7 @@ var ExternalAppsClipboardAgent = exports.ExternalAppsClipboardAgent = Montage.cr
             if (save && save.success && save.status === 201) {
                 //
                 if (fileType.indexOf('svg') !== -1) {
-                    element = document.application.njUtils.make('embed', null, this.application.ninja.currentDocument);//TODO: Verify this is proper
+                    element = document.application.njUtils.make('embed', null, this.application.ninja.currentDocument);
                     element.type = 'image/svg+xml';
                     element.src = url+'/'+fileName;
                 } else {
@@ -119,7 +118,7 @@ var ExternalAppsClipboardAgent = exports.ExternalAppsClipboardAgent = Montage.cr
                 //
                 self.application.ninja.elementMediator.addElements(element, rules, false);
             } else {
-                //TODO: HANDLE ERROR ON SAVING FILE TO BE ADDED AS ELEMENT
+                //HANDLE ERROR ON SAVING FILE TO BE ADDED AS ELEMENT
             }
 
             return element;
@@ -127,7 +126,7 @@ var ExternalAppsClipboardAgent = exports.ExternalAppsClipboardAgent = Montage.cr
     },
 
     //paste from external applicaitons
-    pasteHtml:{//todo: change to pasteNinja, pasteHTML, etc
+    pasteHtml:{
         value: function(htmlData, textData){
             var i=0, j=0,
                 pasteDataObject=null,
@@ -141,7 +140,7 @@ var ExternalAppsClipboardAgent = exports.ExternalAppsClipboardAgent = Montage.cr
 
             if(htmlData){
 
-                //TODO: cleanse HTML
+                //cleanse HTML
 
                 htmlData.replace(/[<script]/g," ");
 

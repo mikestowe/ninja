@@ -112,7 +112,6 @@ exports.CodeEditorWrapper = Montage.create(Component, {
 
     deserializedFromTemplate: {
         value: function() {
-            //TODO:add logic to check some configuration file to load the right code editor
             this.codeEditor = CodeMirror;
         }
     },
