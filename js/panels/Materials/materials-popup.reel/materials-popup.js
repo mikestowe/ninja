@@ -9,7 +9,8 @@ var Montage = require("montage/core/core").Montage,
     MaterialsModel = require("js/models/materials-model").MaterialsModel,
     NJUtils = require("js/lib/NJUtils").NJUtils,
     World = require("js/lib/drawing/world").World,
-    Rectangle = require("js/lib/geom/rectangle").Rectangle;
+    Rectangle = require("js/lib/geom/rectangle").Rectangle,
+    ShapesController = require("js/controllers/elements/shapes-controller").ShapesController;
 
 ////////////////////////////////////////////////////////////////////////
 //Exporting as MaterialsPopup
@@ -341,6 +342,10 @@ exports.MaterialsPopup = Montage.create(Component, {
 					rtnValue = value;
 					break;
 
+                case "gradient":
+                    rtnValue = value;
+                    break;
+
 				default:
 					console.log( "unrecognized material control type: " + type );
 					break;
@@ -432,7 +437,11 @@ exports.MaterialsPopup = Montage.create(Component, {
 			{
 				this._material = material;
 				this._originalValues = material.exportJSON();
-				this.materialsData = this.getMaterialData( material );
+                if((materialID === "Linear Gradient") || (materialID === "Radial Gradient")) {
+                    this.materialsData = this.getEditableProperties( material );
+                } else {
+				    this.materialsData = this.getMaterialData( material );
+                }
 			}
 			else
 			{
@@ -441,6 +450,26 @@ exports.MaterialsPopup = Montage.create(Component, {
 			this.needsDraw = true;
 		}
 	},
+
+    getEditableProperties: {
+        value: function(material) {
+            // declare the array to hold the results
+            var rtnArray = [],
+                obj,
+                colorObj = ShapesController.getMaterialColor(material.getName());
+
+                this._propNames = ["gradient"];
+                this._propValues = ["gradient"];
+                this._propTypes = ["gradient"];
+                this._propLabels = ["gradient"];
+
+            obj = this.createGradientData("gradient", colorObj);
+
+            rtnArray.push(obj);
+
+            return rtnArray;
+        }
+    },
 
 	getMaterialData:
 	{
@@ -489,17 +518,21 @@ exports.MaterialsPopup = Montage.create(Component, {
 						obj = this.createCheckboxData( propLabels[i], propValues[i] );
 						break;
 
-					default:
-						console.log( "unrecognized material control type: " + propType[i] );
-						break;
-				}
+                    case "gradient":
+                        obj = this.createGradientData( propLabels[i], propValues[i] );
+                        break;
 
-				if (obj)
-				{
-					rtnArray.push( obj );
-					obj = null;
-				}
-			}
+                    default:
+                        console.log( "unrecognized material control type: " + propType[i] );
+                        break;
+                }
+
+                if (obj)
+                {
+                    rtnArray.push( obj );
+                    obj = null;
+                }
+            }
 
 			return rtnArray;
 		}
@@ -649,6 +682,25 @@ exports.MaterialsPopup = Montage.create(Component, {
 			return obj;
 		}
 	},
+
+    createGradientData:
+    {
+        value:  function( label,  colorObj )
+        {
+            var obj = {
+                "label":		label,
+                "description":	"a gradient",
+                "controlType":	"GradientPicker",
+                "defaults":
+                {
+                    "_mode":	colorObj.gradientMode,
+                    "value": colorObj.color
+                }
+            };
+
+            return obj;
+        }
+    },
 
     materialsProperties: {
         serializable: true,

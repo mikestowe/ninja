@@ -88,6 +88,16 @@
     position: relative;
 }
 
+.mp_property .gradientpicker
+{
+    top: 0;
+}
+
+.mp_property .gradientpicker .type
+{
+    display: none;
+}
+
 .mp_properties_list
 {
     padding-bottom: 8px;

@@ -77,15 +77,28 @@ exports.Rectangle = Object.create(GeomObj, {
             } else {
                 this._strokeMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() ).dup();
             }
-			if (strokeColor && this._strokeMaterial.hasProperty( "color" ))  this._strokeMaterial.setProperty( "color",  this._strokeColor );
 
+            if(strokeColor) {
+                if(this._strokeMaterial.hasProperty("color")) {
+                    this._strokeMaterial.setProperty( "color",  this._strokeColor );
+                } else if (this._strokeMaterial && (this._strokeMaterial.gradientType === this._strokeColor.gradientMode)) {
+                    this._strokeMaterial.setGradientData(this._strokeColor.color);
+                }
+            }
 
             if(fillMaterial) {
                 this._fillMaterial = fillMaterial.dup();
             } else {
                 this._fillMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() ).dup();
             }
-			if (fillColor && this._fillMaterial.hasProperty( "color" ))  this._fillMaterial.setProperty( "color",  this._fillColor );
+
+			if(fillColor) {
+                if(this._fillMaterial.hasProperty("color")) {
+                    this._fillMaterial.setProperty( "color",  this._fillColor );
+                } else if (this._fillMaterial && (this._fillMaterial.gradientType === this._fillColor.gradientMode)) {
+                    this._fillMaterial.setGradientData(this._fillColor.color);
+                }
+            }
         }
     },
 

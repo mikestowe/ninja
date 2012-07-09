@@ -191,27 +191,10 @@ exports.GeomObj = Object.create(Object.prototype, {
                         nMats = this._materialArray.length;
                     }
 
-                    var stops = [],
-                        colors = c.color;
-
-                    var len = colors.length;
-                    // TODO - Current shaders only support 4 color stops
-                    if (len > 4) {
-                        len = 4;
-                    }
-
-                    for (var n = 0; n < len; n++) {
-                        var position = colors[n].position / 100;
-                        var cs = colors[n].value;
-                        var stop = [cs.r / 255, cs.g / 255, cs.b / 255, cs.a];
-                        stops.push(stop);
-
-                        if (nMats === this._materialTypeArray.length) {
-                            for (i = 0; i < nMats; i++) {
-                                if (this._materialTypeArray[i] == type) {
-                                    this._materialArray[i].setProperty("color" + (n + 1), stop.slice(0));
-                                    this._materialArray[i].setProperty("colorStop" + (n + 1), position);
-                                }
+                    if (nMats === this._materialTypeArray.length) {
+                        for (i = 0; i < nMats; i++) {
+                            if (this._materialTypeArray[i] == type) {
+                                this._materialArray[i].setGradientData(c.color);
                             }
                         }
                     }

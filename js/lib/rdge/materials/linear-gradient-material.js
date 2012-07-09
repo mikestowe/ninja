@@ -79,6 +79,56 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
         this.setShaderValues();
 		this.update( 0 );
     };
+
+    // Only Linear Gradient and Radial Gradients support gradients;
+    this.gradientType = "linear";
+
+    this.getGradientData = function() {
+        var angle = Math.round(this._angle*180/Math.PI),
+            color,
+            colorStr,
+            css = "-webkit-gradient(linear, " + angle + "deg";
+
+        // TODO - Angle is not supported in -webkit-gradient syntax, so just default to across:
+        css = '-webkit-gradient(linear, left top, right top';
+
+        // TODO - Also, Color Model requires from and to in the gradient string
+        color = this.getProperty('u_color1');
+        colorStr = Math.round(color[0] * 255) + ', ' + Math.round(color[1] * 255) + ', ' + Math.round(color[2] * 255) + ', ' + Math.round(color[3] * 100);
+        css += ', from(rgba(' + colorStr + '))';
+
+        for (var i=2; i < 4; i++) {
+            color = this.getProperty('u_color'+i);
+            colorStr = Math.round(color[0] * 255) + ', ' + Math.round(color[1] * 255) + ', ' + Math.round(color[2] * 255) + ', ' + Math.round(color[3] * 100);
+            css += ', color-stop(' + this.getProperty('u_colorStop'+i) + ', rgba(' + colorStr + '))';
+        }
+
+        color = this.getProperty('u_color4');
+        colorStr = Math.round(color[0] * 255) + ', ' + Math.round(color[1] * 255) + ', ' + Math.round(color[2] * 255) + ', ' + Math.round(color[3] * 100);
+        css += ', to(rgba(' + colorStr + '))';
+
+        css += ')';
+
+        return css;
+    };
+
+    // Only Linear Gradient and Radial Gradient have gradient data.
+    this.setGradientData = function(colors) {
+        var len = colors.length;
+        // TODO - Current shaders only support 4 color stops
+        if (len > 4) {
+            len = 4;
+        }
+
+        for (var n = 0; n < len; n++) {
+            var position = colors[n].position/100;
+            var cs = colors[n].value;
+            var stop = [cs.r/255, cs.g/255, cs.b/255, cs.a];
+
+            this.setProperty("u_color" + (n + 1), stop.slice(0));
+            this.setProperty("u_colorStop" + (n + 1), position);
+        }
+    };
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
