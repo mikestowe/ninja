@@ -1,4 +1,4 @@
-/* 
+/*
  * gl-matrix.js - High performance matrix and vector operations for WebGL
  * Version 1.0.0
  */
@@ -1047,7 +1047,7 @@ glmat4.scale = function (mat, vec, dest) {
  * Params:
  * mat - mat4 to rotate
  * angle - angle (in radians) to rotate
- * axis - vec3 representing the axis to rotate around 
+ * axis - vec3 representing the axis to rotate around
  * dest - Optional, mat4 receiving operation result. If not specified result is written to mat
  *
  * Returns:
@@ -1472,7 +1472,7 @@ glmat4.str = function (mat) {
 };
 
 /*
- * quat4 - Quaternions 
+ * quat4 - Quaternions
  */
 
 /*
@@ -1522,8 +1522,8 @@ quat4.set = function (quat, dest) {
 /*
  * quat4.calculateW
  * Calculates the W component of a quat4 from the X, Y, and Z components.
- * Assumes that quaternion is 1 unit in length. 
- * Any existing W component will be ignored. 
+ * Assumes that quaternion is 1 unit in length.
+ * Any existing W component will be ignored.
  *
  * Params:
  * quat - quat4 to calculate W component of
