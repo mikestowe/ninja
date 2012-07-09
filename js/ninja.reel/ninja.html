@@ -31,482 +31,486 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> -->
 
 <html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <link href="../../css/ninja.css" rel="stylesheet" type="text/css" media="screen"/>
+    <head>
+        
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <title>Main Ninja Component</title>
+        <link href="../../css/ninja.css" rel="stylesheet" type="text/css" media="screen"/>
 
-    <script type="text/montage-serialization">
-        {
-            "localStorage": {
-                "prototype": "js/controllers/local-storage-controller[LocalStorage]"
-            },
+        <title>Main Ninja Component</title>
 
-            "toolsData1": {
-                "prototype": "js/data/tools-data"
-            },
-
-            "appModel": {
-                "prototype": "js/models/app-model",
-                "bindings": {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
-                }
-            },
-
-            "materialsModel": {
-                "prototype": "js/models/materials-model"
-            },
-
-            "menu": {
-                "prototype": "js/components/menu/menu.reel",
-                "properties": {
-                    "element": {"#": "mainMenuBar"}
+        <script type="text/montage-serialization">
+            {
+                "localStorage": {
+                    "prototype": "js/controllers/local-storage-controller[LocalStorage]"
                 },
-                "bindings": {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
-                }
-            },
-
-            "splitter1": {
-                "prototype": "js/panels/Splitter",
-                "properties": {
-                    "element": {"#": "topSplitter"},
-                    "panel": {"#": "topPanelContainer"}
-                }
-            },
-
-            "splitter2": {
-                "prototype": "js/panels/Splitter",
-                "properties": {
-                    "element": {"#": "leftSplitter"},
-                    "panel": {"#": "leftPanelContainer"}
-                }
-            },
-
-            "splitter3": {
-                "prototype": "js/panels/Splitter",
-                "properties": {
-                    "element": {"#": "rightSplitter"},
-                    "panel": {"#": "rightPanelContainer"},
-                    "resizeBar": {"#": "rightPanelResizer"}
-                }
-            },
-
-            "splitter4": {
-                "prototype": "js/panels/Splitter",
-                "properties": {
-                    "element": {"#": "bottomSplitter"},
-                    "panel": {"@": "timeline"}
-                }
-            },
-
-            "resizer1": {
-                "prototype": "js/panels/resize-composer",
-                "properties": {
-                    "element": {"#": "rightPanelResizer"},
-                    "component": {"@": "owner"},
-                    "yAxis": false
+    
+                "toolsData1": {
+                    "prototype": "js/data/tools-data"
                 },
-                "listeners": [
-                    {
-                        "type": "resizeStart",
-                        "listener": {"@": "owner"}
-                    },
-                    {
-                        "type": "resizeMove",
-                        "listener": {"@": "owner"}
-                    },
-                    {
-                        "type": "resizeEnd",
-                        "listener": {"@": "owner"}
+    
+                "appModel": {
+                    "prototype": "js/models/app-model",
+                    "bindings": {
+                        "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                     }
-                ]
-            },
-
-            "resizer2": {
-                "prototype": "js/panels/resize-composer",
-                "properties": {
-                    "element": {"#": "timelineResizer"},
-                    "component": {"@": "owner"},
-                    "xAxis": false
                 },
-                "listeners": [
-                    {
-                        "type": "resizeStart",
-                        "listener": {"@": "owner"}
+    
+                "materialsModel": {
+                    "prototype": "js/models/materials-model"
+                },
+    
+                "menu": {
+                    "prototype": "js/components/menu/menu.reel",
+                    "properties": {
+                        "element": {"#": "mainMenuBar"}
                     },
-                    {
-                        "type": "resizeMove",
-                        "listener": {"@": "owner"}
-                    },
-                    {
-                        "type": "resizeEnd",
-                        "listener": {"@": "owner"}
+                    "bindings": {
+                        "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                     }
-                ]
-            },
-
-            "resizer3": {
-                "prototype": "js/panels/resize-composer",
-                "properties": {
-                    "element": {"#": "pasteboardResizer"},
-                    "component": {"@": "owner"}
                 },
-                "listeners": [
-                    {
-                        "type": "resizeStart",
-                        "listener": {"@": "owner"}
-                    },
-                    {
-                        "type": "resizeMove",
-                        "listener": {"@": "owner"}
-                    },
-                    {
-                        "type": "resizeEnd",
-                        "listener": {"@": "owner"}
-                    },
-                    {
-                        "type": "resizeReset",
-                        "listener": {"@": "owner"}
+    
+                "splitter1": {
+                    "prototype": "js/panels/Splitter",
+                    "properties": {
+                        "element": {"#": "topSplitter"},
+                        "panel": {"#": "topPanelContainer"}
                     }
-                ]
-            },
-
-            "stylesController": {
-                "prototype": "js/controllers/styles-controller",
-                "bindings": {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
-                }
-            },
-
-            "stageMode": {
-                "prototype": "js/components/layout/stage-mode.reel",
-                "properties": {
-                    "element": {"#": "stageMode"}
                 },
-                "bindings" : {
-                    "chromePreview": {"<->": "@appModel.chromePreview"}
-                }
-            },
-
-            "toolsList": {
-                "prototype": "js/components/layout/tools-list.reel",
-                "properties": {
-                    "element": {"#": "toolsList"},
-                    "toolsData": {"@": "toolsData1"}
+    
+                "splitter2": {
+                    "prototype": "js/panels/Splitter",
+                    "properties": {
+                        "element": {"#": "leftSplitter"},
+                        "panel": {"#": "leftPanelContainer"}
+                    }
                 },
-                "bindings": {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
-                }
-            },
-
-            "toolsProperties": {
-                "prototype": "js/components/layout/tools-properties.reel",
-                "properties": {
-                    "element": {"#": "toolsProperties"},
-                    "toolsData": {"@": "toolsData1"}
+    
+                "splitter3": {
+                    "prototype": "js/panels/Splitter",
+                    "properties": {
+                        "element": {"#": "rightSplitter"},
+                        "panel": {"#": "rightPanelContainer"},
+                        "resizeBar": {"#": "rightPanelResizer"}
+                    }
                 },
-                "bindings": {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
-                }
-            },
-
-            "documentsTab": {
-                "prototype": "js/components/layout/documents-tab.reel",
-                "properties": {
-                    "element": {"#": "openDocumentsTabComponent"},
-                    "contentController": {"@": "documentList"}
-                }
-            },
-
-            "stage": {
-                "prototype": "js/stage/stage.reel",
-                "properties": {
-                    "element": {"#": "stageAndScenesContainer"},
-                    "appModel":     {"@": "appModel"}
+    
+                "splitter4": {
+                    "prototype": "js/panels/Splitter",
+                    "properties": {
+                        "element": {"#": "bottomSplitter"},
+                        "panel": {"@": "timeline"}
+                    }
                 },
-                "bindings": {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
-                }
-            },
-
-            "documentBar": {
-                "prototype": "js/components/layout/document-bar.reel",
-                "properties": {
-                    "element": {"#": "documentBar"}
+    
+                "resizer1": {
+                    "prototype": "js/panels/resize-composer",
+                    "properties": {
+                        "element": {"#": "rightPanelResizer"},
+                        "component": {"@": "owner"},
+                        "yAxis": false
+                    },
+                    "listeners": [
+                        {
+                            "type": "resizeStart",
+                            "listener": {"@": "owner"}
+                        },
+                        {
+                            "type": "resizeMove",
+                            "listener": {"@": "owner"}
+                        },
+                        {
+                            "type": "resizeEnd",
+                            "listener": {"@": "owner"}
+                        }
+                    ]
                 },
-                "bindings": {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
-                }
-            },
-
-            "editorViewOptions": {
-                "prototype": "js/code-editor/ui/code-editor-view-options.reel",
-                "properties": {
-                    "element": {"#": "editorViewOptions"}
+    
+                "resizer2": {
+                    "prototype": "js/panels/resize-composer",
+                    "properties": {
+                        "element": {"#": "timelineResizer"},
+                        "component": {"@": "owner"},
+                        "xAxis": false
+                    },
+                    "listeners": [
+                        {
+                            "type": "resizeStart",
+                            "listener": {"@": "owner"}
+                        },
+                        {
+                            "type": "resizeMove",
+                            "listener": {"@": "owner"}
+                        },
+                        {
+                            "type": "resizeEnd",
+                            "listener": {"@": "owner"}
+                        }
+                    ]
                 },
-                "bindings" : {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
-                }
-            },
-
-            "panelContainer": {
-                "prototype": "js/panels/PanelContainer.reel",
-                "properties": {
-                    "element": {"#": "rightPanelContent"},
-                    "panelSplitter": {"@": "splitter3"},
-                    "appModel":     {"@": "appModel"}
+    
+                "resizer3": {
+                    "prototype": "js/panels/resize-composer",
+                    "properties": {
+                        "element": {"#": "pasteboardResizer"},
+                        "component": {"@": "owner"}
+                    },
+                    "listeners": [
+                        {
+                            "type": "resizeStart",
+                            "listener": {"@": "owner"}
+                        },
+                        {
+                            "type": "resizeMove",
+                            "listener": {"@": "owner"}
+                        },
+                        {
+                            "type": "resizeEnd",
+                            "listener": {"@": "owner"}
+                        },
+                        {
+                            "type": "resizeReset",
+                            "listener": {"@": "owner"}
+                        }
+                    ]
                 },
-                "bindings" : {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
-                }
-            },
-
-            "breadCrumb":{
-                "prototype": "js/components/layout/bread-crumb.reel[Breadcrumb]",
-                "properties":{
-                    "element":{"#" : "breadCrumbComponent"}
+    
+                "stylesController": {
+                    "prototype": "js/controllers/styles-controller",
+                    "bindings": {
+                        "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                    }
                 },
-                "bindings" : {
-
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
-                }
-            },
-
-            "timeline": {
-                "prototype": "js/panels/Timeline/TimelinePanel.reel",
-                "properties": {
-                    "element": {"#": "timelinePanelComponent"}
+    
+                "stageMode": {
+                    "prototype": "js/components/layout/stage-mode.reel",
+                    "properties": {
+                        "element": {"#": "stageMode"}
+                    },
+                    "bindings" : {
+                        "chromePreview": {"<->": "@appModel.chromePreview"}
+                    }
                 },
-                "bindings": {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
-                }
-            },
-
-            "keyboardMediator": {
-                "prototype": "js/mediators/keyboard-mediator",
-                "properties":{
-                    "appModel":     {"@": "appModel"}
-                }
-            },
-
-            "dragDropMediator": {
-                "prototype": "js/mediators/drag-drop-mediator"
-            },
-
-            "elementMediator": {
-                "prototype": "js/mediators/element-mediator"
-            },
-
-            "ioMediator": {
-                "prototype": "js/mediators/io-mediator"
-            },
-
-            "undocontroller1": {
-                "prototype": "js/controllers/undo-controller"
-            },
-
-            "selectionController": {
-                "prototype": "js/controllers/selection-controller",
-                "bindings" : {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
-                }
-            },
-
-            "documentController": {
-                "prototype": "js/controllers/document-controller",
-                "bindings": {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
-                }
-            },
-
-            "documentList": {
-                "prototype": "montage/ui/controller/array-controller",
-                "properties": {
-                    "selectObjectsOnAddition": true
+    
+                "toolsList": {
+                    "prototype": "js/components/layout/tools-list.reel",
+                    "properties": {
+                        "element": {"#": "toolsList"},
+                        "toolsData": {"@": "toolsData1"}
+                    },
+                    "bindings": {
+                        "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                    }
                 },
-                "bindings": {
-                    "content": {"<->": "@documentController.documents"}
-                }
-            },
-
-            "popupManager1": {
-                "prototype": "js/components/popup-manager.reel",
-                "properties": {
-                    "element": {"#": "popupWindows"}
-                }
-            },
-
-            "colorController1": {
-                "prototype": "js/controllers/color-controller"
-            },
-
-            "presetsController": {
-                "prototype": "js/controllers/presets-controller"
-            },
-
-            "filePickerController": {
-                "prototype": "js/io/ui/file-picker/file-picker-controller"
-            },
-
-            "newFileController": {
-                "prototype": "js/io/ui/new-file-dialog/new-file-workflow-controller"
-            },
-
-            "coreIoApi1": {
-                "prototype": "js/io/system/coreioapi[CoreIoApi]"
-            },
-
-            "mainMenuController": {
-                "prototype": "js/controllers/main-menu-controller"
-            },
-
-            "focusManager": {
-                "object": "js/components/focus-manager.reel",
-                "properties": {
-                    "element": {"#": "focus-container" }
-                }
-            },
-
-            "codeEditorWrapper": {
-                "prototype": "js/code-editor/code-editor-wrapper",
-                "bindings": {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
-                }
-            },
-
-            "objectsController" : {
-                "prototype": "js/controllers/objects-controller",
-                "bindings": {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"},
-                    "objects": {"<-": "@documentList.selectedObjects.0.model.mObjects"}
-                }
-            },
-
-            "clipboardController": {
-                "prototype": "js/controllers/clipboard-controller"
-            },
-
-            "owner": {
-                "prototype": "js/ninja.reel",
-                "properties": {
-                    "element":              {"#": "main"},
-                    "rulerTop":             {"#": "rulerTop"},
-                    "rulerLeft":            {"#": "rulerLeft"},
-                    "appModel":             {"@": "appModel"},
-                    "toolsData":            {"@": "toolsData1"},
-                    "toolsList":            {"@": "toolsList"},
-                    "toolsProperties":      {"@": "toolsProperties"},
-                    "stage":                {"@": "stage"},
-                    "elementMediator":      {"@": "elementMediator"},
-                    "dragDropMediator":     {"@": "dragDropMediator"},
-                    "undocontroller":       {"@": "undocontroller1"},
-                    "selectionController":  {"@": "selectionController"},
-                    "documentController":   {"@": "documentController"},
-                    "popupManager":         {"@": "popupManager1"},
-                    "colorController":      {"@": "colorController1"},
-                    "stylesController":     {"@": "stylesController"},
-                    "presetsController":    {"@": "presetsController"},
-                    "filePickerController": {"@": "filePickerController"},
-                    "newFileController":    {"@": "newFileController"},
-                    "coreIoApi":            {"@": "coreIoApi1"},
-                    "documentBar":          {"@": "documentBar"},
-                    "editorViewOptions":    {"@": "editorViewOptions"},
-                    "ioMediator":           {"@": "ioMediator"},
-                    "timeline":             {"@": "timeline"},
-                    "mainMenuController":   {"@": "mainMenuController"},
-                    "codeEditorWrapper": {"@": "codeEditorWrapper"},
-                    "objectsController":    {"@": "objectsController"},
-                    "rightPanelContainer":  {"#": "rightPanelContainer" },
-                    "panelSplitter":        {"@": "splitter3"},
-                    "timelineSplitter":     {"@": "splitter4"},
-                    "toolsSplitter":        {"@": "splitter2"},
-                    "optionsSplitter":      {"@": "splitter1"},
-                    "clipboardController":  {"@": "clipboardController"},
-                    "documentList":         {"@": "documentList"}
+    
+                "toolsProperties": {
+                    "prototype": "js/components/layout/tools-properties.reel",
+                    "properties": {
+                        "element": {"#": "toolsProperties"},
+                        "toolsData": {"@": "toolsData1"}
+                    },
+                    "bindings": {
+                        "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                    }
+                },
+    
+                "documentsTab": {
+                    "prototype": "js/components/layout/documents-tab.reel",
+                    "properties": {
+                        "element": {"#": "openDocumentsTabComponent"},
+                        "contentController": {"@": "documentList"}
+                    }
+                },
+    
+                "stage": {
+                    "prototype": "js/stage/stage.reel",
+                    "properties": {
+                        "element": {"#": "stageAndScenesContainer"},
+                        "appModel":     {"@": "appModel"}
+                    },
+                    "bindings": {
+                        "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                    }
+                },
+    
+                "documentBar": {
+                    "prototype": "js/components/layout/document-bar.reel",
+                    "properties": {
+                        "element": {"#": "documentBar"}
+                    },
+                    "bindings": {
+                        "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                    }
+                },
+    
+                "editorViewOptions": {
+                    "prototype": "js/code-editor/ui/code-editor-view-options.reel",
+                    "properties": {
+                        "element": {"#": "editorViewOptions"}
+                    },
+                    "bindings" : {
+                        "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                    }
+                },
+    
+                "panelContainer": {
+                    "prototype": "js/panels/PanelContainer.reel",
+                    "properties": {
+                        "element": {"#": "rightPanelContent"},
+                        "panelSplitter": {"@": "splitter3"},
+                        "appModel":     {"@": "appModel"}
+                    },
+                    "bindings" : {
+                        "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                    }
+                },
+    
+                "breadCrumb":{
+                    "prototype": "js/components/layout/bread-crumb.reel[Breadcrumb]",
+                    "properties":{
+                        "element":{"#" : "breadCrumbComponent"}
+                    },
+                    "bindings" : {
+    
+                        "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                    }
+                },
+    
+                "timeline": {
+                    "prototype": "js/panels/Timeline/TimelinePanel.reel",
+                    "properties": {
+                        "element": {"#": "timelinePanelComponent"}
+                    },
+                    "bindings": {
+                        "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                    }
+                },
+    
+                "keyboardMediator": {
+                    "prototype": "js/mediators/keyboard-mediator",
+                    "properties":{
+                        "appModel":     {"@": "appModel"}
+                    }
+                },
+    
+                "dragDropMediator": {
+                    "prototype": "js/mediators/drag-drop-mediator"
+                },
+    
+                "elementMediator": {
+                    "prototype": "js/mediators/element-mediator"
+                },
+    
+                "ioMediator": {
+                    "prototype": "js/mediators/io-mediator"
+                },
+    
+                "undocontroller1": {
+                    "prototype": "js/controllers/undo-controller"
+                },
+    
+                "selectionController": {
+                    "prototype": "js/controllers/selection-controller",
+                    "bindings" : {
+                        "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                    }
+                },
+    
+                "documentController": {
+                    "prototype": "js/controllers/document-controller",
+                    "bindings": {
+                        "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                    }
+                },
+    
+                "documentList": {
+                    "prototype": "montage/ui/controller/array-controller",
+                    "properties": {
+                        "selectObjectsOnAddition": true
+                    },
+                    "bindings": {
+                        "content": {"<->": "@documentController.documents"}
+                    }
+                },
+    
+                "popupManager1": {
+                    "prototype": "js/components/popup-manager.reel",
+                    "properties": {
+                        "element": {"#": "popupWindows"}
+                    }
+                },
+                
+                "colorController1": {
+                    "prototype": "js/controllers/color-controller"
+                },
+    
+                "presetsController": {
+                    "prototype": "js/controllers/presets-controller"
+                },
+    
+                "filePickerController": {
+                    "prototype": "js/io/ui/file-picker/file-picker-controller"
+                },
+    
+                "newFileController": {
+                    "prototype": "js/io/ui/new-file-dialog/new-file-workflow-controller"
+                },
+                
+                "coreIoApi1": {
+                    "prototype": "js/io/system/coreioapi[CoreIoApi]"
+                },
+    
+                "mainMenuController": {
+                    "prototype": "js/controllers/main-menu-controller"
+                },
+    
+                "focusManager": {
+                    "object": "js/components/focus-manager.reel",
+                    "properties": {
+                        "element": {"#": "focus-container" }
+                    }
+                },
+    
+                "codeEditorWrapper": {
+                    "prototype": "js/code-editor/code-editor-wrapper",
+                    "bindings": {
+                        "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                    }
+                },
+    
+                "objectsController" : {
+                    "prototype": "js/controllers/objects-controller",
+                    "bindings": {
+                        "currentDocument": {"<-": "@documentList.selectedObjects.0"},
+                        "objects": {"<-": "@documentList.selectedObjects.0.model.mObjects"}
+                    }
+                },
+    
+                "clipboardController": {
+                    "prototype": "js/controllers/clipboard-controller"
+                },
+    
+                "owner": {
+                    "prototype": "js/ninja.reel",
+                    "properties": {
+                        "element":              {"#": "main"},
+                        "rulerTop":             {"#": "rulerTop"},
+                        "rulerLeft":            {"#": "rulerLeft"},
+                        "appModel":             {"@": "appModel"},
+                        "toolsData":            {"@": "toolsData1"},
+                        "toolsList":            {"@": "toolsList"},
+                        "toolsProperties":      {"@": "toolsProperties"},
+                        "stage":                {"@": "stage"},
+                        "elementMediator":      {"@": "elementMediator"},
+                        "dragDropMediator":     {"@": "dragDropMediator"},
+                        "undocontroller":       {"@": "undocontroller1"},
+                        "selectionController":  {"@": "selectionController"},
+                        "documentController":   {"@": "documentController"},
+                        "popupManager":         {"@": "popupManager1"},
+    					"colorController":      {"@": "colorController1"},
+                        "stylesController":     {"@": "stylesController"},
+                        "presetsController":    {"@": "presetsController"},
+                        "filePickerController": {"@": "filePickerController"},
+                        "newFileController":    {"@": "newFileController"},
+                        "coreIoApi":            {"@": "coreIoApi1"},
+                        "documentBar":          {"@": "documentBar"},
+                        "editorViewOptions":    {"@": "editorViewOptions"},
+                        "ioMediator":           {"@": "ioMediator"},
+                        "timeline":             {"@": "timeline"},
+                        "mainMenuController":   {"@": "mainMenuController"},
+                        "codeEditorWrapper": {"@": "codeEditorWrapper"},
+                        "objectsController":    {"@": "objectsController"},
+                        "rightPanelContainer":  {"#": "rightPanelContainer" },
+                        "panelSplitter":        {"@": "splitter3"},
+                        "timelineSplitter":     {"@": "splitter4"},
+                        "toolsSplitter":        {"@": "splitter2"},
+                        "optionsSplitter":      {"@": "splitter1"},
+    					"clipboardController":  {"@": "clipboardController"},
+                        "documentList":         {"@": "documentList"}
+                    }
                 }
             }
-        }
-    </script>
+        </script>
 
-</head>
-<body>
+    </head>
+    
+    <body>
 
-    <div data-montage-id="main" class="main">
-
-        <section id="topMenu">
-            <nav data-montage-id="mainMenuBar"></nav>
-        </section>
-
-        <section data-montage-id="leftSplitter" class="leftSplitter splitter"></section>
-
-        <section data-montage-id="rightSplitter" class="rightSplitter splitter"></section>
-
-        <section id="appContainer">
-            <section data-montage-id="topSplitter" class="topSplitter splitter"></section>
-
-            <section data-montage-id="topPanelContainer" id="topPanelContainer" class="panelContainer">
-                <div id="topPanel" class="panel">
-                    <div id="toolPropertiesPanel">
-                        <div data-montage-id="toolsProperties"></div>
+        <div data-montage-id="main" class="main">
+    
+            <section id="topMenu">
+                <nav data-montage-id="mainMenuBar"></nav>
+            </section>
+    
+            <section data-montage-id="leftSplitter" class="leftSplitter splitter"></section>
+    
+            <section data-montage-id="rightSplitter" class="rightSplitter splitter"></section>
+    
+            <section id="appContainer">
+                <section data-montage-id="topSplitter" class="topSplitter splitter"></section>
+    
+                <section data-montage-id="topPanelContainer" id="topPanelContainer" class="panelContainer">
+                    <div id="topPanel" class="panel">
+                        <div id="toolPropertiesPanel">
+                            <div data-montage-id="toolsProperties"></div>
+                        </div>
+    
+                        <div data-montage-id="stageMode" class="unselectable marginposition"></div>
                     </div>
-
-                    <div data-montage-id="stageMode" class="unselectable marginposition"></div>
-                </div>
-            </section>
-
-            <section id="appWorkspace">
-                <section data-montage-id="leftPanelContainer" id="leftPanelContainer" class="panelContainer">
-                    <section id="toolsPanelContent" class="panel">
-                        <div data-montage-id="toolsList"></div>
-                    </section>
                 </section>
-
-                <section id="mainContainer">
-                    <section class="mainContainerContent">
-
-                        <section id="documentTabs">
-                            <div data-montage-id="openDocumentsTabComponent" class="openDocumentsTab"></div>
+    
+                <section id="appWorkspace">
+                    <section data-montage-id="leftPanelContainer" id="leftPanelContainer" class="panelContainer">
+                        <section id="toolsPanelContent" class="panel">
+                            <div data-montage-id="toolsList"></div>
                         </section>
-
-                        <section data-montage-id="rulerTop" class="rulerTop"></section>
-
-                        <section id="mainContent">
-                            <section data-montage-id="rulerLeft" class="rulerLeft"></section>
-                            <section data-montage-id="stageAndScenesContainer"></section>
-                            <section data-montage-id="pasteboardResizer" class="pasteboardResizer resizeBar"></section>
-                        </section>
-                        <section data-montage-id="timelineResizer" class="timelineResizer resizeBar"></section>
-                        <section id="stateBar">
-                            <section id="documentBarContainer">
-                                <div data-montage-id="documentBar" class="documentBar" style="display:block"></div>
-                                <div data-montage-id="editorViewOptions" class="editorViewOptions" style="display:none"></div>
+                    </section>
+    
+                    <section id="mainContainer">
+                        <section class="mainContainerContent">
+    
+                            <section id="documentTabs">
+                                <div data-montage-id="openDocumentsTabComponent" class="openDocumentsTab"></div>
                             </section>
+    
+                            <section data-montage-id="rulerTop" class="rulerTop"></section>
+    
+                            <section id="mainContent">
+                                <section data-montage-id="rulerLeft" class="rulerLeft"></section>
+                                <section data-montage-id="stageAndScenesContainer"></section>
+                                <section data-montage-id="pasteboardResizer" class="pasteboardResizer resizeBar"></section>
+                            </section>
+                            <section data-montage-id="timelineResizer" class="timelineResizer resizeBar"></section>
+                            <section id="stateBar">
+                                <section id="documentBarContainer">
+                                    <div data-montage-id="documentBar" class="documentBar" style="display:block"></div>
+                                    <div data-montage-id="editorViewOptions" class="editorViewOptions" style="display:none"></div>
+                                </section>
+                            </section>
+    
+                            <section data-montage-id="breadCrumbComponent"></section>
+                            <div data-montage-id="timelinePanelComponent" class="timelinePanel"></div>
                         </section>
-
-                        <section data-montage-id="breadCrumbComponent"></section>
-                        <div data-montage-id="timelinePanelComponent" class="timelinePanel"></div>
+                    </section>
+    
+                    <section data-montage-id="rightPanelResizer" class="rightPanelResizer resizeBar"></section>
+    
+                    <section data-montage-id="rightPanelContainer" id="rightPanelContainer" class="rightPanelContainer panelContainer">
+                        <section data-montage-id="rightPanelContent" class="rightPanelContent">
+                        </section>
                     </section>
                 </section>
-
-                <section data-montage-id="rightPanelResizer" class="rightPanelResizer resizeBar"></section>
-
-                <section data-montage-id="rightPanelContainer" id="rightPanelContainer" class="rightPanelContainer panelContainer">
-                    <section data-montage-id="rightPanelContent" class="rightPanelContent">
-                    </section>
-                </section>
+    
+                <section data-montage-id="bottomSplitter" class="bottomSplitter splitter"></section>
             </section>
+    
+            <div data-montage-id="focus-container" class="hidden"></div>
+    
+            <section data-montage-id="popupWindows"></section>
+    
+        </div>
 
-            <section data-montage-id="bottomSplitter" class="bottomSplitter splitter"></section>
-        </section>
-
-        <div data-montage-id="focus-container" class="hidden"></div>
-
-        <section data-montage-id="popupWindows"></section>
-
-    </div>
-
-</body>
+    </body>
+    
 </html>
