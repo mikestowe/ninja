@@ -246,48 +246,58 @@ var StageLine = exports.StageLine = Object.create(Object.prototype, {
 				if (s0 != s1)
 				{
 					var t = Math.abs(d0)/( Math.abs(d0) + Math.abs(d1) );
-					if (t == 0)
+					if (MathUtils.fpSign(t) === 0)
 					{
-						if (s1 > 0)	// entering the material from the beginning of the line that is to be drawn
+						// the first point of the line is on the (infinite) extension of a side of the boundary.
+						// Make sure the point (pt0) is within the range of the polygon edge
+						var vt0 = vecUtils.vecSubtract(3, pt0, bp0),
+							vt1 = vecUtils.vecSubtract(3, bp1, pt0);
+						var dt0 = vecUtils.vecDot(3, vec, vt0),
+							dt1 = vecUtils.vecDot(3, vec, vt1);
+						var st0 = MathUtils.fpSign(dt0),  st1 = MathUtils.fpSign(dt1);
+						if ((st0 >= 0) && (st1 >= 0))
 						{
-							// see if the start point of the line is at a corner of the bounded plane
-							var lineDir = vecUtils.vecSubtract(3, pt1, pt0);
-							vecUtils.vecNormalize(3, lineDir);
-							var dist = vecUtils.vecDist( 3, pt0, bp1 );
-							var bp2, bv0, bv1, cross1, cross2, cross3;
-							if ( MathUtils.fpSign(dist) == 0)
+							if (s1 > 0)	// entering the material from the beginning of the line that is to be drawn
 							{
-								bp2 = boundaryPts[(i+1) % 4];
-								bv0 = vecUtils.vecSubtract(3, bp2, bp1);
-								bv1 = vecUtils.vecSubtract(3, bp0, bp1);
-								cross1 = vecUtils.vecCross(3, bv0, lineDir);
-								cross2 = vecUtils.vecCross(3, lineDir, bv1);
-								cross3 = vecUtils.vecCross(3, bv0, bv1);
-								if ( (MathUtils.fpSign(vecUtils.vecDot(3, cross1, cross3)) == 0) && (MathUtils.fpSign(vecUtils.vecDot(3, cross2, cross3)) == 0))
+								// see if the start point of the line is at a corner of the bounded plane
+								var lineDir = vecUtils.vecSubtract(3, pt1, pt0);
+								vecUtils.vecNormalize(3, lineDir);
+								var dist = vecUtils.vecDist( 3, pt0, bp1 );
+								var bp2, bv0, bv1, cross1, cross2, cross3;
+								if ( MathUtils.fpSign(dist) == 0)
 								{
+									bp2 = boundaryPts[(i+1) % 4];
+									bv0 = vecUtils.vecSubtract(3, bp2, bp1);
+									bv1 = vecUtils.vecSubtract(3, bp0, bp1);
+									cross1 = vecUtils.vecCross(3, bv0, lineDir);
+									cross2 = vecUtils.vecCross(3, lineDir, bv1);
+									cross3 = vecUtils.vecCross(3, bv0, bv1);
+									if ( (MathUtils.fpSign(vecUtils.vecDot(3, cross1, cross3)) == 0) && (MathUtils.fpSign(vecUtils.vecDot(3, cross2, cross3)) == 0))
+									{
+										gotEnter = true;
+										this.addIntersection( plane, t, 1 );
+									}
+								}
+								else if (MathUtils.fpSign( vecUtils.vecDist(3, pt0, bp0)) === 0)
+								{
+									bp2 = boundaryPts[(i+2) % 4];
+									bv0 = vecUtils.vecSubtract(3, bp2, bp0);
+									bv1 = vecUtils.vecSubtract(3, bp1, bp0);
+									cross1 = vecUtils.vecCross(3, bv0, lineDir);
+									cross2 = vecUtils.vecCross(3, lineDir, bv1);
+									cross3 = vecUtils.vecCross(3, bv0, bv1);
+									if ( (MathUtils.fpSign(vecUtils.vecDot(3, cross1, cross3)) == 0) && (MathUtils.fpSign(vecUtils.vecDot(3, cross2, cross3)) == 0))
+									{
+										gotEnter = true;
+										this.addIntersection( plane, t, 1 );
+									}
+								}
+								else
+								{
+									// check if the line is on the edge of the boundary or goes to the interior
 									gotEnter = true;
 									this.addIntersection( plane, t, 1 );
 								}
-							}
-							else if (MathUtils.fpSign( vecUtils.vecDist(3, pt0, bp0)) === 0)
-							{
-								bp2 = boundaryPts[(i+2) % 4];
-								bv0 = vecUtils.vecSubtract(3, bp2, bp0);
-								bv1 = vecUtils.vecSubtract(3, bp1, bp0);
-								cross1 = vecUtils.vecCross(3, bv0, lineDir);
-								cross2 = vecUtils.vecCross(3, lineDir, bv1);
-								cross3 = vecUtils.vecCross(3, bv0, bv1);
-								if ( (MathUtils.fpSign(vecUtils.vecDot(3, cross1, cross3)) == 0) && (MathUtils.fpSign(vecUtils.vecDot(3, cross2, cross3)) == 0))
-								{
-									gotEnter = true;
-									this.addIntersection( plane, t, 1 );
-								}
-							}
-							else
-							{
-								// check if the line is on the edge of the boundary or goes to the interior
-								gotEnter = true;
-								this.addIntersection( plane, t, 1 );
 							}
 						}
 					}
