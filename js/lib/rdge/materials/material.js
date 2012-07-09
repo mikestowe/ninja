@@ -201,6 +201,8 @@ var Material = function GLMaterial( world ) {
     };
 
 	this.validateProperty = function( prop, value ) {
+        if(prop === "gradient") return true;
+
 		var rtnVal = false;
 		try
 		{
@@ -264,33 +266,37 @@ var Material = function GLMaterial( world ) {
 		var material = this._materialNode;
 		if (material)  technique = material.shaderProgram[this.getTechniqueName()];
 
-		switch (this.getPropertyType(prop))
-		{
-			case "angle":
-			case "float":
-				this._propValues[prop] = value;
-				if (technique)  technique[prop].set( [value] );
-				break;
+        if(prop === "gradient") {
+            this.setGradientData(value);
+        } else {
+            switch (this.getPropertyType(prop))
+            {
+                case "angle":
+                case "float":
+                    this._propValues[prop] = value;
+                    if (technique)  technique[prop].set( [value] );
+                    break;
 
-			case "file":
-				this._propValues[prop] = value.slice();
-				if (technique)
-				{
-					var glTex = new Texture( this.getWorld(),  value );
-					this._glTextures[prop] = glTex;
-					glTex.render();
-					var tex = glTex.getTexture();
-					if (tex)  technique[prop].set( tex );
-				}
-				break;
+                case "file":
+                    this._propValues[prop] = value.slice();
+                    if (technique)
+                    {
+                        var glTex = new Texture( this.getWorld(),  value );
+                        this._glTextures[prop] = glTex;
+                        glTex.render();
+                        var tex = glTex.getTexture();
+                        if (tex)  technique[prop].set( tex );
+                    }
+                    break;
 
-			case "color":
-			case "vector2d":
-			case "vector3d":
-				this._propValues[prop] = value.slice();
-				if (technique)  technique[prop].set( value );
-				break;
-		}
+                case "color":
+                case "vector2d":
+                case "vector3d":
+                    this._propValues[prop] = value.slice();
+                    if (technique)  technique[prop].set( value );
+                    break;
+            }
+        }
 	};
 
 	this.setShaderValues = function()
@@ -422,6 +428,15 @@ var Material = function GLMaterial( world ) {
 		return tex;
 	};
 
+    this.gradientType = null;
+
+    this.getGradientData = function() {
+        return null;
+    };
+
+    this.setGradientData = function() {
+        // override in linear-gradient-material and radial-gradient-material
+    };
 };
 
 if (typeof exports === "object") {

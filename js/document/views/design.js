@@ -537,9 +537,11 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     //
     pauseVideos:{
         value:function(){
-        	var i, videos = this.document.getElementsByTagName("video");
-            for(i = 0; i < videos.length; i++){
-                if(!videos[i].paused) videos[i].pause();
+            if(this.document) {
+                var i, videos = this.document.getElementsByTagName("video");
+                for(i = 0; i < videos.length; i++){
+                    if(!videos[i].paused) videos[i].pause();
+                }
             }
         }
     },
@@ -563,9 +565,28 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
                 videos[i].src = "";
             }
         }
+    },
+	////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
+    toggleWebGlAnimation: {
+        value: function(show) {
+            if(this.document) {
+                var glCanvases = this.document.querySelectorAll('[data-RDGE-id]'),
+                    glShapeModel;
+                if(glCanvases) {
+                    for(var i = 0, len = glCanvases.length; i<len; i++) {
+                        glShapeModel = glCanvases[i].elementModel.shapeModel;
+                        if(show) {
+                            glShapeModel.GLWorld.restartRenderLoop();
+                        } else {
+                            glShapeModel.GLWorld.stop();
+                        }
+                    }
+
+                }
+            }
+        }
     }
-	////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////
 });
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////

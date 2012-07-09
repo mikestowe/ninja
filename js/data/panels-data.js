@@ -63,12 +63,12 @@ exports.PanelsData = Montage.create(Montage, {
         {
             name: "Materials",
             groups: ["default"],
-            minHeight: 100,
-            height: 100,
+            minHeight: 270,
+            height: 270,
             maxHeight: null,
-            flexible: true,
+            flexible: false,
             collapsed: true,
-            scrollable: true,
+            scrollable: false,
             open: true,
             modulePath: "js/panels/Materials/materials-library-panel.reel",
             moduleName: "MaterialsLibraryPanel"

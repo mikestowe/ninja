@@ -30,7 +30,8 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
 .materials_popup {
-    width:400px;
+    width:auto;
+    min-width: 300px;
     font-size: 12px;
     overflow: hidden;
     background: #494949;
@@ -56,6 +57,7 @@ POSSIBILITY OF SUCH DAMAGE.
 .mp_preview {
     height: 100px;
     text-align: center;
+    margin: 20px 0 10px 0;
 }
 
 .mp_property
@@ -83,7 +85,19 @@ POSSIBILITY OF SUCH DAMAGE.
 .mp_property .hottext,
 .mp_property .hottextInput
 {
-    width: 30px;
+    width: 23px;
+}
+
+.mp_property .hottext
+{
+    color: white;
+    background: none;
+}
+
+.mp_property .hottextInput
+{
+    color: black;
+    background: white;
 }
 
 .mp_property .button
@@ -98,9 +112,20 @@ POSSIBILITY OF SUCH DAMAGE.
     position: relative;
 }
 
+.mp_property .gradientpicker
+{
+    top: 0;
+}
+
+.mp_property .gradientpicker .type
+{
+    display: none;
+}
+
 .mp_properties_list
 {
    padding-bottom: 8px;
+    padding-right: 20px;
 }
 
 .mp_properties_list > .mp_property > .colortoolbar
@@ -128,13 +153,28 @@ POSSIBILITY OF SUCH DAMAGE.
   display: block;
   cursor: pointer;
 }
+.mp_buttons button:hover,
+.mp_buttons button:active {
+    color: white;
+}
 
 .mp_buttons .mp_cancel_btn {
     float: left;
     width: 60px;
 }
 
+.mp_buttons .mp_saveAs_btn {
+    float: right;
+    width: 60px;
+}
+
 .mp_buttons .mp_ok_btn {
     float: right;
     width: 30px;
+    margin-left:4px;
+}
+
+.materials_popup .mp_reset_btn {
+    float: right;
+    margin-right: 8px;
 }

@@ -30,7 +30,11 @@ POSSIBILITY OF SUCH DAMAGE.
 
 var Montage = require("montage/core/core").Montage,
     Component   = require("montage/ui/component").Component,
-    MaterialsModel = require("js/models/materials-model").MaterialsModel;
+    MaterialsModel = require("js/models/materials-model").MaterialsModel,
+    NJUtils = require("js/lib/NJUtils").NJUtils,
+    World = require("js/lib/drawing/world").World,
+    Rectangle = require("js/lib/geom/rectangle").Rectangle,
+    ShapesController = require("js/controllers/elements/shapes-controller").ShapesController;
 
 ////////////////////////////////////////////////////////////////////////
 //Exporting as MaterialsPopup
@@ -46,7 +50,31 @@ exports.MaterialsPopup = Montage.create(Component, {
         serializable: true
     },
 
+    saveAsButton: {
+        value: null,
+        serializable: true
+    },
+
+    resetButton: {
+        value: null,
+        serializable: true
+    },
+
+    materialsLibraryRef: {
+        value: null
+    },
+
     materialTitle: {
+        value: null,
+        serializable: true
+    },
+
+    previewCanvas: {
+        value: null,
+        serializable: true
+    },
+
+    previewShape: {
         value: null,
         serializable: true
     },
@@ -66,11 +94,11 @@ exports.MaterialsPopup = Montage.create(Component, {
 			switch(event._currentTarget.label)
 			{
 				case "Cancel":
-					console.log("Cancel material edit");
+//					console.log("Cancel material edit");
 					this.revertToOriginalValues();
 					break;
 				case "OK":
-					console.log("Committing material with the following values:");
+//					console.log("Committing material with the following values:");
                     for(var i=0, len=this.materialsProperties.childComponents.length; i< len; i++)
                     {
                         var childControl = this.materialsProperties.childComponents[i];
@@ -89,12 +117,40 @@ exports.MaterialsPopup = Montage.create(Component, {
 
                     }
 					break;
+                case "Save As...":
+                    this.saveAs();
+                    break;
+                case "Reset":
+                    this.reset();
+                    break;
 			}
 
             // Notify Materials Library to close popup
             NJevent("hideMaterialPopup");
 		}
 	},
+
+    saveAs:
+    {
+        value: function()
+        {
+//            console.log("Save As...");
+            var materialCopy = prompt("Save material as", this._materialName + "_Copy");
+
+            if (materialCopy)
+            {
+                this.materialsLibraryRef.duplicateMaterial(materialCopy);
+            }
+        }
+    },
+
+    reset:
+    {
+        value: function()
+        {
+//            console.log("Reset");
+        }
+    },
 
 	revertToOriginalValues:
 	{
@@ -155,15 +211,15 @@ exports.MaterialsPopup = Montage.create(Component, {
     {
         value: function(event)
         {
-            if(typeof event.propertyValue === "object")
-            {
-                console.log(event.propertyLabel + " changing to ");
-                console.dir(event.propertyValue);
-            }
-            else
-            {
-                console.log(event.propertyLabel + " changing to " + event.propertyValue);
-            }
+//            if(typeof event.propertyValue === "object")
+//            {
+//                console.log(event.propertyLabel + " changing to ");
+//                console.dir(event.propertyValue);
+//            }
+//            else
+//            {
+//                console.log(event.propertyLabel + " changing to " + event.propertyValue);
+//            }
 
 			if (event.propertyLabel && event.propertyValue)
 				this.applyProperty( event.propertyLabel,  event.propertyValue );
@@ -175,15 +231,15 @@ exports.MaterialsPopup = Montage.create(Component, {
         value: function(theEvent)
         {
 			var event = theEvent._event;
-            if(typeof event.propertyValue === "object")
-            {
-                console.log(event.propertyLabel + " changed to ");
-                console.dir(event.propertyValue);
-            }
-            else
-            {
-                console.log(event.propertyLabel + " changed to " + event.propertyValue);
-            }
+//            if(typeof event.propertyValue === "object")
+//            {
+//                console.log(event.propertyLabel + " changed to ");
+//                console.dir(event.propertyValue);
+//            }
+//            else
+//            {
+//                console.log(event.propertyLabel + " changed to " + event.propertyValue);
+//            }
 
 			if (event.propertyLabel)
 				this.applyProperty( event.propertyLabel,  event.propertyValue );
@@ -219,9 +275,10 @@ exports.MaterialsPopup = Montage.create(Component, {
 					this._material.setProperty( this._propNames[index],  value );
 				}
 
+                var obj, matArray, matTypeArray, nMats, iMat, world;
 				if (this._useSelection)
 				{
-					console.log( "apply to selection" );
+//					console.log( "apply to selection" );
 
 					var selection = this.application.ninja.selectedElements;
 					if (selection && (selection.length > 0))
@@ -230,25 +287,38 @@ exports.MaterialsPopup = Montage.create(Component, {
 						for (var iObj=0;  iObj<nObjs;  iObj++)
 						{
 							var canvas = selection[iObj];
-							var obj;
 							if (canvas.elementModel && canvas.elementModel.shapeModel)  obj = canvas.elementModel.shapeModel.GLGeomObj;
 							if (obj)
 							{
-								var matArray = obj._materialArray;
-								var matTypeArray = obj._materialTypeArray;
-								var nMats = matArray.length;
-								for (var iMat=0;  iMat<nMats;  iMat++)
+								matArray = obj._materialArray;
+								matTypeArray = obj._materialTypeArray;
+								nMats = matArray.length;
+								for (iMat=0;  iMat<nMats;  iMat++)
 								{
 									if (matTypeArray[iMat] === this._whichMaterial)
 										matArray[iMat].setProperty( this._propNames[index], value );
 								}
-								var world = obj.getWorld();
+								world = obj.getWorld();
 								if (world)
 									world.restartRenderLoop();
 							}
 						}
 					}
 				}
+
+                // Update preview material
+                obj = this.previewShape;
+                matArray = obj._materialArray;
+                matTypeArray = obj._materialTypeArray;
+                nMats = matArray.length;
+                for (iMat=0;  iMat<nMats;  iMat++)
+                {
+                    if (matTypeArray[iMat] === "fill")
+                        matArray[iMat].setProperty( this._propNames[index], value );
+                }
+                world = obj.getWorld();
+                if (world)
+                    world.restartRenderLoop();
 			}
 		}
 	},
@@ -296,6 +366,10 @@ exports.MaterialsPopup = Montage.create(Component, {
 					rtnValue = value;
 					break;
 
+                case "gradient":
+                    rtnValue = value;
+                    break;
+
 				default:
 					console.log( "unrecognized material control type: " + type );
 					break;
@@ -310,8 +384,13 @@ exports.MaterialsPopup = Montage.create(Component, {
 		enumerable: false,
 		value: function() {
             this.cancelButton.addEventListener("action", this, true);
-
             this.okButton.addEventListener("action", this, true);
+            this.saveAsButton.addEventListener("action", this, true);
+            this.resetButton.addEventListener("action", this, true);
+
+            if (!this.previewCanvas.getAttribute( "data-RDGE-id" )) {
+                this.previewCanvas.setAttribute( "data-RDGE-id", NJUtils.generateRandom() );
+            }
         }
     },
 	////////////////////////////////////////////////////////////////////
@@ -319,7 +398,23 @@ exports.MaterialsPopup = Montage.create(Component, {
 	didDraw: {
 		enumerable: false,
 		value: function() {
-           this.materialTitle.innerHTML = this._materialName;
+
+            var world;
+            if(!this.previewShape) {
+                world = new World(this.previewCanvas, true);
+                this.previewShape = Object.create(Rectangle, {});
+                this.previewShape.init(world, 0, 0, 200, 100, 1, [0,0,0,1], [1,1,1,1],
+                                            0, 0, 0, 0, null, null, "Solid");
+                world.addObject(this.previewShape);
+            } else {
+                world = this.previewShape.getWorld();
+            }
+
+            this.materialTitle.innerHTML = this._materialName;
+
+            this.previewShape.setFillMaterial(this._material);
+            this.previewShape.buildBuffers();
+            world.restartRenderLoop();
 		}
 	},
 
@@ -327,7 +422,8 @@ exports.MaterialsPopup = Montage.create(Component, {
 	destroy: {
 		enumerable: false,
 		value: function() {
-			// add cleanup routines here
+//			console.log("cleanup routines here");
+            this.previewShape.getWorld().stop();
 		}
 	},
 
@@ -358,44 +454,18 @@ exports.MaterialsPopup = Montage.create(Component, {
 			else
 			{
 				this._useSelection = false;
-
-				if(
-						(materialID ===  "Bump Metal")		||
-						(materialID ===  "Deform")			||
-						(materialID ===  "Flat")			||
-						(materialID ===  "Flag")			||
-						(materialID ===  "Fly")				||
-						(materialID ===  "Julia")			||
-						(materialID ===  "Keleidoscope")	||
-						(materialID ===  "Linear Gradient")	||
-						(materialID ===  "Mandel")			||
-						(materialID ===  "Paris")			||
-						(materialID ===  "Plasma")			||
-						(materialID ===  "Pulse")			||
-						(materialID ===  "Radial Blur")		||
-						(materialID ===  "Radial Gradient")	||
-						(materialID ===  "Raiders")			||
-						(materialID ===  "Relief Tunnel")	||
-						(materialID ===  "Square Tunnel")	||
-						(materialID ===  "Star")			||
-						(materialID ===  "Taper")			||
-						(materialID ===  "Tunnel")			||
-						(materialID ===  "Twist")			||
-						(materialID ===  "Twist Vertex")	||
-						(materialID ===  "Uber")			||
-						(materialID ===  "Water")			||
-						(materialID ===  "Z-Invert")
-					)
-				{
-					material = MaterialsModel.getMaterial( materialID );
-				}
+                material = MaterialsModel.getMaterial( materialID );
 			}
 				
 			if (material)
 			{
 				this._material = material;
 				this._originalValues = material.exportJSON();
-				this.materialsData = this.getMaterialData( material );
+                if((materialID === "Linear Gradient") || (materialID === "Radial Gradient")) {
+                    this.materialsData = this.getEditableProperties( material );
+                } else {
+				    this.materialsData = this.getMaterialData( material );
+                }
 			}
 			else
 			{
@@ -404,6 +474,26 @@ exports.MaterialsPopup = Montage.create(Component, {
 			this.needsDraw = true;
 		}
 	},
+
+    getEditableProperties: {
+        value: function(material) {
+            // declare the array to hold the results
+            var rtnArray = [],
+                obj,
+                colorObj = ShapesController.getMaterialColor(material.getName());
+
+                this._propNames = ["gradient"];
+                this._propValues = ["gradient"];
+                this._propTypes = ["gradient"];
+                this._propLabels = ["gradient"];
+
+            obj = this.createGradientData("gradient", colorObj);
+
+            rtnArray.push(obj);
+
+            return rtnArray;
+        }
+    },
 
 	getMaterialData:
 	{
@@ -452,17 +542,21 @@ exports.MaterialsPopup = Montage.create(Component, {
 						obj = this.createCheckboxData( propLabels[i], propValues[i] );
 						break;
 
-					default:
-						console.log( "unrecognized material control type: " + propType[i] );
-						break;
-				}
+                    case "gradient":
+                        obj = this.createGradientData( propLabels[i], propValues[i] );
+                        break;
 
-				if (obj)
-				{
-					rtnArray.push( obj );
-					obj = null;
-				}
-			}
+                    default:
+                        console.log( "unrecognized material control type: " + propType[i] );
+                        break;
+                }
+
+                if (obj)
+                {
+                    rtnArray.push( obj );
+                    obj = null;
+                }
+            }
 
 			return rtnArray;
 		}
@@ -503,7 +597,8 @@ exports.MaterialsPopup = Montage.create(Component, {
                     "minValue": 0,
                     "maxValue": 400,
                     "decimalPlace": 100,
-					"value": value
+					"value": value,
+                    "stepSize": 0.1
                 }
 			}
 
@@ -571,7 +666,8 @@ exports.MaterialsPopup = Montage.create(Component, {
 								"decimalPlace": 100,
 								"minValue": -10,
                                 "maxValue":  10,
-                                "value": value[0]
+                                "value": value[0],
+                                "stepSize": 0.1
                             }
                         },
                         {
@@ -583,7 +679,8 @@ exports.MaterialsPopup = Montage.create(Component, {
 								"decimalPlace": 100,
 								"minValue": -100,
                                 "maxValue":  100,
-								"value":	value[1]
+								"value":	value[1],
+                                "stepSize": 0.1
                            }
                         }
                     ]
@@ -610,188 +707,23 @@ exports.MaterialsPopup = Montage.create(Component, {
 		}
 	},
 
-    // _dummyData1
-    CheckerBoard: {
-        value: [
-            {
-                "label":         "Texture1",
-                "description":   "Texture1 value",
-                "controlType":   "FileInput",
+    createGradientData:
+    {
+        value:  function( label,  colorObj )
+        {
+            var obj = {
+                "label":		label,
+                "description":	"a gradient",
+                "controlType":	"GradientPicker",
                 "defaults":
                 {
-                    "filePath": "http://localhost/"
+                    "_mode":	colorObj.gradientMode,
+                    "value": colorObj.color
                 }
-            },
-            {
-                "label":         "Diffuse",
-                "description":   "Diffuse value",
-                "controlType":   "ColorChip",
-                "defaults":
-                {
-                }
-            },
-            {
-                "label":         "Specular",
-                "description":   "Specular value",
-                "controlType":   "Button",
-                "defaults":
-                {
-                    "isToggleButton": true
-                }
-            },
-            {
-                "label":         "Shininess",
-                "description":   "Shininess value",
-                "controlType":   "HotText",
-                "defaults":
-                {
-                    "minValue": 0,
-                    "maxValue": 128,
-                    "decimalPlace": 100
-                }
-            },
-            {
-                "label":         "RGB",
-                "description":   "RGB value",
-                "controlType":   "InputGroup",
-                "defaults":
-                {
-                    data:[
-                        {
-                            "label":         "R",
-                            "description":   "R value",
-                            "controlType":   "HotText",
-                            "defaults":
-                            {
-                                "minValue": 0,
-                                "maxValue": 255,
-                                "value": 255
-                            }
-                        },
-                        {
-                            "label":         "G",
-                            "description":   "G value",
-                            "controlType":   "HotText",
-                            "defaults":
-                            {
-                                "minValue": 0,
-                                "maxValue": 255
-                            }
-                        },
-                        {
-                            "label":         "B",
-                            "description":   "B value",
-                            "controlType":   "HotText",
-                            "defaults":
-                            {
-                                "minValue": 0,
-                                "maxValue": 255
-                            }
-                        }
-                    ]
-                }
-            },
-            {
-                "label":         "XYZ",
-                "description":   "XYZ value",
-                "controlType":   "InputGroup",
-                "defaults":
-                {
-                    data:[
-                        {
-                            "label":         "X",
-                            "description":   "X value",
-                            "controlType":   "TextField",
-                            "defaults":
-                            {
-                                "text": "0"
-                            }
-                        },
-                        {
-                            "label":         "Y",
-                            "description":   "Y value",
-                            "controlType":   "TextField",
-                            "defaults":
-                            {
-                                "text": "0"
-                            }
-                        },
-                        {
-                            "label":         "Z",
-                            "description":   "Z value",
-                            "controlType":   "TextField",
-                            "defaults":
-                            {
-                                "text": "1"
-                            }
-                        }
-                    ]
-                }
-            },
-            {
-                "label":         "Foo",
-                "description":   "Foo value",
-                "controlType":   "Slider",
-                "defaults":
-                {
-                    "minValue":    0,
-                    "maxValue":    100,
-                    "value":    50,
-                    "allowTrackClick": true
-                }
-            },
-            {
-                "label":         "Bar",
-                "description":   "Bar value",
-                "controlType":   "HotTextUnit",
-                "defaults":
-                {
-                    "acceptableUnits": ["%"],
-                    "value":    50,
-                    "units": "%"
-                }
-            }
-        ]
-    },
+            };
 
-    // _dummyData2
-    ShinyMetal: {
-        value: [
-                    {
-                        "label":         "Diffuse",
-                        "description":   "Diffuse value",
-                        "controlType":   "ColorChip",
-                        "defaults":
-                        {
-                        }
-                    },
-                    {
-                        "label":         "Ambient",
-                        "description":   "Ambient value",
-                        "controlType":   "ColorChip",
-                        "defaults":
-                        {
-                        }
-                    },
-                    {
-                        "label":         "Specular",
-                        "description":   "Specular value",
-                        "controlType":   "ColorChip",
-                        "defaults":
-                        {
-                        }
-                    },
-                    {
-                        "label":         "Shininess",
-                        "description":   "Shininess value",
-                        "controlType":   "HotText",
-                        "defaults":
-                            {
-                                "minValue": 0,
-                                "maxValue": 128
-                            }
-                    }
-                ]
+            return obj;
+        }
     },
 
     materialsProperties: {

@@ -87,8 +87,17 @@ exports.Line = Object.create(GeomObj, {
             this._materialSpecular = [0.4, 0.4, 0.4,  1.0];
 
             if(strokeMaterial) {
-                this._strokeMaterial = strokeMaterial;
-				if (strokeColor && this._strokeMaterial.hasProperty( "color" ))  this._strokeMaterial.setProperty( "color",  this._strokeColor );
+                this._strokeMaterial = strokeMaterial.dup();
+            } else {
+                this._strokeMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() ).dup();
+            }
+
+            if(strokeColor) {
+                if(this._strokeMaterial.hasProperty("color")) {
+                    this._strokeMaterial.setProperty( "color",  this._strokeColor );
+                } else if (this._strokeMaterial && (this._strokeMaterial.gradientType === this._strokeColor.gradientMode)) {
+                    this._strokeMaterial.setGradientData(this._strokeColor.color);
+                }
             }
         }
     },

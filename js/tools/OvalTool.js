@@ -78,14 +78,22 @@ exports.OvalTool = Montage.create(ShapeTool, {
                 {
                     strokeMaterial = Object.create(MaterialsModel.getMaterial(strokeM));
                 }
-                strokeColor = ShapesController.getMaterialColor(strokeM) || strokeColor;
+                if (strokeMaterial && this.options.stroke.color && (strokeMaterial.gradientType === this.options.stroke.color.gradientMode)) {
+                    strokeColor = {gradientMode:strokeMaterial.gradientType, color:this.options.stroke.color.stops};
+                } else {
+                    strokeColor = ShapesController.getMaterialColor(strokeM) || strokeColor;
+                }
 
                 fillM = this.options.fillMaterial;
                 if(fillM)
                 {
                     fillMaterial = Object.create(MaterialsModel.getMaterial(fillM));
                 }
-                fillColor = ShapesController.getMaterialColor(fillM) || fillColor;
+                if (fillMaterial && this.options.fill.color && (fillMaterial.gradientType === this.options.fill.color.gradientMode)) {
+                    fillColor = {gradientMode:fillMaterial.gradientType, color:this.options.fill.color.stops};
+                } else {
+                    fillColor = ShapesController.getMaterialColor(fillM) || fillColor;
+                }
             }
 
             var world = this.getGLWorld(canvas, this.options.use3D);

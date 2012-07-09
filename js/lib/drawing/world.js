@@ -647,6 +647,7 @@ World.prototype.clearTree = function()
 
 	if (this._useWebGL)
     {
+        this.stop();
 		var root = this._rootNode;
 		root.children = new Array();
 		RDGE.globals.engine.unregisterCanvas( this._canvas.rdgeid );
