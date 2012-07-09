@@ -120,18 +120,15 @@ exports.MenuItem = Montage.create(Component, {
 
             if(this.data.submenu) {
                 this.submenu = true;
-
                 this.subentries = this.data.entries;
-
                 this.subMenu.classList.add("subMenu");
-                this.element.addEventListener("mouseover", this, false);
-                this.element.addEventListener("mouseout", this, false);
-
             }
 
+            this.element.addEventListener("mouseover", this, false);
+            this.element.addEventListener("mouseout", this, false);
 
             this.itemText.innerHTML = this.data.displayText;
-            this.element.addEventListener("mousedown", this, true);
+            this.element.addEventListener("mouseup", this, true);
         }
     },
 
@@ -156,10 +153,13 @@ exports.MenuItem = Montage.create(Component, {
         }
     },
 
-    captureMousedown: {
+    captureMouseup: {
         value: function(event) {
 
-            if(this.data.radio && this.checked) return;
+            if(this.data.radio && this.checked){
+                this.parentComponent.ownerComponent.toggleOnMenuItemAction();
+                return;
+            }
 
             if( ( this.enabled === true || this.enabled > 0 ) && (this.submenu === false) ) {
                 if(this.data.action) {
@@ -167,6 +167,7 @@ exports.MenuItem = Montage.create(Component, {
                 } else  if(this.checked !== null) {
                     this.checked = !this.checked;
                 }
+                this.parentComponent.ownerComponent.toggleOnMenuItemAction();
             }
 
         }
@@ -174,13 +175,22 @@ exports.MenuItem = Montage.create(Component, {
 
     handleMouseover: {
         value: function() {
-            if(this.enabled) this.subMenu.style.display = "block";
+            if(this.enabled){
+                this.element.style.backgroundColor = "#7f7f7f";
+                this.element.style.cursor = "pointer";
+                if(this.data.submenu) {
+                    this.subMenu.style.display = "block";
+                }
+            }
         }
     },
 
     handleMouseout: {
         value: function() {
-            this.subMenu.style.display = "none";
+            this.element.style.backgroundColor = "#474747";
+            if(this.data.submenu) {
+                this.subMenu.style.display = "none";
+            }
         }
     }
 

@@ -102,10 +102,21 @@ exports.MenuEntry = Montage.create(Component, {
         }
     },
 
+    toggleOnMenuItemAction: {
+        value: function() {
+            // TODO: Hack! Rework this!
+            //for non menu headers only
+            this.parentComponent.ownerComponent.toggleActivation(this);
+        }
+    },
+
     captureMousedown: {
         value: function(event) {
             // TODO: Hack! Rework this!
-            this.parentComponent.ownerComponent.toggleActivation(this);
+            //for menu headers only
+            if(event.target.getAttribute("data-montage-id") === "topHeaderText"){
+                this.parentComponent.ownerComponent.toggleActivation(this);
+            }
         }
     },
 
