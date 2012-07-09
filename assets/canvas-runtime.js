@@ -1,7 +1,31 @@
 /* <copyright>
-This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
-No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
-(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+Copyright (c) 2012, Motorola Mobility, Inc
+All Rights Reserved.
+BSD License.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+  - Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+  - Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+  - Neither the name of Motorola Mobility nor the names of its contributors
+    may be used to endorse or promote products derived from this software
+    without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
 // namespace for the Ninja Canvas Runtime
@@ -609,7 +633,7 @@ NinjaCvsRt.RuntimeGeomObj = Object.create(Object.prototype, {
 					case "uber":			mat = Object.create(NinjaCvsRt.RuntimeUberMaterial, {});			break;
 					case "plasma":			mat = Object.create(NinjaCvsRt.RuntimePlasmaMaterial, {});			break;
 					case "taper":			mat = Object.create(NinjaCvsRt.RuntimeTaperMaterial, {});			break;
-					
+
 					case "paris":
 					case "water":			mat = Object.create(NinjaCvsRt.RuntimeWaterMaterial, {});			break;
 
@@ -633,7 +657,7 @@ NinjaCvsRt.RuntimeGeomObj = Object.create(Object.prototype, {
 					case "twistVert":
 						mat = Object.create(NinjaCvsRt.RuntimeTwistVertMaterial, {});
 						break;
-					
+
 					case "flag":
 						mat = Object.create(NinjaCvsRt.RuntimeFlagMaterial, {});
 						break;
@@ -1398,7 +1422,7 @@ NinjaCvsRt.RuntimeMaterial = Object.create(Object.prototype, {
 	// Property Accessors
 	///////////////////////////////////////////////////////////////////////
 
-	// a material can be animated or not. default is not.  
+	// a material can be animated or not. default is not.
 	// Any material needing continuous rendering should override this method
 	isAnimated: { value: function() { return false; }},
 
@@ -1490,7 +1514,7 @@ NinjaCvsRt.RuntimeTwistVertMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, 
 	// they may share this update method
 	update: {
 		value: function(time) {
-		   
+
 			var angle = this._angle;
 			angle += this._dTime * this._speed;
 			if (angle > this._twistAmount)
@@ -1521,7 +1545,7 @@ NinjaCvsRt.RuntimeTaperMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 
 
 	isAnimated: { value: function() { return true; }},
-	
+
 	importJSON: {
 		value: function(jObj) {
 			for (var prop in jObj)
@@ -1568,7 +1592,7 @@ NinjaCvsRt.RuntimeTaperMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 	// they may share this update method
 	update: {
 		value: function(time) {
-		   
+
 			var speed = this.u_speed;
 			this._dTime += 0.01 * speed;
 
@@ -1844,7 +1868,7 @@ NinjaCvsRt.RuntimeRadialGradientMaterial = Object.create(NinjaCvsRt.RuntimeMater
 
 						if (this._textureTransform && this._shader["default"].u_texTransform)
 							this._shader["default"].u_texTransform.set( this._textureTransform );
-						
+
 						if (this.u_cos_sin_angle && this._shader["default"].u_cos_sin_angle)
 							this._shader["default"].u_cos_sin_angle.set( this.u_cos_sin_angle );
 					}
@@ -2323,7 +2347,7 @@ NinjaCvsRt.RuntimeSubPath = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                 var position, gradient, cs, inset; //vars used in gradient calculations
                 inset = Math.ceil( lw ) - 0.5;
                 inset=0;
-                
+
                 if(ipColor.gradientMode === "radial") {
                     var ww = w - 2*lw,  hh = h - 2*lw;
                     gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(ww, hh)/2);
@@ -2663,7 +2687,7 @@ NinjaCvsRt.RuntimeBrushStroke = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                 } else {
                     ctx.strokeStyle = this.buildColor(ctx, this._strokeColor, w,h, this._strokeWidth, alphaVal);
                 }
-                
+
                 for (var l=0;l<numlayers;l++){
                     ctx.beginPath();
                     p = points[0];
