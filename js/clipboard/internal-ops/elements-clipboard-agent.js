@@ -267,7 +267,10 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
                 styles = null;
             }
 
+            var addDelegate = this.application.ninja.elementMediator.addDelegate;
+            this.application.ninja.elementMediator.addDelegate = null;
             this.application.ninja.elementMediator.addElements(canvas, styles, false);
+            this.application.ninja.elementMediator.addDelegate = addDelegate;
 
             worldData = sourceCanvas.elementModel.shapeModel ? sourceCanvas.elementModel.shapeModel.GLWorld.exportJSON(): null;
             if(worldData)
@@ -362,6 +365,8 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
             newX = styles ? ("" + (styles.left + (25 * counter)) + "px") : "100px";
             newY = styles ? ("" + (styles.top + (25 * counter)) + "px") : "100px";
 
+            var addDelegate = this.application.ninja.elementMediator.addDelegate;
+            this.application.ninja.elementMediator.addDelegate = null;
             if(!styles || (styles && !styles.position)){
                 this.application.ninja.elementMediator.addElements(element, null, false);
             }else if(styles && (styles.position === "absolute")){
@@ -375,6 +380,7 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
 
                 this.application.ninja.elementMediator.addElements(element, {"top" : newY, "left" : newX}, false);//displace
             }
+            this.application.ninja.elementMediator.addDelegate = addDelegate;
         }
     },
 
