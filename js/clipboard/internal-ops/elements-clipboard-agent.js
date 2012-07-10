@@ -142,7 +142,7 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
         }
     },
 
-    pasteFromCopy:{//todo: change to appropriate name
+    pasteFromCopy:{
         value:function(){
                 var i=0, j=0,
                 pastedElements = [],//array of te pastes clones - for selection
@@ -152,7 +152,7 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
 
             this.pasteCounter++;
 
-            //TODO: cleanse HTML
+            //cleanse HTML
 
             for(j=0; j< this.copiedObjects.copy.length; j++){
                 copiedElement = this.copiedObjects.copy[j];
@@ -229,9 +229,6 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
 
             //build the computed style attribute
             computedStyles = elem.ownerDocument.defaultView.getComputedStyle(elem);
-
-            //todo: consider cleaning up the position data [or making position:relative with 0,0] from the computed styles,
-            // so that the object is pasted onto expernal applicaitons [like gmail] with no offset
 
             for (i = 0; i < computedStyles.length; i++) {
                 stylePropertyName = computedStyles[i];
