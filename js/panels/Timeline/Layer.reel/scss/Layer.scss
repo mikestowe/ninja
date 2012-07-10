@@ -1,26 +1,27 @@
 @charset "UTF-8";
 
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -33,7 +34,7 @@ POSSIBILITY OF SUCH DAMAGE.
 /* Layer.scss
  * Main SCSS file for Layer component, compiled by SASS into the file css/Layer.css.
  */
- 
+
 // Import theme settings
 @import "../../../../../scss/imports/themes/default/colors";
 // @import "../../../../../scss/imports/themes/default/fonts";
@@ -54,8 +55,8 @@ POSSIBILITY OF SUCH DAMAGE.
     -webkit-box-orient: horizontal;
 }
 .layerLabel.layerSelected {
-	background-color: $color-panel-hilite-bg;
-	color: $color-panel-hilite-text;
+    background-color: $color-panel-hilite-bg;
+    color: $color-panel-hilite-text;
 }
 .layerLabel{
     width:100%;
@@ -100,208 +101,208 @@ POSSIBILITY OF SUCH DAMAGE.
 
 .container-layer,
 .container-layer.selected {
-	background-color: $color-panel-bg;
-	color: $color-panel-text;
-	font-size: 12px;
-	text-shadow: 1px 1px 1px $color-app-shadow;
+    background-color: $color-panel-bg;
+    color: $color-panel-text;
+    font-size: 12px;
+    text-shadow: 1px 1px 1px $color-app-shadow;
 }
 .selected .container-layer {
-	background-color: $color-panel-bg;
+    background-color: $color-panel-bg;
 }
 .selected .container-layer .label-layer {
-	background-color: $color-panel-hilite-bg;
-	color: $color-panel-hilite-text;
+    background-color: $color-panel-hilite-bg;
+    color: $color-panel-hilite-text;
 }
 
 .userlayers .collapsible-label {
-	display: block;
+    display: block;
     height: 21px;
     line-height: 20px;
-	color: $color-panel-text;
-	margin-left: 80px;
-	margin-right: 40px;
+    color: $color-panel-text;
+    margin-left: 80px;
+    margin-right: 40px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .userlayers .layer-tag {
-	position: absolute;
-	top: 3px;
-	left: 20px;
+    position: absolute;
+    top: 3px;
+    left: 20px;
 }
 
 
 .layerSelected .label-layer {
-	background-color: $color-menu-hilite-bg;
-	color: $color-panel-hilite-text;
+    background-color: $color-menu-hilite-bg;
+    color: $color-panel-hilite-text;
 }
 .content-layer {
-	background-color: $color-panel-bg;
-	color: $color-panel-text;
+    background-color: $color-panel-bg;
+    color: $color-panel-text;
 }
 .content-layer .collapsible-label {
-	background-position: 14px 5px;
-	border-width: 0px;
+    background-position: 14px 5px;
+    border-width: 0px;
 }
 .label-layer,
 .label-position,
 .label-transform,
 .label-style,
 .label-styles {
-	position: relative;
-	border-bottom: 1px solid #505050;
-	cursor: pointer;
+    position: relative;
+    border-bottom: 1px solid #505050;
+    cursor: pointer;
 }
 
 .content-layer .collapsible-label,
 .content-layer .collapsible-content,
 .content-layer .layer-tag {
-	font-size: 11px;
+    font-size: 11px;
 }
 
 
 
 .label-layer .collapsible-label br,
 .content-style .editable br {
-	display: none;
+    display: none;
 }
 
 .collapsible-clicker {
-	position: absolute;
-	width: 10px;
-	height: 10px;
-	top: 5px;
-	left: 5px;
-	margin: 0px;
-	padding: 0px;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: 5px;
+    left: 5px;
+    margin: 0px;
+    padding: 0px;
     background-image: url(../images/icon-open.png);
     background-repeat: no-repeat;
 }
 .collapsible-clicker.collapsible-collapsed {
-	background-image: url(../images/icon-collapsed.png);
+    background-image: url(../images/icon-collapsed.png);
 }
 .collapsible-content .collapsible-clicker {
-	left: 12px;
+    left: 12px;
 }
 .container-layer .collapsible-content.collapsible-collapsed {
-	height: 0px;
-	overflow: hidden;
+    height: 0px;
+    overflow: hidden;
 }
 
 .label-layer .cssbutton,
 .label-style .cssbutton {
-	width: 14px;
-	height: 14px;
-	overflow: hidden;
-	position: absolute;
-	background-repeat: no-repeat;
+    width: 14px;
+    height: 14px;
+    overflow: hidden;
+    position: absolute;
+    background-repeat: no-repeat;
 }
 .label-layer .button-lock {
-	background-image: url(../images/icon-lock.png);
-	top: 3px;
-	right: 27px;
+    background-image: url(../images/icon-lock.png);
+    top: 3px;
+    right: 27px;
 }
 .label-layer .button-visible {
-	background-image: url(../images/icon-eye.png);
-	top: 3px;
-	right: 7px;
+    background-image: url(../images/icon-eye.png);
+    top: 3px;
+    right: 7px;
 }
 .label-style .button-add {
-	background-image: url(../images/icon-plus.png);
-	width: 15px;
-	height: 15px;
-	top: 3px;
-	right: 11px;
+    background-image: url(../images/icon-plus.png);
+    width: 15px;
+    height: 15px;
+    top: 3px;
+    right: 11px;
 }
 .label-style .button-delete {
-	background-image: url(../images/icon-minus.png);
-	width: 15px;
-	height: 15px;
-	top: 3px;
-	right: 31px;
+    background-image: url(../images/icon-minus.png);
+    width: 15px;
+    height: 15px;
+    top: 3px;
+    right: 31px;
 }
 .timeline-track .collapsible-content {
-	position: relative;
+    position: relative;
 }
 .collapsible-content .layout-table {
-	width: 99.9%;
+    width: 99.9%;
 }
 .content-layer .collapsible-content {
-	padding-left: 30px;
+    padding-left: 30px;
 }
 .collapsible-content .collapsible-content .layout-table .layout-row {
-	height: 20px;
-	overflow: hidden;
+    height: 20px;
+    overflow: hidden;
 }
 .collapsible-content .collapsible-content .layout-table .layout-row .layout-cell {
-	width: 40%;
-	height: 20px;
-	border-bottom: 1px solid $color-menu-divider;
-	line-height: 20px;
-	text-align: left;
-	overflow: hidden;
+    width: 40%;
+    height: 20px;
+    border-bottom: 1px solid $color-menu-divider;
+    line-height: 20px;
+    text-align: left;
+    overflow: hidden;
 }
 
 .collapsible-content .collapsible-content .container-row {
-	border-bottom: 1px solid $color-menu-divider;
-	height: 20px;
+    border-bottom: 1px solid $color-menu-divider;
+    height: 20px;
 }
 
 .collapsible-content .collapsible-content .cell-property,
 .collapsible-content .collapsible-content .cell-value {
-	width: 45%;
-	float: left;
-	height: 20px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	line-height: 18px;
+    width: 45%;
+    float: left;
+    height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 18px;
 }
 
 
 
 .collapsible-content .layout-table:first-child {
-	border-top: 1px solid $color-menu-divider;
+    border-top: 1px solid $color-menu-divider;
 }
 
 .collapsible-content .hottextunit {
-	width: auto;
+    width: auto;
 }
 .collapsible-transition {
-	-webkit-transition-property: height;
-	-webkit-transition-duration: 200ms;
-	-webkit-transition-timing-function: ease-in;
+    -webkit-transition-property: height;
+    -webkit-transition-duration: 200ms;
+    -webkit-transition-timing-function: ease-in;
 }
 
 
 
 .editable2 {
-	height: 20px;
-	background-color: $color-panel-hilite-text !IMPORTANT;
-	color: $color-panel-hilite-bg !IMPORTANT;
-	border-width: 0px;
-	font-size: 11px;
-	overflow: hidden;
+    height: 20px;
+    background-color: $color-panel-hilite-text !IMPORTANT;
+    color: $color-panel-hilite-bg !IMPORTANT;
+    border-width: 0px;
+    font-size: 11px;
+    overflow: hidden;
     -webkit-user-select: text;
     text-overflow: clip;
 }
 .editable2 br {
-	display: inline;
+    display: inline;
 }
 
 .label-style .disabled {
-	cursor: default;
+    cursor: default;
 }
 
 /* styles elements */
 .content-style .item-template {
-	display: none;
+    display: none;
 }
 .style-row {
-	height: 20px;
+    height: 20px;
 }
 .content-style .layout-row.selected .layout-cell {
-	background-color: $color-panel-hilite-bg;
-	color: $color-panel-hilite-text;
+    background-color: $color-panel-hilite-bg;
+    color: $color-panel-hilite-text;
 }

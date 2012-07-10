@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -31,46 +32,46 @@ POSSIBILITY OF SUCH DAMAGE.
 // RDGE namespaces
 var RDGE = RDGE || {};
 
-/*	
+/*
 this API should be familiar to anyone who has worked with HLSL effect files.
 */
 
 /*
- *	A map of types to uniform 'binding' functions
+ *  A map of types to uniform 'binding' functions
  */
 RDGE.bindMap={};
-RDGE.bindMap['int']		= function(ctx, a,b) { ctx.uniform1iv(a,b); };
-RDGE.bindMap['float']	= function(ctx, a,b) { ctx.uniform1fv(a,b); };
-RDGE.bindMap['vec2']		= function(ctx, a,b) { ctx.uniform2fv(a,b); };
-RDGE.bindMap['vec3']		= function(ctx, a,b) { ctx.uniform3fv(a,b); };
-RDGE.bindMap['vec4']		= function(ctx, a,b) { ctx.uniform4fv(a,b); };
-RDGE.bindMap['mat3']		= function(ctx, a,b) { ctx.uniformMatrix3fv(a,false,b); };
-RDGE.bindMap['mat4']		= function(ctx, a,b) 
-{ 
-	ctx.uniformMatrix4fv(a,false,b); 
-	RDGE.globals.engine.getContext().debug.mat4CallCount++;
-};
-
-RDGE.bindMap['tex2d']	= function(ctx, a,b) 
+RDGE.bindMap['int']     = function(ctx, a,b) { ctx.uniform1iv(a,b); };
+RDGE.bindMap['float']   = function(ctx, a,b) { ctx.uniform1fv(a,b); };
+RDGE.bindMap['vec2']        = function(ctx, a,b) { ctx.uniform2fv(a,b); };
+RDGE.bindMap['vec3']        = function(ctx, a,b) { ctx.uniform3fv(a,b); };
+RDGE.bindMap['vec4']        = function(ctx, a,b) { ctx.uniform4fv(a,b); };
+RDGE.bindMap['mat3']        = function(ctx, a,b) { ctx.uniformMatrix3fv(a,false,b); };
+RDGE.bindMap['mat4']        = function(ctx, a,b)
 {
-	ctx.activeTexture(ctx.TEXTURE0+b[0]);
-	ctx.bindTexture(ctx.TEXTURE_2D, b[1]);
-	ctx.uniform1iv(a,[b[0]]);
+    ctx.uniformMatrix4fv(a,false,b);
+    RDGE.globals.engine.getContext().debug.mat4CallCount++;
 };
 
-RDGE.bindMap['texCube']=function(ctx, a,b) 
+RDGE.bindMap['tex2d']   = function(ctx, a,b)
 {
-	ctx.activeTexture(ctx.TEXTURE0+b[0]);
-	ctx.bindTexture(ctx.TEXTURE_CUBE_MAP, b[1]);
-	ctx.uniform1iv(a,[b[0]]);
+    ctx.activeTexture(ctx.TEXTURE0+b[0]);
+    ctx.bindTexture(ctx.TEXTURE_2D, b[1]);
+    ctx.uniform1iv(a,[b[0]]);
 };
 
-RDGE.lightDataMap = 
+RDGE.bindMap['texCube']=function(ctx, a,b)
+{
+    ctx.activeTexture(ctx.TEXTURE0+b[0]);
+    ctx.bindTexture(ctx.TEXTURE_CUBE_MAP, b[1]);
+    ctx.uniform1iv(a,[b[0]]);
+};
+
+RDGE.lightDataMap =
 [
-	function(ctx, loc, lightNode) { ctx.uniform3fv(loc, lightNode.position); },
-	function(ctx, loc, lightNode) { ctx.uniform4fv(loc, lightNode.lightDiffuse); },
-	function(ctx, loc, lightNode) { ctx.uniform4fv(loc, lightNode.lightAmbient); },
-	function(ctx, loc, lightNode) { ctx.uniform4fv(loc, lightNode.lightSpecular); }
+    function(ctx, loc, lightNode) { ctx.uniform3fv(loc, lightNode.position); },
+    function(ctx, loc, lightNode) { ctx.uniform4fv(loc, lightNode.lightDiffuse); },
+    function(ctx, loc, lightNode) { ctx.uniform4fv(loc, lightNode.lightAmbient); },
+    function(ctx, loc, lightNode) { ctx.uniform4fv(loc, lightNode.lightSpecular); }
 ];
 
 RDGE.paramTypeNameMapping = null;
@@ -120,7 +121,7 @@ RDGE.jshader = function (addr) {
     }
 
     /*
-    *	private helper functions
+    *   private helper functions
     */
     this.bindParameters = function (pass) {
         var params = pass.defParamsList; // global parameters to start with
@@ -177,7 +178,7 @@ RDGE.jshader = function (addr) {
     };
 
     /*
-    *	helper function for setting up a texture
+    *   helper function for setting up a texture
     */
     createJShaderTexture = function (ctx, param) {
         var texHandle = null;
@@ -310,9 +311,9 @@ RDGE.jshader = function (addr) {
             defaultTech = t;
             var curTechnique = techniques[t];
             this[t] =
-			{
-			    'passes': []
-			};
+            {
+                'passes': []
+            };
             var numPasses = curTechnique.length;
             var i = 0;
             while (i < numPasses) {
@@ -410,7 +411,7 @@ RDGE.jshader = function (addr) {
                 // link up aliases
                 for (var p in curTechnique[i].params) {
                     if (typeof curTechnique[i].params[p] == 'string') {
-                        // this just redirects to an already existing parameter.                     
+                        // this just redirects to an already existing parameter.
                         this[t][p] = this[t].passes[i].params[p];
                     }
                 }
@@ -445,8 +446,8 @@ RDGE.jshader = function (addr) {
     };
 
     /*
-    *	Init a local parameter at any time during the life of the jshader.
-    *  This will add the parameter to the list of parameters to be bound  
+    *   Init a local parameter at any time during the life of the jshader.
+    *  This will add the parameter to the list of parameters to be bound
     *  before rendering
     */
     this.initLocalParameter = function (name, param) {
@@ -518,7 +519,7 @@ RDGE.jshader = function (addr) {
             source = vShaderDef;
         } else {
             var vshaderRequest = new XMLHttpRequest();
-            var urlVertShader = vShaderDef;            
+            var urlVertShader = vShaderDef;
             vshaderRequest.open("GET", urlVertShader, false);
             vshaderRequest.send(null);
             source = vshaderRequest.responseText;
@@ -587,7 +588,7 @@ RDGE.jshader = function (addr) {
     };
 
     /*
-    *	Set the light nodes used by this jshader
+    *   Set the light nodes used by this jshader
     * array item 0 corresponds to light 0, item 1 tp light 1 and so on
     * place null for lights that are not there
     */
@@ -601,7 +602,7 @@ RDGE.jshader = function (addr) {
     };
 
     /*
-    *	Called by the system to add material textures settings to the jshader
+    *   Called by the system to add material textures settings to the jshader
     */
     this.setTextureContext = function (textureList) {
         var passCount = this.technique.passes.length;

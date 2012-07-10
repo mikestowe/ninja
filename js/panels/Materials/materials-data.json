@@ -101,6 +101,11 @@
                     "id" : "Z-Invert"
                 }
             ]
+        },
+        {
+            "label": "Custom Materials",
+            "children": [
+            ]
         }
     ]
 }

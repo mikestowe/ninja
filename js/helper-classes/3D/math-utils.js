@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -33,15 +34,15 @@ POSSIBILITY OF SUCH DAMAGE.
 //      Math Utility functions
 ///////////////////////////////////////////////////////////////////////
 var VecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
-	ViewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
-	Rectangle = require("js/helper-classes/3D/rectangle").Rectangle;
+    ViewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
+    Rectangle = require("js/helper-classes/3D/rectangle").Rectangle;
 
 var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
 //    VecUtils: { value: null, writable: true },
-    
+
     EPSILON: { value: 1.e-5, writable: true },
 
     // these are used in containment tests
@@ -61,7 +62,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
     // Vector Methods
     ///////////////////////////////////////////////////////////////////////
 
-	vecIntersectPlaneForParam: {
+    vecIntersectPlaneForParam: {
         value: function( pt0, vec, plane )
         {
             // declare the variable to return - undefined when there is no solution
@@ -82,7 +83,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	vecMag3: {
+    vecMag3: {
         value: function( vec )
         {
             if (vec.length < 3)  return;
@@ -92,7 +93,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	vecMag: {
+    vecMag: {
         value: function( dimen, vec )
         {
             var sum = 0.0;
@@ -102,7 +103,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	vecSubtract: {
+    vecSubtract: {
         value: function( a, b )
         {
             var rtnVec;
@@ -119,7 +120,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	vecAdd: {
+    vecAdd: {
         value: function( a, b )
         {
             var rtnVec;
@@ -136,7 +137,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	vecDist: {
+    vecDist: {
         value: function( a, b )
         {
             var sum;
@@ -176,7 +177,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	getPointOnPlane: {
+    getPointOnPlane: {
         value: function( plane )
         {
             // abreviate the plane equation
@@ -203,7 +204,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	transformPlane: {
+    transformPlane: {
         value: function( plane,  mat )
         {
             // we will project a point down one of the coordinate axes to find a point on the plane
@@ -213,7 +214,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
             // find a point on the plane
             var ptOnPlane = this.getPointOnPlane(plane);
 
-            ptOnPlane[3] = 1.0;	// 4 dimen so we can transform it
+            ptOnPlane[3] = 1.0; // 4 dimen so we can transform it
 
             // transform the point
             //ptOnPlane = mat.multiply( ptOnPlane );
@@ -225,12 +226,12 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	transformHomogeneousPoint: {
+    transformHomogeneousPoint: {
         value: function( srcPt, mat )
         {
             var pt = srcPt.slice(0);
             this.makeDimension4( pt );
-            var	x = VecUtils.vecDot(4,  pt, [mat[0], mat[4], mat[ 8], mat[12]] ),
+            var x = VecUtils.vecDot(4,  pt, [mat[0], mat[4], mat[ 8], mat[12]] ),
                     y = VecUtils.vecDot(4,  pt, [mat[1], mat[5], mat[ 9], mat[13]] ),
                     z = VecUtils.vecDot(4,  pt, [mat[2], mat[6], mat[10], mat[14]] ),
                     w = VecUtils.vecDot(4,  pt, [mat[3], mat[7], mat[11], mat[15]] );
@@ -239,7 +240,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	applyHomogeneousCoordinate: {
+    applyHomogeneousCoordinate: {
         value: function( hPt )
         {
             var w = hPt[3];
@@ -252,19 +253,19 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	transformAndDivideHomogeneousPoint: {
+    transformAndDivideHomogeneousPoint: {
         value: function( pt, mat )
         {
             return this.applyHomogeneousCoordinate( this.transformHomogeneousPoint(pt, mat) );
         }
     },
 
-	transformPoint: {
+    transformPoint: {
         value: function( srcPt, mat )
         {
             var pt = srcPt.slice(0);
             this.makeDimension3( pt );
-            var	x = VecUtils.vecDot(3,  pt, [mat[0], mat[4], mat[ 8]] ) + mat[12],
+            var x = VecUtils.vecDot(3,  pt, [mat[0], mat[4], mat[ 8]] ) + mat[12],
                     y = VecUtils.vecDot(3,  pt, [mat[1], mat[5], mat[ 9]] ) + mat[13],
                     z = VecUtils.vecDot(3,  pt, [mat[2], mat[6], mat[10]] ) + mat[14];
 
@@ -272,11 +273,11 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	transformVector: {
+    transformVector: {
         value: function( vec, mat )
         {
             this.makeDimension3( vec );
-            var	x = VecUtils.vecDot(3,  vec, [mat[0], mat[4], mat[ 8]] ),
+            var x = VecUtils.vecDot(3,  vec, [mat[0], mat[4], mat[ 8]] ),
                     y = VecUtils.vecDot(3,  vec, [mat[1], mat[5], mat[ 9]] ),
                     z = VecUtils.vecDot(3,  vec, [mat[2], mat[6], mat[10]] );
 
@@ -284,7 +285,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	interpolateLine3D: {
+    interpolateLine3D: {
         value: function( pt0, pt1, t )
         {
             var x0 = pt0[0],  y0 = pt0[1],  z0 = pt0[2],
@@ -444,7 +445,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	nearestPointOnLine2D: {
+    nearestPointOnLine2D: {
         value: function( linePt,  lineDir,  pt )
         {
             var vec = this.vecSubtract( pt, linePt );
@@ -458,7 +459,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	parameterizePointOnLine2D: {
+    parameterizePointOnLine2D: {
         value: function( linePt, lineDir, ptOnLine )
         {
             var t;
@@ -483,7 +484,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	pointsEqual: {
+    pointsEqual: {
         value: function( dimen,  a, b )
         {
             if ((a.length < dimen) || (b.length < dimen))
@@ -582,107 +583,107 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	rectsOverlap:
-	{
-		value: function( pt, width, height,  elt )
-		{
-			// only consider rectangles with non-zero area
-			if ((width == 0) || (height == 0))  return false;
+    rectsOverlap:
+    {
+        value: function( pt, width, height,  elt )
+        {
+            // only consider rectangles with non-zero area
+            if ((width == 0) || (height == 0))  return false;
 
-			// get the mins/maxs of the onput rectangle
-			var xMin, xMax, yMin, yMax;
-			if (width > 0)  {  xMin = pt[0];   xMax = pt[0] + width;  }
-			else  {  xMax = pt[0];  xMin = pt[0] + width;  }
-			if (height > 0)  {  yMin = pt[1];   yMax = pt[1] + height;  }
-			else  {  yMax = pt[1];  yMin = pt[1] + height;  }
+            // get the mins/maxs of the onput rectangle
+            var xMin, xMax, yMin, yMax;
+            if (width > 0)  {  xMin = pt[0];   xMax = pt[0] + width;  }
+            else  {  xMax = pt[0];  xMin = pt[0] + width;  }
+            if (height > 0)  {  yMin = pt[1];   yMax = pt[1] + height;  }
+            else  {  yMax = pt[1];  yMin = pt[1] + height;  }
 
-			// get the bounds of the element in global screen space
-			var bounds = ViewUtils.getElementViewBounds3D( elt );
-			var bounds3D = [];
-			for (var i=0;  i<4;  i++)
-				bounds3D[i] = ViewUtils.localToGlobal( bounds[i],  elt );
+            // get the bounds of the element in global screen space
+            var bounds = ViewUtils.getElementViewBounds3D( elt );
+            var bounds3D = [];
+            for (var i=0;  i<4;  i++)
+                bounds3D[i] = ViewUtils.localToGlobal( bounds[i],  elt );
 
-			// get the min/maxs for the element
-			var xMinElt = bounds3D[0][0],  xMaxElt = bounds3D[0][0],
-				yMinElt = bounds3D[0][1],  yMaxElt = bounds3D[0][1];
-			for (var i=1;  i<4;  i++)
-			{
-				if (bounds3D[i][0] < xMinElt)  xMinElt = bounds3D[i][0];
-				else if  (bounds3D[i][0] > xMaxElt)  xMaxElt = bounds3D[i][0];
-				if (bounds3D[i][1] < yMinElt)  yMinElt = bounds3D[i][1];
-				else if  (bounds3D[i][1] > yMaxElt)  yMaxElt = bounds3D[i][1];
-			}
+            // get the min/maxs for the element
+            var xMinElt = bounds3D[0][0],  xMaxElt = bounds3D[0][0],
+                yMinElt = bounds3D[0][1],  yMaxElt = bounds3D[0][1];
+            for (var i=1;  i<4;  i++)
+            {
+                if (bounds3D[i][0] < xMinElt)  xMinElt = bounds3D[i][0];
+                else if  (bounds3D[i][0] > xMaxElt)  xMaxElt = bounds3D[i][0];
+                if (bounds3D[i][1] < yMinElt)  yMinElt = bounds3D[i][1];
+                else if  (bounds3D[i][1] > yMaxElt)  yMaxElt = bounds3D[i][1];
+            }
 
-			// test 1.  Overall bounding box test
-			if ((xMaxElt < xMin) || (xMinElt > xMax) || (yMaxElt < yMin) || (yMinElt > yMax))
-				return false;
-			
-			// test 2.  See if any of the corners of the element are contained in the rectangle
-			var rect = Object.create(Rectangle, {});
-			rect.set( pt[0], pt[1], width, height );
-			for (var i=0;  i<4;  i++)
-			{
-				if (rect.contains( bounds3D[i][0], bounds3D[i][1] ))  return true;
-			}
+            // test 1.  Overall bounding box test
+            if ((xMaxElt < xMin) || (xMinElt > xMax) || (yMaxElt < yMin) || (yMinElt > yMax))
+                return false;
 
-			// test 3.  Bounding box tests on individual edges of the element
-			for (var i=0;  i<4;  i++)
-			{
-				var pt0 = bounds3D[i],
-					pt1 = bounds3D[(i+1)%4];
+            // test 2.  See if any of the corners of the element are contained in the rectangle
+            var rect = Object.create(Rectangle, {});
+            rect.set( pt[0], pt[1], width, height );
+            for (var i=0;  i<4;  i++)
+            {
+                if (rect.contains( bounds3D[i][0], bounds3D[i][1] ))  return true;
+            }
 
-				// get the extremes of the edge
-				if (pt0[0] < pt1[0])  {  xMinElt = pt0[0];  xMaxElt = pt1[0];  }
-				else {  xMaxElt = pt0[0];  xMinElt = pt1[0]; }
-				if (pt0[1] < pt1[1])  {  yMinElt = pt0[1];  yMaxElt = pt1[1];  }
-				else {  yMaxElt = pt0[1];  yMinElt = pt1[1]; }
+            // test 3.  Bounding box tests on individual edges of the element
+            for (var i=0;  i<4;  i++)
+            {
+                var pt0 = bounds3D[i],
+                    pt1 = bounds3D[(i+1)%4];
 
-				if ((xMaxElt < xMin) || (xMinElt > xMax) || (yMaxElt < yMin) || (yMinElt > yMax))
-					continue;
-				else
-				{
-					// intersect the element edge with the 4 sides of the rectangle
-					// vertical edges
-					var xRect = xMin;
-					for (var j=0;  j<2;  j++)
-					{
-						if ((xMinElt < xRect) && (xMaxElt > xRect))
-						{
-							var t = (xRect - pt0[0])/(pt1[0] - pt0[0]);
-							var y = pt0[1] + t*(pt1[1] - pt0[1]);
-							if ((y >= yMin) && (y <= yMax))  return true;
-						}
-						xRect = xMax;
-					}
+                // get the extremes of the edge
+                if (pt0[0] < pt1[0])  {  xMinElt = pt0[0];  xMaxElt = pt1[0];  }
+                else {  xMaxElt = pt0[0];  xMinElt = pt1[0]; }
+                if (pt0[1] < pt1[1])  {  yMinElt = pt0[1];  yMaxElt = pt1[1];  }
+                else {  yMaxElt = pt0[1];  yMinElt = pt1[1]; }
 
-					// horizontal edges
-					var yRect = yMin;
-					for (var j=0;  j<2;  j++)
-					{
-						if ((yMinElt < yRect) && (yMaxElt > yRect))
-						{
-							var t = (yRect - pt0[1])/(pt1[1] - pt0[1]);
-							var x = pt0[0] + t*(pt1[0] - pt0[0]);
-							if ((x >= xMin) && (x <= xMax))  return true;
-						}
-						yRect = yMax;
-					}
-				}
-			}
+                if ((xMaxElt < xMin) || (xMinElt > xMax) || (yMaxElt < yMin) || (yMinElt > yMax))
+                    continue;
+                else
+                {
+                    // intersect the element edge with the 4 sides of the rectangle
+                    // vertical edges
+                    var xRect = xMin;
+                    for (var j=0;  j<2;  j++)
+                    {
+                        if ((xMinElt < xRect) && (xMaxElt > xRect))
+                        {
+                            var t = (xRect - pt0[0])/(pt1[0] - pt0[0]);
+                            var y = pt0[1] + t*(pt1[1] - pt0[1]);
+                            if ((y >= yMin) && (y <= yMax))  return true;
+                        }
+                        xRect = xMax;
+                    }
 
-			// if we get here there is no overlap
-			return false;
-		}
-	},
+                    // horizontal edges
+                    var yRect = yMin;
+                    for (var j=0;  j<2;  j++)
+                    {
+                        if ((yMinElt < yRect) && (yMaxElt > yRect))
+                        {
+                            var t = (yRect - pt0[1])/(pt1[1] - pt0[1]);
+                            var x = pt0[0] + t*(pt1[0] - pt0[0]);
+                            if ((x >= xMin) && (x <= xMax))  return true;
+                        }
+                        yRect = yMax;
+                    }
+                }
+            }
+
+            // if we get here there is no overlap
+            return false;
+        }
+    },
 
     ///////////////////////////////////////////////////////////////////////
     // Bezier Methods
     ///////////////////////////////////////////////////////////////////////
-	// this function returns the quadratic Bezier approximation to the specified
-	// circular arc.  The input can be 2D or 3D, determined by the minimum dimension
-	// of the center and start point.
-	// includedAngle is in radians, can be positiveor negative
-	circularArcToBezier: {
+    // this function returns the quadratic Bezier approximation to the specified
+    // circular arc.  The input can be 2D or 3D, determined by the minimum dimension
+    // of the center and start point.
+    // includedAngle is in radians, can be positiveor negative
+    circularArcToBezier: {
         value: function( ctr_, startPt_, includedAngle )
         {
             var dimen = 3;
@@ -753,16 +754,16 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
             // the area of the polygon is the length of the normal
             var area = VecUtils.vecMag(3, normal );
             if (this.fpSign(area) != 0)
-			{
+            {
                 //vec3.scale(normal, 1.0/area);
-				normal = VecUtils.vecNormalize(3, normal, 1.0);
-			}
+                normal = VecUtils.vecNormalize(3, normal, 1.0);
+            }
 
             return normal;
         }
     },
 
-	getNormalFromBounds3D: {
+    getNormalFromBounds3D: {
         value: function( b )
         {
             var xNrm = 0.0,  yNrm = 0.0,  zNrm = 0.0;
@@ -785,7 +786,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	getCenterFromBounds: {
+    getCenterFromBounds: {
         value: function( dimen, bounds )
         {
             var minVals = bounds[0].slice(0),
@@ -839,7 +840,8 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
                 {
                     //var t = vec1.modulus() / vec0.modulus();
                     var t = VecUtils.vecMag(2, vec1)/VecUtils.vecMag(2, vec0);
-                    if ((this.fpSign(t) >= 0) && (this.fpCmp(t,1.0) <= 0))
+					var dot = VecUtils.vecDot(2, vec0, vec1);
+                    if ((this.fpSign(dot) >= 0) && (this.fpSign(t) >= 0) && (this.fpCmp(t,1.0) <= 0))
                         return this.ON;
                     else
                         return this.OUTSIDE;
@@ -939,7 +941,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
     },
 
      ///////////////////////////////////////////////////////////////////////
-     // Utility method to calculate angle between two 3D vectors 
+     // Utility method to calculate angle between two 3D vectors
      ///////////////////////////////////////////////////////////////////////
     getAxisAngleBetween3DVectors: {
         value: function (vec1, vec2, axis) {
@@ -987,7 +989,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
-	colorToHex: {
+    colorToHex: {
         value: function( colorArray )
         {
             if (colorArray.length < 3)  return "#000000";

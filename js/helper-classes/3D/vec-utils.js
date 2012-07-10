@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -82,7 +83,7 @@ var VecUtils = exports.VecUtils = Object.create(Object.prototype,
             }
     },
 
-	vecAdd: {
+    vecAdd: {
         value: function( dimen,  a, b ) {
 
             var rtnVec;
@@ -100,7 +101,7 @@ var VecUtils = exports.VecUtils = Object.create(Object.prototype,
     },
 
 
-	vecSubtract : {
+    vecSubtract : {
         value: function( dimen, a, b ) {
             var rtnVec;
             if ((a.length < dimen) || (b.length < dimen))
@@ -116,7 +117,7 @@ var VecUtils = exports.VecUtils = Object.create(Object.prototype,
         }
     },
 
-	vecDist : {
+    vecDist : {
         value: function( dimen,  a, b ) {
             var sum;
 
@@ -194,7 +195,7 @@ var VecUtils = exports.VecUtils = Object.create(Object.prototype,
     },
 
 
-	vecInterpolate: {
+    vecInterpolate: {
         value: function( dimen,  a, b, t ) {
             if ((a.length < dimen) || (b.length < dimen))
             {
@@ -209,7 +210,7 @@ var VecUtils = exports.VecUtils = Object.create(Object.prototype,
         }
     },
 
-	vecMag: {
+    vecMag: {
         value: function( dimen, vec ) {
             var sum = 0.0;
             for (var i=0;  i<dimen;  i++)
@@ -227,7 +228,7 @@ var VecUtils = exports.VecUtils = Object.create(Object.prototype,
         }
     },
 
-	vecScale: {
+    vecScale: {
         value: function(dimen, vec, scale) {
             for (var i=0;  i<dimen;  i++)
                 vec[i] *= scale;
@@ -236,72 +237,72 @@ var VecUtils = exports.VecUtils = Object.create(Object.prototype,
         }
     },
 
-	matI :
-	{
-		value: function(dimen)
-		{
-			var mat = [];
-			for (var i=0;  i<dimen*dimen;  i++)  mat.push(0);
+    matI :
+    {
+        value: function(dimen)
+        {
+            var mat = [];
+            for (var i=0;  i<dimen*dimen;  i++)  mat.push(0);
 
-			var index = 0;
-			for (var i=0;  i<dimen;  i++)
-			{
-				mat[index] = 1.0;
-				index += dimen + 1;
-			}
-	
-			return mat;	
-		}
-	},
+            var index = 0;
+            for (var i=0;  i<dimen;  i++)
+            {
+                mat[index] = 1.0;
+                index += dimen + 1;
+            }
 
-	matTranslation:
-	{
-		value: function (vec)
-		{
-			var mat = Matrix.I(4);
-			glmat4.translate(mat, vec);
-			return mat;
-		}
-	},
+            return mat;
+        }
+    },
 
-	matRotationX:
-	{
-		value: function( angle )
-		{
-			var mat = Matrix.I(4);
-			glmat4.rotateX(mat, angle);
-			return mat;
-		}
-	},
+    matTranslation:
+    {
+        value: function (vec)
+        {
+            var mat = Matrix.I(4);
+            glmat4.translate(mat, vec);
+            return mat;
+        }
+    },
 
-	matRotationY:
-	{
-		value: function( angle )
-		{
-			var mat = Matrix.I(4);
-			glmat4.rotateY(mat, angle);
-			return mat;
-		}
-	},
+    matRotationX:
+    {
+        value: function( angle )
+        {
+            var mat = Matrix.I(4);
+            glmat4.rotateX(mat, angle);
+            return mat;
+        }
+    },
 
-	matRotationZ:
-	{
-		value: function( angle )
-		{
-			var mat = Matrix.I(4);
-			glmat4.rotateZ(mat, angle);
-			return mat;
-		}
-	},
+    matRotationY:
+    {
+        value: function( angle )
+        {
+            var mat = Matrix.I(4);
+            glmat4.rotateY(mat, angle);
+            return mat;
+        }
+    },
 
-	matRotation:
-	{
-		value: function(angle, axis)
-		{
-			var mat = Matrix.I(4);
-			glmat4.rotate(mat, angle, axis);
-			return mat;
-		}
-	}
+    matRotationZ:
+    {
+        value: function( angle )
+        {
+            var mat = Matrix.I(4);
+            glmat4.rotateZ(mat, angle);
+            return mat;
+        }
+    },
+
+    matRotation:
+    {
+        value: function(angle, axis)
+        {
+            var mat = Matrix.I(4);
+            glmat4.rotate(mat, angle, axis);
+            return mat;
+        }
+    }
 
 });

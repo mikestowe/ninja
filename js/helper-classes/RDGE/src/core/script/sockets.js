@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -112,70 +113,70 @@ RDGE.ConnPoll = function() {
 */
 RDGE.ConnectionPool = funciton(base, startAddr, endAddr, messageHandlerFunc)
 {
-	this.start = startAddr;
-	this.end = endAddr;
-	this.port = 38951;
-	this.messageHandler = messageHandlerFunc;
-	
-	this.listenSockets		= [];
-	this.connectedSockets	= [];
-	
-	this.openHandler = null;
-	this.closeHandler = null;
-	
-	this.interval = null;
+    this.start = startAddr;
+    this.end = endAddr;
+    this.port = 38951;
+    this.messageHandler = messageHandlerFunc;
 
-	this.Init = function (openHandler, closeHandler) {
-	    // empty out lists
-	    this.listenSockets = [];
-	    this.connectedSockets = [];
+    this.listenSockets      = [];
+    this.connectedSockets   = [];
 
-	    this.openHandler = openHandler;
-	    this.closeHandler = closeHandler;
+    this.openHandler = null;
+    this.closeHandler = null;
 
-	    var len = this.end - this.start;
-	    for (var i = 0; i < len; ++i) {
-	        var url = base + (this.start + i) + ":" + this.port + "/resourcePath";
-	        var ws = CreateSocket(url, this.listenSockets, this.connectedSockets, this.messageHandler, i, this.openHandler, this.closeHandler);
+    this.interval = null;
 
-	        this.listenSockets.push(ws);
-	    }
+    this.Init = function (openHandler, closeHandler) {
+        // empty out lists
+        this.listenSockets = [];
+        this.connectedSockets = [];
 
-	    this.interval = setInterval(ConnPoll, 200);
-	};
+        this.openHandler = openHandler;
+        this.closeHandler = closeHandler;
 
-	this.Shutdown = function () {
-	    if (this.interval != null) {
-	        clearInterval(this.interval);
-	        this.interval = null;
-	    }
-	    var len = this.connectedSockets.length;
-	    for (var i = 0; i < len; ++i) {
-	        // send disconnect message
-	        this.connectedSockets[i].send("type=srv\nmsg=2\n"); ;
-	    }
-	};
+        var len = this.end - this.start;
+        for (var i = 0; i < len; ++i) {
+            var url = base + (this.start + i) + ":" + this.port + "/resourcePath";
+            var ws = CreateSocket(url, this.listenSockets, this.connectedSockets, this.messageHandler, i, this.openHandler, this.closeHandler);
 
-	this.Close = function (socket) {
-	    socket.rdge_tryDisconnect = true;
-	};
+            this.listenSockets.push(ws);
+        }
 
-	this.Poll = function () {
-	    var len = this.end - this.start;
-	    for (var i = 0; i < len; ++i) {
-	        // re init the sockets to simulate broadcast
-	        if (this.listenSockets[i].readyState == 3/*CLOSING*/ || this.listenSockets[i].readyState == 2/*CLOSING*/ || this.listenSockets[i].rdge_tryDisconnect == true) {
-	            if (this.listenSockets[i].rdge_tryDisconnect) {
-	                document.getElementById("socketConnection").innerHTML += "graceful discon: " + this.listenSockets[i].URL + "</br>";
-	            }
+        this.interval = setInterval(ConnPoll, 200);
+    };
 
-	            this.listenSockets[i].rdge_tryDisconnect = false;
+    this.Shutdown = function () {
+        if (this.interval != null) {
+            clearInterval(this.interval);
+            this.interval = null;
+        }
+        var len = this.connectedSockets.length;
+        for (var i = 0; i < len; ++i) {
+            // send disconnect message
+            this.connectedSockets[i].send("type=srv\nmsg=2\n"); ;
+        }
+    };
 
-	            var url = base + (this.start + i) + ":" + this.port + "/resourcePath";
-	            this.listenSockets[i].close();
-	            this.listenSockets[i] = CreateSocket(url, this.listenSockets, this.connectedSockets, this.messageHandler, i, this.openHandler, this.closeHandler);
-	        }
-	    }
-	};	
+    this.Close = function (socket) {
+        socket.rdge_tryDisconnect = true;
+    };
+
+    this.Poll = function () {
+        var len = this.end - this.start;
+        for (var i = 0; i < len; ++i) {
+            // re init the sockets to simulate broadcast
+            if (this.listenSockets[i].readyState == 3/*CLOSING*/ || this.listenSockets[i].readyState == 2/*CLOSING*/ || this.listenSockets[i].rdge_tryDisconnect == true) {
+                if (this.listenSockets[i].rdge_tryDisconnect) {
+                    document.getElementById("socketConnection").innerHTML += "graceful discon: " + this.listenSockets[i].URL + "</br>";
+                }
+
+                this.listenSockets[i].rdge_tryDisconnect = false;
+
+                var url = base + (this.start + i) + ":" + this.port + "/resourcePath";
+                this.listenSockets[i].close();
+                this.listenSockets[i] = CreateSocket(url, this.listenSockets, this.connectedSockets, this.messageHandler, i, this.openHandler, this.closeHandler);
+            }
+        }
+    };
 };
 

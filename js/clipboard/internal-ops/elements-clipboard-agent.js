@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -31,8 +32,8 @@ POSSIBILITY OF SUCH DAMAGE.
 ////////////////////////////////////////////////////////////////////////
 //
 
-var Montage = 		        require("montage/core/core").Montage,
-    Component = 	require("montage/ui/component").Component,
+var Montage =               require("montage/core/core").Montage,
+    Component =     require("montage/ui/component").Component,
     ClipboardUtil = require("js/clipboard/util").ClipboardUtil,
     World =         require("js/lib/drawing/world").World;
 
@@ -141,7 +142,7 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
         }
     },
 
-    pasteFromCopy:{//todo: change to appropriate name
+    pasteFromCopy:{
         value:function(){
                 var i=0, j=0,
                 pastedElements = [],//array of te pastes clones - for selection
@@ -151,7 +152,7 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
 
             this.pasteCounter++;
 
-            //TODO: cleanse HTML
+            //cleanse HTML
 
             for(j=0; j< this.copiedObjects.copy.length; j++){
                 copiedElement = this.copiedObjects.copy[j];
@@ -229,9 +230,6 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
             //build the computed style attribute
             computedStyles = elem.ownerDocument.defaultView.getComputedStyle(elem);
 
-            //todo: consider cleaning up the position data [or making position:relative with 0,0] from the computed styles,
-            // so that the object is pasted onto expernal applicaitons [like gmail] with no offset
-
             for (i = 0; i < computedStyles.length; i++) {
                 stylePropertyName = computedStyles[i];
                 computedStylesStr = computedStylesStr + stylePropertyName + ":" + computedStyles.getPropertyValue(stylePropertyName) + ";";
@@ -267,7 +265,10 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
                 styles = null;
             }
 
+            var addDelegate = this.application.ninja.elementMediator.addDelegate;
+            this.application.ninja.elementMediator.addDelegate = null;
             this.application.ninja.elementMediator.addElements(canvas, styles, false);
+            this.application.ninja.elementMediator.addDelegate = addDelegate;
 
             worldData = sourceCanvas.elementModel.shapeModel ? sourceCanvas.elementModel.shapeModel.GLWorld.exportJSON(): null;
             if(worldData)
@@ -349,7 +350,7 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
 
     pastePositioned:{
         value: function(element, styles, fromCopy){// for now can wok for both in-place and centered paste
-            var modObject = [], x,y, newX, newY, counter;
+            var modObject = [], x,y, newX, newY, counter, self = this;
 
             if((typeof fromCopy === "undefined") || (fromCopy && fromCopy === true)){
                 counter = this.pasteCounter;
@@ -362,11 +363,22 @@ var ElementsClipboardAgent = exports.ElementsClipboardAgent = Montage.create(Com
             newX = styles ? ("" + (styles.left + (25 * counter)) + "px") : "100px";
             newY = styles ? ("" + (styles.top + (25 * counter)) + "px") : "100px";
 
+            var addDelegate = this.application.ninja.elementMediator.addDelegate;
+            this.application.ninja.elementMediator.addDelegate = null;
             if(!styles || (styles && !styles.position)){
                 this.application.ninja.elementMediator.addElements(element, null, false);
             }else if(styles && (styles.position === "absolute")){
+                if((element.tagName === "IMG") || (element.getAttribute("type") === "image/svg+xml")){
+                    element.onload = function(){
+                        element.onload = null;
+                        //refresh selection
+                        self.application.ninja.stage.needsDraw = true;
+                    }
+                }
+
                 this.application.ninja.elementMediator.addElements(element, {"top" : newY, "left" : newX}, false);//displace
             }
+            this.application.ninja.elementMediator.addDelegate = addDelegate;
         }
     },
 

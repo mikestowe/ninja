@@ -1,25 +1,26 @@
 @charset "UTF-8";
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -31,20 +32,20 @@ POSSIBILITY OF SUCH DAMAGE.
 
 input[type=radio], .gradientpicker .type .radio
 {
-	width: 10px;
-	height: 10px;
-	margin: 2px;
-	display: block;
-	float: left;
-	border-radius: 5px;
-	border: 1px solid #222;
-	background: -webkit-linear-gradient(top, #666666 0%,#333333 100%);
+    width: 10px;
+    height: 10px;
+    margin: 2px;
+    display: block;
+    float: left;
+    border-radius: 5px;
+    border: 1px solid #222;
+    background: -webkit-linear-gradient(top, #666666 0%,#333333 100%);
 }
 
 input[type=radio]:checked, .radio:checked, .gradientpicker .type .radio:checked
 {
-	border: 1px solid #000;
-	background: -webkit-radial-gradient(center, circle cover, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 15%, rgba(204,204,204,1) 30%, rgba(204,204,204,0.01) 31%), -webkit-linear-gradient(top, #666666 0%,#333333 100%);
+    border: 1px solid #000;
+    background: -webkit-radial-gradient(center, circle cover, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 15%, rgba(204,204,204,1) 30%, rgba(204,204,204,0.01) 31%), -webkit-linear-gradient(top, #666666 0%,#333333 100%);
 }
 
 .gradientpicker
@@ -63,113 +64,113 @@ input[type=radio]:checked, .radio:checked, .gradientpicker .type .radio:checked
 
 .gradientpicker .type label
 {
-	display: block;
-	float: left;
-	margin: 0px 0px 0px 1px;
+    display: block;
+    float: left;
+    margin: 0px 0px 0px 1px;
 }
 
 .gradientpicker .type :nth-child(3)
 {
-	margin-left: 10px;
+    margin-left: 10px;
 }
 
 
 
 .gradientpicker .type, .gradientpicker .cp_gp_slider
 {
-	overflow: visible;
+    overflow: visible;
 }
 
 .gradientpicker .cp_gp_slider
 {
-	float: left;
-	clear: both;
+    float: left;
+    clear: both;
 }
 
 .gradientpicker .cp_gp_slider .track_container
 {
-	width: 187px;
-	height: 20px;
-	margin: 6px 0px 0px 6px;
-	border: 1px solid #333;
-	background: url(../../../../images/colorpanel/transparent.png) repeat;
-	float: left;
-	clear: both;
+    width: 187px;
+    height: 20px;
+    margin: 6px 0px 0px 6px;
+    border: 1px solid #333;
+    background: url(../../../../images/colorpanel/transparent.png) repeat;
+    float: left;
+    clear: both;
 }
 
 .gradientpicker .cp_gp_slider .track
 {
-	width: 187px;
-	height: 20px;
-	cursor: crosshair;
+    width: 187px;
+    height: 20px;
+    cursor: crosshair;
 }
 
 .gradientpicker .cp_gp_slider .cover
 {
-	overflow: hidden;
-	width: 202px;
-	height: 22px;
-	float: left;
-	position: absolute;
-	bottom: 12px;
-	z-index: 20;
-	display: none;
+    overflow: hidden;
+    width: 202px;
+    height: 22px;
+    float: left;
+    position: absolute;
+    bottom: 12px;
+    z-index: 20;
+    display: none;
 }
 
 .gradientpicker .cp_gp_slider .chips
 {
-	overflow: hidden;
-	width: 202px;
-	height: 22px;
-	float: left; 
-	clear: both;
-	position: relative;
-	z-index: 1;
+    overflow: hidden;
+    width: 202px;
+    height: 22px;
+    float: left;
+    clear: both;
+    position: relative;
+    z-index: 1;
 }
 
 .gradientpicker .cp_gp_slider .chips div
 {
-	width: 14px;
-	position: absolute;
-	top: 3px;
-	cursor: pointer;
+    width: 14px;
+    position: absolute;
+    top: 3px;
+    cursor: pointer;
 }
 
 .gradientpicker .cp_gp_slider .chips span
 {
-	display: block;
-	width: 8px;
-	height: 8px;
-	background: #333;
-	margin: 0px 0px -4px 3px;
-	-webkit-transform: rotate(45deg);
-	float: left;
-	position: relative;
-	cursor: pointer;
+    display: block;
+    width: 8px;
+    height: 8px;
+    background: #333;
+    margin: 0px 0px -4px 3px;
+    -webkit-transform: rotate(45deg);
+    float: left;
+    position: relative;
+    cursor: pointer;
 }
 
 .gradientpicker .cp_gp_slider .chips button
 {
-	display: block;
-	width: 14px;
-	height: 14px;
-	border: 1px solid #333;
-	padding: 0;
-	margin: 0;
-	background: #FFF;
-	float: left;
-	position: relative;
-	cursor: pointer;
+    display: block;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #333;
+    padding: 0;
+    margin: 0;
+    background: #FFF;
+    float: left;
+    position: relative;
+    cursor: pointer;
 }
 
 .gradientpicker .cp_gp_slider .chips div div
 {
-	display: block;
-	width: 14px;
-	height: 14px;
-	float: left;
-	top: 0px;
-	position: relative;
-	cursor: pointer;
-	background: url(../../../../images/colorpanel/transparent.png) repeat;
+    display: block;
+    width: 14px;
+    height: 14px;
+    float: left;
+    top: 0px;
+    position: relative;
+    cursor: pointer;
+    background: url(../../../../images/colorpanel/transparent.png) repeat;
 }

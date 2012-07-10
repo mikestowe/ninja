@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -32,13 +33,13 @@ POSSIBILITY OF SUCH DAMAGE.
 var RDGE = RDGE || {};
 
 
-/* 
+/*
 // Methods not currently used in Ninja
 RDGE.getRandColor = function () {
   var r = Math.random();
   var g = Math.random();
   var b =Math.random();
-  
+
   return [r, g, b, 1.0];
 };
 
@@ -46,7 +47,7 @@ RDGE.unProject = function (winx, winy, winz, modelMatrix, projMatrix, viewport) 
     var inVal   = [0,0,0,0];
 
     var finalMatrix = RDGE.mat4.mul(modelMatrix, projMatrix);
-    
+
     finalMatrix = RDGE.mat4.inverse(finalMatrix);
     if(!finalMatrix)
       return  null;
@@ -56,24 +57,24 @@ RDGE.unProject = function (winx, winy, winz, modelMatrix, projMatrix, viewport) 
     inVal[2]=winz;
     inVal[3]=1.0;
 
-    // Map x and y from window coordinates 
+    // Map x and y from window coordinates
     inVal[0] = (inVal[0] - viewport[0]) / viewport[2];
     inVal[1] = (inVal[1] - viewport[1]) / viewport[3];
 
-    // Map to range -1 to 1 
+    // Map to range -1 to 1
     inVal[0] = inVal[0] * 2 - 1;
     inVal[1] = inVal[1] * 2 - 1;
     inVal[2] = inVal[2] * 2 - 1;
 
     var v4Out = RDGE.mat4.transformPoint(finalMatrix, inVal);
-    
-    if (v4Out[3] <= 0.0001) 
-		return null;
-    
+
+    if (v4Out[3] <= 0.0001)
+        return null;
+
     v4Out[0] /= v4Out[3];
     v4Out[1] /= v4Out[3];
     v4Out[2] /= v4Out[3];
-    
+
     return [ v4Out[0], v4Out[1], v4Out[2] ];
 };
 
@@ -87,7 +88,7 @@ RDGE.AABB2LineSegment = function (box, startPoint, endPoint) {
 
   var adx = Math.abs(d[0]);
   if( Math.abs(m[0]) > e[0] + adx ) return false;
-  
+
   var ady = Math.abs(d[1]);
   if( Math.abs(m[1]) > e[1] + ady ) return false;
 
@@ -109,7 +110,7 @@ RDGE.hitTest = function (mesh, near, far) {
     // holds distance to the nearest BV
   var dist = null;
   var BV = null;
-  
+
     for (var index = 0; index < mesh.BVL.length; index++) {
         if (AABB2LineSegment(mesh.BVL[index], near, far)) {
             var center = RDGE.vec3.scale(RDGE.vec3.add(mesh.BVL[index].min, mesh.BVL[index].max), 0.5);
@@ -147,7 +148,7 @@ RDGE.loadShader = function (ctx, shaderType, shaderStr) {
     var shader = ctx.createShader(shaderType);
     if (shader == null) {
 
-        ctx.console.log("*** Error: unable to create shader '"+shaderType+"'");       
+        ctx.console.log("*** Error: unable to create shader '"+shaderType+"'");
 
         return null;
     }
@@ -181,19 +182,19 @@ RDGE.createShader = function (ctx, strVertShaderName, strFragShaderName, attribs
   if (strVertShaderName.indexOf('{') != -1) {
     vShader = strVertShaderName;
     } else {
-	var vshaderRequest = new XMLHttpRequest();
-	vshaderRequest.open("GET", RDGE.globals.engine._assetPath+'shaders/' + strVertShaderName + '.glsl', false);
-	vshaderRequest.send(null);
-	vShader = vshaderRequest.responseText;
+    var vshaderRequest = new XMLHttpRequest();
+    vshaderRequest.open("GET", RDGE.globals.engine._assetPath+'shaders/' + strVertShaderName + '.glsl', false);
+    vshaderRequest.send(null);
+    vShader = vshaderRequest.responseText;
   }
 
   if (strFragShaderName.indexOf('{') != -1) {
     fShader = strFragShaderName;
     } else {
-	var fshaderRequest = new XMLHttpRequest();
+    var fshaderRequest = new XMLHttpRequest();
     fshaderRequest.open("GET", RDGE.globals.engine._assetPath+'shaders/' + strFragShaderName + '.glsl', false);
     fshaderRequest.send(null);
-	fShader = fshaderRequest.responseText;
+    fShader = fshaderRequest.responseText;
   }
 
   ctx.useProgram(null);
@@ -236,7 +237,7 @@ RDGE.createShader = function (ctx, strVertShaderName, strFragShaderName, attribs
 
         return null;
     }
-    
+
     program.shaderID = "Shader" + RDGE.g_shaderCounter++;
     program.vname = strVertShaderName;
     program.RDGEUniform = new RDGE.RDGEUniformInit();

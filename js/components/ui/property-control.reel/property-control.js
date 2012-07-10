@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -39,7 +40,8 @@ var Montage = require("montage/core/core").Montage,
     TextField = require("js/components/TextField.reel").TextField,
     ColorChip = require("js/components/ui/color-chip.reel").ColorChip,
     FileInput = require("js/components/ui/file-input.reel").FileInput,
-    InputGroup = require("js/components/ui/input-group.reel").InputGroup;
+    InputGroup = require("js/components/ui/input-group.reel").InputGroup,
+    GradientPicker = require("js/components/gradientpicker.reel").GradientPicker;
 
 var PropertyControl = exports.PropertyControl = Montage.create(Component, {
 
@@ -169,15 +171,15 @@ var PropertyControl = exports.PropertyControl = Montage.create(Component, {
     },
 
     handleEvent:
-	{
-		value:function(event)
-		{
+    {
+        value:function(event)
+        {
             if(event.wasSetByCode) {
                 return;
             }
             this._dispatchPropEvent(event);
-		}
-	},
+        }
+    },
 
     _dispatchPropEvent: {
         value: function(event) {
@@ -195,7 +197,7 @@ var PropertyControl = exports.PropertyControl = Montage.create(Component, {
             propEvent.propertyLabel = this.label;
             propEvent.propertyValue = event.currentTarget[this._prop];
             propEvent.propertyEvent = event;
-            
+
             this.dispatchEvent(propEvent);
         }
     },
@@ -259,6 +261,11 @@ var PropertyControl = exports.PropertyControl = Montage.create(Component, {
                     this._control = InputGroup.create();
                     this._control.addEventListener("change", this, false);
                     this._control.addEventListener("changing", this, false);
+                    this._prop = "value";
+                    break;
+                case "GradientPicker":
+                    this._control = GradientPicker.create();
+                    this._control.addEventListener("change", this, false);
                     this._prop = "value";
                     break;
                 default:

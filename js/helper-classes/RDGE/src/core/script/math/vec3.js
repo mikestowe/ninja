@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -31,13 +32,13 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /**
  * RDGE.vec3 = {}
- * This library contains functions for operating on 3D vectors. Any JS array 
- * containing at least 3 numeric components can represent a 3D vector. 
+ * This library contains functions for operating on 3D vectors. Any JS array
+ * containing at least 3 numeric components can represent a 3D vector.
  *
  * For example, all of these are valid RDGE.vec3 declarations:
- *		var a = [0, 0, 1];
- *		var b = RDGE.vec3.zero();
- *		var c = RDGE.vec3.up();
+ *      var a = [0, 0, 1];
+ *      var b = RDGE.vec3.zero();
+ *      var c = RDGE.vec3.up();
  *
  */
 var RDGE = RDGE || {};
@@ -52,7 +53,7 @@ RDGE.vec3.string = function (v) {
 
 /**
  * RDGE.vec3.verify
- * This function is provided for debugging purposes only. It is not recommended 
+ * This function is provided for debugging purposes only. It is not recommended
  * to be used in performance critical areas of the code.
  */
 RDGE.vec3.verify = function (v) {
@@ -94,7 +95,7 @@ RDGE.vec3.translation = function (m) {
 };
 
 /**
-* RDGE.vec3.basisX = function( m ) 
+* RDGE.vec3.basisX = function( m )
 * description : returns a vector containing the translation vector of m.
 */
 RDGE.vec3.basisX = function (m) {
@@ -102,7 +103,7 @@ RDGE.vec3.basisX = function (m) {
 };
 
 /**
-* RDGE.vec3.basisY = function( m ) 
+* RDGE.vec3.basisY = function( m )
 * description : returns a vector containing the translation vector of m.
 */
 RDGE.vec3.basisY = function (m) {
@@ -110,7 +111,7 @@ RDGE.vec3.basisY = function (m) {
 };
 
 /**
-* RDGE.vec3.basisZ = function( m ) 
+* RDGE.vec3.basisZ = function( m )
 * description : returns a vector containing the translation vector of m.
 */
 RDGE.vec3.basisZ = function (m) {
@@ -155,14 +156,14 @@ RDGE.vec3.random = function (min, max) {
 };
 
 /**
-* RDGE.vec3.xy 
+* RDGE.vec3.xy
 */
 RDGE.vec3.xy = function (v) {
     return [v[0], v[1]];
 };
 
 /**
-* RDGE.vec3.xz 
+* RDGE.vec3.xz
 */
 RDGE.vec3.xz = function (v) {
     return [v[0], v[2]];
@@ -222,7 +223,7 @@ RDGE.vec3.plusEqualMul = function (a, b, s) {
 };
 
 /**
-* RDGE.vec3.scale 
+* RDGE.vec3.scale
 */
 RDGE.vec3.scale = function (v, s) {
     if (s.length !== undefined && s.length >= 3) {
@@ -264,16 +265,16 @@ RDGE.vec3.normalize = function (v) {
 };
 
 /**
-* RDGE.vec3.cross 
+* RDGE.vec3.cross
 */
 RDGE.vec3.cross = function (a, b) {
     return [a[1] * b[2] - b[1] * a[2],
-				a[2] * b[0] - b[2] * a[0],
-				a[0] * b[1] - b[0] * a[1]];
+                a[2] * b[0] - b[2] * a[0],
+                a[0] * b[1] - b[0] * a[1]];
 };
 
 /**
-* RDGE.vec3.dot 
+* RDGE.vec3.dot
 */
 RDGE.vec3.dot = function (a, b) {
     return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
@@ -367,8 +368,8 @@ RDGE.vec3.equal = function (a, b, t) {
 */
 RDGE.vec3.lerp = function (a, b, t) {
     return [
-		a[0] + (b[0] - a[0]) * t,
-		a[1] + (b[1] - a[1]) * t,
-		a[2] + (b[2] - a[2]) * t
-	];
+        a[0] + (b[0] - a[0]) * t,
+        a[1] + (b[1] - a[1]) * t,
+        a[2] + (b[2] - a[2]) * t
+    ];
 };

@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -32,43 +33,43 @@ var RDGE = RDGE || {};
 RDGE.renderUtils = RDGE.renderUtils || {};
 
 /*
-*	Creates an indexed box primitive
+*   Creates an indexed box primitive
 *  @return a rdge primitive
 */
 RDGE.renderUtils.createBox = function () {
     var renderer = RDGE.globals.engine.getContext().renderer;
 
     var coords =
-		[1, 1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1, 	// front
-				1, 1, 1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 	// right
-				1, 1, 1, 1, 1, -1, -1, 1, -1, -1, 1, 1, 	// top
-				-1, 1, 1, -1, 1, -1, -1, -1, -1, -1, -1, 1, // left
-				-1, -1, -1, 1, -1, -1, 1, -1, 1, -1, -1, 1, // bottom
-				1, -1, -1, -1, -1, -1, -1, 1, -1, 1, 1, -1]; // back
+        [1, 1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1,    // front
+                1, 1, 1, 1, -1, 1, 1, -1, -1, 1, 1, -1,     // right
+                1, 1, 1, 1, 1, -1, -1, 1, -1, -1, 1, 1,     // top
+                -1, 1, 1, -1, 1, -1, -1, -1, -1, -1, -1, 1, // left
+                -1, -1, -1, 1, -1, -1, 1, -1, 1, -1, -1, 1, // bottom
+                1, -1, -1, -1, -1, -1, -1, 1, -1, 1, 1, -1]; // back
 
     var normals =
-        [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 	// front
-            1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 	// right
-			0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 	// top
-			-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, 	// left
+        [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,    // front
+            1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,     // right
+            0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,     // top
+            -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,     // left
             0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,     // bottom
-			0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1];    // back
+            0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1];    // back
 
     var uvs =
         [1, 1, 0, 1, 0, 0, 1, 0,    // front
-			0, 1, 0, 0, 1, 0, 1, 1,    // right
-			1, 0, 1, 1, 0, 1, 0, 0,    // top
-			1, 1, 0, 1, 0, 0, 1, 0,    // left
-			0, 0, 1, 0, 1, 1, 0, 1,    // bottom
-			0, 0, 1, 0, 1, 1, 0, 1];   // back
+            0, 1, 0, 0, 1, 0, 1, 1,    // right
+            1, 0, 1, 1, 0, 1, 0, 0,    // top
+            1, 1, 0, 1, 0, 0, 1, 0,    // left
+            0, 0, 1, 0, 1, 1, 0, 1,    // bottom
+            0, 0, 1, 0, 1, 1, 0, 1];   // back
 
     var indices =
-        [0, 1, 2, 0, 2, 3, 	// front
-			4, 5, 6, 4, 6, 7, 	// right
-			8, 9, 10, 8, 10, 11, 	// top
-			12, 13, 14, 12, 14, 15, // left
-			16, 17, 18, 16, 18, 19,  // bottom
-			20, 21, 22, 20, 22, 23]; // back
+        [0, 1, 2, 0, 2, 3,  // front
+            4, 5, 6, 4, 6, 7,   // right
+            8, 9, 10, 8, 10, 11,    // top
+            12, 13, 14, 12, 14, 15, // left
+            16, 17, 18, 16, 18, 19,  // bottom
+            20, 21, 22, 20, 22, 23]; // back
 
 
     var prim = new RDGE.rdgePrimitiveDefinition();
@@ -87,16 +88,16 @@ RDGE.renderUtils.createBox = function () {
 
     prim.bufferStreams =
             [
-				coords,
-				normals,
-				uvs
+                coords,
+                normals,
+                uvs
             ];
 
     prim.streamUsage =
             [
-				RDGE.rdgeConstants.BUFFER_STATIC,
-				RDGE.rdgeConstants.BUFFER_STATIC,
-				RDGE.rdgeConstants.BUFFER_STATIC
+                RDGE.rdgeConstants.BUFFER_STATIC,
+                RDGE.rdgeConstants.BUFFER_STATIC,
+                RDGE.rdgeConstants.BUFFER_STATIC
             ];
 
     prim.indexUsage = RDGE.rdgeConstants.BUFFER_STREAM;
@@ -109,10 +110,10 @@ RDGE.renderUtils.createBox = function () {
     return prim;
 };
 
-// 
+//
 // makeSphere
 //
-// Create a sphere with the passed number of latitude and longitude bands and the passed radius. 
+// Create a sphere with the passed number of latitude and longitude bands and the passed radius.
 // Sphere has vertices, normals and texCoords. Create VBOs for each as well as the index array.
 // Return an object with the following properties:
 //
@@ -121,7 +122,7 @@ RDGE.renderUtils.createBox = function () {
 //  vertexObject        WebGLBuffer object for vertices
 //  indexObject         WebGLBuffer object for indices
 //  numIndices          The number of indices in the indexObject
-// 
+//
 RDGE.renderUtils.makeSphere = function (ctx, radius, lats, longs) {
     var geometryData = [];
     var normalData = [];
@@ -191,8 +192,8 @@ RDGE.renderUtils.makeSphere = function (ctx, radius, lats, longs) {
 };
 
 /*
-*	Creates a plane as a grid of triangles/quads, orients the plane according the the plane normal
-*	note: the center of the plane is always assumed to be the origin.
+*   Creates a plane as a grid of triangles/quads, orients the plane according the the plane normal
+*   note: the center of the plane is always assumed to be the origin.
 */
 RDGE.renderUtils.createPlane = function (numCols, numRows, width, height, uTileCount, vTileCount, planeNormal) {
     var renderer = RDGE.globals.engine.getContext().renderer;
@@ -263,16 +264,16 @@ RDGE.renderUtils.createPlane = function (numCols, numRows, width, height, uTileC
 
     prim.bufferStreams =
             [
-				coords,
-				normals,
-				uvs
+                coords,
+                normals,
+                uvs
             ];
 
     prim.streamUsage =
             [
-				RDGE.rdgeConstants.BUFFER_STATIC,
-				RDGE.rdgeConstants.BUFFER_STATIC,
-				RDGE.rdgeConstants.BUFFER_STATIC
+                RDGE.rdgeConstants.BUFFER_STATIC,
+                RDGE.rdgeConstants.BUFFER_STATIC,
+                RDGE.rdgeConstants.BUFFER_STATIC
             ];
 
     prim.indexUsage = RDGE.rdgeConstants.BUFFER_STREAM;
@@ -324,12 +325,12 @@ RDGE.renderUtils.createCubeVolume = function (numCols_x, numLayers_y, numRows_z,
 
     prim.bufferStreams =
             [
-				coords
+                coords
             ];
 
     prim.streamUsage =
             [
-				RDGE.rdgeConstants.BUFFER_DYNAMIC
+                RDGE.rdgeConstants.BUFFER_DYNAMIC
             ];
 
     prim.indexUsage = RDGE.rdgeConstants.BUFFER_STREAM;
@@ -349,14 +350,14 @@ RDGE.renderUtils.createScreenAlignedQuad = function () {
 
     //  Screen aligned quad
     var coords = [
-				  -1.0, 1.0, 0.0,
-				  1.0, 1.0, 0.0,
-				  -1.0, -1.0, 0.0,
+                  -1.0, 1.0, 0.0,
+                  1.0, 1.0, 0.0,
+                  -1.0, -1.0, 0.0,
 
-				  -1.0, -1.0, 0.0,
-				  1.0, 1.0, 0.0,
-				  1.0, -1.0, 0.0
-				  ];
+                  -1.0, -1.0, 0.0,
+                  1.0, 1.0, 0.0,
+                  1.0, -1.0, 0.0
+                  ];
 
     var uvs = [0.0, 0.0,
                 0.0, 1.0,
@@ -378,14 +379,14 @@ RDGE.renderUtils.createScreenAlignedQuad = function () {
 
     prim.bufferStreams =
             [
-				coords,
-				uvs
+                coords,
+                uvs
             ];
 
     prim.streamUsage =
             [
-				RDGE.rdgeConstants.BUFFER_STATIC,
-				RDGE.rdgeConstants.BUFFER_STATIC
+                RDGE.rdgeConstants.BUFFER_STATIC,
+                RDGE.rdgeConstants.BUFFER_STATIC
             ];
 
     prim.type = RDGE.rdgeConstants.TRIANGLES;

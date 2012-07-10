@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -31,8 +32,8 @@ POSSIBILITY OF SUCH DAMAGE.
 ////////////////////////////////////////////////////////////////////////
 //
 
-var Montage = 		        require("montage/core/core").Montage,
-    Component = 	require("montage/ui/component").Component,
+var Montage =               require("montage/core/core").Montage,
+    Component =     require("montage/ui/component").Component,
     ClipboardUtil = require("js/clipboard/util").ClipboardUtil;
 
 var ExternalAppsClipboardAgent = exports.ExternalAppsClipboardAgent = Montage.create(Component, {
@@ -74,7 +75,6 @@ var ExternalAppsClipboardAgent = exports.ExternalAppsClipboardAgent = Montage.cr
         }
     },
 
-    //todo: this will be moved to a seperate api
     pasteImageBinary:{
         value: function(imageBlob){
             var element, self = this,
@@ -98,7 +98,7 @@ var ExternalAppsClipboardAgent = exports.ExternalAppsClipboardAgent = Montage.cr
             if (save && save.success && save.status === 201) {
                 //
                 if (fileType.indexOf('svg') !== -1) {
-                    element = document.application.njUtils.make('embed', null, this.application.ninja.currentDocument);//TODO: Verify this is proper
+                    element = document.application.njUtils.make('embed', null, this.application.ninja.currentDocument);
                     element.type = 'image/svg+xml';
                     element.src = url+'/'+fileName;
                 } else {
@@ -119,7 +119,7 @@ var ExternalAppsClipboardAgent = exports.ExternalAppsClipboardAgent = Montage.cr
                 //
                 self.application.ninja.elementMediator.addElements(element, rules, false);
             } else {
-                //TODO: HANDLE ERROR ON SAVING FILE TO BE ADDED AS ELEMENT
+                //HANDLE ERROR ON SAVING FILE TO BE ADDED AS ELEMENT
             }
 
             return element;
@@ -127,7 +127,7 @@ var ExternalAppsClipboardAgent = exports.ExternalAppsClipboardAgent = Montage.cr
     },
 
     //paste from external applicaitons
-    pasteHtml:{//todo: change to pasteNinja, pasteHTML, etc
+    pasteHtml:{
         value: function(htmlData, textData){
             var i=0, j=0,
                 pasteDataObject=null,
@@ -141,7 +141,7 @@ var ExternalAppsClipboardAgent = exports.ExternalAppsClipboardAgent = Montage.cr
 
             if(htmlData){
 
-                //TODO: cleanse HTML
+                //cleanse HTML
 
                 htmlData.replace(/[<script]/g," ");
 

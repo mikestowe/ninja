@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -74,8 +75,8 @@ RDGE.SceneGraph = function (scene) {
     this.bckTypes = RDGE.rdgeConstants.categoryEnumeration;
 
     this.renderList = new Array(this.bckTypes.MAX_CAT);
-    this.renderList[this.bckTypes.BACKGROUND] = []; //BACKGROUND	
-    this.renderList[this.bckTypes.OPAQUE] = []; //OPAQUE		
+    this.renderList[this.bckTypes.BACKGROUND] = []; //BACKGROUND
+    this.renderList[this.bckTypes.OPAQUE] = []; //OPAQUE
     this.renderList[this.bckTypes.TRANSPARENT] = []; //TRANSPARENT
     this.renderList[this.bckTypes.ADDITIVE] = []; //ADDITIVE
     this.renderList[this.bckTypes.TRANSLUCENT] = []; //TRANSLUCENT
@@ -89,127 +90,127 @@ RDGE.SceneGraph = function (scene) {
 
     // define passes to render geometry and handle post-processing
     this.defaultPassDef =
-	{
-	    // a pass can have children that will receive their parents output as input
+    {
+        // a pass can have children that will receive their parents output as input
 
-	    // this pass renders the depth map to an off-screen target - from the shadow lights view
-	    // you can specify what your output should be
-	    // @param name		- this tells jshader's of child passes (which receive the parents output as input)
-	    //					  what the sampler2d uniform name will be for this output texture
-	    // @param type		- the type of output could be tex2d or target
-	    // @param width		- optional width of the render target
-	    // @param height	- optional height of the render target
-	    // @param mips		- optional flag indicating whether the render target will support mip-mapping
+        // this pass renders the depth map to an off-screen target - from the shadow lights view
+        // you can specify what your output should be
+        // @param name      - this tells jshader's of child passes (which receive the parents output as input)
+        //                    what the sampler2d uniform name will be for this output texture
+        // @param type      - the type of output could be tex2d or target
+        // @param width     - optional width of the render target
+        // @param height    - optional height of the render target
+        // @param mips      - optional flag indicating whether the render target will support mip-mapping
 
-	    // the geometry pass
-	    'name': "geoPass",
-	    'geometrySet': "ALL"
-	    //		'outputs':[{ 'name':"u_mainRT", 'type':"target", 'width':1024, 'height':1024, 'mips':false }],
-	    //		'children':
-	    //		[
-	    //			// shadow pass
-	    //			{
-	    //				'outputs':[{ 'name':"u_shadowDepthMap", 'type':"target", 'width':1024, 'height':1024, 'mips':false }],
-	    //				// custom parameter
-	    //				'name':"shadowDepthMap",
-	    //				'shader': RDGE.rdgeDepthMapShaderDef,
-	    //				'technique':"shadowDepthMap",
-	    //				'geometrySet':"SHADOW",
-	    //				'children':
-	    //				[
-	    //					// create shadow rt
-	    //					{
-	    //						'outputs':[{ 'name':"u_shadowMap", 'type':"target", 'width':1024, 'height':1024, 'mips':false }],
-	    //						'name':"shadowMap",
-	    //						'shader': RDGE.rdgeShadowMapShader,
-	    //						'clearColor' : [1.0,1.0,1.0,1.0],
-	    //						'geometrySet':"SHADOW",
-	    //					}
-	    //				]
-	    //			},
-	    //			// glow pass
-	    //			{
-	    //				'outputs':[{ 'name':"sTexture", 'type':"target", 'width':1024, 'height':1024, 'mips':false }],
-	    //				'name':"glowMap",
-	    //				'shader': RDGE.rdgeGlowMapShader,
-	    //				'clearColor' : [0.0,0.0,0.0,1.0],
-	    //				'technique':"createGlowMap",
-	    //				'geometrySet':"ALL",
-	    //				'children':
-	    //					[
-	    //						{	// the blur pass at half resolution
-	    //							'name':"blurQuarter",
-	    //							'geometrySet':"SCREEN_QUAD",
-	    //							'shader': RDGE.rdgeGaussianBlurShader,
-	    //							'outputs':[{ 'name':"sTexture", 'type':"target", 'width':256, 'height':256, 'mips':false }],
-	    //							'children':
-	    //							[
-	    //								{	// the blur pass at half resolution
-	    //									'name':"blurThreeQuarter",
-	    //									'geometrySet':"SCREEN_QUAD",
-	    //									'shader': RDGE.rdgeGaussianBlurShader,
-	    //									'outputs':[{ 'name':"sTexture", 'type':"target", 'width':128, 'height':128, 'mips':false }],
-	    //									'children':
-	    //									[
-	    //										 {	// the blur pass at quarter resolution
-	    //											'name':"blurFull",
-	    //											'geometrySet':"SCREEN_QUAD",
-	    //											'shader': RDGE.rdgeGaussianBlurShader,
-	    //											'outputs':[{ 'name':"u_glowFinal", 'type':"target", 'width':1024, 'height':1024, 'mips':false }]
-	    //										}
-	    //									]
-	    //								}
-	    //							]
-	    //						}
-	    //					]
-	    //			},
-	    //			// depth map in view space
-	    //			{
-	    //				'name':"depth_map",
-	    //				'shader': RDGE.rdgeDepthMapShaderDef,
-	    //				'technique': "depthMap",
-	    //				'outputs':[{ 'name':"u_depthMap", 'type':"target", 'width':1024, 'height':1024, 'mips':false }],
-	    //				'geometrySet':"ALL",
-	    //				'children' : 
-	    //				[
-	    //					// get the normals in view space
-	    //					{
-	    //						'name':"normals",
-	    //						'shader': RDGE.rdgeViewSpaceNormalsShader,
-	    //						'outputs':[{ 'name':"u_normalsRT", 'type':"target", 'width':1024, 'height':1024, 'mips':false }],
-	    //						'geometrySet':"ALL",
-	    //						'children' : 
-	    //						[
-	    //							// techniques requiring depth and normals in view space go here
-	    //							
-	    //							// SSAO map
-	    //							{
-	    //								'name':"SSAO",
-	    //								'shader': RDGE.rdgeSSAOShader,
-	    //								'outputs':[{ 'name':"u_ssaoRT", 'type':"target", 'width':1024, 'height':1024, 'mips':false }],
-	    //								'textures':[{ 'type':"tex2d", 'data':"u_depthMap" }],
-	    //								'geometrySet':"SCREEN_QUAD",
-	    //								'preRender': function()
-	    //								 {
-	    //									 this.shader.ssao.u_cameraFTR.set(this.renderer.cameraManager().getActiveCamera().getFTR());
-	    //								 }
-	    //							}
-	    //						]
-	    //					}
-	    //				]
-	    //			},
-	    //			
-	    //			// final pass must always be last in the list
-	    //			{
-	    //				// this final pass has no output, its shader, however, will render its input (the previous pass's output)
-	    //				// to the screen-quad geometry setup under the 'renderList' object
-	    //				'name':"finalPass",
-	    //				'geometrySet':"SCREEN_QUAD",
-	    //		        'textures':[{ 'type':"tex2d", 'data':"u_glowFinal" }, { 'type':"tex2d", 'data':"u_ssaoRT" }, { 'type':"tex2d", 'data':"u_shadowMap" }],
-	    //				'shader': RDGE.rdgeScreenQuadShaderDef,
-	    //			}
-	    //		]
-	};
+        // the geometry pass
+        'name': "geoPass",
+        'geometrySet': "ALL"
+        //      'outputs':[{ 'name':"u_mainRT", 'type':"target", 'width':1024, 'height':1024, 'mips':false }],
+        //      'children':
+        //      [
+        //          // shadow pass
+        //          {
+        //              'outputs':[{ 'name':"u_shadowDepthMap", 'type':"target", 'width':1024, 'height':1024, 'mips':false }],
+        //              // custom parameter
+        //              'name':"shadowDepthMap",
+        //              'shader': RDGE.rdgeDepthMapShaderDef,
+        //              'technique':"shadowDepthMap",
+        //              'geometrySet':"SHADOW",
+        //              'children':
+        //              [
+        //                  // create shadow rt
+        //                  {
+        //                      'outputs':[{ 'name':"u_shadowMap", 'type':"target", 'width':1024, 'height':1024, 'mips':false }],
+        //                      'name':"shadowMap",
+        //                      'shader': RDGE.rdgeShadowMapShader,
+        //                      'clearColor' : [1.0,1.0,1.0,1.0],
+        //                      'geometrySet':"SHADOW",
+        //                  }
+        //              ]
+        //          },
+        //          // glow pass
+        //          {
+        //              'outputs':[{ 'name':"sTexture", 'type':"target", 'width':1024, 'height':1024, 'mips':false }],
+        //              'name':"glowMap",
+        //              'shader': RDGE.rdgeGlowMapShader,
+        //              'clearColor' : [0.0,0.0,0.0,1.0],
+        //              'technique':"createGlowMap",
+        //              'geometrySet':"ALL",
+        //              'children':
+        //                  [
+        //                      {   // the blur pass at half resolution
+        //                          'name':"blurQuarter",
+        //                          'geometrySet':"SCREEN_QUAD",
+        //                          'shader': RDGE.rdgeGaussianBlurShader,
+        //                          'outputs':[{ 'name':"sTexture", 'type':"target", 'width':256, 'height':256, 'mips':false }],
+        //                          'children':
+        //                          [
+        //                              {   // the blur pass at half resolution
+        //                                  'name':"blurThreeQuarter",
+        //                                  'geometrySet':"SCREEN_QUAD",
+        //                                  'shader': RDGE.rdgeGaussianBlurShader,
+        //                                  'outputs':[{ 'name':"sTexture", 'type':"target", 'width':128, 'height':128, 'mips':false }],
+        //                                  'children':
+        //                                  [
+        //                                       {  // the blur pass at quarter resolution
+        //                                          'name':"blurFull",
+        //                                          'geometrySet':"SCREEN_QUAD",
+        //                                          'shader': RDGE.rdgeGaussianBlurShader,
+        //                                          'outputs':[{ 'name':"u_glowFinal", 'type':"target", 'width':1024, 'height':1024, 'mips':false }]
+        //                                      }
+        //                                  ]
+        //                              }
+        //                          ]
+        //                      }
+        //                  ]
+        //          },
+        //          // depth map in view space
+        //          {
+        //              'name':"depth_map",
+        //              'shader': RDGE.rdgeDepthMapShaderDef,
+        //              'technique': "depthMap",
+        //              'outputs':[{ 'name':"u_depthMap", 'type':"target", 'width':1024, 'height':1024, 'mips':false }],
+        //              'geometrySet':"ALL",
+        //              'children' :
+        //              [
+        //                  // get the normals in view space
+        //                  {
+        //                      'name':"normals",
+        //                      'shader': RDGE.rdgeViewSpaceNormalsShader,
+        //                      'outputs':[{ 'name':"u_normalsRT", 'type':"target", 'width':1024, 'height':1024, 'mips':false }],
+        //                      'geometrySet':"ALL",
+        //                      'children' :
+        //                      [
+        //                          // techniques requiring depth and normals in view space go here
+        //
+        //                          // SSAO map
+        //                          {
+        //                              'name':"SSAO",
+        //                              'shader': RDGE.rdgeSSAOShader,
+        //                              'outputs':[{ 'name':"u_ssaoRT", 'type':"target", 'width':1024, 'height':1024, 'mips':false }],
+        //                              'textures':[{ 'type':"tex2d", 'data':"u_depthMap" }],
+        //                              'geometrySet':"SCREEN_QUAD",
+        //                              'preRender': function()
+        //                               {
+        //                                   this.shader.ssao.u_cameraFTR.set(this.renderer.cameraManager().getActiveCamera().getFTR());
+        //                               }
+        //                          }
+        //                      ]
+        //                  }
+        //              ]
+        //          },
+        //
+        //          // final pass must always be last in the list
+        //          {
+        //              // this final pass has no output, its shader, however, will render its input (the previous pass's output)
+        //              // to the screen-quad geometry setup under the 'renderList' object
+        //              'name':"finalPass",
+        //              'geometrySet':"SCREEN_QUAD",
+        //              'textures':[{ 'type':"tex2d", 'data':"u_glowFinal" }, { 'type':"tex2d", 'data':"u_ssaoRT" }, { 'type':"tex2d", 'data':"u_shadowMap" }],
+        //              'shader': RDGE.rdgeScreenQuadShaderDef,
+        //          }
+        //      ]
+    };
 
     // a graph of render passes to process in order to produce a final output
     this.renderGraph = new RDGE.jpassGraph(this.defaultPassDef);
@@ -250,7 +251,7 @@ RDGE.SceneGraph = function (scene) {
     };
 
     /*
-    *	scene traversal functor for finding a node by name
+    *   scene traversal functor for finding a node by name
     */
     findNodeByName = function (nodeName) {
         this.result = null;
@@ -265,7 +266,7 @@ RDGE.SceneGraph = function (scene) {
     };
 
     /*
-    *	scene traversal functor for creating a list of node with a given name
+    *   scene traversal functor for creating a list of node with a given name
     */
     buildNodeList = function (nodeName) {
         this.result = [];
@@ -279,7 +280,7 @@ RDGE.SceneGraph = function (scene) {
     };
 
     /*
-    *	scene traversal functor for creating a list of nodes based on a regular expression
+    *   scene traversal functor for creating a list of nodes based on a regular expression
     */
     buildNodeListRegex = function (re) {
         this.result = [];
@@ -293,7 +294,7 @@ RDGE.SceneGraph = function (scene) {
     };
 
     /*
-    *	scene traversal functor for importing a previously exported json scene
+    *   scene traversal functor for importing a previously exported json scene
     */
     importScene = function () {
         this.renderer = RDGE.globals.engine.getContext().renderer;
@@ -333,7 +334,7 @@ RDGE.SceneGraph = function (scene) {
                 // load meshes into context
                 for (var i = 0, len = node.meshes.length; i < len; ++i) {
                     var mesh = RDGE.globals.meshMan.getModelByName(node.meshes[i].mesh.name);
-                    //					mesh.primitive.built = false;
+                    //                  mesh.primitive.built = false;
                     this.renderer.createPrimitive(mesh.primitive);
                 }
             }
@@ -345,7 +346,7 @@ RDGE.SceneGraph = function (scene) {
     };
 
     /*
-    *	helper comparison functions
+    *   helper comparison functions
     */
     __compareLessThan = function (a, b) {
         return a < b;
@@ -355,7 +356,7 @@ RDGE.SceneGraph = function (scene) {
     };
 
     /*
-    *	scene traversal functor for creating a sorted list
+    *   scene traversal functor for creating a sorted list
     */
     insertIntoSortedList = function (list, item, comparator) {
         // insert at the end
@@ -374,7 +375,7 @@ RDGE.SceneGraph = function (scene) {
         // get the distance from object to cameras' 'z' plane
         item.depth = RDGE.vec3.dot(look, toObject);
 
-        // walk down the list of object moving the current item into place until the comparison fails		
+        // walk down the list of object moving the current item into place until the comparison fails
         var i = len - 1;
         var temp = null;
         for (; i > 0; --i) {
@@ -390,7 +391,7 @@ RDGE.SceneGraph = function (scene) {
     };
 
     /*
-    *	Helper function to generate a culled list of geometry for shadow mapping from the mainLights point of view
+    *   Helper function to generate a culled list of geometry for shadow mapping from the mainLights point of view
     */
     shadowCullPass = function (cameraLight, sortCat, compareFunc) {
         this.result = [];
@@ -416,16 +417,16 @@ RDGE.SceneGraph = function (scene) {
     };
 
     /*
-    *	Helper function to create a list sorted front to back as would be used by an opaque render list
-    *	note: this is an insertion sort designed to create a new sorted list, not sort an existing list (optimization)
+    *   Helper function to create a list sorted front to back as would be used by an opaque render list
+    *   note: this is an insertion sort designed to create a new sorted list, not sort an existing list (optimization)
     */
     insertFrontToBack = function (list, item) {
         insertIntoSortedList(list, item, __compareLessThan);
     };
 
     /*
-    *	Helper function to create a list sorted back to front as would be used by an transparent render list
-    *	note: this is an insertion sort designed to create a new sorted list, not sort an existing list (optimization)
+    *   Helper function to create a list sorted back to front as would be used by an transparent render list
+    *   note: this is an insertion sort designed to create a new sorted list, not sort an existing list (optimization)
     */
     insertBackToFront = function (list, item) {
         insertIntoSortedList(list, item, __compareGreaterThan);
@@ -648,7 +649,7 @@ RDGE.SceneGraph.prototype.BuildBVHHelper = function (node) {
                     curNode.world = RDGE.mat4.mul(curNode.local, parentXfrm);
 
                     if (bbox) {
-                        // update bounding box position			
+                        // update bounding box position
                         curNode.bbox_world = bbox.transform(curNode.world);
                     }
 
@@ -678,7 +679,7 @@ RDGE.SceneGraph.prototype.BuildBVHHelper = function (node) {
 
             // propagate the bounding volume up the hierarchy
             if (parent && parent.bbox_world && parent.bbox_world.isValid()
-				&& curNode.bbox_world && curNode.bbox_world.isValid()) {
+                && curNode.bbox_world && curNode.bbox_world.isValid()) {
                 parent.bbox_world.addBox(curNode.bbox_world);
             }
 
@@ -805,8 +806,8 @@ RDGE.SceneGraph.prototype.GetBBoxForNode = function (tr) {
 
 RDGE.SceneGraph.prototype._RenderDFHelper = function (renderer, renderProc, node, forceThisProc) {
     renderList = [];
-    renderList[this.bckTypes.BACKGROUND] = []; //BACKGROUND	
-    renderList[this.bckTypes.OPAQUE] = []; //OPAQUE		
+    renderList[this.bckTypes.BACKGROUND] = []; //BACKGROUND
+    renderList[this.bckTypes.OPAQUE] = []; //OPAQUE
     renderList[this.bckTypes.TRANSPARENT] = []; //TRANSPARENT
     renderList[this.bckTypes.ADDITIVE] = []; //ADDITIVE
     renderList[this.bckTypes.TRANSLUCENT] = []; //TRANSLUCENT
@@ -944,24 +945,24 @@ RDGE.SceneGraph.prototype.exportJSON = function () {
         if (key == 'bbox_world') {
             return null;
         }
-        //		else if(key === 'image')
-        //		{
-        //			return "image";
-        //		}
+        //      else if(key === 'image')
+        //      {
+        //          return "image";
+        //      }
         else if (key === 'parent') {
             return "parent";
         }
 
-        //		for(var i = 0, len = objMap.length; i < len; ++i)
-        //		{
-        //			if((value && typeof value === "object" && !value.jsonExportName && value === objMap[i]) || (value && value.baseURI !== undefined))
-        //			{
-        //				return 'replaced';
-        //			}
-        //		}
-        //    
-        //		if(value && value.baseURI === undefined && typeof value === "object" && !value.lookUpName)
-        //			objMap.push(value);
+        //      for(var i = 0, len = objMap.length; i < len; ++i)
+        //      {
+        //          if((value && typeof value === "object" && !value.jsonExportName && value === objMap[i]) || (value && value.baseURI !== undefined))
+        //          {
+        //              return 'replaced';
+        //          }
+        //      }
+        //
+        //      if(value && value.baseURI === undefined && typeof value === "object" && !value.lookUpName)
+        //          objMap.push(value);
 
         return value;
     }

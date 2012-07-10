@@ -1,24 +1,25 @@
 /* <copyright>
-Copyright (c) 2012, Motorola Mobility, Inc
+Copyright (c) 2012, Motorola Mobility LLC.
 All Rights Reserved.
-BSD License.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  - Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  - Neither the name of Motorola Mobility nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of Motorola Mobility LLC nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -28,9 +29,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
-var Montage = 	require("montage/core/core").Montage,
+var Montage =   require("montage/core/core").Montage,
     ShapeTool = require("js/tools/ShapeTool").ShapeTool,
-    ShapesController = 	require("js/controllers/elements/shapes-controller").ShapesController;
+    ShapesController =  require("js/controllers/elements/shapes-controller").ShapesController;
 
 var Rectangle = require("js/lib/geom/rectangle").Rectangle;
 var MaterialsModel = require("js/models/materials-model").MaterialsModel;
@@ -63,7 +64,7 @@ exports.RectTool = Montage.create(ShapeTool, {
     _buttons: {enumerable: false,value: { hexinput: [] , lockbutton: []}},
 
     RenderShape: {
-		value: function (w, h, planeMat, midPt, canvas)
+        value: function (w, h, planeMat, midPt, canvas)
         {
             if( (Math.floor(w) === 0) || (Math.floor(h) === 0) )
             {
@@ -98,14 +99,22 @@ exports.RectTool = Montage.create(ShapeTool, {
                 {
                     strokeMaterial = Object.create(MaterialsModel.getMaterial(strokeM));
                 }
-                strokeColor = ShapesController.getMaterialColor(strokeM) || strokeColor;
+                if (strokeMaterial && this.options.stroke.color && (strokeMaterial.gradientType === this.options.stroke.color.gradientMode)) {
+                    strokeColor = {gradientMode:strokeMaterial.gradientType, color:this.options.stroke.color.stops};
+                } else {
+                    strokeColor = ShapesController.getMaterialColor(strokeM) || strokeColor;
+                }
 
                 fillM = this.options.fillMaterial;
                 if(fillM)
                 {
                     fillMaterial = Object.create(MaterialsModel.getMaterial(fillM));
                 }
-                fillColor = ShapesController.getMaterialColor(fillM) || fillColor;
+                if (fillMaterial && this.options.fill.color && (fillMaterial.gradientType === this.options.fill.color.gradientMode)) {
+                    fillColor = {gradientMode:fillMaterial.gradientType, color:this.options.fill.color.stops};
+                } else {
+                    fillColor = ShapesController.getMaterialColor(fillM) || fillColor;
+                }
             }
 
             var world = this.getGLWorld(canvas, this.options.use3D);

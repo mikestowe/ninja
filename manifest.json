@@ -1,7 +1,7 @@
 {
-  "name": "Ninja - 0.7.0.0",
-  "description": "Ninja - Alpha Release 0.7.0.0",
-  "version": "0.7.0.0",
+  "name": "Ninja Authoring Tool",
+  "description": "Ninja HTML5 Authoring Tool - Alpha Release",
+  "version": "0.8.0.0",
   "app": {
     "launch": {
       "local_path": "index.html"
