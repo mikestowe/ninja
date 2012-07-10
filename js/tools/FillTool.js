@@ -29,12 +29,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 
-/* <copyright>
-This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
-No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
-(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
-</copyright> */
-
 var Montage = require("montage/core/core").Montage,
     ModifierToolBase = require("js/tools/modifier-tool-base").ModifierToolBase,
     ElementsMediator = require("js/mediators/element-mediator").ElementMediator,
