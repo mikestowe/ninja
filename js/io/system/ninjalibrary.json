@@ -1,6 +1,6 @@
 {
 	"libraries": [
 		{"name": "Montage", "path": "/node_modules/descriptor.json", "version": "0.11.2.1"},
-		{"name": "RDGE", "path": "/assets/descriptor.json", "version": "0.6.0.3"}
+		{"name": "RDGE", "path": "/assets/descriptor.json", "version": "0.6.0.4"}
 	]
 }

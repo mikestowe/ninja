@@ -42,26 +42,26 @@ var RadialGradientMaterial = require("js/lib/rdge/materials/radial-gradient-mate
 var BumpMetalMaterial = require("js/lib/rdge/materials/bump-metal-material").BumpMetalMaterial;
 var UberMaterial = require("js/lib/rdge/materials/uber-material").UberMaterial;
 //var CloudMaterial = require("js/lib/rdge/materials/cloud-material").CloudMaterial;
-var RadialBlurMaterial = require("js/lib/rdge/materials/radial-blur-material").RadialBlurMaterial;
-var RaidersMaterial = require("js/lib/rdge/materials/radial-blur-material").RaidersMaterial;
+//var RadialBlurMaterial = require("js/lib/rdge/materials/radial-blur-material").RadialBlurMaterial;
+//var RaidersMaterial = require("js/lib/rdge/materials/radial-blur-material").RaidersMaterial;
 var PlasmaMaterial = require("js/lib/rdge/materials/plasma-material").PlasmaMaterial;
 var PulseMaterial = require("js/lib/rdge/materials/pulse-material").PulseMaterial;
-var TunnelMaterial = require("js/lib/rdge/materials/tunnel-material").TunnelMaterial;
-var ReliefTunnelMaterial = require("js/lib/rdge/materials/relief-tunnel-material").ReliefTunnelMaterial;
+//var TunnelMaterial = require("js/lib/rdge/materials/tunnel-material").TunnelMaterial;
+//var ReliefTunnelMaterial = require("js/lib/rdge/materials/relief-tunnel-material").ReliefTunnelMaterial;
 var FlagMaterial = require("js/lib/rdge/materials/flag-material").FlagMaterial;
-var SquareTunnelMaterial = require("js/lib/rdge/materials/square-tunnel-material").SquareTunnelMaterial;
-var FlyMaterial = require("js/lib/rdge/materials/fly-material").FlyMaterial;
+//var SquareTunnelMaterial = require("js/lib/rdge/materials/square-tunnel-material").SquareTunnelMaterial;
+//var FlyMaterial = require("js/lib/rdge/materials/fly-material").FlyMaterial;
 var WaterMaterial = require("js/lib/rdge/materials/water-material").WaterMaterial;
 var ParisMaterial = require("js/lib/rdge/materials/water-material").ParisMaterial;
-var ZInvertMaterial = require("js/lib/rdge/materials/z-invert-material").ZInvertMaterial;
-var DeformMaterial = require("js/lib/rdge/materials/deform-material").DeformMaterial;
-var StarMaterial = require("js/lib/rdge/materials/star-material").StarMaterial;
-var TwistMaterial = require("js/lib/rdge/materials/twist-material").TwistMaterial;
+//var ZInvertMaterial = require("js/lib/rdge/materials/z-invert-material").ZInvertMaterial;
+//var DeformMaterial = require("js/lib/rdge/materials/deform-material").DeformMaterial;
+//var StarMaterial = require("js/lib/rdge/materials/star-material").StarMaterial;
+//var TwistMaterial = require("js/lib/rdge/materials/twist-material").TwistMaterial;
 var TwistVertMaterial = require("js/lib/rdge/materials/twist-vert-material").TwistVertMaterial;
 var TaperMaterial = require("js/lib/rdge/materials/taper-material").TaperMaterial;
-var JuliaMaterial = require("js/lib/rdge/materials/julia-material").JuliaMaterial;
-var KeleidoscopeMaterial = require("js/lib/rdge/materials/keleidoscope-material").KeleidoscopeMaterial;
-var MandelMaterial = require("js/lib/rdge/materials/mandel-material").MandelMaterial;
+//var JuliaMaterial = require("js/lib/rdge/materials/julia-material").JuliaMaterial;
+//var KeleidoscopeMaterial = require("js/lib/rdge/materials/keleidoscope-material").KeleidoscopeMaterial;
+//var MandelMaterial = require("js/lib/rdge/materials/mandel-material").MandelMaterial;
 
 
 exports.MaterialsModel = Montage.create(Component, {
@@ -76,29 +76,29 @@ exports.MaterialsModel = Montage.create(Component, {
             this.addMaterial(new FlatMaterial());
             this.addMaterial(new BumpMetalMaterial());
             //this.addMaterial(new CloudMaterial());
-            this.addMaterial(new DeformMaterial());
+            //this.addMaterial(new DeformMaterial());
             this.addMaterial(new FlagMaterial());
-            this.addMaterial(new FlyMaterial());
-            this.addMaterial(new JuliaMaterial());
-            this.addMaterial(new KeleidoscopeMaterial());
+            //this.addMaterial(new FlyMaterial());
+            //this.addMaterial(new JuliaMaterial());
+            //this.addMaterial(new KeleidoscopeMaterial());
             this.addMaterial(new LinearGradientMaterial());
-            this.addMaterial(new MandelMaterial());
+            //this.addMaterial(new MandelMaterial());
             this.addMaterial(new ParisMaterial());
             this.addMaterial(new PlasmaMaterial());
             this.addMaterial(new PulseMaterial());
-            this.addMaterial(new RadialBlurMaterial());
+            //this.addMaterial(new RadialBlurMaterial());
             this.addMaterial(new RadialGradientMaterial());
-            this.addMaterial(new RaidersMaterial());
-            this.addMaterial(new ReliefTunnelMaterial());
-            this.addMaterial(new SquareTunnelMaterial());
-            this.addMaterial(new StarMaterial());
+            //this.addMaterial(new RaidersMaterial());
+            //this.addMaterial(new ReliefTunnelMaterial());
+            //this.addMaterial(new SquareTunnelMaterial());
+            //this.addMaterial(new StarMaterial());
             this.addMaterial(new TaperMaterial());
-            this.addMaterial(new TunnelMaterial());
-            this.addMaterial(new TwistMaterial());
+            //this.addMaterial(new TunnelMaterial());
+            //this.addMaterial(new TwistMaterial());
             this.addMaterial(new TwistVertMaterial());
             this.addMaterial(new UberMaterial());
             this.addMaterial(new WaterMaterial());
-            this.addMaterial(new ZInvertMaterial());
+            //this.addMaterial(new ZInvertMaterial());
         }
     },
 
@@ -251,24 +251,24 @@ exports.MaterialsModel = Montage.create(Component, {
 
                 case "taper":               mat = new TaperMaterial();              break;
                 case "twistVert":           mat = new TwistVertMaterial();          break;
-                case "radialBlur":          mat = new RadialBlurMaterial();         break;
+                //case "radialBlur":          mat = new RadialBlurMaterial();         break;
                 case "plasma":              mat = new PlasmaMaterial();             break;
                 case "pulse":               mat = new PulseMaterial();              break;
-                case "tunnel":              mat = new TunnelMaterial();             break;
-                case "reliefTunnel":        mat = new ReliefTunnelMaterial();       break;
-                case "squareTunnel":        mat = new SquareTunnelMaterial();       break;
+                //case "tunnel":              mat = new TunnelMaterial();             break;
+                //case "reliefTunnel":        mat = new ReliefTunnelMaterial();       break;
+                //case "squareTunnel":        mat = new SquareTunnelMaterial();       break;
                 case "flag":                mat = new FlagMaterial();               break;
-                case "fly":                 mat = new FlyMaterial();                break;
+                //case "fly":                 mat = new FlyMaterial();                break;
                 case "water":               mat = new WaterMaterial();              break;
                 case "paris":               mat = new ParisMaterial();              break;
-                case "raiders":             mat = new RaidersMaterial();            break;
-                case "zinvert":             mat = new ZInvertMaterial();            break;
-                case "deform":              mat = new DeformMaterial();             break;
-                case "star":                mat = new StarMaterial();               break;
-                case "twist":               mat = new TwistMaterial();              break;
-                case "julia":               mat = new JuliaMaterial();              break;
-                case "keleidoscope":        mat = new KeleidoscopeMaterial();       break;
-                case "mandel":              mat = new MandelMaterial();             break;
+                //case "raiders":             mat = new RaidersMaterial();            break;
+                //case "zinvert":             mat = new ZInvertMaterial();            break;
+                //case "deform":              mat = new DeformMaterial();             break;
+                //case "star":                mat = new StarMaterial();               break;
+                //case "twist":               mat = new TwistMaterial();              break;
+                //case "julia":               mat = new JuliaMaterial();              break;
+                //case "keleidoscope":        mat = new KeleidoscopeMaterial();       break;
+                //case "mandel":              mat = new MandelMaterial();             break;
 
 
                 default:
